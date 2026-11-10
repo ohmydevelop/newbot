@@ -1,0 +1,10 @@
+
+> minimal-agent@0.2.0 test:controls-ui
+> node scripts/test-controls-ui.mjs
+
+PASS plugin actions have aligned icons, a separated destructive action and a persistent expanded anchor
+PASS destructive menu actions retain confirmation, with distinct confirm and cancel buttons
+PASS independent tools and add menus use the same action geometry without invoking tools
+PASS attachment and approval menus have consistent icons, grouping and selected state
+PASS history menus use the shared action style and Escape returns focus
+PASS light and dark desktop and phone menus fit their anchors and expose 44px touch rows

@@ -1,0 +1,5 @@
+
+> minimal-agent@0.2.0 test:runtime-isolation
+> node --import tsx scripts/verify-runtime-isolation.mjs
+
+{"checks":["native initialize confirms private CODEX_HOME and HOME","thread-scoped MCP receives server config from memory and discovers real tools","thread config routes real requests from memory without config.toml","same provider endpoint hot-update reaches new address without file write or process restart","same native thread switches in-memory provider with history and PID intact","native config writes are confined to private home; host config unchanged","selected rollout restores original identity and history in a fresh isolated home"],"nativeHomeIsolated":true,"hostConfigUnchanged":true,"memoryConfig":true,"pidUnchanged":true,"sameThread":true,"historyTurns":3,"requests":[{"path":"/a/responses","first":true,"second":false},{"path":"/b/responses","first":true,"second":true},{"path":"/c/responses","first":true,"second":true}]}

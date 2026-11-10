@@ -1,0 +1,18 @@
+
+> minimal-agent@0.2.0 test:pdf-preview
+> node scripts/test-pdf-preview.mjs
+
+PASS PDF renderer and worker load only when opened
+PASS real canvas, Chinese text and inert PDF actions
+PASS pagination, page jump and landscape page
+PASS zoom and bounded canvas memory
+PASS large PDF uses authenticated verified byte ranges
+PASS malformed, encrypted and excessive-page PDFs have clear feedback
+PASS oversized workspace PDF is refused without creating a card
+PASS range failures and inconsistent headers support retry
+PASS closing an in-flight PDF leaves no stale renderer
+PASS PDF versions remain distinct after switching and refresh
+PASS dark theme and mobile portrait controls
+PASS mobile landscape keeps document and download reachable
+PASS session expiry during range read returns to login
+PDF preview regression: 13 checks passed. Evidence: /home/a/Documents/ChatGPT/newbot/.data/pdf-preview

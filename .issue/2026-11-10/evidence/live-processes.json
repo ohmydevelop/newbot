@@ -1,0 +1,15 @@
+{
+  "servicePid": 239968,
+  "nativeProcesses": [
+    {
+      "pid": 240158,
+      "paths": {
+        "HOME": "/home/a/Documents/ChatGPT/newbot/.data/codex/runtime-home",
+        "CODEX_HOME": "/home/a/Documents/ChatGPT/newbot/.data/codex",
+        "CODEX_SQLITE_HOME": "/home/a/Documents/ChatGPT/newbot/.data/codex"
+      },
+      "logsInTmpfs": true
+    }
+  ],
+  "personalCodexStillAlive": true
+}

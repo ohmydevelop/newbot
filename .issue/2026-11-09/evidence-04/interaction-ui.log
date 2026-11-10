@@ -1,0 +1,23 @@
+
+> minimal-agent@0.2.0 test:interaction-ui
+> node scripts/test-interaction-ui.mjs
+
+PASS login keeps native password manager semantics and shortcuts cannot navigate away
+PASS skip link reaches the composer and keyboard focus remains visible
+PASS IME composition and Safari 229 Enter keep text without creating a turn
+PASS Shift Enter adds a line and a plain Enter submits exactly once
+PASS search shortcut traps Tab and Escape restores its composer launcher
+PASS settings prevents global shortcuts from replacing its draft and restores its button
+PASS menu keyboard actions open rename and return focus to the surviving menu trigger
+PASS nested private-input dialog blocks shortcuts, returns within settings and never consumes a credential
+PASS system appearance follows OS changes while explicit light preference stays fixed
+PASS rich text uses the selected theme for code, formulas, diagrams and ECharts
+PASS secondary text meets contrast across both themes and common surfaces
+PASS appearance survives reload and reduced motion disables product animations
+PASS mobile sidebar is modal, contains focus and Escape restores the toggle
+PASS mobile sidebar menus layer above the drawer and nested settings return to navigation
+PASS mobile controls have 44px targets and input fields avoid automatic text zoom
+PASS 320px layout keeps the composer and search usable without horizontal overflow
+PASS landscape and short viewport settings keep close and focused fields reachable
+PASS drawer breakpoint changes leave no stale focus trap or hidden desktop workspace
+Interaction UI: 18 checks passed

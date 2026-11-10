@@ -1,0 +1,11 @@
+{
+  "checks": [
+    "plugin actions have aligned icons, a separated destructive action and a persistent expanded anchor",
+    "destructive menu actions retain confirmation, with distinct confirm and cancel buttons",
+    "independent tools and add menus use the same action geometry without invoking tools",
+    "attachment and approval menus have consistent icons, grouping and selected state",
+    "history menus use the shared action style and Escape returns focus",
+    "light and dark desktop and phone menus fit their anchors and expose 44px touch rows"
+  ],
+  "errors": []
+}

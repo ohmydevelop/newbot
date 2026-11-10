@@ -1,0 +1,29 @@
+{
+  "at": "2026-11-10T01:48:58.739Z",
+  "configurationStorage": "sqlite",
+  "schemaVersion": 7,
+  "automaticRestoreAfterRestart": true,
+  "hotUpdate": true,
+  "unitTests": {
+    "passed": 343,
+    "failed": 0
+  },
+  "nativeGroups": 12,
+  "encryptedCredentialRecovery": true,
+  "browserGroups": {
+    "sqlite": 16,
+    "appHost": 14,
+    "recovery": 15,
+    "credentialPrivacy": 5
+  },
+  "browserTotal": 50,
+  "realServiceRestartsVerified": 2,
+  "configuredProvidersRestored": 2,
+  "originalThreadsPreserved": 17,
+  "personalConfigUnchangedDuringHandoff": true,
+  "providerConfigTomlWritten": false,
+  "paidModelCalls": 0,
+  "serviceReady": true,
+  "localOrigin": "http://127.0.0.1:3100",
+  "productionValidation": "deferred"
+}

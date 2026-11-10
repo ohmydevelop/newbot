@@ -1,0 +1,13 @@
+# Install into the fresh production /data/codex/config.toml. Do not copy your personal Codex home.
+model_provider = "openai"
+# Set model only after discovering and testing it with this Provider.
+# model = "a-verified-model-id"
+
+[model_providers.secondary]
+name = "Secondary (unverified)"
+base_url = "https://provider.example.com/v1"
+env_key = "SECONDARY_API_KEY"
+wire_api = "responses"
+
+# Native OAuth callback is set by the deployment environment.
+# Server-specific callback_port overrides must agree with the fixed proxy port.

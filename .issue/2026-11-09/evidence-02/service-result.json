@@ -1,0 +1,31 @@
+{
+  "at": "2026-11-09T10:08:26.112Z",
+  "service": "newbot-test.service",
+  "previousVersion": "codex-cli 0.165.0",
+  "version": "codex-cli 0.165.0",
+  "schema": 6,
+  "ready": true,
+  "maintenanceBackup": ".data/restart-backups/issue-20261109-02-2026-11-09T10-08-23.058Z",
+  "preserved": {
+    "threads": 16,
+    "attachments": 7,
+    "runs": 41,
+    "managed_credentials": 0
+  },
+  "passwordHashUnchanged": true,
+  "existingSessionValid": true,
+  "integrity": "ok",
+  "pluginsEnabled": true,
+  "privateGatewayEditor": true,
+  "generatedGatewayIds": true,
+  "skillRemoval": "personalArchive",
+  "settingsErrors": 0,
+  "history": {
+    "checked": true,
+    "turns": 1,
+    "items": 3,
+    "nativeModelRecovered": true,
+    "approval": "ask"
+  },
+  "modelTurnsCreated": 0
+}

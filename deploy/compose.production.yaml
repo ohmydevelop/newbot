@@ -1,0 +1,50 @@
+name: newbot-production
+services:
+  minimal-agent:
+    image: ${NEWBOT_IMAGE:-newbot:stable}
+    build:
+      context: ..
+    restart: unless-stopped
+    init: false
+    env_file:
+      - ${NEWBOT_ENV_FILE:-production.env}
+    environment:
+      NODE_ENV: production
+      HOST: 0.0.0.0
+      PORT: 3100
+      DATA_DIR: /data
+      CODEX_HOME: /data/codex
+      AGENT_WORKSPACE: /data/workspace
+      PUBLIC_ORIGIN: ${PUBLIC_ORIGIN:?Set main HTTPS origin}
+      APP_ORIGIN: ${APP_ORIGIN:?Set separate Apps HTTPS origin}
+      AGENT_TRANSPORT: sse
+      MAX_ACTIVE_TURNS: 2
+      MALLOC_ARENA_MAX: "2"
+      ENABLE_TEST_MCP: "false"
+      TRUST_PROXY: "false"
+    ports:
+      - "127.0.0.1:3100:3100"
+    volumes:
+      - ${NEWBOT_DATA_DIR:-/srv/newbot/data}:/data
+    read_only: true
+    tmpfs:
+      - /tmp:rw,nosuid,size=128m
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    stop_grace_period: 30s
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: "3"
+    healthcheck:
+      test:
+        [
+          CMD,
+          node,
+          -e,
+          "fetch('http://127.0.0.1:3100/api/ready').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 30s
+      timeout: 5s
+      start_period: 45s

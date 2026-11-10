@@ -1,0 +1,10 @@
+[Unit]
+Description=Encrypted newbot backup (short maintenance window)
+Requires=docker.service
+After=docker.service
+[Service]
+Type=oneshot
+WorkingDirectory=/srv/newbot/source
+EnvironmentFile=/etc/newbot/backup.env
+ExecStart=/usr/bin/node scripts/backup.mjs
+UMask=0077

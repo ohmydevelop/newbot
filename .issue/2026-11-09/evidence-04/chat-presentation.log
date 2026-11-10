@@ -1,0 +1,15 @@
+
+> minimal-agent@0.2.0 test:chat-presentation-ui
+> node scripts/test-chat-presentation-ui.mjs
+
+PASS one turn presents Markdown, selected skills, files, MCP App and A2UI without raw dynamic tool entries
+PASS declined native command is marked unexecuted instead of completed
+PASS skill modal closes back to its original message action
+PASS file preview and close keep the source card and return keyboard focus
+PASS unrelated message updates and form submission retain the existing App iframe
+PASS clipboard rejection is local and success provides feedback without unhandled rejection
+PASS active conversation failure is shown once in its turn and stays the same after refresh
+PASS reading task status never dispatches another turn and failures stay local
+PASS background failure offers its own thread and does not replace the current conversation
+PASS mobile dark task feedback is readable, keyboard operable and does not overflow
+PASS malformed message is contained and local redisplay never re-executes the task

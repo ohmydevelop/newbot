@@ -1,0 +1,12 @@
+tunnel: REPLACE_WITH_TUNNEL_UUID
+credentials-file: /etc/cloudflared/REPLACE_WITH_TUNNEL_UUID.json
+loglevel: warn
+ingress:
+  - hostname: agent.example.com
+    service: http://127.0.0.1:3100
+  - hostname: apps.agent.example.com
+    path: ^/sandbox/.*$
+    service: http://127.0.0.1:3100
+  - hostname: apps.agent.example.com
+    service: http_status:404
+  - service: http_status:404

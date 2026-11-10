@@ -1,0 +1,106 @@
+{
+  "at": "2026-11-09T14:10:49.944Z",
+  "codex": "0.165.0",
+  "automaticTests": {
+    "passed": 324,
+    "failed": 0,
+    "log": "tests.log"
+  },
+  "typecheck": {
+    "passed": true,
+    "log": "typecheck.log"
+  },
+  "build": {
+    "passed": true,
+    "log": "build.log"
+  },
+  "browser": {
+    "passed": 129,
+    "failed": 0,
+    "suites": [
+      {
+        "log": "ui-regression.log",
+        "passed": 14
+      },
+      {
+        "log": "issue-ui.log",
+        "passed": 22
+      },
+      {
+        "log": "controls-ui.log",
+        "passed": 6
+      },
+      {
+        "log": "skills-use.log",
+        "passed": 11
+      },
+      {
+        "log": "chat-presentation.log",
+        "passed": 11
+      },
+      {
+        "log": "recovery-ui.log",
+        "passed": 15
+      },
+      {
+        "log": "app-host-ui.log",
+        "passed": 14
+      },
+      {
+        "log": "interaction-ui.log",
+        "passed": 18
+      },
+      {
+        "log": "credential-ui.log",
+        "passed": 5
+      },
+      {
+        "log": "pdf-ui.log",
+        "passed": 13
+      }
+    ]
+  },
+  "native": {
+    "isolationAndHotUpdate": {
+      "passed": 7,
+      "evidence": "runtime-isolation-native.json"
+    },
+    "session": {
+      "passed": 11,
+      "log": "session-native.log"
+    },
+    "credentialIsolation": {
+      "passed": true,
+      "log": "credential-native.log"
+    }
+  },
+  "migration": {
+    "threads": 17,
+    "turns": 56,
+    "items": 420,
+    "allOriginalIds": true,
+    "allTurnCountsMatch": true,
+    "allItemCountsMatch": true,
+    "personalAuthCopied": false,
+    "personalPluginsCopied": false,
+    "modelTurns": 0,
+    "managedProfilesVerified": 3,
+    "sourceMissingWebIndexes": 1,
+    "webIndexesPreserved": 18,
+    "evidence": "runtime-migration-verified.json"
+  },
+  "actualInstance": {
+    "evidence": "isolated-app-smoke.json",
+    "serviceEvidence": "service-result.json",
+    "personalConfigUnchanged": true,
+    "passwordUnchanged": true,
+    "localServiceReady": true
+  },
+  "boundaries": {
+    "globalWebSettingsUseIsolatedNativeFiles": true,
+    "fullMemoryConfigCenterImplemented": false,
+    "originalSharedEntrypointRestored": false,
+    "otherCloudflareServiceChanged": false,
+    "formalReleaseValidationDeferred": true
+  }
+}

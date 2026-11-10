@@ -1,0 +1,27 @@
+{
+  "at": "2026-11-09T17:30:54.861Z",
+  "providerStorage": "memory",
+  "codexVersion": "codex-cli 0.165.0",
+  "typecheck": true,
+  "build": true,
+  "format": true,
+  "unitTests": {
+    "passed": 337,
+    "failed": 0
+  },
+  "nativeGroups": 12,
+  "nativeEncryptedCredentialRecovery": true,
+  "browserGroups": {
+    "memory": 16,
+    "appHost": 14,
+    "recovery": 15,
+    "credentials": 5
+  },
+  "browserGroupsTotal": 50,
+  "serviceReady": true,
+  "localOrigin": "http://127.0.0.1:3100",
+  "personalConfigUnchangedDuringHandoff": true,
+  "providerDefinitionsPersisted": false,
+  "paidModelCalls": 0,
+  "productionValidation": "deferred"
+}

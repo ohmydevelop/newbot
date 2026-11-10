@@ -1,0 +1,136 @@
+{
+  "nativeDiagnosticsVolatile": true,
+  "persistentProviderTraces": [],
+  "checks": [
+    "source publication and first product turn route to A without config.toml",
+    "same thread switches A to B and reasoning high through product API; original history and PID survive",
+    "same Provider model ID and supported reasoning parameters update natively and reach the next request without restarting",
+    "resetting reasoning to model default changes the actual upstream request and cannot leave the previous effort active",
+    "same Provider endpoint update reaches C on next turn without restarting Codex",
+    "publishing during a running turn preserves its old configuration; next turn receives the new snapshot",
+    "gateway defaults apply to new sessions in memory; existing session IDs stay stable and no profile file is created",
+    "real MCP calls and structured Skill input remain usable after Provider hot updates",
+    "Bridge restart retains session binding and readable native history, but refuses to run without resupplied Provider definitions",
+    "resupplying definitions restores the original thread and all history after restart",
+    "a conflicting disk Provider cannot contribute old authentication or silently redirect an in-memory session",
+    "one-time import archives legacy Provider configuration, preserves native policies, carries definitions in RAM and never silently imports them again"
+  ],
+  "passed": 12,
+  "requests": [
+    {
+      "path": "/a/responses",
+      "model": "gpt-6.1-sol",
+      "effort": "low",
+      "history": [
+        true,
+        false
+      ],
+      "skill": false
+    },
+    {
+      "path": "/b/responses",
+      "model": "gpt-6.1-sol",
+      "effort": "high",
+      "history": [
+        true,
+        true
+      ],
+      "skill": false
+    },
+    {
+      "path": "/b/responses",
+      "model": "gpt-6-astra",
+      "effort": "low",
+      "history": [
+        true,
+        true
+      ],
+      "skill": false
+    },
+    {
+      "path": "/b/responses",
+      "model": "gpt-6-astra",
+      "effort": "medium",
+      "history": [
+        true,
+        true
+      ],
+      "skill": false
+    },
+    {
+      "path": "/b/responses",
+      "model": "gpt-6-astra",
+      "effort": "low",
+      "history": [
+        true,
+        true
+      ],
+      "skill": false
+    },
+    {
+      "path": "/c/responses",
+      "model": "gpt-6-astra",
+      "effort": "low",
+      "history": [
+        true,
+        true
+      ],
+      "skill": false
+    },
+    {
+      "path": "/c/responses",
+      "model": "gpt-6-astra",
+      "effort": "low",
+      "history": [
+        true,
+        true
+      ],
+      "skill": false
+    },
+    {
+      "path": "/d/responses",
+      "model": "gpt-6-astra",
+      "effort": "low",
+      "history": [
+        true,
+        true
+      ],
+      "skill": false
+    },
+    {
+      "path": "/d/responses",
+      "model": "gpt-6.1-sol",
+      "effort": "low",
+      "history": [
+        false,
+        false
+      ],
+      "skill": false
+    },
+    {
+      "path": "/d/responses",
+      "model": "gpt-6-astra",
+      "effort": "low",
+      "history": [
+        true,
+        true
+      ],
+      "skill": true
+    },
+    {
+      "path": "/e/responses",
+      "model": "gpt-6-astra",
+      "effort": "low",
+      "history": [
+        true,
+        true
+      ],
+      "skill": true
+    }
+  ],
+  "sameThread": true,
+  "pidUnchangedDuringHotUpdates": true,
+  "noProviderConfigFileBeforeCollisionTest": true,
+  "historyRestored": true,
+  "modelTurnsAgainstRealProviders": 0
+}

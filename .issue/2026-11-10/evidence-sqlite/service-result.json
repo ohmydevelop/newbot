@@ -1,0 +1,18 @@
+{
+  "at": "2026-11-10T01:43:40.188Z",
+  "storage": "sqlite",
+  "servicePid": 501378,
+  "localOrigin": "http://127.0.0.1:3100",
+  "restartsVerified": 2,
+  "providersRestored": 2,
+  "originalThreadsReadable": 17,
+  "webThreadRows": 18,
+  "runRows": 45,
+  "historyShapeUnchanged": true,
+  "passwordUnchanged": true,
+  "credentialMasterKeyUnchanged": true,
+  "personalConfigUnchangedDuringHandoff": true,
+  "providerConfigFileAbsent": true,
+  "modelTurnsCreated": 0,
+  "publicTunnelChanged": false
+}

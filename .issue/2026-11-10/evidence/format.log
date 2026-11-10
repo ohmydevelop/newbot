@@ -1,0 +1,26 @@
+server/runtime-logs.ts 30ms
+server/provider-runtime.ts 29ms
+server/provider-source.ts 23ms (unchanged)
+server/configuration.ts 17ms (unchanged)
+server/codex.ts 23ms
+server/bridge.ts 64ms
+server/session-runtime.ts 20ms
+server/index.ts 67ms
+server/providers.ts 14ms (unchanged)
+server/mcp-config.ts 11ms (unchanged)
+server/credential-vault.ts 12ms (unchanged)
+shared/configuration.ts 3ms (unchanged)
+web/store.ts 22ms (unchanged)
+web/components/ProviderSettings.tsx 25ms (unchanged)
+web/components/McpSettings.tsx 35ms (unchanged)
+web/components/ModelDefaults.tsx 7ms (unchanged)
+tests/provider-runtime.test.ts 16ms
+tests/issue-preview-server.ts 8ms (unchanged)
+scripts/test-provider-memory-native.mjs 30ms
+scripts/test-credential-storage-native.mjs 12ms (unchanged)
+scripts/test-ui-regression.mjs 25ms (unchanged)
+docs/provider-memory-config.md 23ms (unchanged)
+docs/runtime-isolation.md 9ms (unchanged)
+docs/provider-management.md 12ms (unchanged)
+README.md 14ms (unchanged)
+package.json 1ms (unchanged)

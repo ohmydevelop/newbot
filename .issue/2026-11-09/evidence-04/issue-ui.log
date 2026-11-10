@@ -1,0 +1,26 @@
+
+> minimal-agent@0.2.0 test:issue-ui
+> node scripts/test-issue-20261109-ui.mjs
+
+PASS one new-chat entry and unified model control
+PASS multiple image thumbnails precede text and open an accessible preview
+PASS drag and clipboard paste add image previews to the active draft
+PASS Markdown attachments open a safe file preview
+PASS failed uploads remain retryable and prevent Enter from dispatching
+PASS $ skill selection uses keyboard and @ adds a real plugin reference
+PASS process defaults collapsed, time advances and final reply stays visible
+PASS history images preview after refresh
+PASS workspace file selection is available only through the composer plus menu
+PASS same-thread provider change and full-access selection persist
+PASS skills use compact equal-height rows with row-click details and protected-source uninstall
+PASS one tools page groups plugin-owned connections and keeps independent MCP actions available before testing
+PASS gateway settings use a single list with defaults
+PASS gateway and connector editors open focused dialogs and cancel without changes
+PASS plugins install, toggle and uninstall through the unified page without model calls
+PASS a custom gateway default applies to new chats without replacing the current conversation model
+PASS gateway editing hides internal IDs, has balanced spacing and stores keys through a private binary channel
+PASS a lost key-save response is reconciled by reading the ticket without resending a secret or creating duplicates
+PASS standalone personal skills uninstall with confirmation and remain absent after refresh
+PASS an implicit account gateway opens a read-only detail instead of a create form
+PASS gateway, tools and skill settings fit mobile in both themes and the editor remains scrollable in landscape
+PASS mobile and both themes fit without horizontal scrolling

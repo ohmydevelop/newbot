@@ -1,0 +1,35 @@
+{
+  "package": "@a2ui/web_core",
+  "version": "0.14.0",
+  "integrity": "sha512-OEJOgcfRMW0lwActVl1NKToxE2Ff5G3mIBHDB6gKm0elGZSwAhB7bj+Ef2a/h2nrL+57VPnSR67YSNz9JVV4yw==",
+  "files": {
+    "00_simple-text.json": {
+      "source": "src/v0_9/schemas/catalogs/basic/examples/00_simple-text.json",
+      "sha256": "741aa1dfcf23358755a69f97cba8e64f33392ebfc0a71986f5d20b24f2ffa01c"
+    },
+    "00_interactive-button.json": {
+      "source": "src/v0_9/schemas/catalogs/basic/examples/00_interactive-button.json",
+      "sha256": "2b4d38a4a47cd96a583586d0948abc420038e1908ed8754b958cefb6f88d7884"
+    },
+    "00_formatted-text.json": {
+      "source": "src/v0_9/schemas/catalogs/basic/examples/00_formatted-text.json",
+      "sha256": "c9465293f85e0d07db8b286d9029ec3407e14fe3edb181381b98a9591306337a"
+    },
+    "00_incremental.json": {
+      "source": "src/v0_9/schemas/catalogs/basic/examples/00_incremental.json",
+      "sha256": "1a3265519e526dbe8b384a7286f6da404d0131fd820f8234da0e16dfa52f4315"
+    },
+    "LICENSE": {
+      "source": "LICENSE",
+      "sha256": "8c8b5b632d56c4c1658296963c693db5396772a33caaddb9a22593c4155c437a"
+    },
+    "server_to_client.json": {
+      "source": "src/v0_9/schemas/server_to_client.json",
+      "sha256": "18529a069f10fe75c6de3641cf2d4d6ca5a31ac967be7074c610a1270ddcb02a"
+    },
+    "common_types.json": {
+      "source": "src/v0_9/schemas/common_types.json",
+      "sha256": "a7a349b1e9abda9dbdf2342ac9ac671d8da7a8576c7b29a9786331faf70b9900"
+    }
+  }
+}

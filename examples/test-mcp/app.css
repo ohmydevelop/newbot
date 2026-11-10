@@ -1,0 +1,310 @@
+:root {
+  font:
+    14px/1.5 ui-sans-serif,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    "Microsoft YaHei",
+    sans-serif;
+  color: #24272b;
+  background: #fff;
+  --bg: #fff;
+  --text: #24272b;
+  --muted: #646b73;
+  --border: #e7e9eb;
+  --surface: #f6f7f8;
+  --accent: #246a55;
+  --chart: #367d68;
+  --error: #b42318;
+  color-scheme: light;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+}
+main {
+  padding: 22px 24px 18px;
+  max-width: 900px;
+  margin: auto;
+}
+button,
+select {
+  font: inherit;
+  color: inherit;
+}
+button {
+  cursor: pointer;
+}
+button:disabled,
+select:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+button:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+.heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.eyebrow {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--muted);
+  margin: 0 0 5px;
+}
+h1 {
+  font-size: 21px;
+  letter-spacing: -0.5px;
+  line-height: 1.35;
+  margin: 0;
+  font-weight: 600;
+}
+.simulation {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  white-space: nowrap;
+  color: var(--muted);
+}
+.simulation > span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+.intro {
+  font-size: 12px;
+  color: var(--muted);
+  margin: 9px 0 19px;
+}
+.controls {
+  display: flex;
+  align-items: end;
+  gap: 12px;
+}
+.controls label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 11px;
+  flex: 1;
+  min-width: 0;
+}
+.controls select {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  padding: 9px 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  min-height: 40px;
+}
+.controls > button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 40px;
+  padding: 9px 13px;
+  background: var(--text);
+  color: var(--bg);
+  border: 0;
+  border-radius: 8px;
+  white-space: nowrap;
+  font-size: 12px;
+}
+.controls > button:hover {
+  opacity: 0.85;
+}
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  margin: 20px 0 19px;
+  border-bottom: 1px solid var(--border);
+  gap: 4px;
+}
+.metrics button {
+  background: none;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  text-align: left;
+  padding: 0 8px 13px;
+  min-width: 0;
+}
+.metrics button:first-child {
+  padding-left: 0;
+}
+.metrics button > span {
+  display: block;
+  font-size: 12px;
+  color: var(--muted);
+}
+.metrics strong {
+  display: block;
+  font-size: 28px;
+  line-height: 1.4;
+  font-weight: 550;
+  letter-spacing: -0.8px;
+  margin-top: 5px;
+}
+.metrics strong small {
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--muted);
+  letter-spacing: 0;
+  margin-left: 3px;
+}
+.metrics .metric-caption {
+  font-size: 10px;
+  margin-top: 3px;
+}
+.metrics [aria-selected="true"] {
+  border-color: var(--accent);
+}
+.metrics [aria-selected="true"] strong {
+  color: var(--accent);
+}
+.chart-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+.chart-heading h2 {
+  font-size: 12px;
+  font-weight: 550;
+  margin: 0;
+}
+.chart-heading > span {
+  font-size: 10px;
+  color: var(--muted);
+}
+.chart-wrap {
+  margin-top: 12px;
+}
+.chart-wrap svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.grid-line {
+  stroke: var(--border);
+  stroke-width: 1;
+  stroke-dasharray: 3 4;
+}
+.axis-text {
+  font: 10px system-ui;
+  fill: var(--muted);
+}
+.series-line {
+  fill: none;
+  stroke: var(--chart);
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.sample-point {
+  fill: var(--chart);
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.sample-point:hover {
+  opacity: 1;
+}
+.range-labels {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 3.5% 0 6%;
+  color: var(--muted);
+  font-size: 10px;
+  margin-top: -9px;
+}
+.status {
+  margin-top: 18px;
+  font-size: 11px;
+  color: var(--muted);
+  min-height: 17px;
+}
+.status.error {
+  color: var(--error);
+}
+footer {
+  border-top: 1px solid var(--border);
+  padding-top: 10px;
+  margin-top: 12px;
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+  font-size: 10px;
+  color: var(--muted);
+}
+:root[data-theme="dark"] {
+  --bg: #212121;
+  --text: #ececec;
+  --muted: #b0b5b9;
+  --border: #3d4043;
+  --surface: #303030;
+  --accent: #92cbb7;
+  --chart: #92cbb7;
+  --error: #ff9a90;
+  background: var(--bg);
+  color: var(--text);
+  color-scheme: dark;
+}
+@media (max-width: 450px) {
+  main {
+    padding: 18px 15px;
+  }
+  h1 {
+    font-size: 19px;
+  }
+  .intro {
+    font-size: 11px;
+  }
+  .controls {
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .controls label {
+    min-width: 120px;
+  }
+  .controls > button {
+    width: 100%;
+    min-height: 44px;
+  }
+  .controls select {
+    min-height: 44px;
+  }
+  .metrics strong {
+    font-size: 25px;
+  }
+  .metric-caption {
+    font-size: 9px !important;
+  }
+  .chart-heading > span {
+    font-size: 9px;
+  }
+  .status {
+    font-size: 10px;
+  }
+  footer {
+    font-size: 9px;
+  }
+  .chart-wrap svg {
+    min-height: 140px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+  }
+}

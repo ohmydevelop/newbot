@@ -1,0 +1,143 @@
+{
+  "at": "2026-11-09T10:08:24.108Z",
+  "typecheck": "passed",
+  "build": "passed",
+  "targetedFormat": "passed",
+  "automaticTests": {
+    "total": 315,
+    "passed": 315,
+    "failed": 0
+  },
+  "nativeChecks": 11,
+  "browserChecks": 81,
+  "suites": [
+    {
+      "name": "issue-ui",
+      "source": ".issue/2026-11-09/evidence-02/ui-result.json",
+      "passed": 22,
+      "checks": [
+        "one new-chat entry and unified model control",
+        "multiple image thumbnails precede text and open an accessible preview",
+        "drag and clipboard paste add image previews to the active draft",
+        "Markdown attachments open a safe file preview",
+        "failed uploads remain retryable and prevent Enter from dispatching",
+        "$ skill selection uses keyboard and @ adds a real plugin reference",
+        "process defaults collapsed, time advances and final reply stays visible",
+        "history images preview after refresh",
+        "workspace file selection is available only through the composer plus menu",
+        "same-thread provider change and full-access selection persist",
+        "skills use compact equal-height rows with row-click details and protected-source uninstall",
+        "one tools page groups plugin-owned connections and keeps independent MCP actions available before testing",
+        "gateway settings use a single list with defaults",
+        "gateway and connector editors open focused dialogs and cancel without changes",
+        "plugins install, toggle and uninstall through the unified page without model calls",
+        "a custom gateway default applies to new chats without replacing the current conversation model",
+        "gateway editing hides internal IDs, has balanced spacing and stores keys through a private binary channel",
+        "a lost key-save response is reconciled by reading the ticket without resending a secret or creating duplicates",
+        "standalone personal skills uninstall with confirmation and remain absent after refresh",
+        "an implicit account gateway opens a read-only detail instead of a create form",
+        "gateway, tools and skill settings fit mobile in both themes and the editor remains scrollable in landscape",
+        "mobile and both themes fit without horizontal scrolling"
+      ],
+      "errors": []
+    },
+    {
+      "name": "skills-ui",
+      "source": ".data/skills-ui/result.json",
+      "passed": 16,
+      "checks": [
+        "native display name, descriptions, scope and enabled state",
+        "formatted skill document is readable and executes no embedded content",
+        "reader focus and return focus remain in the settings dialog",
+        "source view preserves complete frontmatter and text",
+        "disabled skill can be viewed without enabling or writing configuration",
+        "existing enable and disable controls still save native configuration",
+        "reload reads current content; missing and undiscovered skills fail and recover",
+        "empty and metadata-only documents have useful states",
+        "unsafe, oversized and invalid-text files show bounded errors without secret content",
+        "network errors can retry and returning while loading cancels stale content",
+        "discovery errors and native warnings are visible and refreshable",
+        "closing and refreshing keep the read-only viewer available",
+        "dark mode and 375px controls remain readable and tappable",
+        "landscape leaves readable page space and keeps reader controls visible",
+        "older backends keep native skill controls and hide unsupported document actions",
+        "session expiry while reading returns to login"
+      ],
+      "errors": []
+    },
+    {
+      "name": "skills-use",
+      "source": ".data/skills-use/result.json",
+      "passed": 11,
+      "checks": [
+        "search, enabled state, multiple selection and removable draft chips",
+        "sending uses native skill input and stores an immutable message reference",
+        "multiple selected skills preserve order and remain separate from message text",
+        "changed content rejects dispatch and retains draft until the user reselects",
+        "disabled selections cannot execute and historical references still identify the original skill",
+        "missing files reject sends; historical missing or removed skills show recoverable errors",
+        "cancelled selection cannot append a stale skill to a different draft",
+        "refresh and reconnect restore the original message references without duplicating them",
+        "new chat clears unsent skill selection and preserves historical references",
+        "mobile picker, chips and history viewer fit the viewport with 44px controls",
+        "landscape selection and history actions stay visible"
+      ],
+      "errors": []
+    },
+    {
+      "name": "interaction-ui",
+      "source": ".data/interaction-ui/result.json",
+      "passed": 18,
+      "checks": [
+        "login keeps native password manager semantics and shortcuts cannot navigate away",
+        "skip link reaches the composer and keyboard focus remains visible",
+        "IME composition and Safari 229 Enter keep text without creating a turn",
+        "Shift Enter adds a line and a plain Enter submits exactly once",
+        "search shortcut traps Tab and Escape restores its composer launcher",
+        "settings prevents global shortcuts from replacing its draft and restores its button",
+        "menu keyboard actions open rename and return focus to the surviving menu trigger",
+        "nested private-input dialog blocks shortcuts, returns within settings and never consumes a credential",
+        "system appearance follows OS changes while explicit light preference stays fixed",
+        "rich text uses the selected theme for code, formulas, diagrams and ECharts",
+        "secondary text meets contrast across both themes and common surfaces",
+        "appearance survives reload and reduced motion disables product animations",
+        "mobile sidebar is modal, contains focus and Escape restores the toggle",
+        "mobile sidebar menus layer above the drawer and nested settings return to navigation",
+        "mobile controls have 44px targets and input fields avoid automatic text zoom",
+        "320px layout keeps the composer and search usable without horizontal overflow",
+        "landscape and short viewport settings keep close and focused fields reachable",
+        "drawer breakpoint changes leave no stale focus trap or hidden desktop workspace"
+      ],
+      "errors": []
+    },
+    {
+      "name": "app-host-ui",
+      "source": ".data/app-host-ui/result.json",
+      "passed": 14,
+      "checks": [
+        "standard SDK initialization and runtime diagnostics agree on tool scope, sandbox and unadvertised capabilities",
+        "the compact capability disclosure is keyboard operable and shows per-view tool scope without claiming permission",
+        "message returns an explicit denied result and a safe Host notice",
+        "link returns an explicit denied result and a safe Host notice",
+        "download returns an explicit denied result and a safe Host notice",
+        "context, resource enumeration, resource reads, prompt/tool discovery, sampling and unknown methods return JSON-RPC errors without disconnecting",
+        "fullscreen and picture-in-picture requests report inline as the actual mode",
+        "logging is not collected and unsupported actions cause no extra model, resource, tool, download or navigation activity",
+        "a tool linked to another UI resource is refused without an approval dialog or tool execution",
+        "an unsupported App request cannot dismiss, replace or approve a pending tool decision",
+        "a permitted tool still requires a fresh one-use approval and runs once",
+        "reopening with no App-visible tools removes serverTools from the handshake and does not grant tool access",
+        "mobile dark-mode capability disclosure stays readable, within the viewport and has a 44px keyboard target",
+        "Host restrictions preserve lifecycle close/reopen and isolate browser execution and network access"
+      ],
+      "errors": []
+    }
+  ],
+  "credentialIsolation": {
+    "source": ".data/credential-isolation/native-result.json",
+    "providerAuthorized": true,
+    "mcpAuthorized": true,
+    "contextSecretSeen": false
+  },
+  "formalReleaseAcceptance": "deferred by user"
+}

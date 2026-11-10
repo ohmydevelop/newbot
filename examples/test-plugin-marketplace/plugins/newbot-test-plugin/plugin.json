@@ -1,0 +1,1 @@
+{"$schema":"https://agent-plugins.org/schemas/1.0.0/plugin.schema.json","name":"newbot-test-plugin","version":"0.1.0","description":"Local synthetic plugin for newbot integration tests","extensions":{"com.openai":{"interface":{"displayName":"测试插件","shortDescription":"验证原生插件技能引用"}}}}

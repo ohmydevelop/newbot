@@ -1,0 +1,15 @@
+
+> minimal-agent@0.2.0 test:session-native
+> node --import tsx scripts/test-session-native.mjs
+
+PASS configured marketplace discovery, install and private plugin detail through product API
+PASS product run sends a native plugin mention and native capability instructions reach the model
+PASS same native thread resumes on gateway B with full history and approval setting
+PASS native same-thread approval updates and persisted gateway default
+PASS native plugin disable removes runtime skill and product rejects stale selection
+PASS native command policy FULL
+PASS native command policy ASK
+PASS native command policy REVIEW
+PASS native gateway creation saves an encrypted key and Codex reloads only its generated environment reference
+PASS native personal skill uninstall removes real discovery and preserves an archived copy
+PASS SQLite upgrade retains runtime settings across server restart

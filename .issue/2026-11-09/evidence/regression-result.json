@@ -1,0 +1,208 @@
+{
+  "at": "2026-11-09T08:48:30.350Z",
+  "typecheck": "passed",
+  "build": "passed",
+  "targetedFormat": "passed",
+  "automaticTests": {
+    "total": 311,
+    "passed": 311,
+    "failed": 0
+  },
+  "nativeChecks": 9,
+  "browserChecks": 122,
+  "suites": [
+    {
+      "name": "issue-ui",
+      "source": ".issue/2026-11-09/evidence/ui-result.json",
+      "passed": 17,
+      "checks": [
+        "one new-chat entry and unified model control",
+        "multiple image thumbnails precede text and open an accessible preview",
+        "drag and clipboard paste add image previews to the active draft",
+        "Markdown attachments open a safe file preview",
+        "failed uploads remain retryable and prevent Enter from dispatching",
+        "$ skill selection uses keyboard and @ adds a real plugin reference",
+        "process defaults collapsed, time advances and final reply stays visible",
+        "history images preview after refresh",
+        "workspace file selection is available only through the composer plus menu",
+        "same-thread provider change and full-access selection persist",
+        "skills catalog has equal collapsed cards, filtering and readable actions",
+        "MCP actions exist before testing and tools are expandable",
+        "gateway settings use a single list with defaults",
+        "gateway and connector editors open focused dialogs and cancel without changes",
+        "plugin management installs, disables, re-enables and uninstalls without model calls",
+        "a custom gateway default applies to new chats without replacing the current conversation model",
+        "mobile and both themes fit without horizontal scrolling"
+      ],
+      "pageErrors": []
+    },
+    {
+      "name": "skills-ui",
+      "source": ".data/skills-ui/result.json",
+      "passed": 16,
+      "checks": [
+        "native display name, descriptions, scope and enabled state",
+        "formatted skill document is readable and executes no embedded content",
+        "reader focus and return focus remain in the settings dialog",
+        "source view preserves complete frontmatter and text",
+        "disabled skill can be viewed without enabling or writing configuration",
+        "existing enable and disable controls still save native configuration",
+        "reload reads current content; missing and undiscovered skills fail and recover",
+        "empty and metadata-only documents have useful states",
+        "unsafe, oversized and invalid-text files show bounded errors without secret content",
+        "network errors can retry and returning while loading cancels stale content",
+        "discovery errors and native warnings are visible and refreshable",
+        "closing and refreshing keep the read-only viewer available",
+        "dark mode and 375px controls remain readable and tappable",
+        "landscape leaves readable page space and keeps reader controls visible",
+        "older backends keep native skill controls and hide unsupported document actions",
+        "session expiry while reading returns to login"
+      ],
+      "pageErrors": []
+    },
+    {
+      "name": "skills-use",
+      "source": ".data/skills-use/result.json",
+      "passed": 11,
+      "checks": [
+        "search, enabled state, multiple selection and removable draft chips",
+        "sending uses native skill input and stores an immutable message reference",
+        "multiple selected skills preserve order and remain separate from message text",
+        "changed content rejects dispatch and retains draft until the user reselects",
+        "disabled selections cannot execute and historical references still identify the original skill",
+        "missing files reject sends; historical missing or removed skills show recoverable errors",
+        "cancelled selection cannot append a stale skill to a different draft",
+        "refresh and reconnect restore the original message references without duplicating them",
+        "new chat clears unsent skill selection and preserves historical references",
+        "mobile picker, chips and history viewer fit the viewport with 44px controls",
+        "landscape selection and history actions stay visible"
+      ],
+      "pageErrors": []
+    },
+    {
+      "name": "interaction-ui",
+      "source": ".data/interaction-ui/result.json",
+      "passed": 18,
+      "checks": [
+        "login keeps native password manager semantics and shortcuts cannot navigate away",
+        "skip link reaches the composer and keyboard focus remains visible",
+        "IME composition and Safari 229 Enter keep text without creating a turn",
+        "Shift Enter adds a line and a plain Enter submits exactly once",
+        "search shortcut traps Tab and Escape restores its composer launcher",
+        "settings prevents global shortcuts from replacing its draft and restores its button",
+        "menu keyboard actions open rename and return focus to the surviving menu trigger",
+        "nested private-input dialog blocks shortcuts, returns within settings and never consumes a credential",
+        "system appearance follows OS changes while explicit light preference stays fixed",
+        "rich text uses the selected theme for code, formulas, diagrams and ECharts",
+        "secondary text meets contrast across both themes and common surfaces",
+        "appearance survives reload and reduced motion disables product animations",
+        "mobile sidebar is modal, contains focus and Escape restores the toggle",
+        "mobile sidebar menus layer above the drawer and nested settings return to navigation",
+        "mobile controls have 44px targets and input fields avoid automatic text zoom",
+        "320px layout keeps the composer and search usable without horizontal overflow",
+        "landscape and short viewport settings keep close and focused fields reachable",
+        "drawer breakpoint changes leave no stale focus trap or hidden desktop workspace"
+      ],
+      "pageErrors": []
+    },
+    {
+      "name": "conversation-recovery-ui",
+      "source": ".data/conversation-recovery-ui/result.json",
+      "passed": 15,
+      "checks": [
+        "title search handles normalized whitespace and keeps failed list reads recoverable",
+        "page failure preserves current content and retry deduplicates without jumping the reader",
+        "late history page cannot replace another selected conversation",
+        "rename failure retains its draft and a confirmed retry refreshes title",
+        "archive failure keeps its row and late archive acknowledgement never clears another draft",
+        "partial batch upload retains success, reports failures and stays with its draft",
+        "cancel upload keeps prior successes and cannot send a half-uploaded batch",
+        "upload limit is enforced before another batch is sent",
+        "late accepted response preserves newer typing while transferring the new-conversation draft",
+        "checking a hung accepted send releases the composer and its late response cannot clear a newer pending request",
+        "unknown accepted response can be checked without losing edits or dispatching twice",
+        "404 leaves the request stable until explicit abandonment fences late submission",
+        "stop acknowledgement remains pending until authority changes and never silently resends",
+        "lost stop request stays unconfirmed and needs a read before another explicit attempt",
+        "mobile dark recovery controls fit the viewport and preserve keyboard input"
+      ],
+      "pageErrors": []
+    },
+    {
+      "name": "app-host-ui",
+      "source": ".data/app-host-ui/result.json",
+      "passed": 14,
+      "checks": [
+        "standard SDK initialization and runtime diagnostics agree on tool scope, sandbox and unadvertised capabilities",
+        "the compact capability disclosure is keyboard operable and shows per-view tool scope without claiming permission",
+        "message returns an explicit denied result and a safe Host notice",
+        "link returns an explicit denied result and a safe Host notice",
+        "download returns an explicit denied result and a safe Host notice",
+        "context, resource enumeration, resource reads, prompt/tool discovery, sampling and unknown methods return JSON-RPC errors without disconnecting",
+        "fullscreen and picture-in-picture requests report inline as the actual mode",
+        "logging is not collected and unsupported actions cause no extra model, resource, tool, download or navigation activity",
+        "a tool linked to another UI resource is refused without an approval dialog or tool execution",
+        "an unsupported App request cannot dismiss, replace or approve a pending tool decision",
+        "a permitted tool still requires a fresh one-use approval and runs once",
+        "reopening with no App-visible tools removes serverTools from the handshake and does not grant tool access",
+        "mobile dark-mode capability disclosure stays readable, within the viewport and has a 44px keyboard target",
+        "Host restrictions preserve lifecycle close/reopen and isolate browser execution and network access"
+      ],
+      "pageErrors": []
+    },
+    {
+      "name": "official-app-ui",
+      "source": ".data/official-app-ui/result.json",
+      "passed": 18,
+      "checks": [
+        "two unmodified official Views initialize against real native Codex/MCP and retain distinct original results",
+        "denial executes no native tool and a fresh explicit approval can retry successfully",
+        "repeated reopening gives fresh leases and original results without replaying native tools or a model turn",
+        "concurrent requests from the same View cannot replace its first decision or run an extra tool",
+        "different Views share one visible consent decision and can retry independently after it resolves",
+        "already-approved executions may overlap while their confirmations remain separate",
+        "protocol cancellation removes an unapproved decision and revokes its grant without a native call",
+        "cancellation during permission discovery cannot create a delayed modal or leave a hidden grant",
+        "protocol cancellation after approval reports uncertain completion while the approved native call may finish",
+        "the original message and external-link controls are denied and application logs are not collected",
+        "forged cross-server tools remain unauthorized even when another configured server exposes them",
+        "a real MCP input and an official App keep their decisions, drafts and native outcomes separate",
+        "resource failures offer recovery and reopening restores the original result without another tool execution",
+        "a browser refresh reconstructs both original Views without new native tool or model calls",
+        "real Codex/MCP restart invalidates former leases and allows explicit recovery from replayed history",
+        "separate authenticated browsers own separate leases for the same official result",
+        "official UI stays isolated and readable in desktop light and mobile dark layouts",
+        "pinned official files stay unchanged and the full matrix performs zero model turns or external requests"
+      ],
+      "pageErrors": []
+    },
+    {
+      "name": "pdf-preview",
+      "source": ".data/pdf-preview/result.json",
+      "passed": 13,
+      "checks": [
+        "PDF renderer and worker load only when opened",
+        "real canvas, Chinese text and inert PDF actions",
+        "pagination, page jump and landscape page",
+        "zoom and bounded canvas memory",
+        "large PDF uses authenticated verified byte ranges",
+        "malformed, encrypted and excessive-page PDFs have clear feedback",
+        "oversized workspace PDF is refused without creating a card",
+        "range failures and inconsistent headers support retry",
+        "closing an in-flight PDF leaves no stale renderer",
+        "PDF versions remain distinct after switching and refresh",
+        "dark theme and mobile portrait controls",
+        "mobile landscape keeps document and download reachable",
+        "session expiry during range read returns to login"
+      ],
+      "pageErrors": []
+    }
+  ],
+  "credentialIsolation": {
+    "source": ".data/credential-isolation/native-result.json",
+    "providerAuthorized": true,
+    "mcpAuthorized": true,
+    "contextSecretSeen": false
+  },
+  "formalReleaseAcceptance": "deferred by user"
+}

@@ -1,0 +1,21 @@
+
+> minimal-agent@0.2.0 test:provider-memory-ui
+> ISSUE_MEMORY_PROVIDERS=1 UI_EVIDENCE_DIR=.issue/2026-11-10/evidence/ui node scripts/test-ui-regression.mjs
+
+PASS plugin button opens searchable panel without changing draft; repeat focuses same panel
+PASS outside click closes picker; Escape returns focus; entry switch keeps one panel
+PASS manual @ at caret selects and preserves suffix; duplicate reference remains unique
+PASS manual $ supports keyboard selection and IME never submits
+PASS typing while plugin list is delayed preserves loading; errors retry in same panel
+PASS model groups collapse, search temporarily expands, and redundant compatibility text is absent
+PASS reasoning slider reflects six supported values and commits final keyboard choice
+PASS model selection and mention panel do not overlap; draft survives closing
+PASS message area accepts files; nested drag leaves do not flicker or duplicate uploads
+PASS text drags, sidebar and settings do not upload files; cancellation clears the hint
+PASS settings keep identical bounds across tabs; gateway columns and editor controls align
+PASS responsive settings, palettes and model popover stay inside all viewports
+PASS cancelled skill selection and late plugin discovery cannot populate a new draft
+PASS running turns block model changes and uploads; failed setting keeps binding and draft
+PASS gateway edits stay in server RAM across browser reload and never write Provider config or restart Codex
+PASS empty and resupplied memory configuration are explicit on mobile and preserve existing history
+{"passed":16,"errors":[]}

@@ -1,0 +1,40 @@
+services:
+  minimal-agent:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3100:3100"
+    environment:
+      PUBLIC_ORIGIN: ${PUBLIC_ORIGIN:-http://localhost:3100}
+      APP_ORIGIN: ${APP_ORIGIN:-http://127.0.0.1:3100}
+      AGENT_TRANSPORT: ${AGENT_TRANSPORT:-sse}
+      MAX_ACTIVE_TURNS: ${MAX_ACTIVE_TURNS:-2}
+      ENABLE_TEST_MCP: ${ENABLE_TEST_MCP:-false}
+      TRUST_PROXY: ${TRUST_PROXY:-false}
+      # Optional: provide a strong password. Otherwise /data/initial-password is generated.
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
+      # Provider credentials belong in the Codex home or its server-side environment.
+      # OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+    volumes:
+      - agent-data:/data
+    read_only: true
+    tmpfs:
+      - /tmp:rw,nosuid,size=128m
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    stop_grace_period: 20s
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:3100/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 30s
+      timeout: 5s
+      start_period: 30s
+volumes:
+  agent-data:

@@ -1,0 +1,42 @@
+{
+  "at": "2026-11-09T14:08:28.747Z",
+  "mode": "isolated-local-test",
+  "localOrigin": "http://127.0.0.1:3100",
+  "personalConfigUnchangedSinceStart": true,
+  "webRowsBefore": {
+    "threads": 18,
+    "runs": 45
+  },
+  "modelTurnsCreated": 0,
+  "localEntryStatus": 200,
+  "latestWebEntry": true,
+  "anonymousStatus": 401,
+  "loginStatus": 200,
+  "runtimeStatus": "ready",
+  "runtimeVersion": "codex-cli 0.165.0",
+  "configurationStatus": 200,
+  "logoutStatus": 200,
+  "sharedEntrypoints": [
+    {
+      "origin": "https://backing-watch-yields-ranks.trycloudflare.com",
+      "reachable": false
+    }
+  ],
+  "passwordUnchanged": true,
+  "webRowsUnchanged": true,
+  "cloudflareTunnel": {
+    "existingTunnelTarget": "http://127.0.0.1:8787",
+    "targetService": "hyperbot",
+    "changed": false
+  },
+  "runtimePaths": {
+    "HOME": "/home/a/Documents/ChatGPT/newbot/.data/codex/runtime-home",
+    "CODEX_HOME": "/home/a/Documents/ChatGPT/newbot/.data/codex",
+    "CODEX_SQLITE_HOME": "/home/a/Documents/ChatGPT/newbot/.data/codex",
+    "XDG_CONFIG_HOME": "/home/a/Documents/ChatGPT/newbot/.data/codex/runtime-home/.config"
+  },
+  "servicePid": 95905,
+  "nativePid": 96022,
+  "personalCodexProcessStillAlive": true,
+  "passwordUnchangedFromPrelaunchBackup": true
+}

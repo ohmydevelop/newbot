@@ -1,0 +1,35 @@
+{
+  "mode": "dry-run",
+  "threads": 12,
+  "recordedThreads": 12,
+  "filteredOut": 0,
+  "historyModes": [
+    "paginated"
+  ],
+  "databaseRows": {
+    "state/_sqlx_migrations": 62,
+    "state/threads": 12,
+    "state/thread_dynamic_tools": 0,
+    "state/backfill_state": 0,
+    "state/thread_spawn_edges": 0,
+    "state/remote_control_enrollments": 0,
+    "state/external_agent_config_imports": 0,
+    "state/thread_sections": 0,
+    "state/rollout_migration_state": 0,
+    "state/rollout_migration_skipped_rollouts": 0,
+    "state/projects": 0,
+    "state/project_roots": 0,
+    "state/project_idempotency_keys": 0,
+    "state/thread_attachments": 0,
+    "state/guardian_review_feedback": 0,
+    "state/thread_read_receipts": 12,
+    "history/_sqlx_migrations": 8,
+    "history/thread_turns": 45,
+    "history/thread_items": 355,
+    "history/thread_history_projection_state": 12,
+    "history/thread_realtime_items": 0
+  },
+  "providers": 2,
+  "copiedRollouts": 12,
+  "sourceConfigUnchanged": true
+}

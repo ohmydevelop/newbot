@@ -1,0 +1,14 @@
+✔ v6 migration preserves existing session, model selection and credential data while adding SQLite Provider state (2.302144ms)
+✔ SQLite commits precede snapshot publication; failed writes preserve both RAM and leased execution configuration (6.995915ms)
+✔ a stale process cannot overwrite a newer durable configuration or publish its rejected snapshot (1.749473ms)
+✔ ordinary Provider SQLite state rejects plaintext credentials, arbitrary native settings and credential-bearing URLs (1.955165ms)
+✔ invalid persisted state fails explicitly without resetting configuration or falling back to native files (1.159084ms)
+✔ product APIs persist edits, defaults and deletion; restart restores SQLite and write failures remain unchanged (169.008215ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 536.800597

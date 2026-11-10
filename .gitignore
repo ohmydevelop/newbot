@@ -1,0 +1,26 @@
+node_modules/
+dist/
+.data/
+playwright-report/
+test-results/
+coverage/
+*.tsbuildinfo
+
+# Local environment and deployment secrets; templates remain versioned.
+.env
+.env.*
+!.env.example
+deploy/production.env
+*.sqlite
+*.sqlite-*
+*.db
+*.db-*
+*.pem
+*.key
+*.p12
+*.pfx
+*.pid
+
+# Local agent state is separate from project instructions and example plugins.
+/.codex/
+/.agents/

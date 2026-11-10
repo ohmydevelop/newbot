@@ -1,0 +1,16 @@
+{
+  "checks": [
+    "one new-chat entry and unified model control",
+    "multiple image thumbnails precede text and open an accessible preview",
+    "drag and clipboard paste add image previews to the active draft",
+    "Markdown attachments open a safe file preview",
+    "failed uploads remain retryable and prevent Enter from dispatching",
+    "$ skill selection uses keyboard and @ adds a real plugin reference",
+    "process defaults collapsed, time advances and final reply stays visible",
+    "history images preview after refresh",
+    "workspace file selection is available only through the composer plus menu"
+  ],
+  "error": "TimeoutError: locator.click: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('menuitem').filter({ hasText: 'secondary-model' })\u001b[22m\n",
+  "errors": [],
+  "log": "Issue UI fixture ready\n"
+}

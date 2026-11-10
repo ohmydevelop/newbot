@@ -1,0 +1,1 @@
+{"name":"newbot-local-tests","plugins":[{"name":"newbot-test-plugin","source":{"source":"local","path":"./plugins/newbot-test-plugin"}}]}

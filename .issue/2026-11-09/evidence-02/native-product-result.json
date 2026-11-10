@@ -1,0 +1,79 @@
+{
+  "version": "0.165.0",
+  "checks": [
+    "configured marketplace discovery, install and private plugin detail through product API",
+    "product run sends a native plugin mention and native capability instructions reach the model",
+    "same native thread resumes on gateway B with full history and approval setting",
+    "native same-thread approval updates and persisted gateway default",
+    "native plugin disable removes runtime skill and product rejects stale selection",
+    "native command policy FULL",
+    "native command policy ASK",
+    "native command policy REVIEW",
+    "native gateway creation saves an encrypted key and Codex reloads only its generated environment reference",
+    "native personal skill uninstall removes real discovery and preserves an archived copy",
+    "SQLite upgrade retains runtime settings across server restart"
+  ],
+  "requests": [
+    {
+      "path": "/a/responses",
+      "first": true,
+      "second": false,
+      "pluginCapabilities": true
+    },
+    {
+      "path": "/a/responses",
+      "first": false,
+      "second": false,
+      "pluginCapabilities": false
+    },
+    {
+      "path": "/b/responses",
+      "first": true,
+      "second": true,
+      "pluginCapabilities": true
+    },
+    {
+      "path": "/b/responses",
+      "first": false,
+      "second": false,
+      "pluginCapabilities": false
+    },
+    {
+      "path": "/b/responses",
+      "first": false,
+      "second": false,
+      "pluginCapabilities": false
+    },
+    {
+      "path": "/b/responses",
+      "first": false,
+      "second": false,
+      "pluginCapabilities": false
+    },
+    {
+      "path": "/b/responses",
+      "first": false,
+      "second": false,
+      "pluginCapabilities": false
+    },
+    {
+      "path": "/b/responses",
+      "first": false,
+      "second": false,
+      "pluginCapabilities": false
+    },
+    {
+      "path": "/b/responses",
+      "first": false,
+      "second": false,
+      "pluginCapabilities": false
+    },
+    {
+      "path": "/b/responses",
+      "first": false,
+      "second": false,
+      "pluginCapabilities": false
+    }
+  ],
+  "autoReviewAssessments": 1
+}

@@ -1,0 +1,22 @@
+{
+  "checks": [
+    "one new-chat entry and unified model control",
+    "multiple image thumbnails precede text and open an accessible preview",
+    "drag and clipboard paste add image previews to the active draft",
+    "Markdown attachments open a safe file preview",
+    "failed uploads remain retryable and prevent Enter from dispatching",
+    "$ skill selection uses keyboard and @ adds a real plugin reference",
+    "process defaults collapsed, time advances and final reply stays visible",
+    "history images preview after refresh",
+    "workspace file selection is available only through the composer plus menu",
+    "same-thread provider change and full-access selection persist",
+    "skills catalog has equal collapsed cards, filtering and readable actions",
+    "MCP actions exist before testing and tools are expandable",
+    "gateway settings use a single list with defaults",
+    "gateway and connector editors open focused dialogs and cancel without changes",
+    "plugin management installs, disables, re-enables and uninstalls without model calls",
+    "a custom gateway default applies to new chats without replacing the current conversation model",
+    "mobile and both themes fit without horizontal scrolling"
+  ],
+  "errors": []
+}

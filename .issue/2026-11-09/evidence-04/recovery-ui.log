@@ -1,0 +1,19 @@
+
+> minimal-agent@0.2.0 test:conversation-recovery-ui
+> node scripts/test-conversation-recovery-ui.mjs
+
+PASS title search handles normalized whitespace and keeps failed list reads recoverable
+PASS page failure preserves current content and retry deduplicates without jumping the reader
+PASS late history page cannot replace another selected conversation
+PASS rename failure retains its draft and a confirmed retry refreshes title
+PASS archive failure keeps its row and late archive acknowledgement never clears another draft
+PASS partial batch upload retains success, reports failures and stays with its draft
+PASS cancel upload keeps prior successes and cannot send a half-uploaded batch
+PASS upload limit is enforced before another batch is sent
+PASS late accepted response preserves newer typing while transferring the new-conversation draft
+PASS checking a hung accepted send releases the composer and its late response cannot clear a newer pending request
+PASS unknown accepted response can be checked without losing edits or dispatching twice
+PASS 404 leaves the request stable until explicit abandonment fences late submission
+PASS stop acknowledgement remains pending until authority changes and never silently resends
+PASS lost stop request stays unconfirmed and needs a read before another explicit attempt
+PASS mobile dark recovery controls fit the viewport and preserve keyboard input

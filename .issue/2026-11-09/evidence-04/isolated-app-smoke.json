@@ -1,0 +1,16 @@
+{
+  "runtime": "ready",
+  "bundle": "dist/server/index.js",
+  "runtimeHomeIsolated": true,
+  "passwordUnchanged": true,
+  "hostConfigUnchanged": true,
+  "anonymousStatus": 401,
+  "loginStatus": 200,
+  "configurationStatus": 200,
+  "readableOriginalThreads": 17,
+  "webThreadRows": 18,
+  "runRowsUnchanged": true,
+  "credentialReferencesResolved": 2,
+  "modelTurns": 0,
+  "publicListenerStarted": false
+}

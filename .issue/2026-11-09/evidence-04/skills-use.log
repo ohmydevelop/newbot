@@ -1,0 +1,16 @@
+
+> minimal-agent@0.2.0 test:skills-use
+> node scripts/test-skills-use.mjs
+
+PASS search, enabled state, multiple selection and removable draft chips
+PASS sending uses native skill input and stores an immutable message reference
+PASS multiple selected skills preserve order and remain separate from message text
+PASS changed content rejects dispatch and retains draft until the user reselects
+PASS disabled selections cannot execute and historical references still identify the original skill
+PASS missing files reject sends; historical missing or removed skills show recoverable errors
+PASS cancelled selection cannot append a stale skill to a different draft
+PASS refresh and reconnect restore the original message references without duplicating them
+PASS new chat clears unsent skill selection and preserves historical references
+PASS mobile picker, chips and history viewer fit the viewport with 44px controls
+PASS landscape selection and history actions stay visible
+Skills use regression: 11 checks passed. Evidence: /home/a/Documents/ChatGPT/newbot/.data/skills-use

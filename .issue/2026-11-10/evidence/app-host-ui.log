@@ -1,0 +1,15 @@
+PASS standard SDK initialization and runtime diagnostics agree on tool scope, sandbox and unadvertised capabilities
+PASS the compact capability disclosure is keyboard operable and shows per-view tool scope without claiming permission
+PASS message returns an explicit denied result and a safe Host notice
+PASS link returns an explicit denied result and a safe Host notice
+PASS download returns an explicit denied result and a safe Host notice
+PASS context, resource enumeration, resource reads, prompt/tool discovery, sampling and unknown methods return JSON-RPC errors without disconnecting
+PASS fullscreen and picture-in-picture requests report inline as the actual mode
+PASS logging is not collected and unsupported actions cause no extra model, resource, tool, download or navigation activity
+PASS a tool linked to another UI resource is refused without an approval dialog or tool execution
+PASS an unsupported App request cannot dismiss, replace or approve a pending tool decision
+PASS a permitted tool still requires a fresh one-use approval and runs once
+PASS reopening with no App-visible tools removes serverTools from the handshake and does not grant tool access
+PASS mobile dark-mode capability disclosure stays readable, within the viewport and has a 44px keyboard target
+PASS Host restrictions preserve lifecycle close/reopen and isolate browser execution and network access
+App Host UI: 14 checks passed

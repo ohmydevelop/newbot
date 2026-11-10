@@ -1,0 +1,36 @@
+{
+  "initialize": {
+    "userAgent": "newbot_compat_probe/0.165.0 (Linux Unknown; x86_64) unknown (newbot_compat_probe; 1.0)",
+    "codexHome": "/tmp/newbot-native-compat-UgwVWD",
+    "platformFamily": "unix",
+    "platformOs": "linux"
+  },
+  "plugins": {
+    "discovery": true,
+    "marketplaces": 0
+  },
+  "approval": {
+    "policy": "on-request",
+    "reviewer": "user"
+  },
+  "unsubscribe": {
+    "status": "unsubscribed"
+  },
+  "resumedProvider": "probe_b",
+  "sameThread": true,
+  "secondStatus": "completed",
+  "turns": 2,
+  "crossProviderPassed": true,
+  "requests": [
+    {
+      "path": "/a/responses",
+      "first": true,
+      "second": false
+    },
+    {
+      "path": "/b/responses",
+      "first": true,
+      "second": true
+    }
+  ]
+}

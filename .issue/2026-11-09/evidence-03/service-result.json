@@ -1,0 +1,16 @@
+{
+  "at": "2026-11-09T10:45:50.148Z",
+  "mode": "static-assets",
+  "service": "newbot-test.service",
+  "servicePidUnchanged": true,
+  "agentRuntimeRestarted": false,
+  "version": "codex-cli 0.165.0",
+  "anonymousStatus": 401,
+  "loginStatus": 200,
+  "appOriginApiStatus": 403,
+  "entryStatus": 200,
+  "latestWebEntry": true,
+  "sharedControlsCss": true,
+  "assetsChecked": 2,
+  "modelTurnsCreated": 0
+}
