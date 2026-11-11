@@ -1,3 +1,5 @@
+import type { MediaReference } from "../../shared/types";
+import { MediaImage } from "./MediaImage";
 import {
   memo,
   lazy,
@@ -98,13 +100,20 @@ function renderDiagram(
   diagramQueue = task;
   return task;
 }
-function Diagram({ code }: { code: string }) {
+function Diagram({
+  code,
+  streaming = false,
+}: {
+  code: string;
+  streaming?: boolean;
+}) {
   const id = useId().replace(/:/g, "");
   const theme = useResolvedTheme();
   const [svg, setSvg] = useState("");
   const [error, setError] = useState("");
   const [resourceError, setResourceError] = useState(false);
   useEffect(() => {
+    if (streaming) return;
     let active = true;
     const timer = setTimeout(() => {
       void renderDiagram(`diagram-${id}-${theme}`, code, theme, () => active)
@@ -130,10 +139,14 @@ function Diagram({ code }: { code: string }) {
       active = false;
       clearTimeout(timer);
     };
-  }, [code, id, theme]);
+  }, [code, id, theme, streaming]);
   return (
     <div className="diagram">
-      {error ? (
+      {streaming ? (
+        <p className="muted" role="status">
+          正在绘制图表…
+        </p>
+      ) : error ? (
         <>
           <p className="muted">{error}</p>
           {resourceError && (
@@ -158,9 +171,13 @@ const MathMarkdown = lazy(() => import("./MathMarkdown"));
 export const Renderer = memo(function Renderer({
   text,
   document = false,
+  media = [],
+  streaming = false,
 }: {
   text: string;
   document?: boolean;
+  media?: MediaReference[];
+  streaming?: boolean;
 }) {
   const components: import("react-markdown").Components = {
     a: ({ children, href }) =>
@@ -177,17 +194,21 @@ export const Renderer = memo(function Renderer({
           [图片：{alt || "未命名"}，请下载后查看引用资源]
         </span>
       ) : (
-        <img src={src} alt={alt || "图片"} loading="lazy" />
+        <MediaImage
+          media={media.find((m) => m.reference === src)}
+          label={alt || "图片"}
+        />
       ),
     pre: ({ children }) => <>{children}</>,
     code: ({ children, className, ...props }) => {
       const code = String(children).replace(/\n$/, "");
       const language = /language-(\S+)/.exec(className || "")?.[1];
-      if (!document && language === "mermaid") return <Diagram code={code} />;
+      if (!document && language === "mermaid")
+        return <Diagram code={code} streaming={streaming} />;
       if (!document && language === "echarts")
         return (
           <Suspense fallback={<p className="muted">正在加载图表…</p>}>
-            <Chart code={code} />
+            <Chart code={code} streaming={streaming} />
           </Suspense>
         );
       return language || code.includes("\n") ? (

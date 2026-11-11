@@ -1,0 +1,15 @@
+{
+  "at": "2026-11-10T15:57:15.958Z",
+  "version": "0.165.0",
+  "pluginVersion": "0.5.2",
+  "archiveSha256": "e58c9ecb0ec22fcceee860b279ee11e04dce27e8e1796900e465b385b585ca46",
+  "modelRequests": 0,
+  "realBusinessRequests": 0,
+  "syntheticBusinessRequests": 2,
+  "checks": [
+    "published MCPB ZIP imports as one plugin with both skills, three declared fields and seven native tools",
+    "guarded certificate API observes a self-signed TLS endpoint without HTTP, credentials, or configuration writes; auth/origin/private-field/HTTP/metadata rejection verified",
+    "real native MCP rejects system-untrusted and wrong-pin TLS before sending token; confirmed observed pin enables only the synthetic target and yields business data",
+    "SQLite settings and encrypted token restore after restart; plugin connector remains out of independent catalog; no config.toml preferences"
+  ]
+}

@@ -1,0 +1,6 @@
+{
+  "stage": "native-model-app-source",
+  "error": "SyntaxError: Unexpected end of JSON input",
+  "stack": "SyntaxError: Unexpected end of JSON input\n    at JSON.parse (<anonymous>)\n    at Server.<anonymous> (file:///home/a/Documents/ChatGPT/newbot/scripts/test-app-tool-scope-native.mjs:52:23)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)",
+  "checks": []
+}

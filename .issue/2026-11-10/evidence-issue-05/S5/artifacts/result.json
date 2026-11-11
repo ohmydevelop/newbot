@@ -1,0 +1,32 @@
+{
+  "checks": [
+    "sending waits for model configuration",
+    "file cards from native events",
+    "Markdown preview/source, inert HTML and explicit focus restoration",
+    "keyboard focus remains inside the preview",
+    "code syntax highlighting",
+    "JSON formatting and byte-preserving download",
+    "download failures are visible and retryable",
+    "CSV table with multiline and quoted cells",
+    "HTML source never executes at the main origin",
+    "empty, invalid JSON and large preview feedback",
+    "authenticated image decoding",
+    "content failure, visible retry and recovery",
+    "closing a loading preview cancels stale content",
+    "workspace listing failure, retry, file selection and registration",
+    "refresh restores cards and immutable versions after workspace changes",
+    "dark theme",
+    "375px mobile layout and touch controls",
+    "landscape modal stays inside the viewport",
+    "session expiry during file reads returns to login"
+  ],
+  "pageErrors": [],
+  "externalRequests": 0,
+  "screenshots": [
+    "markdown-desktop.png",
+    "csv-desktop.png",
+    "markdown-dark.png",
+    "csv-mobile.png",
+    "workspace-mobile.png"
+  ]
+}

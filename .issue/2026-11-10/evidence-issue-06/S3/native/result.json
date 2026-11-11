@@ -1,0 +1,425 @@
+{
+  "codex": "0.165.0",
+  "syntheticReceivers": true,
+  "checks": [
+    "Authenticated native MCP diagnosis discovers tools without model turns or business tool calls",
+    "Native HTTP Bearer, custom header and stdio environment reached correct recipients",
+    "One-run authorization is required again on the next turn",
+    "Thread grant reused on same native thread, absent from another thread",
+    "Revocation blocks subsequent execution until authorized again",
+    "Thread authorization expires on service restart without replay",
+    "Private save receipt survives restart and can resolve a lost response without resubmitting values",
+    "Encrypted global fields restore after Bridge restart",
+    "No private marker in model context, public events, config, native history, run snapshots or persistent files"
+  ],
+  "calls": [
+    {
+      "kind": "mcp",
+      "method": "initialize",
+      "correct": true,
+      "providerAbsent": true
+    },
+    {
+      "kind": "mcp",
+      "method": "notifications/initialized",
+      "correct": true,
+      "providerAbsent": true
+    },
+    {
+      "kind": "mcp",
+      "method": "tools/list",
+      "correct": true,
+      "providerAbsent": true
+    },
+    {
+      "kind": "mcp",
+      "method": "resources/templates/list",
+      "correct": true,
+      "providerAbsent": true
+    },
+    {
+      "kind": "mcp",
+      "method": "resources/list",
+      "correct": true,
+      "providerAbsent": true
+    },
+    {
+      "kind": "mcp",
+      "method": "initialize",
+      "correct": true,
+      "providerAbsent": true
+    },
+    {
+      "kind": "mcp",
+      "method": "notifications/initialized",
+      "correct": true,
+      "providerAbsent": true
+    },
+    {
+      "kind": "mcp",
+      "method": "tools/list",
+      "correct": true,
+      "providerAbsent": true
+    },
+    {
+      "kind": "mcp",
+      "method": "resources/list",
+      "correct": true,
+      "providerAbsent": true
+    },
+    {
+      "kind": "mcp",
+      "method": "resources/templates/list",
+      "correct": true,
+      "providerAbsent": true
+    },
+    {
+      "kind": "mcp",
+      "method": "initialize",
+      "correct": true,
+      "providerAbsent": true
+    },
+    {
+      "kind": "mcp",
+      "method": "notifications/initialized",
+      "correct": true,
+      "providerAbsent": true
+    },
+    {
+      "kind": "mcp",
+      "method": "tools/list",
+      "correct": true,
+      "providerAbsent": true
+    },
+    {
+      "kind": "mcp",
+      "method": "initialize",
+      "correct": true,
+      "providerAbsent": true
+    },
+    {
+      "kind": "mcp",
+      "method": "notifications/initialized",
+      "correct": true,
+      "providerAbsent": true
+    },
+    {
+      "kind": "mcp",
+      "method": "tools/list",
+      "correct": true,
+      "providerAbsent": true
+    },
+    {
+      "kind": "mcp",
+      "method": "resources/list",
+      "correct": true,
+      "providerAbsent": true
+    },
+    {
+      "kind": "mcp",
+      "method": "resources/templates/list",
+      "correct": true,
+      "providerAbsent": true
+    },
+    {
+      "kind": "model",
+      "correct": true,
+      "privateBody": false
+    },
+    {
+      "kind": "mcp",
+      "method": "initialize",
+      "correct": true,
+      "providerAbsent": true
+    },
+    {
+      "kind": "mcp",
+      "method": "notifications/initialized",
+      "correct": true,
+      "providerAbsent": true
+    },
+    {
+      "kind": "mcp",
+      "method": "tools/list",
+      "correct": true,
+      "providerAbsent": true
+    },
+    {
+      "kind": "mcp",
+      "method": "initialize",
+      "correct": true,
+      "providerAbsent": true
+    },
+    {
+      "kind": "mcp",
+      "method": "notifications/initialized",
+      "correct": true,
+      "providerAbsent": true
+    },
+    {
+      "kind": "mcp",
+      "method": "tools/list",
+      "correct": true,
+      "providerAbsent": true
+    },
+    {
+      "kind": "mcp",
+      "method": "resources/list",
+      "correct": true,
+      "providerAbsent": true
+    },
+    {
+      "kind": "mcp",
+      "method": "resources/templates/list",
+      "correct": true,
+      "providerAbsent": true
+    },
+    {
+      "kind": "model",
+      "correct": true,
+      "privateBody": false
+    },
+    {
+      "kind": "mcp",
+      "method": "initialize",
+      "correct": true,
+      "providerAbsent": true
+    },
+    {
+      "kind": "mcp",
+      "method": "notifications/initialized",
+      "correct": true,
+      "providerAbsent": true
+    },
+    {
+      "kind": "mcp",
+      "method": "tools/list",
+      "correct": true,
+      "providerAbsent": true
+    },
+    {
+      "kind": "mcp",
+      "method": "initialize",
+      "correct": true,
+      "providerAbsent": true
+    },
+    {
+      "kind": "mcp",
+      "method": "notifications/initialized",
+      "correct": true,
+      "providerAbsent": true
+    },
+    {
+      "kind": "mcp",
+      "method": "tools/list",
+      "correct": true,
+      "providerAbsent": true
+    },
+    {
+      "kind": "mcp",
+      "method": "resources/list",
+      "correct": true,
+      "providerAbsent": true
+    },
+    {
+      "kind": "mcp",
+      "method": "resources/templates/list",
+      "correct": true,
+      "providerAbsent": true
+    },
+    {
+      "kind": "model",
+      "correct": true,
+      "privateBody": false
+    },
+    {
+      "kind": "mcp",
+      "method": "initialize",
+      "correct": true,
+      "providerAbsent": true
+    },
+    {
+      "kind": "mcp",
+      "method": "notifications/initialized",
+      "correct": true,
+      "providerAbsent": true
+    },
+    {
+      "kind": "mcp",
+      "method": "tools/list",
+      "correct": true,
+      "providerAbsent": true
+    },
+    {
+      "kind": "mcp",
+      "method": "resources/templates/list",
+      "correct": true,
+      "providerAbsent": true
+    },
+    {
+      "kind": "mcp",
+      "method": "resources/list",
+      "correct": true,
+      "providerAbsent": true
+    },
+    {
+      "kind": "model",
+      "correct": true,
+      "privateBody": false
+    },
+    {
+      "kind": "mcp",
+      "method": "initialize",
+      "correct": true,
+      "providerAbsent": true
+    },
+    {
+      "kind": "mcp",
+      "method": "notifications/initialized",
+      "correct": true,
+      "providerAbsent": true
+    },
+    {
+      "kind": "mcp",
+      "method": "tools/list",
+      "correct": true,
+      "providerAbsent": true
+    },
+    {
+      "kind": "mcp",
+      "method": "initialize",
+      "correct": true,
+      "providerAbsent": true
+    },
+    {
+      "kind": "mcp",
+      "method": "notifications/initialized",
+      "correct": true,
+      "providerAbsent": true
+    },
+    {
+      "kind": "mcp",
+      "method": "tools/list",
+      "correct": true,
+      "providerAbsent": true
+    },
+    {
+      "kind": "mcp",
+      "method": "resources/list",
+      "correct": true,
+      "providerAbsent": true
+    },
+    {
+      "kind": "mcp",
+      "method": "resources/templates/list",
+      "correct": true,
+      "providerAbsent": true
+    },
+    {
+      "kind": "model",
+      "correct": true,
+      "privateBody": false
+    },
+    {
+      "kind": "mcp",
+      "method": "initialize",
+      "correct": true,
+      "providerAbsent": true
+    },
+    {
+      "kind": "mcp",
+      "method": "notifications/initialized",
+      "correct": true,
+      "providerAbsent": true
+    },
+    {
+      "kind": "mcp",
+      "method": "tools/list",
+      "correct": true,
+      "providerAbsent": true
+    },
+    {
+      "kind": "mcp",
+      "method": "initialize",
+      "correct": true,
+      "providerAbsent": true
+    },
+    {
+      "kind": "mcp",
+      "method": "notifications/initialized",
+      "correct": true,
+      "providerAbsent": true
+    },
+    {
+      "kind": "mcp",
+      "method": "tools/list",
+      "correct": true,
+      "providerAbsent": true
+    },
+    {
+      "kind": "mcp",
+      "method": "resources/list",
+      "correct": true,
+      "providerAbsent": true
+    },
+    {
+      "kind": "mcp",
+      "method": "resources/templates/list",
+      "correct": true,
+      "providerAbsent": true
+    },
+    {
+      "kind": "mcp",
+      "method": "initialize",
+      "correct": true,
+      "providerAbsent": true
+    },
+    {
+      "kind": "mcp",
+      "method": "notifications/initialized",
+      "correct": true,
+      "providerAbsent": true
+    },
+    {
+      "kind": "mcp",
+      "method": "tools/list",
+      "correct": true,
+      "providerAbsent": true
+    },
+    {
+      "kind": "mcp",
+      "method": "initialize",
+      "correct": true,
+      "providerAbsent": true
+    },
+    {
+      "kind": "mcp",
+      "method": "notifications/initialized",
+      "correct": true,
+      "providerAbsent": true
+    },
+    {
+      "kind": "mcp",
+      "method": "tools/list",
+      "correct": true,
+      "providerAbsent": true
+    },
+    {
+      "kind": "mcp",
+      "method": "resources/list",
+      "correct": true,
+      "providerAbsent": true
+    },
+    {
+      "kind": "mcp",
+      "method": "resources/templates/list",
+      "correct": true,
+      "providerAbsent": true
+    },
+    {
+      "kind": "model",
+      "correct": true,
+      "privateBody": false
+    }
+  ]
+}

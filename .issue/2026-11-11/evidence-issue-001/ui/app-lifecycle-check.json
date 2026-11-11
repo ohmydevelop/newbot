@@ -1,0 +1,7 @@
+{
+  "scope": "isolated SDK fixture, fake MCP tool",
+  "originalResult": "原始结果 first: CPU 25%",
+  "afterFold": "工具交互成功 {\"cpu\":42,\"source\":\"first\"}",
+  "approval": "on-request showed single-operation dialog and returned cpu 42",
+  "initialFailure": "First loads timed out while Browser Use reported a paused document response; reopening completed initialization without product changes"
+}

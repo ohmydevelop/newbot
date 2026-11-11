@@ -87,8 +87,7 @@ try {
     await p.getByPlaceholder("询问任何问题").waitFor();
   };
   const root = (p = page, n = 0) => p.locator(".mcp-app").nth(n),
-    view = (p = page, n = 0) =>
-      root(p, n).frameLocator('iframe[title="MCP 应用"]'),
+    view = (p = page, n = 0) => root(p, n).frameLocator("iframe"),
     close = async (p = page, n = 0) => {
       const closed = p.waitForResponse(
         (r) =>
@@ -100,7 +99,9 @@ try {
         .getByRole("button", { name: "关闭应用", exact: true })
         .click();
       assert.equal((await closed).status(), 200);
-      await root(p, n).getByText("应用已关闭", { exact: true }).waitFor();
+      await root(p, n)
+        .getByText("应用已关闭", { exact: true })
+        .waitFor({ state: "attached" });
     },
     open = async (p = page, n = 0) => {
       await root(p, n)
@@ -159,9 +160,10 @@ try {
         .waitFor();
       assert.ok(openPosts.every((p) => p.turnId && p.requestId));
       assert.equal((await state()).records, 2);
-      await root()
-        .getByText("test-server / metrics · 原始工具结果", { exact: true })
-        .waitFor();
+      assert.equal(
+        await root().locator(".app-source, .app-capabilities").count(),
+        0,
+      );
     },
   );
   await check(
@@ -174,7 +176,7 @@ try {
       assert.equal(await root().locator("iframe").count(), 0);
       assert.equal(
         await root()
-          .getByRole("button", { name: "打开交互应用", exact: true })
+          .getByRole("button", { name: "重新打开应用", exact: true })
           .evaluate((el) => document.activeElement === el),
         true,
       );
@@ -216,7 +218,7 @@ try {
       await view()
         .getByRole("button", { name: "刷新数据", exact: true })
         .click();
-      const dialog = page.getByRole("dialog", { name: "允许应用调用工具？" });
+      const dialog = page.getByRole("dialog", { name: "允许这次操作？" });
       await dialog.locator("pre").getByText(/first/).waitFor();
       await dialog
         .getByRole("button", { name: "仅允许这一次", exact: true })
@@ -251,7 +253,9 @@ try {
         .click();
       await view().getByText("工具交互未完成", { exact: true }).waitFor();
       assert.equal((await state()).toolCalls, before);
-      await root().getByText("已连接 · 隔离运行", { exact: true }).waitFor();
+      await root()
+        .getByText("应用已就绪", { exact: true })
+        .waitFor({ state: "attached" });
     },
   );
   await check(
@@ -265,7 +269,9 @@ try {
         .getByRole("dialog")
         .getByRole("button", { name: "关闭应用并取消授权", exact: true })
         .click();
-      await root().getByText("应用已关闭", { exact: true }).waitFor();
+      await root()
+        .getByText("应用已关闭", { exact: true })
+        .waitFor({ state: "attached" });
       await waitState((s) => s.records === 1);
       assert.equal((await state()).toolCalls, before);
       await open();
@@ -290,7 +296,7 @@ try {
       await close();
       await control("fail");
       await root()
-        .getByRole("button", { name: "打开交互应用", exact: true })
+        .getByRole("button", { name: "重新打开应用", exact: true })
         .click();
       await root()
         .getByRole("alert")
@@ -308,7 +314,7 @@ try {
       await close();
       await control("invalid");
       await root()
-        .getByRole("button", { name: "打开交互应用", exact: true })
+        .getByRole("button", { name: "重新打开应用", exact: true })
         .click();
       await root().getByRole("alert").waitFor();
       const before = (await state()).toolCalls;
@@ -324,14 +330,16 @@ try {
       await control("hold");
       const before = (await state()).resourceCalls;
       await root()
-        .getByRole("button", { name: "打开交互应用", exact: true })
+        .getByRole("button", { name: "重新打开应用", exact: true })
         .click();
       await waitState((s) => s.resourceCalls > before);
       await close();
       await control("release");
       await waitState((s) => s.records === 1);
       assert.equal(await root().locator("iframe").count(), 0);
-      await root().getByText("应用已关闭", { exact: true }).waitFor();
+      await root()
+        .getByText("应用已关闭", { exact: true })
+        .waitFor({ state: "attached" });
       await open();
     },
   );
@@ -449,7 +457,7 @@ try {
       assert.ok(
         (
           await root()
-            .getByRole("button", { name: "打开交互应用", exact: true })
+            .getByRole("button", { name: "重新打开应用", exact: true })
             .boundingBox()
         ).height >= 44,
       );
@@ -473,7 +481,7 @@ try {
       await p.clock.install();
       await control("no-init");
       await root(p)
-        .getByRole("button", { name: "打开交互应用", exact: true })
+        .getByRole("button", { name: "重新打开应用", exact: true })
         .click();
       await root(p).locator("iframe").waitFor();
       await p.clock.runFor(15100);
@@ -500,7 +508,7 @@ try {
       await control("hold");
       const before = (await state()).resourceCalls;
       await root(p)
-        .getByRole("button", { name: "打开交互应用", exact: true })
+        .getByRole("button", { name: "重新打开应用", exact: true })
         .click();
       await waitState((s) => s.resourceCalls > before);
       await p.clock.runFor(15100);
@@ -527,7 +535,7 @@ try {
       await view(p)
         .getByRole("button", { name: "刷新数据", exact: true })
         .click();
-      await p.getByRole("dialog", { name: "允许应用调用工具？" }).waitFor();
+      await p.getByRole("dialog", { name: "允许这次操作？" }).waitFor();
       await p.clock.runFor(125000);
       await p.getByRole("dialog").waitFor({ state: "hidden" });
       assert.equal((await state()).toolCalls, before);

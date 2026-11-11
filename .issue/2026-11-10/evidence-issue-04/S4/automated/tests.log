@@ -1,0 +1,47 @@
+✔ expert bundles become native inputs, persist per chat, deduplicate references and respect disabled/deleted dependencies and revisions (303.943052ms)
+✔ expert draft changes survive delayed acknowledgement; session events and older reads cannot replace newer bindings (0.553272ms)
+✔ sqlite: model defaults cannot inject an unsupported effort, while explicit choices remain validated (201.122442ms)
+✔ native: model defaults cannot inject an unsupported effort, while explicit choices remain validated (91.885454ms)
+✔ an older save acknowledgement cannot replace a confirmed application or newer references (0.751678ms)
+✔ dispatch consumption and late acknowledgements cannot erase later draft input or references (0.415292ms)
+✔ the default product path uses SQLite snapshots and ignores native Provider file defaults (103.508892ms)
+✔ memory Provider editing remains writable without a native user layer and cannot bypass native MCP write restrictions (3.95924ms)
+✔ native diagnostics use a private tmpfs directory, clean up, and fail closed for an invalid log root (2.183458ms)
+✔ Provider snapshots are detached, leased revisions survive edits, and unleased old revisions expire (0.602658ms)
+✔ configuration mutations use RAM CAS and never call native config writes, including defaults and credential references (2.554372ms)
+✔ non-Provider configuration remains native, and mixed storage mutations are rejected before writing (1.395432ms)
+✔ source payloads cannot carry keys, executable configuration, duplicate IDs or unsafe URLs (0.631598ms)
+✔ authenticated source publication and gateway CRUD update RAM without restart or config files (94.500059ms)
+✔ updates preserve running turns, retry IDs and drafts; new run metadata contains only selection and revision (383.443316ms)
+✔ an empty runtime rejects old Provider selection while retaining its session binding and native history (157.726685ms)
+✔ encrypted credentials rebind only to an identical explicitly supplied receiver, never a changed endpoint (2.340696ms)
+✔ Web can restore a missing historical gateway under its original ID and reconnect its uniquely bound encrypted credential (271.28318ms)
+✔ configuration source failures retain an existing snapshot; cold boot remains available with an explicit unavailable state (20.059074ms)
+✔ cross-provider session changes preserve native identity and another running task; revisions reject stale updates (157.167479ms)
+✔ active choices are saved without altering pending approval; failed application preserves intent and confirmed binding (90.121706ms)
+✔ session settings survive restart and model catalog discovery is not reported as verified compatibility (71.913404ms)
+✔ independent Codex does not inherit the launching agent's tool pipe, identity or Bridge secrets (0.255281ms)
+✔ a managed policy change blocks a previously saved full-access session before dispatch (65.913715ms)
+✔ legacy sessions recover the native saved model instead of adopting a changed global default (62.776172ms)
+✔ reading legacy history uses saved native metadata without restoring the execution environment (64.583482ms)
+✔ latest candidate survives restart and changes only the next native turn (112.704545ms)
+✔ competing saves use CAS after asynchronous validation (65.680385ms)
+✔ an edit arriving during native application is retained for the following turn (67.409193ms)
+✔ selected skills become ordered native skill inputs derived from fresh discovery, alongside normal text and attachments (149.378768ms)
+✔ skill selections reject forged fields, duplicates, stale hashes, disabled, missing and unsafe skills before reserving or creating a thread (61.977535ms)
+✔ pre-dispatch revalidation catches changes after initial validation, releases references and never invokes a model (74.365705ms)
+✔ successful retries preserve idempotency even when a skill later disappears; empty selections keep old fingerprints (74.706817ms)
+✔ skill references survive restart and archive, retain original names/hashes after edits, and are associated with the correct user item only (94.430368ms)
+✔ unknown dispatch keeps skill references, reconciles by canonical native client ID, and never dispatches a duplicate (57.560441ms)
+✔ v2 database upgrade adds only the skill reference table and keeps existing sessions and conversations (1.485429ms)
+✔ next-message references survive restart, reject stale sends, and are consumed exactly once by dispatch (102.387323ms)
+✔ presentation cache bounds retained conversations and evicts the least recently visited (0.625293ms)
+✔ large histories cannot exceed the byte budget or leave an obsolete version behind (0.193618ms)
+ℹ tests 39
+ℹ suites 0
+ℹ pass 39
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1459.872377

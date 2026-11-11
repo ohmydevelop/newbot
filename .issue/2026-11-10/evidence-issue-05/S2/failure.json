@@ -1,0 +1,26 @@
+{
+  "error": "TimeoutError: locator.click: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.history-link').filter({ hasText: 'Issue 05 process' })\u001b[22m\n",
+  "checks": [
+    "专家 1440 light: one toolbar, search, no overflow",
+    "插件 1440 light: one toolbar, search, no overflow",
+    "技能 1440 light: one toolbar, search, no overflow",
+    "连接器 1440 light: one toolbar, search, no overflow",
+    "专家 1440 dark: one toolbar, search, no overflow",
+    "插件 1440 dark: one toolbar, search, no overflow",
+    "技能 1440 dark: one toolbar, search, no overflow",
+    "连接器 1440 dark: one toolbar, search, no overflow",
+    "专家 390 light: one toolbar, search, no overflow",
+    "插件 390 light: one toolbar, search, no overflow",
+    "技能 390 light: one toolbar, search, no overflow",
+    "连接器 390 light: one toolbar, search, no overflow",
+    "专家 390 dark: one toolbar, search, no overflow",
+    "插件 390 dark: one toolbar, search, no overflow",
+    "技能 390 dark: one toolbar, search, no overflow",
+    "连接器 390 dark: one toolbar, search, no overflow",
+    "gateway aligned 1440",
+    "gateway aligned 768",
+    "gateway aligned 390"
+  ],
+  "errors": [],
+  "log": "Issue UI fixture ready\n"
+}

@@ -13,15 +13,24 @@ export function A2uiPanel({
 }) {
   const descriptionId = useId();
   useSyncExternalStore(runtime.subscribe, () => runtime.revision);
+  const components = [...runtime.components().values()];
+  const hasInputs = components.some((component) =>
+    ["TextField", "ChoicePicker"].includes(String(component.component)),
+  );
+  const interactive =
+    hasInputs ||
+    components.some((component) => component.component === "Button");
   return (
     <section
       className="a2ui-panel"
-      aria-label="助手生成的表单"
+      aria-label={interactive ? "助手生成的表单" : "助手生成的内容"}
       aria-busy={runtime.busy}
     >
-      <p className="a2ui-notice" id={descriptionId}>
-        普通信息会随操作发送给助手，请勿填写密码或密钥。
-      </p>
+      {hasInputs && (
+        <p className="a2ui-notice" id={descriptionId}>
+          普通信息会随操作发送给助手，请勿填写密码或密钥。
+        </p>
+      )}
       {runtime.error && (
         <p role="alert" className="a2ui-error">
           {runtime.error}

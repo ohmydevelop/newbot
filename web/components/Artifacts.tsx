@@ -41,7 +41,7 @@ export const Artifacts = memo(function Artifacts({
   const [preview, setPreview] = useState<Artifact | null>(null);
   const [error, setError] = useState("");
   const opener = useRef<HTMLElement | null>(null);
-  const allRecords = turn.artifacts || [];
+  const allRecords = (turn.artifacts || []).filter((a) => a.source !== "media");
   const records = [
     ...new Map(
       [...allRecords]

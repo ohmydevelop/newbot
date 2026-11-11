@@ -1,5 +1,6 @@
 import { useReducer, useRef } from "react";
-import type { SkillReference } from "../shared/types";
+import type { SkillReference, SessionInputs } from "../shared/types";
+import type { ExpertReference } from "../shared/experts";
 export type DraftFile = {
   id: string;
   name: string;
@@ -18,6 +19,9 @@ export type DraftSnapshot = {
   pluginsVersion: number;
   skills: SkillReference[];
   skillsVersion: number;
+  inputRevision?: number;
+  expert: ExpertReference | null;
+  expertVersion: number;
 };
 const empty = (key: string, generation = 0): DraftSnapshot => ({
   key,
@@ -29,6 +33,8 @@ const empty = (key: string, generation = 0): DraftSnapshot => ({
   pluginsVersion: 0,
   skills: [],
   skillsVersion: 0,
+  expert: null,
+  expertVersion: 0,
 });
 export class ComposerDrafts {
   private sequence = 0;
@@ -58,8 +64,24 @@ export class ComposerDrafts {
       pluginsVersion: v.pluginsVersion + 1,
     });
   }
+  hydrateInputs(key: string, input: SessionInputs) {
+    const prior = this.get(key);
+    if (input.revision <= (prior.inputRevision ?? -1)) return;
+    this.entries.set(key, {
+      ...prior,
+      inputRevision: input.revision,
+      skills: input.skills,
+      plugins: input.plugins,
+      skillsVersion: prior.skillsVersion + 1,
+      pluginsVersion: prior.pluginsVersion + 1,
+    });
+  }
   reset(key: string) {
     this.entries.set(key, empty(key, ++this.sequence));
+  }
+  setExpert(key: string, expert: ExpertReference | null) {
+    const v = this.get(key);
+    this.entries.set(key, { ...v, expert, expertVersion: v.expertVersion + 1 });
   }
   addFiles(scope: DraftSnapshot, files: DraftFile[]) {
     const v = this.get(scope.key);
@@ -76,6 +98,8 @@ export class ComposerDrafts {
     const ids = new Set(sent.files.map((f) => f.id));
     const remaining = {
       ...current,
+      expert:
+        current.expertVersion === sent.expertVersion ? null : current.expert,
       text: current.textVersion === sent.textVersion ? "" : current.text,
       files: current.files.filter((f) => !ids.has(f.id)),
       plugins:
@@ -100,7 +124,8 @@ export class ComposerDrafts {
         !value.text &&
         !value.files.length &&
         !value.skills.length &&
-        !value.plugins.length
+        !value.plugins.length &&
+        !value.expert
       )
         this.entries.delete(key);
   }
@@ -108,10 +133,10 @@ export class ComposerDrafts {
     this.entries.clear();
   }
 }
-export function useComposerDrafts(threadId: string | null) {
+export function useComposerDrafts(threadId: string | null, newKey="$new") {
   const store = useRef(new ComposerDrafts()).current,
     [, render] = useReducer((v) => v + 1, 0);
-  const key = threadId || "$new",
+  const key = threadId || newKey,
     value = store.get(key);
   return {
     key,

@@ -1,0 +1,11 @@
+{
+  "fixture": true,
+  "stage": "gateway-notices",
+  "checks": [
+    "gateway cards have aligned text, separate actions, model counts and responsive themes",
+    "manual model saves despite failed discovery and keeps editor actions independent",
+    "ordinary error overlay leaves composer and message viewport fixed and dismissal does not unlock failed action"
+  ],
+  "metrics": [],
+  "errors": []
+}

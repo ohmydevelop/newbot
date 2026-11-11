@@ -2,7 +2,12 @@
 // externally supplied payloads must pass a2ui-policy BEFORE these schemas.
 import { z } from "zod3";
 import { CommonSchemas, Catalog } from "@a2ui/web_core/v0_9";
-import { A2UI_LIMITS, A2UI_CATALOG_ID, isA2uiPointer } from "./a2ui-policy.js";
+import {
+  A2UI_LIMITS,
+  A2UI_CATALOG_ID,
+  A2UI_RICH_CATALOG_ID,
+  isA2uiPointer,
+} from "./a2ui-policy.js";
 
 const string = z.string().max(A2UI_LIMITS.string);
 const label = string
@@ -106,5 +111,70 @@ export const a2uiApis = {
       .strict(),
   },
 };
-export const createA2uiSchemaCatalog = () =>
-  new Catalog(A2UI_CATALOG_ID, "0.9", Object.values(a2uiApis), []);
+export const richA2uiApis = {
+  ...a2uiApis,
+  Image: {
+    name: "Image",
+    allowedParents: parent,
+    schema: z.object({ source: string.min(1), alt: label }).strict(),
+  },
+  Metric: {
+    name: "Metric",
+    allowedParents: parent,
+    schema: z
+      .object({
+        label,
+        value: string.max(120),
+        detail: string.max(240).optional(),
+      })
+      .strict(),
+  },
+  Chart: {
+    name: "Chart",
+    allowedParents: parent,
+    schema: z
+      .object({
+        title: label,
+        kind: z.enum(["bar", "line", "pie"]),
+        labels: z.array(label).min(1).max(48),
+        series: z
+          .array(
+            z
+              .object({
+                name: label,
+                values: z.array(z.number().finite()).min(1).max(48),
+              })
+              .strict(),
+          )
+          .min(1)
+          .max(6),
+      })
+      .strict()
+      .refine(
+        (v) =>
+          v.series.every((s) => s.values.length === v.labels.length) &&
+          (v.kind !== "pie" || v.series.length === 1),
+      ),
+  },
+  SourceLink: {
+    name: "SourceLink",
+    allowedParents: parent,
+    schema: z
+      .object({
+        label,
+        url: string.url().refine((v) => {
+          try {
+            const u = new URL(v);
+            return u.protocol === "https:" && !u.username && !u.password;
+          } catch {
+            return false;
+          }
+        }),
+      })
+      .strict(),
+  },
+};
+export const catalogApis = (id: string) =>
+  id === A2UI_RICH_CATALOG_ID ? richA2uiApis : a2uiApis;
+export const createA2uiSchemaCatalog = (id: string = A2UI_CATALOG_ID) =>
+  new Catalog(id, "0.9", Object.values(catalogApis(id)), []);

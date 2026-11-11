@@ -4,7 +4,7 @@ import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { randomUUID } from "node:crypto";
-import { database } from "../server/db.js";
+import { database, DATABASE_VERSION } from "../server/db.js";
 import { a2uiStore } from "../server/a2ui-store.js";
 import { a2uiManager } from "../server/a2ui.js";
 import { A2uiFixtureCodex, formMessages } from "./a2ui-fixture.js";
@@ -49,7 +49,7 @@ test("v3 migration adds bounded UI tables while preserving existing credentials 
     const next = database(directory);
     assert.equal(
       (next.raw.prepare("PRAGMA user_version").get() as any).user_version,
-      7,
+      DATABASE_VERSION,
     );
     assert.equal(next.get("password"), "keep-hash");
     assert.ok(next.owns("t"));

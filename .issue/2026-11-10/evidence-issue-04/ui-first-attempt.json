@@ -1,0 +1,1293 @@
+{
+  "at": "2026-11-10T07:02:01.563Z",
+  "environment": "Chromium, existing dist/web, isolated IssueCodex fixture",
+  "layouts": [
+    {
+      "width": 1366,
+      "height": 400,
+      "before": {
+        "conversation": {
+          "x": 260,
+          "width": 1106,
+          "clientWidth": 1106,
+          "scrollHeight": 385,
+          "clientHeight": 184
+        },
+        "column": {
+          "x": 429,
+          "width": 768,
+          "clientWidth": 768,
+          "scrollHeight": 385,
+          "clientHeight": 385
+        },
+        "composer": {
+          "x": 423,
+          "width": 780,
+          "clientWidth": 778,
+          "scrollHeight": 103,
+          "clientHeight": 103
+        },
+        "main": {
+          "x": 260,
+          "width": 1106,
+          "clientWidth": 1106,
+          "scrollHeight": 400,
+          "clientHeight": 400
+        },
+        "gutter": "auto"
+      },
+      "after": {
+        "conversation": {
+          "x": 260,
+          "width": 1106,
+          "clientWidth": 1106,
+          "scrollHeight": 465,
+          "clientHeight": 184
+        },
+        "column": {
+          "x": 429,
+          "width": 768,
+          "clientWidth": 768,
+          "scrollHeight": 465,
+          "clientHeight": 465
+        },
+        "composer": {
+          "x": 423,
+          "width": 780,
+          "clientWidth": 778,
+          "scrollHeight": 103,
+          "clientHeight": 103
+        },
+        "main": {
+          "x": 260,
+          "width": 1106,
+          "clientWidth": 1106,
+          "scrollHeight": 400,
+          "clientHeight": 400
+        },
+        "gutter": "auto"
+      }
+    },
+    {
+      "width": 1366,
+      "height": 450,
+      "before": {
+        "conversation": {
+          "x": 260,
+          "width": 1106,
+          "clientWidth": 1106,
+          "scrollHeight": 385,
+          "clientHeight": 234
+        },
+        "column": {
+          "x": 429,
+          "width": 768,
+          "clientWidth": 768,
+          "scrollHeight": 385,
+          "clientHeight": 385
+        },
+        "composer": {
+          "x": 423,
+          "width": 780,
+          "clientWidth": 778,
+          "scrollHeight": 103,
+          "clientHeight": 103
+        },
+        "main": {
+          "x": 260,
+          "width": 1106,
+          "clientWidth": 1106,
+          "scrollHeight": 450,
+          "clientHeight": 450
+        },
+        "gutter": "auto"
+      },
+      "after": {
+        "conversation": {
+          "x": 260,
+          "width": 1106,
+          "clientWidth": 1106,
+          "scrollHeight": 465,
+          "clientHeight": 234
+        },
+        "column": {
+          "x": 429,
+          "width": 768,
+          "clientWidth": 768,
+          "scrollHeight": 465,
+          "clientHeight": 465
+        },
+        "composer": {
+          "x": 423,
+          "width": 780,
+          "clientWidth": 778,
+          "scrollHeight": 103,
+          "clientHeight": 103
+        },
+        "main": {
+          "x": 260,
+          "width": 1106,
+          "clientWidth": 1106,
+          "scrollHeight": 450,
+          "clientHeight": 450
+        },
+        "gutter": "auto"
+      }
+    },
+    {
+      "width": 1366,
+      "height": 500,
+      "before": {
+        "conversation": {
+          "x": 260,
+          "width": 1106,
+          "clientWidth": 1106,
+          "scrollHeight": 385,
+          "clientHeight": 284
+        },
+        "column": {
+          "x": 429,
+          "width": 768,
+          "clientWidth": 768,
+          "scrollHeight": 385,
+          "clientHeight": 385
+        },
+        "composer": {
+          "x": 423,
+          "width": 780,
+          "clientWidth": 778,
+          "scrollHeight": 103,
+          "clientHeight": 103
+        },
+        "main": {
+          "x": 260,
+          "width": 1106,
+          "clientWidth": 1106,
+          "scrollHeight": 500,
+          "clientHeight": 500
+        },
+        "gutter": "auto"
+      },
+      "after": {
+        "conversation": {
+          "x": 260,
+          "width": 1106,
+          "clientWidth": 1106,
+          "scrollHeight": 465,
+          "clientHeight": 284
+        },
+        "column": {
+          "x": 429,
+          "width": 768,
+          "clientWidth": 768,
+          "scrollHeight": 465,
+          "clientHeight": 465
+        },
+        "composer": {
+          "x": 423,
+          "width": 780,
+          "clientWidth": 778,
+          "scrollHeight": 103,
+          "clientHeight": 103
+        },
+        "main": {
+          "x": 260,
+          "width": 1106,
+          "clientWidth": 1106,
+          "scrollHeight": 500,
+          "clientHeight": 500
+        },
+        "gutter": "auto"
+      }
+    },
+    {
+      "width": 1366,
+      "height": 550,
+      "before": {
+        "conversation": {
+          "x": 260,
+          "width": 1106,
+          "clientWidth": 1106,
+          "scrollHeight": 385,
+          "clientHeight": 334
+        },
+        "column": {
+          "x": 429,
+          "width": 768,
+          "clientWidth": 768,
+          "scrollHeight": 385,
+          "clientHeight": 385
+        },
+        "composer": {
+          "x": 423,
+          "width": 780,
+          "clientWidth": 778,
+          "scrollHeight": 103,
+          "clientHeight": 103
+        },
+        "main": {
+          "x": 260,
+          "width": 1106,
+          "clientWidth": 1106,
+          "scrollHeight": 550,
+          "clientHeight": 550
+        },
+        "gutter": "auto"
+      },
+      "after": {
+        "conversation": {
+          "x": 260,
+          "width": 1106,
+          "clientWidth": 1106,
+          "scrollHeight": 465,
+          "clientHeight": 334
+        },
+        "column": {
+          "x": 429,
+          "width": 768,
+          "clientWidth": 768,
+          "scrollHeight": 465,
+          "clientHeight": 465
+        },
+        "composer": {
+          "x": 423,
+          "width": 780,
+          "clientWidth": 778,
+          "scrollHeight": 103,
+          "clientHeight": 103
+        },
+        "main": {
+          "x": 260,
+          "width": 1106,
+          "clientWidth": 1106,
+          "scrollHeight": 550,
+          "clientHeight": 550
+        },
+        "gutter": "auto"
+      }
+    },
+    {
+      "width": 1366,
+      "height": 650,
+      "before": {
+        "conversation": {
+          "x": 260,
+          "width": 1106,
+          "clientWidth": 1106,
+          "scrollHeight": 434,
+          "clientHeight": 434
+        },
+        "column": {
+          "x": 429,
+          "width": 768,
+          "clientWidth": 768,
+          "scrollHeight": 434,
+          "clientHeight": 434
+        },
+        "composer": {
+          "x": 423,
+          "width": 780,
+          "clientWidth": 778,
+          "scrollHeight": 103,
+          "clientHeight": 103
+        },
+        "main": {
+          "x": 260,
+          "width": 1106,
+          "clientWidth": 1106,
+          "scrollHeight": 650,
+          "clientHeight": 650
+        },
+        "gutter": "auto"
+      },
+      "after": {
+        "conversation": {
+          "x": 260,
+          "width": 1106,
+          "clientWidth": 1106,
+          "scrollHeight": 465,
+          "clientHeight": 434
+        },
+        "column": {
+          "x": 429,
+          "width": 768,
+          "clientWidth": 768,
+          "scrollHeight": 465,
+          "clientHeight": 465
+        },
+        "composer": {
+          "x": 423,
+          "width": 780,
+          "clientWidth": 778,
+          "scrollHeight": 103,
+          "clientHeight": 103
+        },
+        "main": {
+          "x": 260,
+          "width": 1106,
+          "clientWidth": 1106,
+          "scrollHeight": 650,
+          "clientHeight": 650
+        },
+        "gutter": "auto"
+      }
+    },
+    {
+      "width": 1366,
+      "height": 800,
+      "before": {
+        "conversation": {
+          "x": 260,
+          "width": 1106,
+          "clientWidth": 1106,
+          "scrollHeight": 584,
+          "clientHeight": 584
+        },
+        "column": {
+          "x": 429,
+          "width": 768,
+          "clientWidth": 768,
+          "scrollHeight": 584,
+          "clientHeight": 584
+        },
+        "composer": {
+          "x": 423,
+          "width": 780,
+          "clientWidth": 778,
+          "scrollHeight": 103,
+          "clientHeight": 103
+        },
+        "main": {
+          "x": 260,
+          "width": 1106,
+          "clientWidth": 1106,
+          "scrollHeight": 800,
+          "clientHeight": 800
+        },
+        "gutter": "auto"
+      },
+      "after": {
+        "conversation": {
+          "x": 260,
+          "width": 1106,
+          "clientWidth": 1106,
+          "scrollHeight": 584,
+          "clientHeight": 584
+        },
+        "column": {
+          "x": 429,
+          "width": 768,
+          "clientWidth": 768,
+          "scrollHeight": 584,
+          "clientHeight": 584
+        },
+        "composer": {
+          "x": 423,
+          "width": 780,
+          "clientWidth": 778,
+          "scrollHeight": 103,
+          "clientHeight": 103
+        },
+        "main": {
+          "x": 260,
+          "width": 1106,
+          "clientWidth": 1106,
+          "scrollHeight": 800,
+          "clientHeight": 800
+        },
+        "gutter": "auto"
+      }
+    },
+    {
+      "width": 1000,
+      "height": 400,
+      "before": {
+        "conversation": {
+          "x": 230,
+          "width": 770,
+          "clientWidth": 770,
+          "scrollHeight": 385,
+          "clientHeight": 184
+        },
+        "column": {
+          "x": 251,
+          "width": 728,
+          "clientWidth": 728,
+          "scrollHeight": 385,
+          "clientHeight": 385
+        },
+        "composer": {
+          "x": 250,
+          "width": 730,
+          "clientWidth": 728,
+          "scrollHeight": 103,
+          "clientHeight": 103
+        },
+        "main": {
+          "x": 230,
+          "width": 770,
+          "clientWidth": 770,
+          "scrollHeight": 400,
+          "clientHeight": 400
+        },
+        "gutter": "auto"
+      },
+      "after": {
+        "conversation": {
+          "x": 230,
+          "width": 770,
+          "clientWidth": 770,
+          "scrollHeight": 465,
+          "clientHeight": 184
+        },
+        "column": {
+          "x": 251,
+          "width": 728,
+          "clientWidth": 728,
+          "scrollHeight": 465,
+          "clientHeight": 465
+        },
+        "composer": {
+          "x": 250,
+          "width": 730,
+          "clientWidth": 728,
+          "scrollHeight": 103,
+          "clientHeight": 103
+        },
+        "main": {
+          "x": 230,
+          "width": 770,
+          "clientWidth": 770,
+          "scrollHeight": 400,
+          "clientHeight": 400
+        },
+        "gutter": "auto"
+      }
+    },
+    {
+      "width": 1000,
+      "height": 450,
+      "before": {
+        "conversation": {
+          "x": 230,
+          "width": 770,
+          "clientWidth": 770,
+          "scrollHeight": 385,
+          "clientHeight": 234
+        },
+        "column": {
+          "x": 251,
+          "width": 728,
+          "clientWidth": 728,
+          "scrollHeight": 385,
+          "clientHeight": 385
+        },
+        "composer": {
+          "x": 250,
+          "width": 730,
+          "clientWidth": 728,
+          "scrollHeight": 103,
+          "clientHeight": 103
+        },
+        "main": {
+          "x": 230,
+          "width": 770,
+          "clientWidth": 770,
+          "scrollHeight": 450,
+          "clientHeight": 450
+        },
+        "gutter": "auto"
+      },
+      "after": {
+        "conversation": {
+          "x": 230,
+          "width": 770,
+          "clientWidth": 770,
+          "scrollHeight": 465,
+          "clientHeight": 234
+        },
+        "column": {
+          "x": 251,
+          "width": 728,
+          "clientWidth": 728,
+          "scrollHeight": 465,
+          "clientHeight": 465
+        },
+        "composer": {
+          "x": 250,
+          "width": 730,
+          "clientWidth": 728,
+          "scrollHeight": 103,
+          "clientHeight": 103
+        },
+        "main": {
+          "x": 230,
+          "width": 770,
+          "clientWidth": 770,
+          "scrollHeight": 450,
+          "clientHeight": 450
+        },
+        "gutter": "auto"
+      }
+    },
+    {
+      "width": 1000,
+      "height": 500,
+      "before": {
+        "conversation": {
+          "x": 230,
+          "width": 770,
+          "clientWidth": 770,
+          "scrollHeight": 385,
+          "clientHeight": 284
+        },
+        "column": {
+          "x": 251,
+          "width": 728,
+          "clientWidth": 728,
+          "scrollHeight": 385,
+          "clientHeight": 385
+        },
+        "composer": {
+          "x": 250,
+          "width": 730,
+          "clientWidth": 728,
+          "scrollHeight": 103,
+          "clientHeight": 103
+        },
+        "main": {
+          "x": 230,
+          "width": 770,
+          "clientWidth": 770,
+          "scrollHeight": 500,
+          "clientHeight": 500
+        },
+        "gutter": "auto"
+      },
+      "after": {
+        "conversation": {
+          "x": 230,
+          "width": 770,
+          "clientWidth": 770,
+          "scrollHeight": 465,
+          "clientHeight": 284
+        },
+        "column": {
+          "x": 251,
+          "width": 728,
+          "clientWidth": 728,
+          "scrollHeight": 465,
+          "clientHeight": 465
+        },
+        "composer": {
+          "x": 250,
+          "width": 730,
+          "clientWidth": 728,
+          "scrollHeight": 103,
+          "clientHeight": 103
+        },
+        "main": {
+          "x": 230,
+          "width": 770,
+          "clientWidth": 770,
+          "scrollHeight": 500,
+          "clientHeight": 500
+        },
+        "gutter": "auto"
+      }
+    },
+    {
+      "width": 1000,
+      "height": 550,
+      "before": {
+        "conversation": {
+          "x": 230,
+          "width": 770,
+          "clientWidth": 770,
+          "scrollHeight": 385,
+          "clientHeight": 334
+        },
+        "column": {
+          "x": 251,
+          "width": 728,
+          "clientWidth": 728,
+          "scrollHeight": 385,
+          "clientHeight": 385
+        },
+        "composer": {
+          "x": 250,
+          "width": 730,
+          "clientWidth": 728,
+          "scrollHeight": 103,
+          "clientHeight": 103
+        },
+        "main": {
+          "x": 230,
+          "width": 770,
+          "clientWidth": 770,
+          "scrollHeight": 550,
+          "clientHeight": 550
+        },
+        "gutter": "auto"
+      },
+      "after": {
+        "conversation": {
+          "x": 230,
+          "width": 770,
+          "clientWidth": 770,
+          "scrollHeight": 465,
+          "clientHeight": 334
+        },
+        "column": {
+          "x": 251,
+          "width": 728,
+          "clientWidth": 728,
+          "scrollHeight": 465,
+          "clientHeight": 465
+        },
+        "composer": {
+          "x": 250,
+          "width": 730,
+          "clientWidth": 728,
+          "scrollHeight": 103,
+          "clientHeight": 103
+        },
+        "main": {
+          "x": 230,
+          "width": 770,
+          "clientWidth": 770,
+          "scrollHeight": 550,
+          "clientHeight": 550
+        },
+        "gutter": "auto"
+      }
+    },
+    {
+      "width": 1000,
+      "height": 650,
+      "before": {
+        "conversation": {
+          "x": 230,
+          "width": 770,
+          "clientWidth": 770,
+          "scrollHeight": 434,
+          "clientHeight": 434
+        },
+        "column": {
+          "x": 251,
+          "width": 728,
+          "clientWidth": 728,
+          "scrollHeight": 434,
+          "clientHeight": 434
+        },
+        "composer": {
+          "x": 250,
+          "width": 730,
+          "clientWidth": 728,
+          "scrollHeight": 103,
+          "clientHeight": 103
+        },
+        "main": {
+          "x": 230,
+          "width": 770,
+          "clientWidth": 770,
+          "scrollHeight": 650,
+          "clientHeight": 650
+        },
+        "gutter": "auto"
+      },
+      "after": {
+        "conversation": {
+          "x": 230,
+          "width": 770,
+          "clientWidth": 770,
+          "scrollHeight": 465,
+          "clientHeight": 434
+        },
+        "column": {
+          "x": 251,
+          "width": 728,
+          "clientWidth": 728,
+          "scrollHeight": 465,
+          "clientHeight": 465
+        },
+        "composer": {
+          "x": 250,
+          "width": 730,
+          "clientWidth": 728,
+          "scrollHeight": 103,
+          "clientHeight": 103
+        },
+        "main": {
+          "x": 230,
+          "width": 770,
+          "clientWidth": 770,
+          "scrollHeight": 650,
+          "clientHeight": 650
+        },
+        "gutter": "auto"
+      }
+    },
+    {
+      "width": 1000,
+      "height": 800,
+      "before": {
+        "conversation": {
+          "x": 230,
+          "width": 770,
+          "clientWidth": 770,
+          "scrollHeight": 584,
+          "clientHeight": 584
+        },
+        "column": {
+          "x": 251,
+          "width": 728,
+          "clientWidth": 728,
+          "scrollHeight": 584,
+          "clientHeight": 584
+        },
+        "composer": {
+          "x": 250,
+          "width": 730,
+          "clientWidth": 728,
+          "scrollHeight": 103,
+          "clientHeight": 103
+        },
+        "main": {
+          "x": 230,
+          "width": 770,
+          "clientWidth": 770,
+          "scrollHeight": 800,
+          "clientHeight": 800
+        },
+        "gutter": "auto"
+      },
+      "after": {
+        "conversation": {
+          "x": 230,
+          "width": 770,
+          "clientWidth": 770,
+          "scrollHeight": 584,
+          "clientHeight": 584
+        },
+        "column": {
+          "x": 251,
+          "width": 728,
+          "clientWidth": 728,
+          "scrollHeight": 584,
+          "clientHeight": 584
+        },
+        "composer": {
+          "x": 250,
+          "width": 730,
+          "clientWidth": 728,
+          "scrollHeight": 103,
+          "clientHeight": 103
+        },
+        "main": {
+          "x": 230,
+          "width": 770,
+          "clientWidth": 770,
+          "scrollHeight": 800,
+          "clientHeight": 800
+        },
+        "gutter": "auto"
+      }
+    },
+    {
+      "width": 390,
+      "height": 400,
+      "before": {
+        "conversation": {
+          "x": 0,
+          "width": 390,
+          "clientWidth": 390,
+          "scrollHeight": 379,
+          "clientHeight": 191
+        },
+        "column": {
+          "x": 18,
+          "width": 354,
+          "clientWidth": 354,
+          "scrollHeight": 379,
+          "clientHeight": 379
+        },
+        "composer": {
+          "x": 12,
+          "width": 366,
+          "clientWidth": 364,
+          "scrollHeight": 108,
+          "clientHeight": 108
+        },
+        "main": {
+          "x": 0,
+          "width": 390,
+          "clientWidth": 390,
+          "scrollHeight": 400,
+          "clientHeight": 400
+        },
+        "gutter": "auto"
+      },
+      "after": {
+        "conversation": {
+          "x": 0,
+          "width": 390,
+          "clientWidth": 390,
+          "scrollHeight": 460,
+          "clientHeight": 188
+        },
+        "column": {
+          "x": 18,
+          "width": 354,
+          "clientWidth": 354,
+          "scrollHeight": 460,
+          "clientHeight": 460
+        },
+        "composer": {
+          "x": 12,
+          "width": 366,
+          "clientWidth": 364,
+          "scrollHeight": 108,
+          "clientHeight": 108
+        },
+        "main": {
+          "x": 0,
+          "width": 390,
+          "clientWidth": 390,
+          "scrollHeight": 400,
+          "clientHeight": 400
+        },
+        "gutter": "auto"
+      }
+    },
+    {
+      "width": 390,
+      "height": 450,
+      "before": {
+        "conversation": {
+          "x": 0,
+          "width": 390,
+          "clientWidth": 390,
+          "scrollHeight": 379,
+          "clientHeight": 238
+        },
+        "column": {
+          "x": 18,
+          "width": 354,
+          "clientWidth": 354,
+          "scrollHeight": 379,
+          "clientHeight": 379
+        },
+        "composer": {
+          "x": 12,
+          "width": 366,
+          "clientWidth": 364,
+          "scrollHeight": 108,
+          "clientHeight": 108
+        },
+        "main": {
+          "x": 0,
+          "width": 390,
+          "clientWidth": 390,
+          "scrollHeight": 450,
+          "clientHeight": 450
+        },
+        "gutter": "auto"
+      },
+      "after": {
+        "conversation": {
+          "x": 0,
+          "width": 390,
+          "clientWidth": 390,
+          "scrollHeight": 460,
+          "clientHeight": 238
+        },
+        "column": {
+          "x": 18,
+          "width": 354,
+          "clientWidth": 354,
+          "scrollHeight": 460,
+          "clientHeight": 460
+        },
+        "composer": {
+          "x": 12,
+          "width": 366,
+          "clientWidth": 364,
+          "scrollHeight": 108,
+          "clientHeight": 108
+        },
+        "main": {
+          "x": 0,
+          "width": 390,
+          "clientWidth": 390,
+          "scrollHeight": 450,
+          "clientHeight": 450
+        },
+        "gutter": "auto"
+      }
+    },
+    {
+      "width": 390,
+      "height": 500,
+      "before": {
+        "conversation": {
+          "x": 0,
+          "width": 390,
+          "clientWidth": 390,
+          "scrollHeight": 379,
+          "clientHeight": 288
+        },
+        "column": {
+          "x": 18,
+          "width": 354,
+          "clientWidth": 354,
+          "scrollHeight": 379,
+          "clientHeight": 379
+        },
+        "composer": {
+          "x": 12,
+          "width": 366,
+          "clientWidth": 364,
+          "scrollHeight": 108,
+          "clientHeight": 108
+        },
+        "main": {
+          "x": 0,
+          "width": 390,
+          "clientWidth": 390,
+          "scrollHeight": 500,
+          "clientHeight": 500
+        },
+        "gutter": "auto"
+      },
+      "after": {
+        "conversation": {
+          "x": 0,
+          "width": 390,
+          "clientWidth": 390,
+          "scrollHeight": 460,
+          "clientHeight": 288
+        },
+        "column": {
+          "x": 18,
+          "width": 354,
+          "clientWidth": 354,
+          "scrollHeight": 460,
+          "clientHeight": 460
+        },
+        "composer": {
+          "x": 12,
+          "width": 366,
+          "clientWidth": 364,
+          "scrollHeight": 108,
+          "clientHeight": 108
+        },
+        "main": {
+          "x": 0,
+          "width": 390,
+          "clientWidth": 390,
+          "scrollHeight": 500,
+          "clientHeight": 500
+        },
+        "gutter": "auto"
+      }
+    },
+    {
+      "width": 390,
+      "height": 550,
+      "before": {
+        "conversation": {
+          "x": 0,
+          "width": 390,
+          "clientWidth": 390,
+          "scrollHeight": 379,
+          "clientHeight": 338
+        },
+        "column": {
+          "x": 18,
+          "width": 354,
+          "clientWidth": 354,
+          "scrollHeight": 379,
+          "clientHeight": 379
+        },
+        "composer": {
+          "x": 12,
+          "width": 366,
+          "clientWidth": 364,
+          "scrollHeight": 108,
+          "clientHeight": 108
+        },
+        "main": {
+          "x": 0,
+          "width": 390,
+          "clientWidth": 390,
+          "scrollHeight": 550,
+          "clientHeight": 550
+        },
+        "gutter": "auto"
+      },
+      "after": {
+        "conversation": {
+          "x": 0,
+          "width": 390,
+          "clientWidth": 390,
+          "scrollHeight": 460,
+          "clientHeight": 338
+        },
+        "column": {
+          "x": 18,
+          "width": 354,
+          "clientWidth": 354,
+          "scrollHeight": 460,
+          "clientHeight": 460
+        },
+        "composer": {
+          "x": 12,
+          "width": 366,
+          "clientWidth": 364,
+          "scrollHeight": 108,
+          "clientHeight": 108
+        },
+        "main": {
+          "x": 0,
+          "width": 390,
+          "clientWidth": 390,
+          "scrollHeight": 550,
+          "clientHeight": 550
+        },
+        "gutter": "auto"
+      }
+    },
+    {
+      "width": 390,
+      "height": 650,
+      "before": {
+        "conversation": {
+          "x": 0,
+          "width": 390,
+          "clientWidth": 390,
+          "scrollHeight": 438,
+          "clientHeight": 438
+        },
+        "column": {
+          "x": 18,
+          "width": 354,
+          "clientWidth": 354,
+          "scrollHeight": 438,
+          "clientHeight": 438
+        },
+        "composer": {
+          "x": 12,
+          "width": 366,
+          "clientWidth": 364,
+          "scrollHeight": 108,
+          "clientHeight": 108
+        },
+        "main": {
+          "x": 0,
+          "width": 390,
+          "clientWidth": 390,
+          "scrollHeight": 650,
+          "clientHeight": 650
+        },
+        "gutter": "auto"
+      },
+      "after": {
+        "conversation": {
+          "x": 0,
+          "width": 390,
+          "clientWidth": 390,
+          "scrollHeight": 460,
+          "clientHeight": 438
+        },
+        "column": {
+          "x": 18,
+          "width": 354,
+          "clientWidth": 354,
+          "scrollHeight": 460,
+          "clientHeight": 460
+        },
+        "composer": {
+          "x": 12,
+          "width": 366,
+          "clientWidth": 364,
+          "scrollHeight": 108,
+          "clientHeight": 108
+        },
+        "main": {
+          "x": 0,
+          "width": 390,
+          "clientWidth": 390,
+          "scrollHeight": 650,
+          "clientHeight": 650
+        },
+        "gutter": "auto"
+      }
+    },
+    {
+      "width": 390,
+      "height": 800,
+      "before": {
+        "conversation": {
+          "x": 0,
+          "width": 390,
+          "clientWidth": 390,
+          "scrollHeight": 588,
+          "clientHeight": 588
+        },
+        "column": {
+          "x": 18,
+          "width": 354,
+          "clientWidth": 354,
+          "scrollHeight": 588,
+          "clientHeight": 588
+        },
+        "composer": {
+          "x": 12,
+          "width": 366,
+          "clientWidth": 364,
+          "scrollHeight": 108,
+          "clientHeight": 108
+        },
+        "main": {
+          "x": 0,
+          "width": 390,
+          "clientWidth": 390,
+          "scrollHeight": 800,
+          "clientHeight": 800
+        },
+        "gutter": "auto"
+      },
+      "after": {
+        "conversation": {
+          "x": 0,
+          "width": 390,
+          "clientWidth": 390,
+          "scrollHeight": 588,
+          "clientHeight": 588
+        },
+        "column": {
+          "x": 18,
+          "width": 354,
+          "clientWidth": 354,
+          "scrollHeight": 588,
+          "clientHeight": 588
+        },
+        "composer": {
+          "x": 12,
+          "width": 366,
+          "clientWidth": 364,
+          "scrollHeight": 108,
+          "clientHeight": 108
+        },
+        "main": {
+          "x": 0,
+          "width": 390,
+          "clientWidth": 390,
+          "scrollHeight": 800,
+          "clientHeight": 800
+        },
+        "gutter": "auto"
+      }
+    }
+  ],
+  "errors": [],
+  "runningControls": [
+    {
+      "label": "选择技能",
+      "disabled": true
+    },
+    {
+      "label": "选择模型与推理强度",
+      "disabled": true
+    },
+    {
+      "label": "会话审批：请求批准",
+      "disabled": true
+    }
+  ],
+  "runningUpdate": {
+    "status": 400,
+    "body": {
+      "error": "当前会话有任务或授权待处理"
+    }
+  },
+  "waiting": {
+    "label": "等待处理",
+    "process": "正在处理 0 秒",
+    "approvalVisible": true,
+    "statusText": ""
+  },
+  "gutterCounterfactual": {
+    "before": {
+      "conversation": {
+        "x": 0,
+        "width": 1000,
+        "clientWidth": 990,
+        "scrollHeight": 385,
+        "clientHeight": 284
+      },
+      "column": {
+        "x": 21,
+        "width": 948,
+        "clientWidth": 948,
+        "scrollHeight": 385,
+        "clientHeight": 385
+      },
+      "composer": {
+        "x": 20,
+        "width": 960,
+        "clientWidth": 958,
+        "scrollHeight": 103,
+        "clientHeight": 103
+      },
+      "main": {
+        "x": 0,
+        "width": 1000,
+        "clientWidth": 1000,
+        "scrollHeight": 500,
+        "clientHeight": 500
+      },
+      "gutter": "stable"
+    },
+    "after": {
+      "conversation": {
+        "x": 0,
+        "width": 1000,
+        "clientWidth": 990,
+        "scrollHeight": 465,
+        "clientHeight": 284
+      },
+      "column": {
+        "x": 21,
+        "width": 948,
+        "clientWidth": 948,
+        "scrollHeight": 465,
+        "clientHeight": 465
+      },
+      "composer": {
+        "x": 20,
+        "width": 960,
+        "clientWidth": 958,
+        "scrollHeight": 103,
+        "clientHeight": 103
+      },
+      "main": {
+        "x": 0,
+        "width": 1000,
+        "clientWidth": 1000,
+        "scrollHeight": 500,
+        "clientHeight": 500
+      },
+      "gutter": "stable"
+    }
+  },
+  "search": {
+    "focused": true,
+    "focusVisible": true,
+    "border": "0px none rgb(32, 32, 32)",
+    "outline": "rgb(102, 102, 102) solid 1px",
+    "outlineOffset": "-2px"
+  },
+  "failure": "locator.click: Timeout 12000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: '个人工作台 私有实例' })\u001b[22m\n\n    at /home/a/Documents/ChatGPT/newbot/.issue/2026-11-10/evidence-issue-04/inspect-ui.mjs:80:58"
+}

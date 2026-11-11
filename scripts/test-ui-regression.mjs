@@ -209,7 +209,7 @@ try {
   await check(
     "outside click closes picker; Escape returns focus; entry switch keeps one panel",
     async () => {
-      await page.locator(".welcome h1").click();
+      await page.locator(".topbar .workspace-title").click();
       await picker("插件").waitFor({ state: "hidden" });
       await page.getByRole("button", { name: "选择插件", exact: true }).click();
       await picker("插件").waitFor();
@@ -289,7 +289,9 @@ try {
       );
       await picker("插件").getByRole("combobox").fill("测试");
       assert.equal(
-        await picker("插件").getByText("正在读取…", { exact: true }).count(),
+        await picker("插件")
+          .getByText("正在读取选择目录", { exact: true })
+          .count(),
         1,
       );
       pluginMode = "";
@@ -477,7 +479,7 @@ try {
       const initial = await settings.boundingBox();
       for (const tab of [
         "通用",
-        "模型网关",
+        "网关",
         "工具连接",
         "技能",
         "文件存储",
@@ -493,15 +495,15 @@ try {
             Math.abs(box[key] - initial[key]) < 1,
             tab + " changes " + key,
           );
-        if (["模型网关", "工具连接", "技能"].includes(tab))
+        if (["网关", "工具连接", "技能"].includes(tab))
           await snapshot("settings-desktop-dark-" + tab);
       }
       await settings
-        .getByRole("button", { name: "模型网关", exact: true })
+        .getByRole("button", { name: "网关", exact: true })
         .click();
-      await settings.locator(".gateway-row").first().waitFor();
+      await settings.locator(".gateway-card").first().waitFor();
       const boxes = await settings
-        .locator(".gateway-row > select")
+        .locator(".gateway-card select")
         .evaluateAll((nodes) =>
           nodes.map((n) => {
             const r = n.getBoundingClientRect();
@@ -509,15 +511,9 @@ try {
           }),
         );
       assert.ok(boxes.length >= 2);
-      assert.ok(
-        boxes.every(
-          (b) =>
-            Math.abs(b.x - boxes[0].x) < 1 &&
-            Math.abs(b.width - boxes[0].width) < 1,
-        ),
-      );
+      assert.ok(boxes.every((b) => Math.abs(b.width - boxes[0].width) < 1));
       await settings
-        .locator(".gateway-row")
+        .locator(".gateway-card")
         .first()
         .getByRole("button", { name: /编辑/ })
         .click();
@@ -532,7 +528,7 @@ try {
       );
       await editor.getByText("当前连接地址", { exact: true }).waitFor();
       const actions = await editor
-        .locator(".provider-actions")
+        .locator(".editor-actions")
         .first()
         .locator("button")
         .evaluateAll((nodes) =>
@@ -585,7 +581,7 @@ try {
               initial.y >= 0 &&
               initial.y + initial.height <= 801,
           );
-          for (const tab of ["技能", "模型网关", "工具连接"]) {
+          for (const tab of ["技能", "网关", "工具连接"]) {
             await settings
               .getByRole("button", { name: tab, exact: true })
               .click();
@@ -620,7 +616,7 @@ try {
             .getByRole("button", { name: "测试网关 模型分组", exact: true })
             .waitFor();
           await model()
-            .locator(".picker-feedback [role=status]")
+            .getByText("正在读取模型目录", { exact: true })
             .waitFor({ state: "hidden" });
           const popup = await model().boundingBox();
           assert.ok(
@@ -767,7 +763,7 @@ try {
       await page.getByRole("button", { name: "工具连接", exact: true }).click();
       const dialog = page.getByRole("dialog", { name: "设置", exact: true });
       await dialog
-        .getByRole("button", { name: "模型网关", exact: true })
+        .getByRole("button", { name: "网关", exact: true })
         .click();
       return dialog;
     };
@@ -778,9 +774,6 @@ try {
         await page.reload();
         const dialog = await openProviderSettings();
         await dialog
-          .getByText("网关参数已保存到 SQLite", { exact: false })
-          .waitFor();
-        await dialog
           .getByRole("button", { name: "编辑 测试网关", exact: true })
           .click();
         const editor = page.getByRole("dialog", {
@@ -790,7 +783,9 @@ try {
         await editor
           .getByRole("textbox", { name: "名称", exact: true })
           .fill("持久化网关");
-        await editor.getByRole("button", { name: "保存", exact: true }).click();
+        await editor
+          .getByRole("button", { name: "保存并获取模型", exact: true })
+          .click();
         await editor.waitFor({ state: "hidden" });
         await dialog
           .getByRole("button", { name: "编辑 持久化网关", exact: true })
@@ -834,7 +829,7 @@ try {
         await page.reload();
         // Open settings through the shared sidebar drawer.
         await openProviderSettings();
-        await page.getByText("尚未配置自定义网关", { exact: false }).waitFor();
+        await page.getByText("尚未添加网关", { exact: false }).waitFor();
         await page.screenshot({
           path: resolve(output, "sqlite-empty-mobile.png"),
         });
@@ -850,7 +845,7 @@ try {
           .getByRole("textbox", { name: "连接地址", exact: true })
           .fill(origin + "/fixture/provider-a");
         await restoration
-          .getByRole("button", { name: "保存", exact: true })
+          .getByRole("button", { name: "保存并获取模型", exact: true })
           .click();
         await restoration.waitFor({ state: "hidden" });
         await page
@@ -880,7 +875,7 @@ try {
         });
         assert.equal(restored, 200);
         await page
-          .getByRole("button", { name: "刷新模型网关", exact: true })
+          .getByRole("button", { name: "刷新网关", exact: true })
           .click();
         await page
           .getByRole("button", { name: "编辑 恢复测试网关", exact: true })
@@ -908,7 +903,7 @@ try {
 } catch (error) {
   if (page) {
     const geometry = await page
-      .locator(".gateway-connection-tools .provider-actions > button")
+      .locator(".gateway-connection-tools .editor-actions > button")
       .evaluateAll((nodes) =>
         nodes.map((node) => {
           const s = getComputedStyle(node),

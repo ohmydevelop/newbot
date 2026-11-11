@@ -1,0 +1,10 @@
+{
+  "fixture": true,
+  "stage": "workspaces",
+  "checks": [
+    "workspace picker and previews stay bound to the active conversation",
+    "refresh restores the correct file snapshot and mobile workspace picker stays within viewport"
+  ],
+  "metrics": [],
+  "errors": []
+}

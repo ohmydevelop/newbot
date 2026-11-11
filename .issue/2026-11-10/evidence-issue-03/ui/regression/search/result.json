@@ -1,0 +1,54 @@
+{
+  "fixture": true,
+  "stage": "search",
+  "checks": [
+    "cached search refresh keeps input, results and sidebar anchored",
+    "normalized search, no result and retry preserve results and focus",
+    "desktop and mobile themes retain search geometry and keyboard dismissal"
+  ],
+  "metrics": [
+    {
+      "before": {
+        "input": {
+          "x": 537,
+          "y": 340,
+          "width": 353,
+          "height": 41
+        },
+        "result": {
+          "x": 495,
+          "y": 396,
+          "width": 450,
+          "height": 43.5
+        },
+        "sidebar": {
+          "x": 10,
+          "y": 272.25,
+          "width": 208,
+          "height": 37.5
+        }
+      },
+      "after": {
+        "input": {
+          "x": 537,
+          "y": 340,
+          "width": 353,
+          "height": 41
+        },
+        "result": {
+          "x": 495,
+          "y": 396,
+          "width": 450,
+          "height": 43.5
+        },
+        "sidebar": {
+          "x": 10,
+          "y": 272.25,
+          "width": 208,
+          "height": 37.5
+        }
+      }
+    }
+  ],
+  "errors": []
+}

@@ -1,0 +1,35 @@
+[
+  {
+    "variable": "relative",
+    "servers": [
+      {
+        "name": "cloudwalker",
+        "status": "failed",
+        "error": "MCP startup failed: No such file or directory (os error 2)",
+        "toolNames": []
+      }
+    ]
+  },
+  {
+    "variable": "dollar",
+    "servers": [
+      {
+        "name": "cloudwalker",
+        "status": "failed",
+        "error": "MCP startup failed: No such file or directory (os error 2)",
+        "toolNames": []
+      }
+    ]
+  },
+  {
+    "variable": "brace",
+    "servers": [
+      {
+        "name": "cloudwalker",
+        "status": "failed",
+        "error": "MCP startup failed: No such file or directory (os error 2)",
+        "toolNames": []
+      }
+    ]
+  }
+]

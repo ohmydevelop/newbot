@@ -11,6 +11,7 @@ import type { ThreadReadResponse } from "../generated/codex/v2/ThreadReadRespons
 import type { ThreadTurnsListResponse } from "../generated/codex/v2/ThreadTurnsListResponse.js";
 import type { ThreadItemsListResponse } from "../generated/codex/v2/ThreadItemsListResponse.js";
 import type { TurnStartResponse } from "../generated/codex/v2/TurnStartResponse.js";
+import type { TurnSettingsUpdateResponse } from "../generated/codex/v2/TurnSettingsUpdateResponse.js";
 import type { ModelListResponse } from "../generated/codex/v2/ModelListResponse.js";
 import type { ConfigReadResponse } from "../generated/codex/v2/ConfigReadResponse.js";
 import type { ConfigWriteResponse } from "../generated/codex/v2/ConfigWriteResponse.js";
@@ -38,6 +39,7 @@ export type Results = {
   "thread/turns/list": ThreadTurnsListResponse;
   "thread/items/list": ThreadItemsListResponse;
   "turn/start": TurnStartResponse;
+  "turn/settings/update": TurnSettingsUpdateResponse;
   "model/list": ModelListResponse;
   "config/read": ConfigReadResponse;
   "config/batchWrite": ConfigWriteResponse;
@@ -50,3 +52,17 @@ export type Results = {
 export type Result<M extends Method> = M extends keyof Results
   ? Results[M]
   : Record<string, unknown>;
+
+// ts-rs represents native u64 fields as bigint; JSON-RPC transports numbers.
+// Keep integers lossless within the range this JS client can round-trip.
+export function encodeRpc(value: unknown) {
+  return JSON.stringify(value, (_key, item) => {
+    if (typeof item !== "bigint") return item;
+    if (
+      item > BigInt(Number.MAX_SAFE_INTEGER) ||
+      item < BigInt(Number.MIN_SAFE_INTEGER)
+    )
+      throw new RangeError("Codex integer exceeds the supported JSON range");
+    return Number(item);
+  });
+}

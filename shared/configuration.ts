@@ -2,6 +2,8 @@ import type { CredentialMetadata } from "./credentials.js";
 export type ConfigSource = { type: string; profile: boolean };
 export type ConfigurationView = {
   revision: string;
+  /** Object revisions exclude unrelated settings and discovery status. */
+  revisions?: Record<string, string>;
   writable: boolean;
   nativeWritable?: boolean;
   providerStorage?: "sqlite" | "memory" | "native";
@@ -24,19 +26,27 @@ export type ConfigurationView = {
     editable: boolean;
     missing?: boolean;
     managedCredential?: CredentialMetadata;
+    privateFields?: import("./credentials.js").PrivateFieldView;
     credentialEditable?: boolean;
+    authentication?: import("./credentials.js").AuthenticationView;
+    customModels?: string[];
     requiresAccountAuth: boolean;
     temporaryCredentialTest?: boolean;
     name: string;
     endpointOrigin: string | null;
+    editableEndpoint?: string | null;
     wireApi: "responses" | "other" | null;
     credentials: "inline" | "environment" | "none";
   }[];
   mcp: {
     id: string;
+    name?: string;
+    definition?: { command?: string; args?: string[]; url?: string };
     editable: boolean;
     managedCredential?: CredentialMetadata;
+    privateFields?: import("./credentials.js").PrivateFieldView;
     credentialEditable?: boolean;
+    authentication?: import("./credentials.js").AuthenticationView;
     hasEnvReferences: boolean;
     startupTimeout: number | null;
     toolTimeout: number | null;

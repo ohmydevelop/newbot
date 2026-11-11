@@ -1,0 +1,48 @@
+✔ connector creation depends on absence, edits on its own revision, and lost save responses have one receipt (364.531245ms)
+✔ saved views and mutation receipts preserve legacy authentication; omitted fields cannot erase it (177.826114ms)
+✔ GitHub links resolve slash refs and subdirectories against real refs, then pin the commit (23.150696ms)
+✔ reference discovery paginates and searches beyond the first page without dropping matching rows (10.982178ms)
+✔ GitHub source discovery rejects credential URLs, other hosts and oversized or malformed upstream responses (2.848298ms)
+✔ only explicitly selected plugins contribute skills, MCP and native hook activation (3.546167ms)
+✔ publication preserves referenced bytes across upgrades, uninstall and restart; unrelated packages do not share a lock (20.881653ms)
+✔ standalone skill retirement changes discoverability without editing its immutable package (5.260891ms)
+✔ MCP edits use native CAS leaves and preserve private commands, arguments, environment and headers (228.826263ms)
+✔ MCP create supports stdio/HTTP, strict schemas, safe endpoint syntax and no transport conversion (99.425025ms)
+✔ MCP environment references require explicit authorization and can be removed without clearing private values (91.152322ms)
+✔ non-user and overridden MCP definitions are read-only and cannot be edited or deleted (49.972733ms)
+✔ MCP enable, disable and delete change only their versioned configuration (40.165775ms)
+✔ MCP public inventory and connection diagnostics strip raw errors, schemas and metadata (44.352061ms)
+✔ testing disabled MCP does not reload or start discovery, and stale reload tokens fail closed (36.67435ms)
+✔ MCP management blocks tasks, approvals and pending OAuth, releasing guards after each error (37.626289ms)
+✔ MCP reload failure retains saved state, invalidates old App records and recovers through native reconnect (41.878033ms)
+✔ lost MCP write responses reload authoritative configuration without a duplicate write (39.177376ms)
+✔ MCP maintenance rejects new work during a pending mutation, then releases it (39.151583ms)
+✔ MCP HTTP routes require login and allowed Origin and return only the redacted effective configuration (83.912087ms)
+✔ paginated MCP catalogs keep App permissions discoverable and reload invalidates the old App capability (37.688467ms)
+✔ plugin settings preserve ownership, encrypt credentials and recover without config files (49.275386ms)
+✔ same-name connectors in different plugins stay isolated, including disable and uninstall (30.925726ms)
+✔ plugin saves reject missing or invalidated credentials atomically instead of reporting success (91.124116ms)
+✔ selected plugin readiness uses the captured configuration and leaves unrelated or intentionally disabled connectors alone (70.041993ms)
+✔ endpoint/package changes cannot inherit secrets and concurrent writes preserve the first save (35.089398ms)
+✔ upgrades preserve compatible ordinary fields while invalidating code-bound credentials (90.493384ms)
+✔ MCPB numeric/optional fields and HTTP runtime headers bind only declared destinations (42.521751ms)
+✔ unsupported descriptors, sensitive command templates and protected env fail closed (20.311732ms)
+✔ configuration-free connectors need no credential, and declared manifest paths stay within the package (21.116851ms)
+✔ MCPB discovery uses declared names and manifest-relative roots, rejects obsolete pointers and malformed bundles (10.048786ms)
+✔ certificate observation validates ownership, field privacy and revision before and after network work (74.323594ms)
+✔ new conversations isolate cwd, sandbox roots, live browsing and captured files; old threads retain their directory through restart (432.748316ms)
+✔ SQLite extension edits defer to the next turn, project skills are copied, disabled skills cannot be cited, and another active thread is untouched (148.515711ms)
+✔ discovered skill IDs are stable, deduplicated and preserve native metadata; disabled skills remain readable without writes (14.439763ms)
+✔ each read rediscovers current skills, refuses stale or forged IDs and reports native discovery failure without exposing upstream errors (10.286396ms)
+✔ skill viewing rejects file and ancestor symlinks, hard links, directories and nonlocal/non-SKILL paths (26.916559ms)
+✔ skill reads are bounded, UTF-8 text only, allow empty files and report deleted files without a filesystem path (9.580346ms)
+✔ skill HTTP endpoint enforces session and origin boundaries, ignores arbitrary paths and exposes actual capabilities and discovery warnings (157.102105ms)
+✔ formatted skill content treats instructions as inert Markdown while preserving exact source and refusing embedded resources (16.52942ms)
+ℹ tests 40
+ℹ suites 0
+ℹ pass 40
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2108.505532

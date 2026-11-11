@@ -33,7 +33,7 @@ export function publicItem(item: ThreadItem): Item {
     view.result =
       item.result && !failed
         ? {
-            content: compact(item.result.content),
+            content: compact(publicToolContent(item.result.content)),
             structuredContent: compact(item.result.structuredContent),
           }
         : null;
@@ -85,4 +85,28 @@ function compact(value: any, depth = 0): any {
         .map(([k, v]) => [k, compact(v, depth + 1)]),
     );
   return value;
+}
+
+// Image/audio payloads are registered before projection; never truncate binary into text events.
+export function publicToolContent(content: unknown): unknown {
+  if (!Array.isArray(content)) return content;
+  return content.map((block) => {
+    if (
+      block &&
+      ["image", "audio", "inputImage", "input_image", "inputAudio"].includes(
+        block.type,
+      )
+    )
+      return {
+        type: block.type,
+        ...(block.mimeType ? { mimeType: block.mimeType } : {}),
+        resource: "registered",
+      };
+    if (block?.type === "resource" && block.resource?.blob)
+      return {
+        type: "resource",
+        resource: { mimeType: block.resource.mimeType },
+      };
+    return block;
+  });
 }

@@ -1,0 +1,4 @@
+{"at":"2026-11-11T07:16:59.269Z","event":"runtime.status","status":"ready"}
+fixture native error {"code":-32600,"message":"the destination model has only fallback metadata"}
+{"at":"2026-11-11T07:17:05.087Z","event":"runtime.status","status":"ready"}
+{"passed":7}

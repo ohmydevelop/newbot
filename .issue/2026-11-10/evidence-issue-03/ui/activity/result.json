@@ -1,0 +1,10 @@
+{
+  "fixture": true,
+  "stage": "activity",
+  "checks": [
+    "background task states update a fixed sidebar slot without opening the conversation",
+    "sidebar state survives refresh and is visible in desktop/mobile and both themes"
+  ],
+  "metrics": [],
+  "errors": []
+}

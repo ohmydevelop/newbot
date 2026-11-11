@@ -1,0 +1,28 @@
+{
+  "at": "2026-11-10T06:59:43.830Z",
+  "head": "2ccb03154338738c9e4e556cbc86f5b473952b7b",
+  "pid": 817676,
+  "process": "/home/a/.local/share/mise/installs/node/26.12.0/bin/node --env-file-if-exists=.env /home/a/Documents/ChatGPT/newbot/dist/server/index.js ",
+  "codex": "0.165.0",
+  "asset": "/assets/index-B-cWmD3y.js",
+  "localHash": "4e93d0b22b1be31a6af78010aaae20f8b8e61a93470e00a71af39e0e6f529e68",
+  "origins": [
+    {
+      "origin": "http://127.0.0.1:3100",
+      "status": 200,
+      "asset": "/assets/index-B-cWmD3y.js",
+      "hash": "4e93d0b22b1be31a6af78010aaae20f8b8e61a93470e00a71af39e0e6f529e68"
+    },
+    {
+      "origin": "https://frequencies-alumni-prior-rna.trycloudflare.com",
+      "status": 200,
+      "asset": "/assets/index-B-cWmD3y.js",
+      "hash": "4e93d0b22b1be31a6af78010aaae20f8b8e61a93470e00a71af39e0e6f529e68"
+    },
+    {
+      "origin": "https://recordings-reaching-basically-none.trycloudflare.com",
+      "status": 403,
+      "hash": null
+    }
+  ]
+}

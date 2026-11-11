@@ -1,0 +1,11 @@
+{
+  "fixture": true,
+  "stage": "experts",
+  "checks": [
+    "unified extensions, keyboard tabs and expert create/edit with actual members",
+    "@ keyboard selection persists across turns and refresh; global disable blocks dispatch and preserves draft",
+    "expert unavailable details, removal and responsive extensions in light and dark themes"
+  ],
+  "metrics": [],
+  "errors": []
+}

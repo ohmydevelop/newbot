@@ -89,7 +89,8 @@ codex.call = (async (method: any, params: any) => {
   return result;
 }) as typeof codex.call;
 const { app, service } = await createServer({
-    providerRuntime: null,
+  webDirectory: process.env.UI_TEST_CANDIDATE,
+  providerRuntime: null,
   directory,
   cwd: join(directory, "work"),
   codex,

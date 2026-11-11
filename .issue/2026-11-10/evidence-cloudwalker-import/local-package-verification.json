@@ -1,0 +1,60 @@
+{
+  "codex": "0.165.0",
+  "realInstallation": false,
+  "modelTurns": 0,
+  "businessCalls": 0,
+  "scan": {
+    "files": 42,
+    "skills": [
+      "cloudwalker:cloudwalker-investigate",
+      "cloudwalker:cloudwalker-posture"
+    ],
+    "mcp": [
+      "cloudwalker"
+    ]
+  },
+  "firstStart": {
+    "status": "connected",
+    "tools": [
+      "get_host_security_context",
+      "inspect_security_alert",
+      "list_business_groups",
+      "open_security_workspace",
+      "search_hosts",
+      "search_security_alerts",
+      "summarize_security_posture"
+    ],
+    "ui": {
+      "uri": "ui://cloudwalker/security-workspace/v1.html",
+      "mimeType": "text/html;profile=mcp-app",
+      "bytes": 926917
+    },
+    "enabledSkills": [
+      "cloudwalker:cloudwalker-investigate",
+      "cloudwalker:cloudwalker-posture"
+    ]
+  },
+  "afterRestart": {
+    "status": "connected",
+    "tools": [
+      "get_host_security_context",
+      "inspect_security_alert",
+      "list_business_groups",
+      "open_security_workspace",
+      "search_hosts",
+      "search_security_alerts",
+      "summarize_security_posture"
+    ],
+    "ui": {
+      "uri": "ui://cloudwalker/security-workspace/v1.html",
+      "mimeType": "text/html;profile=mcp-app",
+      "bytes": 926917
+    },
+    "enabledSkills": [
+      "cloudwalker:cloudwalker-investigate",
+      "cloudwalker:cloudwalker-posture"
+    ]
+  },
+  "binaryUnchanged": true,
+  "passed": true
+}

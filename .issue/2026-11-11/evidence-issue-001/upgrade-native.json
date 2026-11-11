@@ -1,0 +1,10 @@
+{
+  "oldVersion": "0.165.0",
+  "newBinary": "/home/a/Documents/ChatGPT/newbot/.data/native/bin/codex-main-live",
+  "checks": [
+    "patched main restores the exact native thread created by 0.165.0",
+    "prior answer and executed tool output survive in the new model request",
+    "history restoration does not re-execute the original tool"
+  ],
+  "upstream": "synthetic loopback Responses gateway"
+}

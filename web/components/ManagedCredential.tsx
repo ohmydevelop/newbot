@@ -1,3 +1,4 @@
+import {responseJson} from "../http";
 import { lazy, Suspense, useState, useRef } from "react";
 import type { CredentialMetadata } from "../../shared/credentials.js";
 import { useApp, loadSettings, request, acceptSettings } from "../store.js";
@@ -69,7 +70,7 @@ export default function ManagedCredential({
       });
       if (response.status === 401) useApp.setState({ authenticated: false });
       if (!response.ok) throw new Error();
-      const result = await response.json();
+      const result = await responseJson(response);
       setNotice(
         path === "clear"
           ? result.applied

@@ -1,0 +1,128 @@
+{
+  "stage": "one run",
+  "message": "{\"requestId\":\"16713075-f9e3-489b-bfcd-74ec9f8b40b0\",\"state\":\"rejected\",\"threadId\":\"01a1c558-a8f6-7303-b7a9-fd7e79cf778d\",\"clientUserMessageId\":\"226263df-e6ea-4e69-84e2-f31ce00fdd3d\",\"privateInputs\":[],\"error\":\"操作失败，请检查请求或服务端配置\"}",
+  "checks": [
+    "Native HTTP Bearer, custom header and stdio environment reached correct recipients"
+  ],
+  "calls": [
+    {
+      "kind": "mcp",
+      "method": "initialize",
+      "correct": true,
+      "providerAbsent": true
+    },
+    {
+      "kind": "mcp",
+      "method": "notifications/initialized",
+      "correct": true,
+      "providerAbsent": true
+    },
+    {
+      "kind": "mcp",
+      "method": "tools/list",
+      "correct": true,
+      "providerAbsent": true
+    },
+    {
+      "kind": "mcp",
+      "method": "initialize",
+      "correct": true,
+      "providerAbsent": true
+    },
+    {
+      "kind": "mcp",
+      "method": "notifications/initialized",
+      "correct": true,
+      "providerAbsent": true
+    },
+    {
+      "kind": "mcp",
+      "method": "tools/list",
+      "correct": true,
+      "providerAbsent": true
+    },
+    {
+      "kind": "mcp",
+      "method": "resources/list",
+      "correct": true,
+      "providerAbsent": true
+    },
+    {
+      "kind": "mcp",
+      "method": "resources/templates/list",
+      "correct": true,
+      "providerAbsent": true
+    },
+    {
+      "kind": "mcp",
+      "method": "initialize",
+      "correct": true,
+      "providerAbsent": true
+    },
+    {
+      "kind": "mcp",
+      "method": "notifications/initialized",
+      "correct": true,
+      "providerAbsent": true
+    },
+    {
+      "kind": "mcp",
+      "method": "tools/list",
+      "correct": true,
+      "providerAbsent": true
+    },
+    {
+      "kind": "mcp",
+      "method": "initialize",
+      "correct": true,
+      "providerAbsent": true
+    },
+    {
+      "kind": "mcp",
+      "method": "notifications/initialized",
+      "correct": true,
+      "providerAbsent": true
+    },
+    {
+      "kind": "mcp",
+      "method": "tools/list",
+      "correct": true,
+      "providerAbsent": true
+    },
+    {
+      "kind": "mcp",
+      "method": "resources/list",
+      "correct": true,
+      "providerAbsent": true
+    },
+    {
+      "kind": "mcp",
+      "method": "resources/templates/list",
+      "correct": true,
+      "providerAbsent": true
+    },
+    {
+      "kind": "model",
+      "correct": true,
+      "privateBody": false
+    },
+    {
+      "kind": "mcp",
+      "method": "initialize",
+      "correct": true,
+      "providerAbsent": true
+    },
+    {
+      "kind": "mcp",
+      "method": "notifications/initialized",
+      "correct": true,
+      "providerAbsent": true
+    },
+    {
+      "kind": "mcp",
+      "method": "tools/list",
+      "correct": true,
+      "providerAbsent": true
+    }
+  ]
+}

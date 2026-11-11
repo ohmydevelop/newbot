@@ -1,6 +1,6 @@
 # 实现能力与限制
 
-更新：2026-11-09。对应固定 Codex CLI 0.165.0、产品 0.2.0 用户反馈改进版（开发阶段）。实例当前值以登录后的 `GET /api/runtime/capabilities` 为准；本文是字段解释，不把布尔值当成对所有第三方服务的兼容承诺。
+更新：2026-11-10。对应固定 Codex CLI 0.165.0、产品 0.2.0 用户反馈改进版（开发阶段）。实例当前值以登录后的 `GET /api/runtime/capabilities` 为准；本文是字段解释，不把布尔值当成对所有第三方服务的兼容承诺。
 
 | 能力字段                          | 实际范围                                              | 条件与限制                                                                                      |
 | --------------------------------- | ----------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
@@ -12,12 +12,12 @@
 | skillDocuments / skillSelection   | 已发现技能受控读取、显式结构化输入、历史引用          | 最多 8 个；说明最多 256 KiB，失效或变化时重新校验                                               |
 | elicitation                       | 普通非敏感表单、拒绝、取消与超时                      | 最多 12 字段/32 选项，默认 300 秒；私密输入与 URL 模式关闭                                      |
 | mcpApps / mcpAppHost.available    | 官方 SDK 隔离 Host、结果、主题、高度与工具授权        | 需要可用的独立 App origin；当前只支持 inline 模式、内联依赖                                     |
-| mcpAppHost                        | 同 Server/UI 资源内的 App 可见工具，逐次授权          | 网络、外链、下载、聊天写入、模型上下文、Sampling、额外资源、工具目录、Prompts 和 App 日志均关闭 |
+| mcpAppHost                        | 同一 Server 连接的 App 可见工具，逐次授权；数据工具无需关联 UI 资源 | 网络、外链、下载、聊天写入、模型上下文、Sampling、额外资源、工具目录、Prompts 和 App 日志均关闭 |
 | mcpAppLifecycle                   | 关闭、过期、取消、会话归属与重新打开                  | 恢复页面不恢复旧授权；重新打开会校验当前权限                                                    |
 | artifacts                         | 受控登记、不可变版本、预览、下载、用量和清理          | 不提供任意路径读取；当前文件最多 8 MiB                                                          |
 | artifacts.previewKinds            | 文本/代码/Markdown/JSON/CSV/图片/PDF                  | HTML 运行预览只在独立 origin 可用时加入；不启用时仍可源码/下载                                  |
 | artifacts.pdf                     | 受控 Range、分页与缩放                                | 最多 500 页、单画布最多 800 万像素；不是 PDF 编辑器                                             |
-| a2ui                              | 线协议 v0.9、固定 Catalog 与 6 种组件类型             | 只对新原生线程注册工具；支持增量、草稿和重启只读恢复；私密字段关闭                              |
+| a2ui                              | 线协议 v0.9；v1 六种表单组件，v2 加图文组件             | 只对新原生线程注册工具；支持增量、草稿和重启只读恢复；私密字段关闭                              |
 | privateCredentials / trustedInput | 临时 Provider 检查、Provider/HTTPS MCP 内存或加密保存 | 与聊天/普通表单分离；凭证不可回读；加密可用性以 storage.encrypted 为准                          |
 | trustedInput.sudo                 | 显式启用时的固定 sudo.identity                        | 仅执行一次固定 id -u；不允许任意命令、Agent 主动请求、保存密码或 stdio 凭证注入                 |
 | runRecovery.abandonUnseen         | 放弃尚未登记的发送并持久阻止迟到请求                  | 已有预留/派发/未知/已接收或旧版回执不能覆盖；不是取消已运行任务                                 |
@@ -42,3 +42,23 @@ D7.5 新增三项服务端契约检查：无应用域时关闭执行能力；应
 ## 第二轮设置体验
 
 详见 [第二轮反馈记录](../.issue/2026-11-09/progress-02.md)。`providerManagement.privateEditor/generatedIds` 表示网关名称/地址与私密 API Key 可在一个编辑器保存、内部 ID 自动生成；密钥以二进制私密通道提交，默认本机加密。`skillManagement.uninstall = personalArchive` 仅支持受管理的独立个人技能移出发现目录并保留备份；项目、系统、管理员和插件技能不能通过此接口移除。前端工具与插件合并管理，执行与配置仍使用各自原生接口。SQLite 保持 v6。
+
+## 2026-11-10 会话工作区与扩展
+
+SQLite 增量版本现为 9。`capabilities.experts` 表示专家组合和每会话一个持续绑定；普通 MCP 定义、插件/技能启停和网关手工模型也保存至 SQLite。新会话独立目录，旧会话保留旧根，已运行任务保留快照，下一轮只同步目标线程。前文的历史 profile/原生配置写入说明不再用于普通 Web 设置。实际接口、安全边界、原生文件保留范围及验证方式见 [会话工作区与扩展](session-extensions.md)。
+
+
+### Issue 04：等待状态与下一轮配置
+
+SQLite 当前增量版本为 11。`sessionSettings.nextTurnSettings/persistentInputReferences` 表示运行中可保存下一轮选择及技能/插件引用。设置返回已应用/候选与状态版本，应用失败不会以旧参数发送。等待状态聚合审批、普通输入和 A2UI；正文和侧栏共用原因/数量/定位目标。自定义网关的未知推理能力不宣称已支持，原生探针和浏览器证据见 [Issue 04](../.issue/2026-11-10/issue-04-progress.md)。
+
+
+## Issue 05：图文输出与扩展导入
+
+SQLite 增量版本为 12，仅增加媒体关联及导入记录/恢复日志。`presentation` 声明新线程使用 `newbot:ui/v2`（Image、Metric、Chart、SourceLink），旧线程返回其真实 `uiCatalog`，不重建线程升级契约。
+
+`media` 表示正文、原生和 MCP 图片统一受鉴权快照，PNG/JPEG/WebP 单张最多 8 MiB。公开 HTTPS 资源经过地址、重定向、类型及大小检查，不接受任意代理或身份凭证；真实图片生成仍取决于上游。当前开发环境 DNS 将公网域名解析为保留地址时，下载会拒绝并显示失败，而不绕过保护。
+
+`imports` 支持目录、ZIP 和公开 GitHub 仓库/子目录/ref。扫描调用固定原生发现接口；整包安装由用户确认，技能逐项启用；配置归 SQLite，资产归实例隔离目录。导入数量不使用单消息 8 项上限，最大资源预算由接口返回。发现和渲染测试不等于任意 Provider/插件兼容证明。完整证据见 [Issue 05 进度](../.issue/2026-11-10/issue-05-progress.md)。
+
+Issue 06：SQLite 运行配置下，`trustedInput.fields/agentRequests/storage.httpHeaders/storage.stdio` 表示已实现的接收方字段与聊天授权；旧 native 配置模式返回 false。保存值加密持久化，临时授权按任务/线程隔离。运行时检测为准，见 [私密字段与任务授权](private-runtime-fields.md)。SQLite 增量版本为 v13。

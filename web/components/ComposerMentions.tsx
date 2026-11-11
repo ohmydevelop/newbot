@@ -7,7 +7,7 @@ import {
   type RefObject,
 } from "react";
 import * as Popover from "@radix-ui/react-popover";
-import { Check, RefreshCw, X } from "lucide-react";
+import { Check, RefreshCw, Search, X } from "lucide-react";
 import type { Json } from "../../shared/types";
 import { skillLabel } from "../../shared/skills";
 import { request, loadSettings, useApp } from "../store";
@@ -23,6 +23,7 @@ export function useComposerMentions({
   textarea,
   selectedSkills,
   selectedPlugins,
+  selectedExpert,
   onSelect,
 }: {
   value: string;
@@ -33,6 +34,7 @@ export function useComposerMentions({
   textarea: RefObject<HTMLTextAreaElement | null>;
   selectedSkills: string[];
   selectedPlugins: string[];
+  selectedExpert?: string | null;
   onSelect: (
     kind: "$" | "@",
     entry: Json,
@@ -42,7 +44,9 @@ export function useComposerMentions({
 }) {
   const skills = useApp((s) => s.settings?.skills),
     skillSelection = useApp((s) => s.skillSelection),
-    pluginSelection = useApp((s) => s.pluginSelection);
+    pluginSelection = useApp((s) => s.pluginSelection),
+    expertSelection = useApp((s) => s.expertSelection);
+  const atSelection = pluginSelection || expertSelection;
   const [plugins, setPlugins] = useState<Json[]>([]),
     [mode, setMode] = useState<"button" | "mention">("button"),
     [search, setSearch] = useState(""),
@@ -64,8 +68,7 @@ export function useComposerMentions({
   const active = panel === "plugins" || panel === "skills",
     kind = panel === "skills" ? "$" : "@";
   const query = mode === "mention" ? token?.query || "" : search;
-  const allowed =
-    (kind === "$" ? skillSelection : pluginSelection) && !disabled;
+  const allowed = (kind === "$" ? skillSelection : atSelection) && !disabled;
   const current = useRef({ scope, panel, value, signature });
   current.current = { scope, panel, value, signature };
   function close(fromOutside = false) {
@@ -75,8 +78,7 @@ export function useComposerMentions({
     setPanel((p) => (p === "plugins" || p === "skills" ? null : p));
   }
   function open(next: "plugins" | "skills", target?: HTMLElement | null) {
-    if (disabled || !(next === "skills" ? skillSelection : pluginSelection))
-      return;
+    if (disabled || !(next === "skills" ? skillSelection : atSelection)) return;
     if (panel === next && mode === "button") {
       searchInput.current?.focus();
       return;
@@ -105,7 +107,7 @@ export function useComposerMentions({
     if (
       token &&
       signature !== dismissed &&
-      (token.kind === "$" ? skillSelection : pluginSelection)
+      (token.kind === "$" ? skillSelection : atSelection)
     ) {
       opener.current = textarea.current;
       outside.current = false;
@@ -113,7 +115,7 @@ export function useComposerMentions({
       setMode("mention");
       setPanel(token.kind === "$" ? "skills" : "plugins");
     } else if (mode === "mention" && active) close(true);
-  }, [value, caret[0], caret[1], disabled, skillSelection, pluginSelection]);
+  }, [value, caret[0], caret[1], disabled, skillSelection, atSelection]);
   useEffect(() => {
     pending.current?.abort();
     setSelecting(false);
@@ -133,10 +135,25 @@ export function useComposerMentions({
     setLoading(true);
     const read =
       kind === "@"
-        ? request<Json>("plugin/list").then((v) => {
+        ? Promise.all([
+            pluginSelection
+              ? request<Json>("plugin/list")
+              : Promise.resolve({ entries: [] }),
+            expertSelection
+              ? request<Json>("expert/list")
+              : Promise.resolve({ entries: [] }),
+          ]).then(([p, e]) => {
             if (!live) return;
-            setPlugins(v.entries || []);
-            if (!v.available) setError(v.reason || "插件目录不可用");
+            setPlugins([
+              ...(e.entries || []).map((x: Json) => ({
+                ...x,
+                kind: "expert",
+                displayName: x.name,
+              })),
+              ...(p.entries || [])
+                .filter((x: Json) => x.installed && x.enabled && x.available)
+                .map((x: Json) => ({ ...x, kind: "plugin" })),
+            ]);
           })
         : reload
           ? loadSettings()
@@ -159,12 +176,12 @@ export function useComposerMentions({
   const entries: Json[] = (
     kind === "$"
       ? (skills || [])
-          .filter((s: Json) => mode === "button" || s.enabled)
+          .filter((s: Json) => !s.pluginId && (mode === "button" || s.enabled))
           .map((s: Json) => ({
             ...s,
             displayName: skillLabel({ name: s.name, interface: s.interface }),
           }))
-      : plugins.filter((p) => p.installed && p.enabled && p.available)
+      : plugins
   ).filter((entry: Json) =>
     `${entry.name} ${entry.displayName} ${entry.description || ""}`
       .toLowerCase()
@@ -176,7 +193,9 @@ export function useComposerMentions({
       selecting ||
       loading ||
       !allowed ||
-      (kind === "$" && entry.enabled === false)
+      (entry.kind === "expert"
+        ? !entry.available
+        : kind === "$" && entry.enabled === false)
     )
       return;
     const controller = new AbortController();
@@ -257,7 +276,7 @@ export function useComposerMentions({
         className="composer-selection-panel"
         align="start"
         side="top"
-        aria-label={kind === "$" ? "选择技能" : "选择插件"}
+        aria-label={kind === "$" ? "选择技能" : "选择专家或插件"}
         onOpenAutoFocus={(e) => {
           e.preventDefault();
           if (mode === "button") searchInput.current?.focus();
@@ -293,11 +312,12 @@ export function useComposerMentions({
         }}
       >
         <div className="picker-search">
+          <Search size={17} aria-hidden="true" />
           <input
             ref={searchInput}
             type="search"
-            aria-label={kind === "$" ? "搜索技能" : "搜索插件"}
-            placeholder={kind === "$" ? "搜索技能" : "搜索插件"}
+            aria-label={kind === "$" ? "搜索技能" : "搜索专家或插件"}
+            placeholder={kind === "$" ? "搜索技能" : "搜索专家或插件"}
             value={query}
             role="combobox"
             aria-expanded
@@ -339,7 +359,9 @@ export function useComposerMentions({
           </button>
         </div>
         <div className="picker-feedback" aria-live="polite">
-          {loading && <p role="status">正在读取…</p>}
+          <span role="status" className="sr-only">
+            {loading ? "正在读取选择目录" : ""}
+          </span>
           {error && (
             <p role="alert" className="inline-error">
               {error}
@@ -352,7 +374,7 @@ export function useComposerMentions({
             <p>
               {query
                 ? "没有匹配的结果"
-                : "没有可用的" + (kind === "$" ? "技能" : "插件")}
+                : "没有可用的" + (kind === "$" ? "技能" : "专家或插件")}
             </p>
           )}
         </div>
@@ -360,7 +382,7 @@ export function useComposerMentions({
           id={id}
           className="picker-results"
           role="listbox"
-          aria-label={kind === "$" ? "可选技能" : "可选插件"}
+          aria-label={kind === "$" ? "可选技能" : "可选专家或插件"}
           aria-multiselectable={mode === "button"}
           aria-busy={loading || selecting}
         >
@@ -370,13 +392,21 @@ export function useComposerMentions({
               key={entry.id}
               type="button"
               role="option"
-              aria-selected={selected.includes(entry.id)}
+              aria-selected={
+                entry.kind === "expert"
+                  ? selectedExpert === entry.id
+                  : selected.includes(entry.id)
+              }
               data-active={index === i || undefined}
               disabled={
                 selecting ||
                 loading ||
-                (kind === "$" && entry.enabled === false) ||
-                (!selected.includes(entry.id) && selected.length >= 8)
+                (entry.kind === "expert"
+                  ? !entry.available
+                  : kind === "$" && entry.enabled === false) ||
+                (entry.kind !== "expert" &&
+                  !selected.includes(entry.id) &&
+                  selected.length >= 8)
               }
               onMouseDown={(e) => e.preventDefault()}
               onPointerMove={() => setIndex(i)}
@@ -385,18 +415,30 @@ export function useComposerMentions({
               <span>
                 <strong>{entry.displayName || entry.name}</strong>
                 <small>
-                  {entry.name}
+                  {entry.kind === "expert"
+                    ? entry.available
+                      ? "专家 · 用于当前会话"
+                      : entry.problems?.join("；")
+                    : entry.kind === "plugin"
+                      ? "插件 · " + entry.name
+                      : entry.name}
                   {entry.enabled === false ? " · 已停用" : ""}
                 </small>
               </span>
-              {selected.includes(entry.id) && (
+              {(entry.kind === "expert"
+                ? selectedExpert === entry.id
+                : selected.includes(entry.id)) && (
                 <Check size={17} aria-hidden="true" />
               )}
             </button>
           ))}
         </div>
         <footer className="picker-footer">
-          <span>已选择 {selected.length} / 8</span>
+          <span>
+            {kind === "$"
+              ? `已选择 ${selected.length} / 8`
+              : `插件 ${selectedPlugins.length} / 8${selectedExpert ? " · 已选择专家" : ""}`}
+          </span>
           <button type="button" className="text-button" onClick={() => close()}>
             完成
           </button>

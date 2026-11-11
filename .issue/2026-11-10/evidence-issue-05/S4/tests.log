@@ -1,0 +1,19 @@
+✔ ZIP extraction preserves ordinary resources and mode; rejects traversal, links, bombs, duplicate names and bad CRC (22.368184ms)
+✔ import paths and GitHub references stay inside a selected package and fixed public service (0.738078ms)
+✔ SQLite journal restores package, preferences and interrupted import without claiming success (124.176389ms)
+✔ public image policy rejects local, mapped, reserved IPs, credentials, unsafe schemes and type masquerading (4.747109ms)
+✔ markdown image discovery respects syntax and reference images, excluding code examples (5.285567ms)
+✔ live markdown, native generation, MCP and function images share authenticated snapshots; history never recaptures files (22.833555ms)
+✔ image registration rejects links, traversal, foreign references and preserves per-resource failures (3.931967ms)
+✔ v2 cards, charts and links use a versioned catalog; legacy forms cannot accept new components (9.157144ms)
+✔ HTTPS redirects revalidate DNS, pin the socket and send no ambient credentials (0.98277ms)
+✔ new conversations isolate cwd, sandbox roots, live browsing and captured files; old threads retain their directory through restart (210.486061ms)
+✔ SQLite extension edits defer to the next turn, project skills are copied, disabled skills cannot be cited, and another active thread is untouched (105.362851ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 11
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 734.450884

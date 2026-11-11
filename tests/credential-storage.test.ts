@@ -13,7 +13,7 @@ import {
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { randomUUID } from "node:crypto";
-import { database } from "../server/db.js";
+import { database, DATABASE_VERSION } from "../server/db.js";
 import {
   credentialVault,
   credentialBinding,
@@ -497,7 +497,7 @@ test("v4 database upgrade preserves sessions and existing data while adding only
     assert.equal(after.get("password"), "keep-hash");
     assert.equal(
       (after.raw.prepare("PRAGMA user_version").get() as any).user_version,
-      7,
+      DATABASE_VERSION,
     );
     assert.equal(
       (after.raw.prepare("SELECT COUNT(*) n FROM sessions").get() as any).n,

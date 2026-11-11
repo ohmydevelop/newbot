@@ -1,0 +1,67 @@
+{
+  "browser": "Chrome extension via CUA",
+  "viewports": [
+    {
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "width": 390,
+      "height": 844
+    },
+    {
+      "width": 320,
+      "height": 740
+    }
+  ],
+  "candidate": ".data/issue001-web",
+  "fixture": "isolated fake Codex + real Bridge/SQLite; GitHub references from public repository",
+  "checks": {
+    "gateway": {
+      "editableFullUrl": true,
+      "inputTextareaAlignment": true,
+      "footerVisibleMobile": true
+    },
+    "connector": {
+      "advancedBodyScrollable": true,
+      "saveVisible": true,
+      "keyboard": true,
+      "saved": true,
+      "accessibleDisplayName": true
+    },
+    "github": {
+      "defaultRef": "main",
+      "pagingCounts": [
+        101,
+        201
+      ],
+      "slashRef": "7ocjkf-codex/implement-chat-completions-sse-parser-test",
+      "searchMatch": "ab/compaction-start-end-events",
+      "tagsDiscovered": true,
+      "bodyWidth390": 368,
+      "bodyScrollWidth390": 368,
+      "bodyWidth320": 298,
+      "bodyScrollWidth320": 298
+    },
+    "process": {
+      "viewportHeight": 360,
+      "initialScrollHeight": 974,
+      "keyboardScrollTop": 614,
+      "collapsedHeight": 52,
+      "reopenedScrollTop": 614,
+      "detailBodyHeight": 258,
+      "detailScrollHeight": 35238,
+      "finalAnswerVisible": true,
+      "reloadCollapsed": true
+    },
+    "reasoning": {
+      "keyboardChange": "medium -> high",
+      "reloadPersisted": true,
+      "mobilePopoverWidth": 320
+    }
+  },
+  "remaining": [
+    "Native backend and provider already tested separately; UI fixture does not prove real provider compatibility",
+    "Live-service deploy not performed"
+  ]
+}

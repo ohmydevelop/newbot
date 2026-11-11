@@ -1,0 +1,17 @@
+{
+  "at": "2026-11-11T02:49:35.310Z",
+  "version": "0.165.0",
+  "pluginVersion": "0.5.2",
+  "archiveSha256": "e58c9ecb0ec22fcceee860b279ee11e04dce27e8e1796900e465b385b585ca46",
+  "modelRequests": 2,
+  "syntheticBusinessRequests": 11,
+  "realModelRequests": 0,
+  "realBusinessRequests": 0,
+  "checks": [
+    "unchanged 0.5.2 package; actual native model/tool history opens its resource and exposes seven same-connection tools including unannotated data tools",
+    "real SDK tools/call through host grants and pinned Codex returns business groups and refreshed posture; denial, foreign tool and replay do not execute",
+    "closing revokes calls; reopening the same persisted source gets a new lease without repeating business requests",
+    "full service restart restores original thread/App result and encrypted connector settings; approved data calls still work without model replay or config.toml"
+  ],
+  "browserValidation": false
+}

@@ -1,0 +1,25 @@
+{
+  "at": "2026-11-10T09:57:15.484Z",
+  "source": {
+    "kind": "github",
+    "owner": "openai",
+    "repo": "skills",
+    "ref": "49f948faa9258a0c61caceaf225e179651397431",
+    "path": "skills/.system/skill-creator",
+    "name": "openai/skills",
+    "url": "https://github.com/openai/skills",
+    "commit": "49f948faa9258a0c61caceaf225e179651397431"
+  },
+  "state": "ready",
+  "files": 7,
+  "bytes": 56734,
+  "entries": [
+    {
+      "name": "openai/skills",
+      "skills": [
+        "skill-creator"
+      ]
+    }
+  ],
+  "scope": "public HTTPS download and native read-only scan; no package script or model execution"
+}

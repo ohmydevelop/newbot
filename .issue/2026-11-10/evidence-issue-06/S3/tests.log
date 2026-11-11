@@ -1,0 +1,41 @@
+✔ vault encrypts at rest with a separate protected key and authenticates ciphertext and metadata (5.400728ms)
+✔ encrypted entries restore after restart, memory entries do not, and unknown refs never activate (2.428616ms)
+✔ receiver changes, cross-provider reuse and forwarding to stdio prevent native secret injection (1.863737ms)
+✔ lost or symlinked master key locks encrypted credentials without silently regenerating a key (2.055756ms)
+✔ vault writes fail closed inside the agent workspace and do not permit persistence (1.740846ms)
+✔ Provider save writes only a reference, refreshes native credentials, and clear removes the value and reference (164.487681ms)
+✔ HTTPS MCP bearer credentials use the native environment reference and remain absent from normal config (84.247336ms)
+✔ stale configuration or credential version cannot overwrite or clear an existing key (75.962829ms)
+✔ a lost native write acknowledgment keeps the staged value until the authoritative outcome can be read (76.268006ms)
+✔ restart failure reports saved but unapplied and preserves the encrypted credential (69.161609ms)
+✔ Bridge restart reloads encrypted credentials but requires memory credentials to be entered again (202.020105ms)
+✔ external binding changes terminate stale native authorization before a new turn (80.531172ms)
+✔ normal configuration APIs cannot retarget managed references or bypass the private clear path (77.22005ms)
+✔ stdio and non-user-owned credential targets fail before any secret is staged (71.908578ms)
+✔ v4 database upgrade preserves sessions and existing data while adding only encrypted credential storage (2.090641ms)
+✔ master key removal during a running service locks reads and new encrypted writes (2.042969ms)
+✔ saved configuration and defaults do not wait for remote discovery, or touch existing native threads (169.800433ms)
+✔ HTML and malformed JSON responses never leak parser errors or HTML bodies (1.928667ms)
+✔ object revisions allow unrelated edits but reject a stale edit of the same gateway (1.6006ms)
+✔ field vault injects only selected recipients, encrypts at rest and binds to endpoint (174.430468ms)
+✔ chat authorization holds dispatch, isolates run and thread grants, cancels and survives disconnect without replay (97.154865ms)
+✔ sqlite: model defaults cannot inject an unsupported effort, while explicit choices remain validated (210.854689ms)
+✔ native: model defaults cannot inject an unsupported effort, while explicit choices remain validated (107.28544ms)
+✔ cross-provider session changes preserve native identity and another running task; revisions reject stale updates (179.963378ms)
+✔ active choices are saved without altering pending approval; failed application preserves intent and confirmed binding (77.258397ms)
+✔ session settings survive restart and model catalog discovery is not reported as verified compatibility (71.634692ms)
+✔ independent Codex does not inherit the launching agent's tool pipe, identity or Bridge secrets (0.27795ms)
+✔ a managed policy change blocks a previously saved full-access session before dispatch (68.70202ms)
+✔ legacy sessions recover the native saved model instead of adopting a changed global default (69.504961ms)
+✔ reading legacy history uses saved native metadata without restoring the execution environment (67.539349ms)
+✔ latest candidate survives restart and changes only the next native turn (107.404859ms)
+✔ competing saves use CAS after asynchronous validation (69.774824ms)
+✔ an edit arriving during native application is retained for the following turn (63.651575ms)
+ℹ tests 33
+ℹ suites 0
+ℹ pass 33
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1463.349149

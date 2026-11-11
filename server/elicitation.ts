@@ -19,6 +19,7 @@ export function elicitations(
   codex: Codex,
   db: Store,
   expired: (id: string | number, threadId: string) => void,
+  decorate: (approval: Approval) => Approval = (approval) => approval,
 ) {
   const pending = new Map<string | number, Pending>();
   function track(a: Approval) {
@@ -101,9 +102,9 @@ export function elicitations(
   }
   function publicApproval(a: Approval): Approval {
     const e = track(a);
-    if (!e) return a;
+    if (!e) return decorate(a);
     const { request: _, ...input } = e;
-    return {
+    return decorate({
       id: a.id,
       method: a.method,
       params: {
@@ -113,7 +114,7 @@ export function elicitations(
         mode: "form",
         elicitation: input,
       },
-    };
+    });
   }
   const timer = setInterval(expire, 1000);
   timer.unref();

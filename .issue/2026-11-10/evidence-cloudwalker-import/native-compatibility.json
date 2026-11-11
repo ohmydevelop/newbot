@@ -1,0 +1,24 @@
+[
+  {
+    "variable": "PLUGIN_ROOT",
+    "servers": [
+      {
+        "name": "cloudwalker",
+        "status": "failed",
+        "error": "MCP startup failed: No such file or directory (os error 2)",
+        "toolNames": []
+      }
+    ]
+  },
+  {
+    "variable": "CLAUDE_PLUGIN_ROOT",
+    "servers": [
+      {
+        "name": "cloudwalker",
+        "status": "failed",
+        "error": "MCP startup failed: No such file or directory (os error 2)",
+        "toolNames": []
+      }
+    ]
+  }
+]

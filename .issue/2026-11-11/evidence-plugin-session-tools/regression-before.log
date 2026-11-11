@@ -1,0 +1,42 @@
+✔ plugin settings preserve ownership, encrypt credentials and recover without config files (34.178095ms)
+✔ same-name connectors in different plugins stay isolated, including disable and uninstall (22.609883ms)
+✖ plugin saves reject missing or invalidated credentials atomically instead of reporting success (10.522591ms)
+✖ selected plugin readiness uses the captured configuration and leaves unrelated or intentionally disabled connectors alone (4.671638ms)
+✔ endpoint/package changes cannot inherit secrets and concurrent writes preserve the first save (26.759609ms)
+✔ upgrades preserve compatible ordinary fields while invalidating code-bound credentials (19.669544ms)
+✔ MCPB numeric/optional fields and HTTP runtime headers bind only declared destinations (20.825644ms)
+✔ unsupported descriptors, sensitive command templates and protected env fail closed (13.638482ms)
+✔ configuration-free connectors need no credential, and declared manifest paths stay within the package (11.601645ms)
+✔ MCPB discovery uses declared names and manifest-relative roots, rejects obsolete pointers and malformed bundles (8.416235ms)
+✔ certificate observation validates ownership, field privacy and revision before and after network work (17.935583ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 9
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 385.509344
+
+✖ failing tests:
+
+test at tests/plugin-configuration.test.ts:1:6437
+✖ plugin saves reject missing or invalidated credentials atomically instead of reporting success (10.522591ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection.
+      at async TestContext.<anonymous> (/home/a/Documents/ChatGPT/newbot/tests/plugin-configuration.test.ts:276:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: /请填写.*密钥/,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at tests/plugin-configuration.test.ts:1:8086
+✖ selected plugin readiness uses the captured configuration and leaves unrelated or intentionally disabled connectors alone (4.671638ms)
+  TypeError [Error]: f.connections.requireConfigured is not a function
+      at TestContext.<anonymous> (/home/a/Documents/ChatGPT/newbot/tests/plugin-configuration.test.ts:302:40)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)

@@ -1,3 +1,4 @@
+import { Code } from "./Renderer";
 import { useEffect, useRef, useState } from "react";
 import { useResolvedTheme } from "../appearance";
 import { useMediaQuery } from "../media";
@@ -25,12 +26,19 @@ echarts.use([
   DatasetComponent,
   SVGRenderer,
 ]);
-export default function Chart({ code }: { code: string }) {
+export default function Chart({
+  code,
+  streaming = false,
+}: {
+  code: string;
+  streaming?: boolean;
+}) {
   const ref = useRef<HTMLDivElement>(null);
   const theme = useResolvedTheme();
   const reducedMotion = useMediaQuery("(prefers-reduced-motion: reduce)");
   const [error, setError] = useState("");
   useEffect(() => {
+    if (streaming) return;
     let chart: echarts.ECharts | undefined;
     let observer: ResizeObserver | undefined;
     let frame = 0;
@@ -65,19 +73,27 @@ export default function Chart({ code }: { code: string }) {
       observer?.disconnect();
       chart?.dispose();
     };
-  }, [code, theme, reducedMotion]);
+  }, [code, theme, reducedMotion, streaming]);
   return (
     <figure className="chart" aria-label="交互图表">
-      {error ? <p className="muted">{error}</p> : null}
+      {streaming ? (
+        <p className="muted" role="status">
+          正在绘制图表…
+        </p>
+      ) : error ? (
+        <>
+          <p className="muted">图表配置无法解析，以下为原始数据。</p>
+          <Code language="json" code={code} />
+        </>
+      ) : null}
       <div
         ref={ref}
         style={{
           height: 320,
           width: "100%",
-          display: error ? "none" : undefined,
+          display: error || streaming ? "none" : undefined,
         }}
       />
-      <figcaption>交互图表 · ECharts</figcaption>
     </figure>
   );
 }

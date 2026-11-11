@@ -1,0 +1,7 @@
+{
+  "tests": 355,
+  "pass": 355,
+  "fail": 0,
+  "typecheck": "passed",
+  "fixtures": "isolated test runtimes and local simulated upstreams; native probes are recorded separately"
+}

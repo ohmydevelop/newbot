@@ -1,3 +1,4 @@
+import { imageExtension } from "./public-images.js";
 import { PublicError } from "./public-error.js";
 import { createHash, randomUUID } from "node:crypto";
 import { constants, mkdirSync, realpathSync } from "node:fs";
@@ -165,7 +166,12 @@ function dto(row: Row): Artifact {
   };
 }
 
-export function artifactStore(directory: string, workspace: string, db: Store) {
+export function artifactStore(
+  directory: string,
+  workspace: string,
+  db: Store,
+  workspaceRoot?: (threadId: string) => string,
+) {
   const root = realpathSync(workspace);
   const privateRoot = realpathSync(directory);
   const folder = join(privateRoot, "artifacts");
@@ -180,7 +186,11 @@ export function artifactStore(directory: string, workspace: string, db: Store) {
   const own = (id: string) => {
     if (!db.owns(id)) throw new PublicError("会话不存在");
   };
-  function pathOf(input: string, native = false) {
+  function pathOf(
+    input: string,
+    native = false,
+    root = realpathSync(workspace),
+  ) {
     if (!input || input.length > 1024 || /[\\\x00-\x1f\x7f]/.test(input))
       fail("invalid_path");
     let path = input;
@@ -215,7 +225,11 @@ export function artifactStore(directory: string, workspace: string, db: Store) {
       fail("restricted_path");
     return { path: parts.join("/"), full };
   }
-  async function validate(full: string, directoryOnly = false) {
+  async function validate(
+    full: string,
+    directoryOnly = false,
+    root = realpathSync(workspace),
+  ) {
     let current = root;
     const parts = relative(root, full).split(sep).filter(Boolean);
     for (let i = 0; i < parts.length; i++) {
@@ -232,8 +246,12 @@ export function artifactStore(directory: string, workspace: string, db: Store) {
     if (directoryOnly && !(await lstat(full)).isDirectory())
       fail("not_directory");
   }
-  async function readBounded(full: string, workspaceFile: boolean) {
-    if (workspaceFile) await validate(full);
+  async function readBounded(
+    full: string,
+    workspaceFile: boolean,
+    root = realpathSync(workspace),
+  ) {
+    if (workspaceFile) await validate(full, false, root);
     const handle = await open(
       full,
       constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_NONBLOCK,
@@ -261,7 +279,7 @@ export function artifactStore(directory: string, workspace: string, db: Store) {
         count += result.bytesRead;
       }
       const after = await handle.stat();
-      if (workspaceFile) await validate(full);
+      if (workspaceFile) await validate(full, false, root);
       const current = await lstat(full);
       if (
         count !== before.size ||
@@ -450,11 +468,15 @@ export function artifactStore(directory: string, workspace: string, db: Store) {
     turnId: string,
     path: string,
     itemId: string | null,
+    provided?: Buffer,
+    source: Artifact["source"] = itemId ? "fileChange" : "user",
   ) {
     own(threadId);
     assertStorageDirectory(folder);
-    const { full } = pathOf(path);
-    const data = await readBounded(full, true);
+    const root = workspaceRoot?.(threadId) || realpathSync(workspace);
+    const data =
+      provided ??
+      (await readBounded(pathOf(path, false, root).full, true, root));
     const type = format(path, data);
     const sha = createHash("sha256").update(data).digest("hex");
     if (!itemId) {
@@ -557,10 +579,10 @@ export function artifactStore(directory: string, workspace: string, db: Store) {
             data.length,
             sha,
             version,
-            itemId ? "fileChange" : "user",
+            source,
             Date.now(),
           );
-        if (itemId)
+        if (itemId && source === "fileChange")
           db.raw
             .prepare(
               "UPDATE artifact_sources SET state='ready',artifact_id=?,reason=NULL WHERE thread_id=? AND turn_id=? AND item_id=? AND path=?",
@@ -584,6 +606,33 @@ export function artifactStore(directory: string, workspace: string, db: Store) {
   }
   return {
     get,
+    image(
+      threadId: string,
+      turnId: string,
+      itemId: string,
+      input: { path?: string; data?: Buffer },
+    ) {
+      own(threadId);
+      return serial(async () => {
+        const root = workspaceRoot?.(threadId) || realpathSync(workspace);
+        const data =
+          input.data ??
+          (await readBounded(pathOf(input.path!, true, root).full, true, root));
+        const ext = imageExtension(data);
+        const key = createHash("sha256")
+          .update(itemId)
+          .digest("hex")
+          .slice(0, 24);
+        return capture(
+          threadId,
+          turnId,
+          `media/${key}/image${ext}`,
+          itemId,
+          data,
+          "media",
+        );
+      });
+    },
     list,
     maintenance,
     versions(id: string, before?: number) {
@@ -622,7 +671,7 @@ export function artifactStore(directory: string, workspace: string, db: Store) {
     },
     register(threadId: string, turnId: string, input: string) {
       own(threadId);
-      const { path } = pathOf(input);
+      const { path } = pathOf(input, false, workspaceRoot?.(threadId) || root);
       return serial(() => capture(threadId, turnId, path, null));
     },
     completed(
@@ -651,7 +700,11 @@ export function artifactStore(directory: string, workspace: string, db: Store) {
         if (change.kind?.type === "delete") continue;
         let path: string;
         try {
-          path = pathOf(change.kind?.move_path || change.path, true).path;
+          path = pathOf(
+            change.kind?.move_path || change.path,
+            true,
+            workspaceRoot?.(threadId) || root,
+          ).path;
         } catch {
           continue;
         }
@@ -698,9 +751,13 @@ export function artifactStore(directory: string, workspace: string, db: Store) {
         fail("snapshot_corrupt");
       return { artifact, data };
     },
-    async workspaceFiles(input = "", offset = 0) {
-      const full = input ? pathOf(input).full : root;
-      await validate(full, true);
+    async workspaceFiles(input = "", offset = 0, threadId?: string) {
+      const root =
+        workspaceRoot && threadId
+          ? workspaceRoot(threadId)
+          : realpathSync(workspace);
+      const full = input ? pathOf(input, false, root).full : root;
+      await validate(full, true, root);
       const dir = await opendir(full);
       const entries = [];
       let scanned = 0;
@@ -712,7 +769,7 @@ export function artifactStore(directory: string, workspace: string, db: Store) {
         }
         const path = input ? `${input}/${entry.name}` : entry.name;
         try {
-          pathOf(path);
+          pathOf(path, false, root);
         } catch {
           continue;
         }

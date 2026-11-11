@@ -1,0 +1,21 @@
+{
+  "checks": [
+    "plugin button opens searchable panel without changing draft; repeat focuses same panel",
+    "outside click closes picker; Escape returns focus; entry switch keeps one panel",
+    "manual @ at caret selects and preserves suffix; duplicate reference remains unique",
+    "manual $ supports keyboard selection and IME never submits",
+    "typing while plugin list is delayed preserves loading; errors retry in same panel",
+    "model groups collapse, search temporarily expands, and redundant compatibility text is absent",
+    "reasoning slider reflects six supported values and commits final keyboard choice",
+    "model selection and mention panel do not overlap; draft survives closing",
+    "message area accepts files; nested drag leaves do not flicker or duplicate uploads",
+    "text drags, sidebar and settings do not upload files; cancellation clears the hint",
+    "settings keep identical bounds across tabs; gateway columns and editor controls align",
+    "responsive settings, palettes and model popover stay inside all viewports",
+    "cancelled skill selection and late plugin discovery cannot populate a new draft",
+    "running turns block model changes and uploads; failed setting keeps binding and draft",
+    "gateway edits persist in SQLite across browser reload and never write native Provider config or restart Codex",
+    "empty and externally supplied SQLite configuration are explicit on mobile and preserve existing history"
+  ],
+  "errors": []
+}

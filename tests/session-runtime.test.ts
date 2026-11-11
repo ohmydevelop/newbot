@@ -65,14 +65,15 @@ async function fixture(fn: (f: any) => Promise<void>) {
   const directory = mkdtempSync(join(tmpdir(), "newbot-runtime-contract-")),
     codex = new RuntimeCodex(),
     origin = "http://127.0.0.1:3100";
-  const ctx = await createServer({
+  const options = {
     providerRuntime: null,
     directory,
     cwd: join(directory, "work"),
     codex,
     password: "runtime-test-login",
     origins: [origin],
-  });
+  };
+  let ctx = await createServer(options);
   const login = await ctx.app.inject({
       method: "POST",
       url: "/api/login",
@@ -86,7 +87,7 @@ async function fixture(fn: (f: any) => Promise<void>) {
   const post = (url: string, payload: object) =>
     ctx.app.inject({ method: "POST", url, headers, payload });
   try {
-    await fn({
+    const f = {
       ...ctx,
       codex,
       headers,
@@ -98,7 +99,15 @@ async function fixture(fn: (f: any) => Promise<void>) {
           ...payload,
         }),
       action: (payload: object) => post("/api/agent/action", payload),
-    });
+      async restart() {
+        await ctx.app.close();
+        codex.active.clear();
+        codex.loaded.clear();
+        ctx = await createServer(options);
+        Object.assign(f, ctx);
+      },
+    };
+    await fn(f);
   } finally {
     await ctx.app.close();
     rmSync(directory, { recursive: true, force: true });
@@ -158,51 +167,71 @@ test("cross-provider session changes preserve native identity and another runnin
       .get(next.json().requestId);
     assert.equal(JSON.parse(context.context).provider, "secondary");
   }));
-test("active sessions and denied permission presets cannot be changed; failed provider recovery leaves saved binding intact", async () =>
+test("active choices are saved without altering pending approval; failed application preserves intent and confirmed binding", async () =>
   fixture(async (f) => {
     const first = (await f.run()).json();
+    f.codex.approvals.set(501, {
+      id: 501,
+      method: "item/commandExecution/requestApproval",
+      params: { threadId: first.threadId },
+    });
+    const saved = await f.action({
+      action: "session/update",
+      threadId: first.threadId,
+      expectedRevision: 0,
+      approval: "full",
+    });
+    assert.equal(saved.statusCode, 200, saved.body);
+    assert.equal(saved.json().pending.state, "pending");
+    assert.equal(saved.json().applied.approval, "ask");
+    assert.ok(f.codex.approvals.has(501));
     assert.equal(
-      (
-        await f.action({
-          action: "session/update",
-          threadId: first.threadId,
-          expectedRevision: 0,
-          approval: "full",
-        })
-      ).statusCode,
-      400,
+      f.codex.calls.filter((c: any) => c.method === "thread/settings/update")
+        .length,
+      0,
     );
     f.codex.finish(first.threadId);
+    f.codex.approvals.clear();
     f.codex.denied = true;
-    const choices = (await f.action({ action: "runtime/presets" })).json();
-    assert.equal(choices.find((v: any) => v.id === "full").allowed, false);
-    assert.equal(
-      (
-        await f.action({
-          action: "session/update",
-          threadId: first.threadId,
-          expectedRevision: 0,
-          approval: "full",
-        })
-      ).statusCode,
-      400,
-    );
+    const denied = await f.action({
+      action: "session/update",
+      threadId: first.threadId,
+      expectedRevision: 1,
+      approval: "full",
+    });
+    assert.equal(denied.statusCode, 400);
     f.codex.denied = false;
     f.codex.failResume = true;
-    assert.notEqual(
-      (
-        await f.action({
-          action: "session/update",
-          threadId: first.threadId,
-          expectedRevision: 0,
-          provider: "secondary",
-          model: "fixture-model",
-        })
-      ).statusCode,
-      200,
-    );
+    const failed = await f.action({
+      action: "session/update",
+      threadId: first.threadId,
+      expectedRevision: 1,
+      provider: "secondary",
+      model: "fixture-model",
+    });
+    assert.equal(failed.statusCode, 200, failed.body);
+    assert.equal(failed.json().pending.state, "failed");
+    assert.equal(failed.json().provider, "secondary");
     assert.equal(f.db.provider(first.threadId), "fixture");
-    assert.equal(f.service.runtimeSettings.get(first.threadId).revision, 0);
+    const count = f.codex.calls.filter(
+      (c: any) => c.method === "turn/start",
+    ).length;
+    assert.equal((await f.run({ threadId: first.threadId })).statusCode, 400);
+    assert.equal(
+      f.codex.calls.filter((c: any) => c.method === "turn/start").length,
+      count,
+    );
+    f.codex.failResume = false;
+    const cancelled = await f.action({
+      action: "session/update",
+      threadId: first.threadId,
+      expectedRevision: 2,
+      cancel: true,
+    });
+    assert.equal(cancelled.statusCode, 200, cancelled.body);
+    assert.equal(cancelled.json().pending, undefined);
+    assert.equal(cancelled.json().approval, "ask");
+    assert.equal(cancelled.json().revision, 3);
   }));
 test("session settings survive restart and model catalog discovery is not reported as verified compatibility", async () =>
   fixture(async (f) => {
@@ -332,5 +361,127 @@ test("reading legacy history uses saved native metadata without restoring the ex
     assert.equal(
       f.codex.calls.filter((c: any) => c.method === "thread/resume").length,
       before,
+    );
+  }));
+
+test("latest candidate survives restart and changes only the next native turn", async () =>
+  fixture(async (f) => {
+    const first = (await f.run()).json(),
+      id = first.threadId;
+    const firstCall = structuredClone(
+      f.codex.calls.filter((c: any) => c.method === "turn/start").at(-1),
+    );
+    for (const [revision, effort] of [
+      [0, "low"],
+      [1, "high"],
+    ] as const) {
+      const r = await f.action({
+        action: "session/update",
+        threadId: id,
+        expectedRevision: revision,
+        provider: "secondary",
+        model: "fixture-model",
+        effort,
+        approval: "review",
+      });
+      assert.equal(r.statusCode, 200, r.body);
+      assert.equal(r.json().pending.state, "pending");
+    }
+    assert.equal(f.codex.unloaded.length, 0);
+    assert.deepEqual(
+      f.codex.calls.filter((c: any) => c.method === "turn/start").at(-1),
+      firstCall,
+    );
+    f.codex.finish(id);
+    await f.restart();
+    assert.equal(f.service.runtimeSettings.get(id).effort, "high");
+    assert.equal(f.service.runtimeSettings.applied(id).provider, "fixture");
+    const next = await f.run({ threadId: id, runtimeRevision: 2 });
+    assert.equal(next.statusCode, 200, next.body);
+    assert.equal(next.json().threadId, id);
+    const call = f.codex.calls
+      .filter((c: any) => c.method === "turn/start")
+      .at(-1);
+    assert.equal(call.params.effort, "high");
+    assert.equal(call.params.approvalsReviewer, "auto_review");
+    assert.equal(f.service.runtimeSettings.get(id).pending, undefined);
+    assert.equal(f.service.runtimeSettings.applied(id).provider, "secondary");
+    const before = JSON.parse(
+      f.db.raw
+        .prepare("SELECT context FROM run_context WHERE request_id=?")
+        .get(first.requestId).context,
+    );
+    assert.equal(before.approval, "ask");
+    assert.equal(before.provider, "fixture");
+  }));
+
+test("competing saves use CAS after asynchronous validation", async () =>
+  fixture(async (f) => {
+    const first = (await f.run()).json();
+    const results = await Promise.all(
+      ["low", "high"].map((effort) =>
+        f.action({
+          action: "session/update",
+          threadId: first.threadId,
+          expectedRevision: 0,
+          effort,
+        }),
+      ),
+    );
+    assert.deepEqual(results.map((r) => r.statusCode).sort(), [200, 400]);
+    assert.equal(f.service.runtimeSettings.get(first.threadId).revision, 1);
+    assert.equal(
+      f.codex.calls.filter((c: any) => c.method === "thread/settings/update")
+        .length,
+      0,
+    );
+  }));
+
+test("an edit arriving during native application is retained for the following turn", async () =>
+  fixture(async (f) => {
+    const first = (await f.run()).json(),
+      id = first.threadId;
+    f.codex.finish(id);
+    const original = f.codex.call.bind(f.codex);
+    let release!: () => void, entered!: () => void;
+    const ready = new Promise<void>((resolve) => (entered = resolve)),
+      gate = new Promise<void>((resolve) => (release = resolve));
+    let blocked = false;
+    f.codex.call = async (method: any, params: any) => {
+      if (method === "thread/settings/update" && !blocked) {
+        blocked = true;
+        entered();
+        await gate;
+      }
+      return original(method, params);
+    };
+    const older = f.action({
+      action: "session/update",
+      threadId: id,
+      expectedRevision: 0,
+      effort: "low",
+    });
+    await ready;
+    const newer = await f.action({
+      action: "session/update",
+      threadId: id,
+      expectedRevision: 1,
+      effort: "high",
+    });
+    assert.equal(newer.statusCode, 200, newer.body);
+    release();
+    await older;
+    const saved = f.service.runtimeSettings.get(id);
+    assert.equal(saved.effort, "high");
+    assert.equal(saved.applied.effort, "low");
+    assert.equal(saved.pending.state, "pending");
+    assert.equal(
+      (await f.run({ threadId: id, runtimeRevision: 2 })).statusCode,
+      200,
+    );
+    assert.equal(
+      f.codex.calls.filter((c: any) => c.method === "turn/start").at(-1).params
+        .effort,
+      "high",
     );
   }));

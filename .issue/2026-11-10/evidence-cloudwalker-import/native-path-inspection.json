@@ -1,0 +1,13 @@
+[
+  {
+    "variable": "CLAUDE_PLUGIN_ROOT_ARGS",
+    "servers": [
+      {
+        "name": "cloudwalker",
+        "status": "failed",
+        "error": "MCP startup failed: handshaking with MCP server failed: Send message error Transport [codex_rmcp_client::tool_list_changes::ToolListChanges<codex_rmcp_client::ordered_byte_transport::OrderedByteTransport<codex_rmcp_client::stdio_server_launcher::StdioServerTransport>>] error: Broken pipe (os error 32), when send initialize request: Send message error Transport [codex_rmcp_client::tool_list_changes::ToolListChanges<codex_rmcp_client::ordered_byte_transport::OrderedByteTransport<codex_rmcp_client::stdio_server_launcher::StdioServerTransport>>] error: Broken pipe (os error 32), when send initialize request",
+        "toolNames": []
+      }
+    ]
+  }
+]

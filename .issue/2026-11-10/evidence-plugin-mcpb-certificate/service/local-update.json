@@ -1,0 +1,20 @@
+{
+  "at": "2026-11-10T16:02:56.678Z",
+  "oldPid": 1722066,
+  "pid": 1789901,
+  "schema": 14,
+  "counts": {
+    "threads": 24,
+    "runs": 71,
+    "attachments": 5
+  },
+  "passwordUnchanged": true,
+  "credentialsUnchanged": true,
+  "personalConfigUnchanged": true,
+  "instanceConfigUnchanged": true,
+  "providersUnchanged": true,
+  "historiesVerified": 3,
+  "modelTurnsCreated": 0,
+  "asset": "/assets/index-DW8Vx5FP.js",
+  "backup": "/home/a/Documents/ChatGPT/newbot/.data/restart-backups/plugin-mcpb-certificate-1794326575794"
+}

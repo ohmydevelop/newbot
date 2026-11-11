@@ -1,0 +1,19 @@
+✔ manual models survive unavailable discovery, enter execution, and restore from SQLite without native writes (274.135433ms)
+✔ sqlite: model defaults cannot inject an unsupported effort, while explicit choices remain validated (210.690151ms)
+✔ native: model defaults cannot inject an unsupported effort, while explicit choices remain validated (101.719139ms)
+✔ reasoning separates missing metadata, native declarations and provider-specific unknown capabilities (0.981611ms)
+✔ cross-provider session changes preserve native identity and another running task; revisions reject stale updates (176.274538ms)
+✔ active sessions and denied permission presets cannot be changed; failed provider recovery leaves saved binding intact (72.304907ms)
+✔ session settings survive restart and model catalog discovery is not reported as verified compatibility (78.553191ms)
+✔ independent Codex does not inherit the launching agent's tool pipe, identity or Bridge secrets (0.292309ms)
+✔ a managed policy change blocks a previously saved full-access session before dispatch (71.805804ms)
+✔ legacy sessions recover the native saved model instead of adopting a changed global default (70.190067ms)
+✔ reading legacy history uses saved native metadata without restoring the execution environment (67.602438ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 11
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 918.931987

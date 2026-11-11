@@ -1,0 +1,42 @@
+{
+  "observedAt": "2026-11-10T15:32:26.030Z",
+  "plugin": {
+    "id": "cloudwalker@newbot-imports",
+    "version": "0.5.1",
+    "enabled": true,
+    "transport": "stdio",
+    "configured": true,
+    "source": "package",
+    "reviewRequired": false,
+    "fields": [
+      {"id": "base_url", "type": "string", "required": true, "sensitive": false},
+      {"id": "api_token", "type": "string", "required": true, "sensitive": true}
+    ],
+    "documentedButUndeclared": ["CLOUDWALKER_CA_PEM", "CLOUDWALKER_TLS_CERTIFICATE_SHA256"]
+  },
+  "build": {"asset": "/assets/index-DVvWXta9.js", "localMatches": true, "publicMatches": true},
+  "tlsProbe": {
+    "target": "10.2.97.190:443",
+    "verificationRequired": true,
+    "ipVerificationRequested": "10.2.97.190",
+    "exitCode": 1,
+    "verifyCode": 18,
+    "reason": "self-signed certificate",
+    "httpRequests": 0,
+    "credentialsSent": false,
+    "trustChanged": false,
+    "unverified": ["SAN", "validity", "token validity", "post-trust business availability"]
+  },
+  "sourceEvidence": [
+    "server/plugin-descriptor.ts",
+    "server/plugin-connections.ts",
+    "server/private-fields.ts",
+    "server/bridge.ts:plugin/connection/test",
+    "web/components/PluginComponents.tsx",
+    ".data/codex/plugins/cache/newbot-imports/cloudwalker/0.5.1/configuration/cloudwalker.json",
+    ".data/codex/plugins/cache/newbot-imports/cloudwalker/0.5.1/docs/configuration.md",
+    ".data/codex/plugins/cache/newbot-imports/cloudwalker/0.5.1/README.md"
+  ],
+  "productEdits": false,
+  "browserVerification": "not performed"
+}

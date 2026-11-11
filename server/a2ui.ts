@@ -13,6 +13,7 @@ import {
   type A2uiView,
 } from "../shared/a2ui-chat.js";
 import {
+  a2uiCatalogId,
   A2uiInputError,
   assertA2uiBudget,
   encodeA2ui,
@@ -51,8 +52,16 @@ export function a2uiManager(
   db: Store,
   changed: (threadId: string) => void,
   running: (threadId: string, turnId: string) => boolean,
+  resolveImage?: (
+    threadId: string,
+    turnId: string,
+    itemId: string,
+    source: string,
+    label: string,
+  ) => Promise<string>,
 ) {
   const records = new Map<string, UiRecord>();
+  const applying = new Set<string>();
   const saved = a2uiStore(db);
   const timeoutMs = 10 * 60_000;
   const current = (request: ToolRequest) =>
@@ -174,9 +183,13 @@ export function a2uiManager(
       };
     return view;
   }
-  function makeRecord(view: A2uiView, calls = new Set<string>()): UiRecord {
+  function makeRecord(
+    view: A2uiView,
+    calls = new Set<string>(),
+    catalogId = a2uiCatalogId(view.messages),
+  ): UiRecord {
     const r: UiRecord = { view, calls, runtime: null! };
-    r.runtime = new A2uiRuntime(createA2uiSchemaCatalog(), {
+    r.runtime = new A2uiRuntime(createA2uiSchemaCatalog(catalogId), {
       surfaceId: view.surfaceId,
       allowedActions: A2UI_ACTIONS,
       onAction: (action) => {
@@ -238,7 +251,7 @@ export function a2uiManager(
     }
     fail("待处理表单已满，请先完成现有表单", 429);
   }
-  function handle(request: ToolRequest) {
+  async function handle(request: ToolRequest) {
     const {
       threadId,
       turnId,
@@ -255,6 +268,7 @@ export function a2uiManager(
       return;
     }
     let record: UiRecord | undefined;
+    let lock = "";
     let fresh = false,
       applied = false;
     try {
@@ -271,6 +285,10 @@ export function a2uiManager(
             : "updateDataModel" in operation
               ? operation.updateDataModel.surfaceId
               : operation.deleteSurface.surfaceId;
+      const key = `${threadId}:${turnId}:${surfaceId}`;
+      if (applying.has(key)) fail("界面正在更新，请等待当前调用完成");
+      applying.add(key);
+      lock = key;
       const storedId = saved.idBySurface(threadId, turnId, surfaceId);
       record = storedId ? restore(storedId) : undefined;
       if (record?.pending || record?.consuming)
@@ -296,16 +314,19 @@ export function a2uiManager(
           state: "display",
           messages: [],
         };
-        record = makeRecord(view);
+        record = makeRecord(view, new Set(), a2uiCatalogId(input.messages));
         fresh = true;
       }
       // The shared runtime applies budget, schema and graph checks before SDK
       // processing. No unvalidated UI is forwarded to a browser.
-      const validation = new A2uiRuntime(createA2uiSchemaCatalog(), {
-        surfaceId,
-        allowedActions: A2UI_ACTIONS,
-        onAction: () => {},
-      });
+      const validation = new A2uiRuntime(
+        createA2uiSchemaCatalog(record.runtime.catalog.id),
+        {
+          surfaceId,
+          allowedActions: A2UI_ACTIONS,
+          onAction: () => {},
+        },
+      );
       try {
         const prior = record.runtime.snapshot();
         if (prior.length) validation.apply(encodeA2ui(prior));
@@ -318,6 +339,20 @@ export function a2uiManager(
       } finally {
         validation.dispose();
       }
+      for (const message of input.messages)
+        if ("updateComponents" in message)
+          for (const component of message.updateComponents.components)
+            if (component.component === "Image") {
+              if (!resolveImage) fail("图片资源接口不可用");
+              component.source = await resolveImage(
+                threadId,
+                turnId,
+                callId,
+                String(component.source),
+                String(component.alt),
+              );
+              if (!current(request)) fail("界面任务已失效");
+            }
       record.runtime.apply(encodeA2ui(input.messages));
       applied = true;
       record.calls.add(callId);
@@ -382,9 +417,11 @@ export function a2uiManager(
               "statusCode" in error &&
               error.statusCode === 507
                 ? "Saved UI storage is full or unavailable. Ask the user to check storage before retrying."
-                : "Use the registered newbot:ui/v1 catalog, one complete tree, submit/cancel actions, and the documented limits.",
+                : "Use the registered catalog version, one complete tree, submit/cancel actions, and the documented limits.",
           }),
         );
+    } finally {
+      if (lock) applying.delete(lock);
     }
   }
   function decorateItem(threadId: string, turnId: string, item: Item): Item {
@@ -614,6 +651,15 @@ export function a2uiManager(
     resolved,
     close,
     read: (id: string) => publicView(findView(id)),
+    waiting: (threadId: string) =>
+      [...records.values()]
+        .filter(
+          (r) =>
+            r.pending &&
+            r.view.threadId === threadId &&
+            r.view.state === "waiting",
+        )
+        .map((r) => ({ id: r.view.id, turnId: r.view.turnId })),
     get pending() {
       return [...records.values()].filter((r) => r.pending).length;
     },

@@ -15,6 +15,7 @@ async function boot(history?: A2uiFixtureCodex["threads"]) {
       for (const turn of t.turns) turn.status = "interrupted";
   }
   const ctx = await createServer({
+  webDirectory: process.env.UI_TEST_CANDIDATE,
     providerRuntime: null,
     directory,
     cwd: join(directory, "workspace"),

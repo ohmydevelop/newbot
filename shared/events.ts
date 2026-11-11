@@ -1,12 +1,46 @@
 import { EventType, type Event } from "@ag-ui/core";
 import type { Item, Thread, Turn } from "./types";
 import { mergeRecentHistory } from "./history.js";
+import { runtimeIsNewer } from "./runtime-settings.js";
 // The UI consumes only AG-UI; Codex notification names stay inside its server adapter.
 export function reduceAgentEvent(
   thread: Thread,
   event: Event,
   retainHistory = false,
 ): Thread {
+  if (
+    event.type === EventType.CUSTOM &&
+    event.name === "newbot.session.runtime"
+  ) {
+    const { threadId, runtime } = event.value;
+    return threadId === thread.id && runtimeIsNewer(runtime, thread.runtime)
+      ? {
+          ...thread,
+          runtime,
+          modelProvider: runtime.applied?.provider || runtime.provider,
+        }
+      : thread;
+  }
+  if (
+    event.type === EventType.CUSTOM &&
+    event.name === "newbot.session.inputs"
+  ) {
+    const { threadId, nextInput } = event.value;
+    return threadId === thread.id &&
+      nextInput.revision >= (thread.nextInput?.revision || 0)
+      ? { ...thread, nextInput }
+      : thread;
+  }
+  if (
+    event.type === EventType.CUSTOM &&
+    event.name === "newbot.session.extensions"
+  ) {
+    const { threadId, extensions } = event.value;
+    return threadId === thread.id &&
+      extensions.revision >= (thread.extensions?.revision || 0)
+      ? { ...thread, extensions }
+      : thread;
+  }
   if (
     event.metadata?.revision &&
     thread.revision &&

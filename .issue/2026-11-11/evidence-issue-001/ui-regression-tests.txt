@@ -1,0 +1,37 @@
+✔ selected turn owns its failure without duplicating or replacing an independent operation error (3.595105ms)
+✔ scoped native notice stays in its running turn and final failure never becomes a global duplicate (0.540508ms)
+✔ confirmed completion clears a transient task notice while an unscoped notice remains a global operation error (0.43785ms)
+✔ background failure leaves the visible turn alone, offers its own target and does not reappear on replay (0.549916ms)
+✔ failure buffered during history loading stays attached to the recovered turn (0.80735ms)
+✔ successful read consumes only the matching background notice and never creates a turn (0.959312ms)
+✔ local status read failure preserves the conversation and independent error without emitting a second banner (0.617359ms)
+✔ unscoped run errors remain visible and failed restored turns have the same presentation as live failures (0.340399ms)
+✔ late older-page responses cannot enter a different conversation (0.769624ms)
+✔ older-page failure preserves cursor and retry uses one request per click (0.740487ms)
+✔ an older thread-list request cannot undo a newer rename/archive refresh (0.491612ms)
+✔ concurrent submissions from one draft reserve only one execution (8.535578ms)
+✔ a late submission response cannot clear the next pending request after explicit recovery (1.733968ms)
+✔ GitHub links resolve slash refs and subdirectories against real refs, then pin the commit (17.649984ms)
+✔ reference discovery paginates and searches beyond the first page without dropping matching rows (7.543969ms)
+✔ GitHub source discovery rejects credential URLs, other hosts and oversized or malformed upstream responses (2.486095ms)
+✔ MCP edits use native CAS leaves and preserve private commands, arguments, environment and headers (107.605248ms)
+✔ MCP create supports stdio/HTTP, strict schemas, safe endpoint syntax and no transport conversion (48.958732ms)
+✔ MCP environment references require explicit authorization and can be removed without clearing private values (42.51692ms)
+✔ non-user and overridden MCP definitions are read-only and cannot be edited or deleted (39.770389ms)
+✔ MCP enable, disable and delete change only their versioned configuration (38.123701ms)
+✔ MCP public inventory and connection diagnostics strip raw errors, schemas and metadata (44.571447ms)
+✔ testing disabled MCP does not reload or start discovery, and stale reload tokens fail closed (37.074338ms)
+✔ MCP management blocks tasks, approvals and pending OAuth, releasing guards after each error (39.411366ms)
+✔ MCP reload failure retains saved state, invalidates old App records and recovers through native reconnect (35.647076ms)
+✔ lost MCP write responses reload authoritative configuration without a duplicate write (35.368362ms)
+✔ MCP maintenance rejects new work during a pending mutation, then releases it (34.984702ms)
+✔ MCP HTTP routes require login and allowed Origin and return only the redacted effective configuration (82.593437ms)
+✔ paginated MCP catalogs keep App permissions discoverable and reload invalidates the old App capability (34.834981ms)
+ℹ tests 29
+ℹ suites 0
+ℹ pass 29
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1111.665505

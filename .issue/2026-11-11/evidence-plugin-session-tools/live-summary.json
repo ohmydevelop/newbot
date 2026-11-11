@@ -1,0 +1,1428 @@
+{
+  "at": "2026-11-10T16:12:02.927Z",
+  "version": "codex-cli 0.165.0",
+  "pid": 1789901,
+  "asset": "/assets/index-DW8Vx5FP.js",
+  "publicHtmlMatches": true,
+  "entries": [
+    {
+      "id": "github@openai-api-curated",
+      "version": "0.1.12",
+      "enabled": true,
+      "connections": []
+    },
+    {
+      "id": "cloudwalker@newbot-imports",
+      "version": "0.5.2",
+      "enabled": true,
+      "connections": [
+        {
+          "id": "plugin_653b596318a40bf8c2ef1541b10f9c87",
+          "name": "cloudwalker",
+          "enabled": true,
+          "configured": false,
+          "fields": [
+            {
+              "id": "base_url",
+              "sensitive": false
+            },
+            {
+              "id": "api_token",
+              "sensitive": true
+            },
+            {
+              "id": "tls_certificate_sha256",
+              "sensitive": false
+            }
+          ],
+          "revision": "0c538db2-7300-48ee-abf4-9224434e14a5",
+          "schemaDigest": "0213e85c2552780aec59e84222ccb5bb618f7a402644a16168fe1d474182089d"
+        }
+      ]
+    }
+  ],
+  "threads": [
+    {
+      "id": "01a1c63a-3d9a-75b3-9c70-080a55e08162",
+      "updated": 1794327089542,
+      "status": {
+        "type": "idle"
+      },
+      "turnCount": 1,
+      "workspace": "/home/a/Documents/ChatGPT/newbot/.data/workspaces/433c1d59-ea1d-482a-8769-49cbf42ad134",
+      "revision": "222de8b5a8f4bf804cc82dfd61a694a15690fc608f6778f71c2700d15d5dd52d",
+      "servers": [
+        {
+          "name": "plugin_653b596318a40bf8c2ef1541b10f9c87",
+          "enabled": false,
+          "commandBasename": "cloudwalker-mcp",
+          "envNames": [
+            "CLOUDWALKER_BASE_URL",
+            "CLOUDWALKER_TLS_CERTIFICATE_SHA256"
+          ]
+        }
+      ],
+      "pluginIds": [
+        {
+          "id": "github@openai-api-curated",
+          "enabled": true
+        },
+        {
+          "id": "cloudwalker@newbot-imports",
+          "enabled": true
+        }
+      ],
+      "turns": [
+        {
+          "id": "01a1c63a-4696-70a1-8739-98c59466423c",
+          "status": "completed",
+          "items": [
+            {
+              "id": "01a1c63a-4b00-79d3-92e3-1ae721cf7c4b",
+              "type": "userMessage",
+              "errorTags": [],
+              "fields": [
+                "id",
+                "type",
+                "clientId",
+                "content",
+                "pluginRefs",
+                "expert"
+              ]
+            },
+            {
+              "id": "rs_02179432707225400000000000000000000ffffac1827ff17abb1",
+              "type": "reasoning",
+              "errorTags": [],
+              "fields": [
+                "id",
+                "type",
+                "summary"
+              ]
+            },
+            {
+              "id": "msg_02179432707301300000000000000000000ffffac1827ffa8960b",
+              "type": "agentMessage",
+              "errorTags": [],
+              "characters": 38,
+              "fields": [
+                "id",
+                "type",
+                "text",
+                "phase"
+              ]
+            },
+            {
+              "id": "call_01_rbyw6eam0rusykpcdgmmnvg1",
+              "type": "mcpToolCall",
+              "server": "codex",
+              "tool": "list_mcp_resources",
+              "status": "completed",
+              "argumentKeys": [],
+              "errorTags": [],
+              "fields": [
+                "id",
+                "type",
+                "status",
+                "durationMs",
+                "server",
+                "tool",
+                "arguments",
+                "readOnlyHint",
+                "mcpAppUi",
+                "result",
+                "error"
+              ]
+            },
+            {
+              "id": "call_00_u4qkn4adkrxbedqbvof8j11p",
+              "type": "commandExecution",
+              "status": "completed",
+              "errorTags": [],
+              "fields": [
+                "id",
+                "type",
+                "command",
+                "status",
+                "aggregatedOutput",
+                "exitCode",
+                "durationMs"
+              ]
+            },
+            {
+              "id": "rs_02179432707536700000000000000000000ffffac154c42bc7e9d",
+              "type": "reasoning",
+              "errorTags": [],
+              "fields": [
+                "id",
+                "type",
+                "summary"
+              ]
+            },
+            {
+              "id": "msg_02179432707645600000000000000000000ffffac154c42a29b7d",
+              "type": "agentMessage",
+              "errorTags": [],
+              "characters": 67,
+              "fields": [
+                "id",
+                "type",
+                "text",
+                "phase"
+              ]
+            },
+            {
+              "id": "call_00_0ts79hq1zqrngkmkr7nvk79n",
+              "type": "commandExecution",
+              "status": "completed",
+              "errorTags": [],
+              "fields": [
+                "id",
+                "type",
+                "command",
+                "status",
+                "aggregatedOutput",
+                "exitCode",
+                "durationMs"
+              ]
+            },
+            {
+              "id": "call_01_6cn1r6llue6fxnsz8ls4jmyw",
+              "type": "commandExecution",
+              "status": "completed",
+              "errorTags": [],
+              "fields": [
+                "id",
+                "type",
+                "command",
+                "status",
+                "aggregatedOutput",
+                "exitCode",
+                "durationMs"
+              ]
+            },
+            {
+              "id": "rs_02179432707975400000000000000000000ffffac15d3adc6f694",
+              "type": "reasoning",
+              "errorTags": [],
+              "fields": [
+                "id",
+                "type",
+                "summary"
+              ]
+            },
+            {
+              "id": "call_00_auiz6vbg56x3ukkh20v0dol4",
+              "type": "commandExecution",
+              "status": "completed",
+              "errorTags": [
+                "tls_certificate"
+              ],
+              "fields": [
+                "id",
+                "type",
+                "command",
+                "status",
+                "aggregatedOutput",
+                "exitCode",
+                "durationMs"
+              ]
+            },
+            {
+              "id": "call_01_8rbyre1oszgo8syzciw5k9f3",
+              "type": "commandExecution",
+              "status": "completed",
+              "errorTags": [],
+              "fields": [
+                "id",
+                "type",
+                "command",
+                "status",
+                "aggregatedOutput",
+                "exitCode",
+                "durationMs"
+              ]
+            },
+            {
+              "id": "rs_02179432708443400000000000000000000ffffac150590c0dd35",
+              "type": "reasoning",
+              "errorTags": [],
+              "fields": [
+                "id",
+                "type",
+                "summary"
+              ]
+            },
+            {
+              "id": "msg_02179432708795000000000000000000000ffffac150590139e2a",
+              "type": "agentMessage",
+              "errorTags": [],
+              "characters": 293,
+              "fields": [
+                "id",
+                "type",
+                "text",
+                "phase"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "01a1c60e-7daf-7641-86cb-61b3c97baeda",
+      "updated": 1794327035184,
+      "status": {
+        "type": "idle"
+      },
+      "turnCount": 5,
+      "workspace": "/home/a/Documents/ChatGPT/newbot/.data/workspaces/a995fd08-cc41-45be-923d-fe946aaaefd4",
+      "revision": "222de8b5a8f4bf804cc82dfd61a694a15690fc608f6778f71c2700d15d5dd52d",
+      "servers": [
+        {
+          "name": "plugin_653b596318a40bf8c2ef1541b10f9c87",
+          "enabled": false,
+          "commandBasename": "cloudwalker-mcp",
+          "envNames": [
+            "CLOUDWALKER_BASE_URL",
+            "CLOUDWALKER_TLS_CERTIFICATE_SHA256"
+          ]
+        }
+      ],
+      "pluginIds": [
+        {
+          "id": "github@openai-api-curated",
+          "enabled": true
+        },
+        {
+          "id": "cloudwalker@newbot-imports",
+          "enabled": true
+        }
+      ],
+      "turns": [
+        {
+          "id": "01a1c60e-86d0-7ae1-b805-9cbf4e0fc671",
+          "status": "completed",
+          "items": [
+            {
+              "id": "01a1c60e-8b7a-7f03-89d8-8a383645d33f",
+              "type": "userMessage",
+              "errorTags": [],
+              "fields": [
+                "id",
+                "type",
+                "clientId",
+                "content",
+                "pluginRefs",
+                "expert"
+              ]
+            },
+            {
+              "id": "rs_02179432420546900000000000000000000ffffac183aeb322cc0",
+              "type": "reasoning",
+              "errorTags": [],
+              "fields": [
+                "id",
+                "type",
+                "summary"
+              ]
+            },
+            {
+              "id": "call_00_dk9leqaca2fnkxkgjsb5erxl",
+              "type": "commandExecution",
+              "status": "completed",
+              "errorTags": [],
+              "fields": [
+                "id",
+                "type",
+                "command",
+                "status",
+                "aggregatedOutput",
+                "exitCode",
+                "durationMs"
+              ]
+            },
+            {
+              "id": "rs_02179432420735000000000000000000000ffffac150238cf5fe3",
+              "type": "reasoning",
+              "errorTags": [],
+              "fields": [
+                "id",
+                "type",
+                "summary"
+              ]
+            },
+            {
+              "id": "call_00_ausdh5kj89e3ksd717loxggd",
+              "type": "mcpToolCall",
+              "server": "plugin_653b596318a40bf8c2ef1541b10f9c87",
+              "tool": "summarize_security_posture",
+              "status": "failed",
+              "argumentKeys": [
+                "period_days"
+              ],
+              "errorTags": [],
+              "fields": [
+                "id",
+                "type",
+                "status",
+                "durationMs",
+                "server",
+                "tool",
+                "arguments",
+                "readOnlyHint",
+                "mcpAppUi",
+                "result",
+                "error"
+              ]
+            },
+            {
+              "id": "call_01_d5fes0a6hfo6puv6phl9cbdl",
+              "type": "mcpToolCall",
+              "server": "plugin_653b596318a40bf8c2ef1541b10f9c87",
+              "tool": "search_security_alerts",
+              "status": "failed",
+              "argumentKeys": [
+                "start_time",
+                "end_time",
+                "risky",
+                "limit"
+              ],
+              "errorTags": [],
+              "fields": [
+                "id",
+                "type",
+                "status",
+                "durationMs",
+                "server",
+                "tool",
+                "arguments",
+                "readOnlyHint",
+                "mcpAppUi",
+                "result",
+                "error"
+              ]
+            },
+            {
+              "id": "rs_02179432421084900000000000000000000ffffac153af13a3667",
+              "type": "reasoning",
+              "errorTags": [
+                "tls_certificate",
+                "certificate validation failed"
+              ],
+              "fields": [
+                "id",
+                "type",
+                "summary"
+              ]
+            },
+            {
+              "id": "msg_02179432421253800000000000000000000ffffac153af12d2cbe",
+              "type": "agentMessage",
+              "errorTags": [
+                "tls_certificate",
+                "certificate validation failed"
+              ],
+              "characters": 330,
+              "fields": [
+                "id",
+                "type",
+                "text",
+                "phase"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "01a1c610-c5f9-72c3-bbbc-00483b112225",
+          "status": "completed",
+          "items": [
+            {
+              "id": "01a1c610-c6a0-7761-b412-fb77d8414de8",
+              "type": "userMessage",
+              "errorTags": [],
+              "fields": [
+                "id",
+                "type",
+                "clientId",
+                "content",
+                "pluginRefs",
+                "expert"
+              ]
+            },
+            {
+              "id": "rs_02179432435148100000000000000000000ffffac15566fb06c10",
+              "type": "reasoning",
+              "errorTags": [],
+              "fields": [
+                "id",
+                "type",
+                "summary"
+              ]
+            },
+            {
+              "id": "msg_02179432435193600000000000000000000ffffac15566f4f1528",
+              "type": "agentMessage",
+              "errorTags": [
+                "tls_certificate"
+              ],
+              "characters": 385,
+              "fields": [
+                "id",
+                "type",
+                "text",
+                "phase"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "01a1c611-72b7-7e92-aaba-0657b4f38fe6",
+          "status": "completed",
+          "items": [
+            {
+              "id": "01a1c611-7719-7d52-8249-b97bcebf47e3",
+              "type": "userMessage",
+              "errorTags": [],
+              "fields": [
+                "id",
+                "type",
+                "clientId",
+                "content",
+                "pluginRefs",
+                "expert"
+              ]
+            },
+            {
+              "id": "rs_02179432439674900000000000000000000ffffac15b59689aed5",
+              "type": "reasoning",
+              "errorTags": [],
+              "fields": [
+                "id",
+                "type",
+                "summary"
+              ]
+            },
+            {
+              "id": "msg_02179432439897700000000000000000000ffffac15b5963e4414",
+              "type": "agentMessage",
+              "errorTags": [
+                "tls_certificate",
+                "certificate validation failed"
+              ],
+              "characters": 1813,
+              "fields": [
+                "id",
+                "type",
+                "text",
+                "phase"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "01a1c638-5596-7551-9ac8-b0447b0f8d7d",
+          "status": "completed",
+          "items": [
+            {
+              "id": "01a1c638-5a1e-7222-9813-28a9466a15c9",
+              "type": "userMessage",
+              "errorTags": [],
+              "fields": [
+                "id",
+                "type",
+                "clientId",
+                "content",
+                "pluginRefs",
+                "expert"
+              ]
+            },
+            {
+              "id": "rs_02179432694540100000000000000000000ffffac1820275c2c9b",
+              "type": "reasoning",
+              "errorTags": [],
+              "fields": [
+                "id",
+                "type",
+                "summary"
+              ]
+            },
+            {
+              "id": "msg_02179432694648900000000000000000000ffffac182027163c22",
+              "type": "agentMessage",
+              "errorTags": [],
+              "characters": 21,
+              "fields": [
+                "id",
+                "type",
+                "text",
+                "phase"
+              ]
+            },
+            {
+              "id": "rs_02179432694831300000000000000000000ffffac15541b4dfa77",
+              "type": "reasoning",
+              "errorTags": [
+                "unsupported call"
+              ],
+              "fields": [
+                "id",
+                "type",
+                "summary"
+              ]
+            },
+            {
+              "id": "msg_02179432694906500000000000000000000ffffac15541b1003f6",
+              "type": "agentMessage",
+              "errorTags": [],
+              "characters": 39,
+              "fields": [
+                "id",
+                "type",
+                "text",
+                "phase"
+              ]
+            },
+            {
+              "id": "call_00_csn0873ayeiwwx8sx71k33vs",
+              "type": "mcpToolCall",
+              "server": "codex",
+              "tool": "list_mcp_resources",
+              "status": "completed",
+              "argumentKeys": [],
+              "errorTags": [],
+              "fields": [
+                "id",
+                "type",
+                "status",
+                "durationMs",
+                "server",
+                "tool",
+                "arguments",
+                "readOnlyHint",
+                "mcpAppUi",
+                "result",
+                "error"
+              ]
+            },
+            {
+              "id": "rs_02179432695032500000000000000000000ffffac154bf24a2894",
+              "type": "reasoning",
+              "errorTags": [],
+              "fields": [
+                "id",
+                "type",
+                "summary"
+              ]
+            },
+            {
+              "id": "call_00_98hyhh0yzp0kc9mgiftwk6xf",
+              "type": "mcpToolCall",
+              "server": "codex",
+              "tool": "list_mcp_resource_templates",
+              "status": "completed",
+              "argumentKeys": [],
+              "errorTags": [],
+              "fields": [
+                "id",
+                "type",
+                "status",
+                "durationMs",
+                "server",
+                "tool",
+                "arguments",
+                "readOnlyHint",
+                "mcpAppUi",
+                "result",
+                "error"
+              ]
+            },
+            {
+              "id": "rs_02179432695143600000000000000000000ffffac151931d3be58",
+              "type": "reasoning",
+              "errorTags": [
+                "unsupported call"
+              ],
+              "fields": [
+                "id",
+                "type",
+                "summary"
+              ]
+            },
+            {
+              "id": "call_00_4421209otve2mn04chckv8vr",
+              "type": "commandExecution",
+              "status": "completed",
+              "errorTags": [],
+              "fields": [
+                "id",
+                "type",
+                "command",
+                "status",
+                "aggregatedOutput",
+                "exitCode",
+                "durationMs"
+              ]
+            },
+            {
+              "id": "call_01_i5g4yld3t3apbi9tbzjnuuod",
+              "type": "commandExecution",
+              "status": "completed",
+              "errorTags": [],
+              "fields": [
+                "id",
+                "type",
+                "command",
+                "status",
+                "aggregatedOutput",
+                "exitCode",
+                "durationMs"
+              ]
+            },
+            {
+              "id": "rs_02179432695431900000000000000000000ffffac15d8049afabf",
+              "type": "reasoning",
+              "errorTags": [],
+              "fields": [
+                "id",
+                "type",
+                "summary"
+              ]
+            },
+            {
+              "id": "call_00_6di5jz3xygc2iu3zmj97ha3y",
+              "type": "commandExecution",
+              "status": "completed",
+              "errorTags": [],
+              "fields": [
+                "id",
+                "type",
+                "command",
+                "status",
+                "aggregatedOutput",
+                "exitCode",
+                "durationMs"
+              ]
+            },
+            {
+              "id": "call_01_cdqi4r3xhc0avgakfyeepre8",
+              "type": "commandExecution",
+              "status": "completed",
+              "errorTags": [],
+              "fields": [
+                "id",
+                "type",
+                "command",
+                "status",
+                "aggregatedOutput",
+                "exitCode",
+                "durationMs"
+              ]
+            },
+            {
+              "id": "rs_02179432695627800000000000000000000ffffac15f1cd8891e2",
+              "type": "reasoning",
+              "errorTags": [
+                "unsupported call"
+              ],
+              "fields": [
+                "id",
+                "type",
+                "summary"
+              ]
+            },
+            {
+              "id": "call_01_f2scylrvunivzlwf9b9combc",
+              "type": "commandExecution",
+              "status": "failed",
+              "errorTags": [],
+              "fields": [
+                "id",
+                "type",
+                "command",
+                "status",
+                "aggregatedOutput",
+                "exitCode",
+                "durationMs"
+              ]
+            },
+            {
+              "id": "call_00_3ze42bcqq75ytkjuxackykuk",
+              "type": "commandExecution",
+              "status": "completed",
+              "errorTags": [],
+              "fields": [
+                "id",
+                "type",
+                "command",
+                "status",
+                "aggregatedOutput",
+                "exitCode",
+                "durationMs"
+              ]
+            },
+            {
+              "id": "rs_02179432696161600000000000000000000ffffac15023896b733",
+              "type": "reasoning",
+              "errorTags": [],
+              "fields": [
+                "id",
+                "type",
+                "summary"
+              ]
+            },
+            {
+              "id": "call_00_vioj4gbhnzhm9kwb3pc99fou",
+              "type": "commandExecution",
+              "status": "completed",
+              "errorTags": [],
+              "fields": [
+                "id",
+                "type",
+                "command",
+                "status",
+                "aggregatedOutput",
+                "exitCode",
+                "durationMs"
+              ]
+            },
+            {
+              "id": "rs_02179432696377500000000000000000000ffffac155754c2466b",
+              "type": "reasoning",
+              "errorTags": [],
+              "fields": [
+                "id",
+                "type",
+                "summary"
+              ]
+            },
+            {
+              "id": "call_00_qlfpgo2saud5kocpewvk615x",
+              "type": "commandExecution",
+              "status": "completed",
+              "errorTags": [
+                "tls_certificate"
+              ],
+              "fields": [
+                "id",
+                "type",
+                "command",
+                "status",
+                "aggregatedOutput",
+                "exitCode",
+                "durationMs"
+              ]
+            },
+            {
+              "id": "rs_02179432696631300000000000000000000ffffac15d21a4a0402",
+              "type": "reasoning",
+              "errorTags": [
+                "unsupported call"
+              ],
+              "fields": [
+                "id",
+                "type",
+                "summary"
+              ]
+            },
+            {
+              "id": "call_00_54ep3vf5m2ao5n4ewirgky8a",
+              "type": "commandExecution",
+              "status": "completed",
+              "errorTags": [],
+              "fields": [
+                "id",
+                "type",
+                "command",
+                "status",
+                "aggregatedOutput",
+                "exitCode",
+                "durationMs"
+              ]
+            },
+            {
+              "id": "call_01_mdks30urb5kbld6788g9es5p",
+              "type": "commandExecution",
+              "status": "completed",
+              "errorTags": [
+                "unsupported call"
+              ],
+              "fields": [
+                "id",
+                "type",
+                "command",
+                "status",
+                "aggregatedOutput",
+                "exitCode",
+                "durationMs"
+              ]
+            },
+            {
+              "id": "rs_02179432697077100000000000000000000ffffac15f63c18307a",
+              "type": "reasoning",
+              "errorTags": [],
+              "fields": [
+                "id",
+                "type",
+                "summary"
+              ]
+            },
+            {
+              "id": "call_00_vq2dabpm9a8ak8fzi26d9kg4",
+              "type": "commandExecution",
+              "status": "completed",
+              "errorTags": [],
+              "fields": [
+                "id",
+                "type",
+                "command",
+                "status",
+                "aggregatedOutput",
+                "exitCode",
+                "durationMs"
+              ]
+            },
+            {
+              "id": "rs_02179432697284100000000000000000000ffffac1833e0b3cf3d",
+              "type": "reasoning",
+              "errorTags": [],
+              "fields": [
+                "id",
+                "type",
+                "summary"
+              ]
+            },
+            {
+              "id": "call_00_sgv7h6oris3hubh5zkfyprev",
+              "type": "commandExecution",
+              "status": "completed",
+              "errorTags": [
+                "unsupported call"
+              ],
+              "fields": [
+                "id",
+                "type",
+                "command",
+                "status",
+                "aggregatedOutput",
+                "exitCode",
+                "durationMs"
+              ]
+            },
+            {
+              "id": "rs_02179432697537000000000000000000000ffffac15541b902f9c",
+              "type": "reasoning",
+              "errorTags": [],
+              "fields": [
+                "id",
+                "type",
+                "summary"
+              ]
+            },
+            {
+              "id": "call_00_kmw5c8k9nymeg4av5qz70wx5",
+              "type": "commandExecution",
+              "status": "completed",
+              "errorTags": [],
+              "fields": [
+                "id",
+                "type",
+                "command",
+                "status",
+                "aggregatedOutput",
+                "exitCode",
+                "durationMs"
+              ]
+            },
+            {
+              "id": "rs_02179432697757800000000000000000000ffffac183b0f9770a6",
+              "type": "reasoning",
+              "errorTags": [
+                "unsupported call"
+              ],
+              "fields": [
+                "id",
+                "type",
+                "summary"
+              ]
+            },
+            {
+              "id": "msg_02179432698087000000000000000000000ffffac183b0ffa26cd",
+              "type": "agentMessage",
+              "errorTags": [
+                "unsupported call"
+              ],
+              "characters": 250,
+              "fields": [
+                "id",
+                "type",
+                "text",
+                "phase"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "01a1c639-7677-7b02-b4e0-27453c15037a",
+          "status": "completed",
+          "items": [
+            {
+              "id": "01a1c639-76fd-7f32-98bb-733776746383",
+              "type": "userMessage",
+              "errorTags": [],
+              "fields": [
+                "id",
+                "type",
+                "clientId",
+                "content",
+                "pluginRefs",
+                "expert"
+              ]
+            },
+            {
+              "id": "rs_02179432701810500000000000000000000ffffac15274d6e6661",
+              "type": "reasoning",
+              "errorTags": [],
+              "fields": [
+                "id",
+                "type",
+                "summary"
+              ]
+            },
+            {
+              "id": "msg_02179432701847600000000000000000000ffffac15274d4ffb54",
+              "type": "agentMessage",
+              "errorTags": [],
+              "characters": 26,
+              "fields": [
+                "id",
+                "type",
+                "text",
+                "phase"
+              ]
+            },
+            {
+              "id": "rs_02179432702038200000000000000000000ffffac154b7acd1b05",
+              "type": "reasoning",
+              "errorTags": [],
+              "fields": [
+                "id",
+                "type",
+                "summary"
+              ]
+            },
+            {
+              "id": "msg_02179432702159900000000000000000000ffffac154b7affb393",
+              "type": "agentMessage",
+              "errorTags": [],
+              "characters": 40,
+              "fields": [
+                "id",
+                "type",
+                "text",
+                "phase"
+              ]
+            },
+            {
+              "id": "call_00_wqb406y0agqb9g1dzse3ctnv",
+              "type": "commandExecution",
+              "status": "completed",
+              "errorTags": [],
+              "fields": [
+                "id",
+                "type",
+                "command",
+                "status",
+                "aggregatedOutput",
+                "exitCode",
+                "durationMs"
+              ]
+            },
+            {
+              "id": "call_01_6hlr289ksghwlf7d8qau3vym",
+              "type": "commandExecution",
+              "status": "completed",
+              "errorTags": [],
+              "fields": [
+                "id",
+                "type",
+                "command",
+                "status",
+                "aggregatedOutput",
+                "exitCode",
+                "durationMs"
+              ]
+            },
+            {
+              "id": "rs_02179432702370200000000000000000000ffffac156a1ca3c130",
+              "type": "reasoning",
+              "errorTags": [],
+              "fields": [
+                "id",
+                "type",
+                "summary"
+              ]
+            },
+            {
+              "id": "call_00_r47llnm7nrorhq0cmbfdpepv",
+              "type": "commandExecution",
+              "status": "completed",
+              "errorTags": [],
+              "fields": [
+                "id",
+                "type",
+                "command",
+                "status",
+                "aggregatedOutput",
+                "exitCode",
+                "durationMs"
+              ]
+            },
+            {
+              "id": "rs_02179432702518400000000000000000000ffffac159b18665a4d",
+              "type": "reasoning",
+              "errorTags": [],
+              "fields": [
+                "id",
+                "type",
+                "summary"
+              ]
+            },
+            {
+              "id": "call_00_3il82vum9v4s6qen0epnkhha",
+              "type": "commandExecution",
+              "status": "completed",
+              "errorTags": [],
+              "fields": [
+                "id",
+                "type",
+                "command",
+                "status",
+                "aggregatedOutput",
+                "exitCode",
+                "durationMs"
+              ]
+            },
+            {
+              "id": "rs_02179432702695700000000000000000000ffffac1821d0a1f068",
+              "type": "reasoning",
+              "errorTags": [],
+              "fields": [
+                "id",
+                "type",
+                "summary"
+              ]
+            },
+            {
+              "id": "call_00_nt68e80q0ktjq7tx5pxarvg8",
+              "type": "commandExecution",
+              "status": "failed",
+              "errorTags": [],
+              "fields": [
+                "id",
+                "type",
+                "command",
+                "status",
+                "aggregatedOutput",
+                "exitCode",
+                "durationMs"
+              ]
+            },
+            {
+              "id": "call_01_stx8d9gszaot4mh7c7m7gxo0",
+              "type": "commandExecution",
+              "status": "failed",
+              "errorTags": [],
+              "fields": [
+                "id",
+                "type",
+                "command",
+                "status",
+                "aggregatedOutput",
+                "exitCode",
+                "durationMs"
+              ]
+            },
+            {
+              "id": "rs_02179432703072400000000000000000000ffffac15387036f5f5",
+              "type": "reasoning",
+              "errorTags": [],
+              "fields": [
+                "id",
+                "type",
+                "summary"
+              ]
+            },
+            {
+              "id": "msg_02179432703426500000000000000000000ffffac153870869458",
+              "type": "agentMessage",
+              "errorTags": [
+                "unsupported call"
+              ],
+              "characters": 173,
+              "fields": [
+                "id",
+                "type",
+                "text",
+                "phase"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "01a1c588-7093-7b73-b5fc-48d490894568",
+      "updated": 1794315488983,
+      "status": {
+        "type": "notLoaded"
+      },
+      "turnCount": 2,
+      "workspace": "/home/a/Documents/ChatGPT/newbot/.data/workspaces/da61438d-6463-4185-8539-5bb7d53451c3",
+      "revision": "a1b026d3375ba855680c9326d5517d252bf1a70b5bd5930c6756e3d39a4e513d",
+      "servers": [],
+      "pluginIds": [
+        {
+          "id": "github@openai-api-curated",
+          "enabled": true
+        }
+      ],
+      "turns": [
+        {
+          "id": "01a1c588-793f-7a80-9559-215e00d2f40a",
+          "status": "interrupted",
+          "items": [
+            {
+              "id": "01a1c588-7dc5-7271-b293-8953d4fd9cf8",
+              "type": "userMessage",
+              "errorTags": [],
+              "fields": [
+                "id",
+                "type",
+                "clientId",
+                "content"
+              ]
+            },
+            {
+              "id": "msg_04a36b39d50e9a7d016af3149f6a1887d08dfa3bc7bb551d3d",
+              "type": "agentMessage",
+              "errorTags": [],
+              "characters": 59,
+              "fields": [
+                "id",
+                "type",
+                "text",
+                "phase"
+              ]
+            },
+            {
+              "id": "call_9b2d1ec07af74155ac73bdbcc970f6cb",
+              "type": "agentMessage",
+              "errorTags": [],
+              "characters": 68,
+              "fields": [
+                "id",
+                "type",
+                "text",
+                "phase"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "01a1c588-c9a6-7263-9d96-4a6f5d7f1d8a",
+          "status": "completed",
+          "items": [
+            {
+              "id": "01a1c588-ca20-7fb0-a5d9-c11c4dd90f92",
+              "type": "userMessage",
+              "errorTags": [],
+              "fields": [
+                "id",
+                "type",
+                "clientId",
+                "content"
+              ]
+            },
+            {
+              "id": "rs_04a36b39d50e9a7d016af314c748e087d0906360971842d65b",
+              "type": "reasoning",
+              "errorTags": [],
+              "fields": [
+                "id",
+                "type",
+                "summary"
+              ]
+            },
+            {
+              "id": "rs_04a36b39d50e9a7d016af314da106887d08269606acff61655",
+              "type": "reasoning",
+              "errorTags": [],
+              "fields": [
+                "id",
+                "type",
+                "summary"
+              ]
+            },
+            {
+              "id": "msg_04a36b39d50e9a7d016af314da355087d0beaf784afd0fb2d1",
+              "type": "agentMessage",
+              "errorTags": [],
+              "characters": 269,
+              "fields": [
+                "id",
+                "type",
+                "text",
+                "phase"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "01a1c517-d922-73c2-8089-001a00e5f62b",
+      "updated": 1794308101037,
+      "status": {
+        "type": "notLoaded"
+      },
+      "turnCount": 2,
+      "workspace": "/home/a/Documents/ChatGPT/newbot/.data/workspaces/76a288c3-ea1f-4ed4-beed-582dc574e33f",
+      "revision": "a1b026d3375ba855680c9326d5517d252bf1a70b5bd5930c6756e3d39a4e513d",
+      "servers": [],
+      "pluginIds": [
+        {
+          "id": "github@openai-api-curated",
+          "enabled": true
+        }
+      ],
+      "turns": [
+        {
+          "id": "01a1c517-e267-7671-a369-74bebc16605e",
+          "status": "completed",
+          "items": [
+            {
+              "id": "01a1c517-e6ce-75e1-b9cb-28e85c456b21",
+              "type": "userMessage",
+              "errorTags": [],
+              "fields": [
+                "id",
+                "type",
+                "clientId",
+                "content"
+              ]
+            },
+            {
+              "id": "msg_1",
+              "type": "agentMessage",
+              "errorTags": [],
+              "characters": 197,
+              "fields": [
+                "id",
+                "type",
+                "text",
+                "phase"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "01a1c518-4af7-7913-b56a-4a08d1d78163",
+          "status": "completed",
+          "items": [
+            {
+              "id": "01a1c518-4b8d-7f63-869f-896f6ec9dc69",
+              "type": "userMessage",
+              "errorTags": [],
+              "fields": [
+                "id",
+                "type",
+                "clientId",
+                "content"
+              ]
+            },
+            {
+              "id": "rs_28c9eea6-6b5b-9fd5-85c5-bc5ffb2c95d1",
+              "type": "reasoning",
+              "errorTags": [],
+              "fields": [
+                "id",
+                "type",
+                "summary"
+              ]
+            },
+            {
+              "id": "ws_28c9eea6-6b5b-9fd5-85c5-bc5ffb2c95d1_call-c5db8fe1-3f2c-4587-98b4-ce672e283e67-0",
+              "type": "webSearch",
+              "errorTags": [],
+              "fields": [
+                "id",
+                "type"
+              ]
+            },
+            {
+              "id": "tco_28c9eea6-6b5b-9fd5-85c5-bc5ffb2c95d1_call-c5db8fe1-3f2c-4587-98b4-ce672e283e67-0",
+              "type": "reasoning",
+              "errorTags": [],
+              "fields": [
+                "id",
+                "type",
+                "summary"
+              ]
+            },
+            {
+              "id": "ws_28c9eea6-6b5b-9fd5-85c5-bc5ffb2c95d1_call-c5db8fe1-3f2c-4587-98b4-ce672e283e67-1",
+              "type": "webSearch",
+              "errorTags": [],
+              "fields": [
+                "id",
+                "type"
+              ]
+            },
+            {
+              "id": "tco_28c9eea6-6b5b-9fd5-85c5-bc5ffb2c95d1_call-c5db8fe1-3f2c-4587-98b4-ce672e283e67-1",
+              "type": "reasoning",
+              "errorTags": [],
+              "fields": [
+                "id",
+                "type",
+                "summary"
+              ]
+            },
+            {
+              "id": "ws_28c9eea6-6b5b-9fd5-85c5-bc5ffb2c95d1_call-c5db8fe1-3f2c-4587-98b4-ce672e283e67-2",
+              "type": "webSearch",
+              "errorTags": [],
+              "fields": [
+                "id",
+                "type"
+              ]
+            },
+            {
+              "id": "tco_28c9eea6-6b5b-9fd5-85c5-bc5ffb2c95d1_call-c5db8fe1-3f2c-4587-98b4-ce672e283e67-2",
+              "type": "reasoning",
+              "errorTags": [],
+              "fields": [
+                "id",
+                "type",
+                "summary"
+              ]
+            },
+            {
+              "id": "msg_28c9eea6-6b5b-9fd5-85c5-bc5ffb2c95d1",
+              "type": "agentMessage",
+              "errorTags": [],
+              "characters": 765,
+              "fields": [
+                "id",
+                "type",
+                "text",
+                "phase"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

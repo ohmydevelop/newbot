@@ -531,7 +531,9 @@ test("Web can restore a missing historical gateway under its original ID and rec
     });
     assert.equal(resumed.statusCode, 200, resumed.body);
     assert.equal(resumed.json().threadId, id);
-    assert.ok(c.codex.credentialRefs.has(ref));
+    assert.equal(c.codex.credentialRefs.has(ref),false);
+    const injected=await c.codex.privateConfiguration!({threadId:id,modelProvider:"memory_gateway",config:c.memory.snapshot().values});
+    assert.equal(injected.config.model_providers.memory_gateway.http_headers.Authorization,"Bearer restore-test-secret");
     assert.ok(!resumed.body.includes("restore-test-secret"));
     assert.equal(
       c.codex.calls.filter((x: any) => x.method === "config/batchWrite").length,

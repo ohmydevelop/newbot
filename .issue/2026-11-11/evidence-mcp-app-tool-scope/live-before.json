@@ -1,0 +1,74 @@
+{
+  "at": "2026-11-11T02:44:55.294Z",
+  "version": "codex-cli 0.165.0",
+  "pid": 1872604,
+  "asset": "/assets/index-DUhiMicX.js",
+  "publicHtmlMatches": true,
+  "localHtmlMatches": true,
+  "plugin": {
+    "id": "cloudwalker@newbot-imports",
+    "version": "0.5.2",
+    "connections": [
+      {
+        "id": "plugin_653b596318a40bf8c2ef1541b10f9c87",
+        "name": "cloudwalker",
+        "configured": true,
+        "enabled": true
+      }
+    ]
+  },
+  "source": {
+    "threadId": "01a1c645-9bae-7662-9169-7689d80d9463",
+    "turnId": "01a1c647-8d75-7430-b1a2-a8a719015cfd",
+    "itemId": "exec-55f69c10-8d48-482d-82c1-833518535c3e",
+    "server": "plugin_653b596318a40bf8c2ef1541b10f9c87",
+    "tool": "open_security_workspace"
+  },
+  "appTools": [
+    "open_security_workspace"
+  ],
+  "policy": {
+    "version": 1,
+    "toolAuthorization": "allow-once",
+    "toolScope": "same-server-and-resource",
+    "displayModes": [
+      "inline"
+    ],
+    "theme": true,
+    "resize": true,
+    "network": false,
+    "inlineDependenciesOnly": true,
+    "openLinks": false,
+    "downloads": false,
+    "messages": false,
+    "modelContext": false,
+    "sampling": false,
+    "serverResources": false,
+    "toolDiscovery": false,
+    "prompts": false,
+    "logging": false,
+    "protocolCapabilities": {
+      "serverTools": {},
+      "sandbox": {
+        "permissions": {},
+        "csp": {
+          "connectDomains": [],
+          "resourceDomains": [],
+          "frameDomains": [],
+          "baseUriDomains": []
+        }
+      }
+    }
+  },
+  "grant": {
+    "status": 403,
+    "accepted": false,
+    "error": "应用无权调用该工具",
+    "appIssue": {
+      "code": "permission"
+    }
+  },
+  "businessToolsApproved": 0,
+  "businessToolsCalled": 0,
+  "uiVerification": "Browser control disabled in Work settings; API verification only"
+}

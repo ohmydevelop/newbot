@@ -28,7 +28,7 @@ export function credentialManagement(
     eligible = true,
   ) {
     const snapshot = await core.read();
-    if (snapshot.publicView.revision !== data.expectedRevision)
+    if (!core.matches(snapshot, data.expectedRevision, `${data.scope}:${data.targetId}`))
       throw new PublicError("配置已变化，请重新读取");
     const editable =
       data.scope === "provider"
@@ -80,7 +80,7 @@ export function credentialManagement(
             );
             commit();
             const result = await core.mutate(
-              data.expectedRevision,
+              (await core.read()).publicView.revision,
               async () => ({
                 edits: [
                   {
@@ -162,7 +162,7 @@ export function credentialManagement(
         )
           throw new PublicError("此凭证不是工作台管理的引用");
       } else {
-        const result = await core.mutate(data.expectedRevision, async () => ({
+        const result = await core.mutate((await core.read()).publicView.revision, async () => ({
           edits: [
             {
               keyPath: keyPath(data.scope, data.targetId),
@@ -195,7 +195,7 @@ export function credentialManagement(
     const id = data.targetId || newGatewayId(data.requestId);
     async function checked(core: ReturnType<typeof configuration>) {
       const snapshot = await core.read();
-      if (snapshot.publicView.revision !== data.expectedRevision)
+      if (!core.matches(snapshot, data.expectedRevision, data.targetId ? `provider:${data.targetId}` : undefined))
         throw new PublicError("配置已变化，请重新读取");
       const previous = (snapshot.response.config.model_providers as any)?.[id];
       if (data.targetId) {
@@ -246,9 +246,18 @@ export function credentialManagement(
             const value = { ...definition, env_key: ref };
             commit();
             const result = await core.mutate(
-              data.expectedRevision,
+              (await core.read()).publicView.revision,
               async () => ({
                 edits: [
+                  ...(data.customModels !== undefined && core.runtime
+                    ? [
+                        {
+                          keyPath: `newbot_models.${id}`,
+                          value: data.customModels,
+                          mergeStrategy: "replace" as const,
+                        },
+                      ]
+                    : []),
                   {
                     keyPath: `model_providers.${id}`,
                     value,

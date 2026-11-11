@@ -1,0 +1,23 @@
+✔ ZIP extraction preserves ordinary resources and mode; rejects traversal, links, bombs, duplicate names and bad CRC (20.267169ms)
+✔ native-sized resources survive ZIP and session capture while oversized files stay rejected (250.557721ms)
+✔ import paths and GitHub references stay inside a selected package and fixed public service (1.054742ms)
+✔ staging budget includes abandoned sources, releases cancelled content and keeps retained sources reachable (105.333252ms)
+✔ SQLite journal restores package, preferences and interrupted import without claiming success (91.058834ms)
+✔ only repository homepages discover defaults; tree links resolve slash refs, tags, commits and directories without a catalog (4.826732ms)
+✔ release links resolve the exact tag, including annotated slash tags, without a same-name branch (0.737425ms)
+✔ an explicit missing ref never falls back to default; malformed and cyclic tag objects fail (0.969992ms)
+✔ URL and upstream validation reject credentials, unrelated hosts, malformed JSON and oversized responses (1.417919ms)
+✔ existing pinned sources keep captured ref/path; unpinned legacy drafts and traversal fail (0.215704ms)
+✔ a new scan reads the current branch tip while an existing scan keeps its snapshot (0.2914ms)
+✔ new imports reject overrides; restart and native scanning download the pinned commit and exact directory (363.050261ms)
+✔ publication preserves referenced bytes across upgrades, uninstall and restart; unrelated packages do not share a lock (19.251084ms)
+✔ collection rechecks a republished version and removes only old unregistered preparation directories (12.45642ms)
+✔ standalone skill retirement changes discoverability without editing its immutable package (4.473014ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 15
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 954.056409

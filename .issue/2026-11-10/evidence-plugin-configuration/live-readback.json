@@ -1,0 +1,62 @@
+{
+  "at": "2026-11-10T14:36:51.331Z",
+  "plugin": {
+    "id": "cloudwalker@newbot-imports",
+    "installed": true,
+    "enabled": true,
+    "skills": [
+      {
+        "name": "cloudwalker:cloudwalker-investigate",
+        "enabled": true
+      },
+      {
+        "name": "cloudwalker:cloudwalker-posture",
+        "enabled": true
+      }
+    ],
+    "connections": [
+      {
+        "name": "cloudwalker",
+        "configured": false,
+        "source": "verified-compatibility",
+        "fields": [
+          {
+            "id": "base_url",
+            "title": "牧云平台地址",
+            "sensitive": false,
+            "stored": false
+          },
+          {
+            "id": "api_token",
+            "title": "API Token",
+            "sensitive": true,
+            "stored": false
+          }
+        ]
+      }
+    ]
+  },
+  "standaloneSkillCount": 5,
+  "noPluginSkillsInStandaloneCatalog": true,
+  "noPluginConnectorsInStandaloneConfiguration": true,
+  "mcpOwnership": [
+    {
+      "pluginId": "cloudwalker@newbot-imports",
+      "runtimeStatus": "disabled",
+      "source": "newbot-plugin"
+    }
+  ],
+  "userConfigurationUnchanged": true,
+  "businessCalls": 0,
+  "publicBuild": {
+    "origin": "https://frequencies-alumni-prior-rna.trycloudflare.com",
+    "asset": "/assets/index-Q58qMvQG.js",
+    "matchesLocal": true
+  },
+  "finalPublicBuild": {
+    "at": "2026-11-10T14:39:40.454Z",
+    "origin": "https://frequencies-alumni-prior-rna.trycloudflare.com",
+    "asset": "/assets/index-BjJxw1dN.js",
+    "matchesLocal": true
+  }
+}

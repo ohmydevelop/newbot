@@ -3,10 +3,13 @@ export type Json = Record<string, any>;
 export type Item = Json & {
   id: string;
   type: string;
+  display?: import("./tool-display.js").ToolDisplay;
   text?: string;
   content?: Json[];
+  media?: MediaReference[];
   skillRefs?: SkillReference[];
   pluginRefs?: PluginReference[];
+  expert?: import("./experts.js").ExpertReference;
   a2ui?: import("./a2ui-chat.js").A2uiView;
 };
 export type Turn = {
@@ -21,6 +24,9 @@ export type Turn = {
   artifactNotices?: ArtifactNotice[];
 };
 export type Thread = {
+  uiCatalog?: string;
+  nextInput?: SessionInputs;
+  extensions?: import("./experts.js").SessionExtensions;
   id: string;
   name?: string;
   preview?: string;
@@ -33,6 +39,7 @@ export type Thread = {
   historyCursor?: string | null;
 };
 export type ThreadSummary = {
+  activity?: import("./thread-activity.js").ThreadActivity;
   id: string;
   title: string;
   provider: string;
@@ -48,7 +55,12 @@ export type Model = {
   defaultReasoningEffort: string;
   supportedReasoningEfforts: { reasoningEffort: string; description: string }[];
 };
-export type Approval = { id: string | number; method: string; params: Json };
+export type Approval = {
+  id: string | number;
+  method: string;
+  params: Json;
+  display?: import("./tool-display.js").ToolDisplay;
+};
 export type Rpc = {
   id?: string | number;
   method?: string;
@@ -77,7 +89,7 @@ export type Artifact = {
   size: number;
   sha256: string;
   version: number;
-  source: "fileChange" | "user";
+  source: "fileChange" | "user" | "media";
   createdAt: number;
   contentUrl: string;
   downloadUrl: string;
@@ -136,3 +148,18 @@ export type SkillReference = SkillSelection & {
 };
 
 export type PluginReference = { id: string; name: string; displayName: string };
+export type SessionInputs = {
+  revision: number;
+  skills: SkillReference[];
+  plugins: PluginReference[];
+};
+
+export type MediaReference = {
+  id: string;
+  reference?: string;
+  label: string;
+  state: "pending" | "ready" | "failed";
+  reason?: string;
+  url?: string;
+  artifactId?: string;
+};

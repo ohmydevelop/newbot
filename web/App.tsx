@@ -1,3 +1,8 @@
+import SessionPrivateAccess from "./components/SessionPrivateAccess";
+import { privateApi } from "./private-input";
+import { responseJson } from "./http";
+import ChatPrivateInputs from "./components/ChatPrivateInputs";
+import ThreadStatus from "./components/ThreadStatus";
 import { lazy, useEffect, useRef, useState, type FormEvent } from "react";
 import * as Dropdown from "@radix-ui/react-dropdown-menu";
 import { ActionMenuContent, ActionMenuItem } from "./components/ActionMenu";
@@ -8,6 +13,7 @@ import {
   Search,
   PanelLeft,
   SquarePen,
+  MessageSquare,
   Settings as SettingsIcon,
   ChevronDown,
   Check,
@@ -18,6 +24,7 @@ import {
   CheckCheck,
   ArrowDown,
   Blocks,
+  UsersRound,
   BookOpen,
   Terminal,
   LoaderCircle,
@@ -28,7 +35,14 @@ import {
   AlertCircle,
   WifiOff,
 } from "lucide-react";
-import type { Json, Model, Thread, SkillReference } from "../shared/types";
+import type {
+  Json,
+  Model,
+  Thread,
+  SkillReference,
+  PluginReference,
+  SessionInputs,
+} from "../shared/types";
 import {
   useApp,
   connect,
@@ -40,6 +54,7 @@ import {
   newChat,
   submitRun,
   clearPendingRun,
+  updatePendingRun,
 } from "./store";
 import { useComposerMentions } from "./components/ComposerMentions";
 import type { ComposerPanel } from "./components/Picker";
@@ -47,6 +62,8 @@ import { removeMention } from "./composer-selection";
 import { useChatDrop } from "./chat-drop";
 import { readSkill } from "./skills";
 import RuntimeSelector from "./components/RuntimeSelector";
+import type { ExpertReference, SessionExtensions } from "../shared/experts";
+const ExpertDetails = lazy(() => import("./components/ExpertDetails"));
 import type { ApprovalPreset } from "../shared/runtime-settings";
 import AttachmentPreview, {
   AttachmentImage,
@@ -62,6 +79,7 @@ import { HistoryPager } from "./components/chat/HistoryPager";
 import { RenameDialog } from "./components/chat/RenameDialog";
 import { useTaskStop } from "./components/chat/StopTask";
 import { ChatTurn } from "./components/chat/Turn";
+import { ReadIndicator } from "./components/ReadIndicator";
 const Settings = lazy(() => import("./components/Settings"));
 import { BackgroundNotice } from "./components/chat/BackgroundNotice";
 import { ApprovalCard } from "./components/Approvals";
@@ -135,14 +153,109 @@ function Login() {
 const WorkspaceFiles = lazy(() => import("./components/WorkspaceFiles"));
 export default function App() {
   const s = useApp();
-  const composer = useComposerDrafts(s.selectedId);
+  const composer = useComposerDrafts(s.selectedId, s.newDraftKey);
   const draft = composer.value.text,
     setDraft = composer.setText;
   const attachments = composer.value.files,
     setAttachments = composer.setFiles;
   const selectedPlugins = composer.value.plugins;
-  const selectedSkills = composer.value.skills,
-    setSelectedSkills = composer.setSkills;
+  const [inputsBusy, setInputsBusy] = useState(false),
+    [runtimeBusy, setRuntimeBusy] = useState(false);
+  const inputsRequest = useRef(false);
+  useEffect(() => {
+    if (s.thread?.id === s.selectedId && s.thread?.nextInput) {
+      composer.store.hydrateInputs(s.thread.id, s.thread.nextInput);
+      composer.refresh();
+    }
+  }, [s.thread?.id, s.thread?.nextInput?.revision, s.selectedId]);
+  async function saveInputs(
+    key: string,
+    skills: SkillReference[],
+    plugins: PluginReference[],
+  ) {
+    if (inputsRequest.current) throw new Error("正在保存扩展，请稍候");
+    if (key.startsWith("$new")) {
+      composer.store.setSkills(key, skills);
+      composer.store.setPlugins(key, plugins);
+      composer.refresh();
+      return;
+    }
+    const before = composer.store.get(key);
+    inputsRequest.current = true;
+    setInputsBusy(true);
+    try {
+      const value = await request<SessionInputs>("session/inputs", {
+        threadId: key,
+        expectedRevision: before.inputRevision || 0,
+        skills: skills.map(({ id, sha256 }) => ({ id, sha256 })),
+        plugins: plugins.map((p) => p.id),
+      });
+      useApp.setState((state) =>
+        state.thread?.id === key &&
+        value.revision >= (state.thread.nextInput?.revision || 0)
+          ? { thread: { ...state.thread, nextInput: value } }
+          : {},
+      );
+      if (composer.store.get(key).generation === before.generation)
+        composer.store.hydrateInputs(key, value);
+      composer.refresh();
+    } catch (error) {
+      if (useApp.getState().selectedId === key)
+        void loadThread(key, false).catch(() => {});
+      throw error;
+    } finally {
+      inputsRequest.current = false;
+      setInputsBusy(false);
+    }
+  }
+  const selectedExpert = s.selectedId
+    ? s.thread?.extensions?.expert ||
+      (s.thread?.extensions?.expertId
+        ? {
+            id: s.thread.extensions.expertId,
+            name: "已移除的专家",
+            revision: 0,
+          }
+        : null)
+    : composer.value.expert;
+  const [expertDetail, setExpertDetail] = useState<ExpertReference | null>(
+      null,
+    ),
+    [expertBusy, setExpertBusy] = useState(false);
+  const expertRequest = useRef(false);
+  async function chooseExpert(expert: ExpertReference | null) {
+    if (expertRequest.current) throw new Error("正在更新专家，请稍候");
+    const state = useApp.getState(),
+      scope = composer.store.get(composer.key);
+    if (!state.selectedId) {
+      composer.store.setExpert(scope.key, expert);
+      composer.refresh();
+      return;
+    }
+    const threadId = state.selectedId;
+    expertRequest.current = true;
+    setExpertBusy(true);
+    try {
+      const extensions = await request<SessionExtensions>(
+        "session/extensions",
+        {
+          threadId,
+          expertId: expert?.id || null,
+          expectedRevision: state.thread?.extensions?.revision || 0,
+        },
+      );
+      useApp.setState((s) =>
+        s.thread?.id === threadId &&
+        extensions.revision >= (s.thread.extensions?.revision || 0)
+          ? { thread: { ...s.thread, extensions } }
+          : {},
+      );
+    } finally {
+      expertRequest.current = false;
+      setExpertBusy(false);
+    }
+  }
+  const selectedSkills = composer.value.skills;
   const sendingOrigin = useRef<object | null>(null);
   const submissionError = useRef<string | null>(null);
   const navigation = useRef(0),
@@ -151,7 +264,17 @@ export default function App() {
       navigation: number;
       threadId: string | null;
     } | null>(null);
-  const [sending, setSending] = useState(false);
+  const origins = useRef(
+    new Map<string, NonNullable<typeof lastSubmission.current>>(),
+  );
+  const [sendingKey, setSendingKey] = useState<string | null>(null);
+  const sending = sendingKey === composer.key;
+  const setSending = (value: boolean) =>
+    setSendingKey(value ? composer.key : null);
+  const pendingSubmission = s.pendingRun
+    ? s.pendingRuns[s.pendingRun]
+    : undefined;
+  const [privateAccess, setPrivateAccess] = useState<string | null>(null);
   const [settings, setSettings] = useState<string | null>(null);
   const [search, setSearch] = useState(false);
   useEffect(() => {
@@ -285,8 +408,8 @@ export default function App() {
   }, [s.selectedId]);
   const activeTurn = s.thread?.turns.find((t) => t.status === "inProgress");
   const running = !!activeTurn || s.thread?.status?.type === "active";
-  const selectionDisabled =
-    running ||
+  const selectionContextDisabled =
+    !!expertDetail ||
     sending ||
     !!s.pendingRun ||
     !s.authenticated ||
@@ -294,6 +417,7 @@ export default function App() {
     !s.connected ||
     s.runtime !== "ready" ||
     s.loading ||
+    !!s.threadError ||
     !!(
       settings ||
       search ||
@@ -302,15 +426,18 @@ export default function App() {
       attachmentPreview ||
       workspacePicker
     );
+  const selectionDisabled =
+    selectionContextDisabled || expertBusy || inputsBusy;
   const mentions = useComposerMentions({
     value: draft,
     scope: `${composer.key}:${composer.value.generation}`,
-    disabled: selectionDisabled,
+    disabled: selectionContextDisabled,
     panel: composerPanel,
     setPanel: setComposerPanel,
     textarea,
     selectedSkills: selectedSkills.map((x) => x.id),
     selectedPlugins: selectedPlugins.map((x) => x.id),
+    selectedExpert: selectedExpert?.id,
     async onSelect(kind, entry, token, signal) {
       const scope = composer.store.get(composer.key);
       let selection: SkillReference | undefined;
@@ -329,24 +456,45 @@ export default function App() {
           sha256: document.sha256,
         };
       }
+      if (entry.kind === "expert") {
+        if (signal.aborted) return;
+        await chooseExpert({
+          id: entry.id,
+          name: entry.name,
+          revision: entry.revision,
+        });
+      }
       const current = composer.store.get(scope.key);
       if (signal.aborted || current.generation !== scope.generation) return;
       if (kind === "$") {
         if (!current.skills.some((x) => x.id === entry.id)) {
           if (current.skills.length >= 8)
             throw new Error("每条消息最多选择 8 个技能");
-          composer.store.setSkills(scope.key, [...current.skills, selection!]);
+          await saveInputs(
+            scope.key,
+            [...current.skills, selection!],
+            current.plugins,
+          );
         }
-      } else if (!current.plugins.some((x) => x.id === entry.id)) {
+      } else if (
+        entry.kind !== "expert" &&
+        !current.plugins.some((x) => x.id === entry.id)
+      ) {
         if (current.plugins.length >= 8)
           throw new Error("每条消息最多选择 8 个插件");
-        composer.store.setPlugins(scope.key, [
+        await saveInputs(scope.key, current.skills, [
           ...current.plugins,
           { id: entry.id, name: entry.name, displayName: entry.displayName },
         ]);
       }
-      if (token && current.text === scope.text)
-        composer.store.setText(scope.key, removeMention(current.text, token));
+      const latest = composer.store.get(scope.key);
+      if (
+        !signal.aborted &&
+        latest.generation === scope.generation &&
+        token &&
+        latest.text === scope.text
+      )
+        composer.store.setText(scope.key, removeMention(latest.text, token));
       composer.refresh();
     },
   });
@@ -362,7 +510,7 @@ export default function App() {
       setComposerPanel(null);
   }, [settings, search, rename, archiving, attachmentPreview, workspacePicker]);
   const drop = useChatDrop({
-    disabled: uploading || sending || running || !!s.pendingRun,
+    disabled: uploading || sending || !!s.pendingRun,
     scope: `${composer.key}:${s.authenticated}`,
     upload: (files) => {
       void upload(files);
@@ -372,8 +520,8 @@ export default function App() {
       setUploadNotice(
         uploading
           ? "请等待当前上传完成后再添加附件"
-          : running || sending || s.pendingRun
-            ? "当前任务执行中，完成后可添加附件"
+          : sending || s.pendingRun
+            ? "请等待本次发送确认后再添加附件"
             : "没有可上传的文件，文件夹暂不支持",
       );
       setUploadOwner(composer.key);
@@ -386,6 +534,9 @@ export default function App() {
     e?.preventDefault();
     if (
       !draft.trim() ||
+      expertRequest.current ||
+      inputsRequest.current ||
+      runtimeBusy ||
       sending ||
       !!s.pendingRun ||
       uploading ||
@@ -393,7 +544,9 @@ export default function App() {
       running ||
       !s.connected ||
       !s.settings ||
-      s.runtime !== "ready"
+      s.runtime !== "ready" ||
+      s.loading ||
+      !!s.threadError
     )
       return;
     const snapshot = composer.store.get(composer.key);
@@ -415,24 +568,38 @@ export default function App() {
     s.set({ error: "" });
     pinned.current = true;
     try {
-      const result = await submitRun({
-        threadId: s.selectedId || undefined,
-        text,
-        attachments: files.map((a) => a.id),
-        ...(skills.length ? { skills } : {}),
-        ...(selectedPlugins.length
-          ? { plugins: selectedPlugins.map((p) => p.id) }
-          : {}),
-        provider: s.provider || undefined,
-        ...(s.selectedId
-          ? { runtimeRevision: s.thread?.runtime?.revision || 0 }
-          : { approval: newApproval }),
-        ...(s.model ? { model: s.model, effort: s.effort || undefined } : {}),
-      });
-      if (lastSubmission.current !== origin) return;
+      const result = await submitRun(
+        {
+          threadId: s.selectedId || undefined,
+          text,
+          attachments: files.map((a) => a.id),
+          expertId: selectedExpert?.id || null,
+          extensionRevision: s.selectedId
+            ? s.thread?.extensions?.revision || 0
+            : undefined,
+          inputRevision: s.selectedId
+            ? (snapshot.inputRevision ?? s.thread?.nextInput?.revision ?? 0)
+            : undefined,
+          ...(skills.length ? { skills } : {}),
+          ...(selectedPlugins.length
+            ? { plugins: selectedPlugins.map((p) => p.id) }
+            : {}),
+          provider: s.provider || undefined,
+          ...(s.selectedId
+            ? { runtimeRevision: s.thread?.runtime?.revision || 0 }
+            : { approval: newApproval }),
+          ...(s.model ? { model: s.model, effort: s.effort || undefined } : {}),
+        },
+        (id) => origins.current.set(id, origin),
+      );
+      if (result.state === "awaiting_credentials") return;
+      if (!origins.current.has(result.requestId)) return;
+      origins.current.delete(result.requestId);
       const follow =
         navigation.current === origin.navigation &&
-        useApp.getState().selectedId === origin.threadId;
+        useApp.getState().selectedId === origin.threadId &&
+        (origin.threadId !== null ||
+          useApp.getState().newDraftKey === origin.draft.key);
       composer.store.acknowledge(
         snapshot,
         follow && origin.threadId === null ? result.threadId : undefined,
@@ -443,7 +610,10 @@ export default function App() {
       if (follow) await loadThread(result.threadId);
       await loadThreads();
     } catch (e) {
-      if (lastSubmission.current === origin) {
+      if (
+        navigation.current === origin.navigation &&
+        useApp.getState().selectedId === origin.threadId
+      ) {
         const message = useApp.getState().pendingRun
           ? "发送结果未确认，请检查发送状态。"
           : e instanceof Error
@@ -461,8 +631,7 @@ export default function App() {
     }
   }
   async function upload(files: FileList | File[] | null) {
-    if (!files?.length || uploading || sending || running || s.pendingRun)
-      return;
+    if (!files?.length || uploading || sending || s.pendingRun) return;
     const list = Array.from(files),
       scope = composer.store.get(composer.key);
     if (scope.files.length + list.length > 8) {
@@ -503,7 +672,7 @@ export default function App() {
           );
           if (response.status === 401)
             useApp.setState({ authenticated: false });
-          const data = await response.json();
+          const data = await responseJson(response);
           if (!response.ok) throw new Error(data.error || "上传未完成");
           const current = composer.store.get(scope.key);
           if (current.generation === scope.generation)
@@ -590,7 +759,6 @@ export default function App() {
     setComposerPanel(null);
     setNewApproval("ask");
     navigation.current++;
-    composer.store.reset("$new");
     composer.refresh();
     newChat();
     if (window.innerWidth <= 760) s.set({ sidebar: false });
@@ -604,12 +772,17 @@ export default function App() {
       useApp.setState({ error: "" });
     submissionError.current = null;
   }
-  async function inspectSubmission() {
-    const id = useApp.getState().pendingRun;
-    if (!id || checkingRef.current) return;
-    checkingRef.current = true;
-    setCheckingRun(true);
-    setCanAbandon(null);
+  const inspections = useRef(new Set<string>());
+  async function inspectSubmission(requestId?: string, automatic = false) {
+    const id = requestId || useApp.getState().pendingRun;
+    if (!id || inspections.current.has(id)) return;
+    const entry = useApp.getState().pendingRuns[id];
+    if (!entry || entry.state === "submitting") return;
+    inspections.current.add(id);
+    if (!automatic) {
+      setCheckingRun(true);
+      setCanAbandon(null);
+    }
     try {
       const response = await fetch(`/api/agent/runs/${id}`, {
         cache: "no-store",
@@ -619,56 +792,93 @@ export default function App() {
         return;
       }
       if (response.status === 404) {
-        setCanAbandon(id);
-        setRecoveryNotice(
-          "暂未找到提交记录，请稍后核对；也可放弃尚未登记的发送。",
-        );
+        if (useApp.getState().pendingRun === id) {
+          setCanAbandon(id);
+          if (!automatic)
+            setRecoveryNotice(
+              "暂未找到提交记录，可稍后核对或放弃尚未登记的发送。",
+            );
+        }
         return;
       }
       if (!response.ok) throw new Error("无法读取请求状态");
-      const status = await response.json();
-      if (useApp.getState().pendingRun !== id) return;
+      const status = await responseJson<Json>(response);
+      if (!useApp.getState().pendingRuns[id]) return;
       if (status.turn?.id) {
-        const origin = lastSubmission.current,
-          follow =
-            !!origin &&
-            origin.navigation === navigation.current &&
-            useApp.getState().selectedId === origin.threadId;
+        const origin = origins.current.get(id);
+        const follow = origin
+          ? origin.navigation === navigation.current &&
+            useApp.getState().selectedId === origin.threadId &&
+            (origin.threadId !== null ||
+              useApp.getState().newDraftKey === origin.draft.key)
+          : entry.origin ===
+              (useApp.getState().selectedId || useApp.getState().newDraftKey) &&
+            !composer.store.get(entry.origin).text &&
+            !composer.store.get(entry.origin).files.length;
         if (origin)
           composer.store.acknowledge(
             origin.draft,
             follow && origin.threadId === null ? status.threadId : undefined,
           );
         composer.refresh();
-        lastSubmission.current = null;
+        origins.current.delete(id);
+        clearPendingRun(id);
+        clearSubmissionError();
         if (origin && sendingOrigin.current === origin) {
           sendingOrigin.current = null;
           setSending(false);
         }
-        clearPendingRun(id);
-        clearSubmissionError();
-        setRecoveredThread(status.threadId);
-        setRecoveryNotice("上次消息已确认提交。");
+        if (origin === lastSubmission.current) lastSubmission.current = null;
         if (follow) await loadThread(status.threadId);
+        if (!automatic) {
+          setRecoveredThread(status.threadId);
+          setRecoveryNotice("消息已确认提交。");
+        }
         void loadThreads().catch(() => {});
       } else if (["rejected", "abandoned"].includes(status.state)) {
+        const visible = useApp.getState().pendingRun === id;
         clearPendingRun(id);
+        origins.current.delete(id);
         clearSubmissionError();
-        sendingOrigin.current = null;
-        setSending(false);
-        lastSubmission.current = null;
-        setRecoveryNotice("上次发送未进入执行阶段，草稿已保留。");
-      } else
-        setRecoveryNotice(
-          "提交结果仍未确认，请检查对话记录；不会自动重复执行。",
-        );
+        if (visible)
+          setRecoveryNotice(
+            status.error || "此次发送未进入执行阶段，草稿已保留。",
+          );
+      } else {
+        updatePendingRun(id, status);
+        if (!automatic && status.state !== "awaiting_credentials")
+          setRecoveryNotice("提交结果仍未确认，不会自动重复执行。");
+      }
     } catch {
-      setRecoveryNotice("发送状态未能读取，请恢复连接后重试。");
+      if (!automatic) setRecoveryNotice("发送状态暂不可读，请恢复连接后重试。");
     } finally {
-      checkingRef.current = false;
-      setCheckingRun(false);
+      inspections.current.delete(id);
+      if (!automatic) setCheckingRun(false);
     }
   }
+  const inspectRef = useRef(inspectSubmission);
+  inspectRef.current = inspectSubmission;
+  useEffect(() => {
+    if (!s.authenticated || !s.connected) return;
+    const check = () => {
+      for (const entry of Object.values(useApp.getState().pendingRuns))
+        if (entry.state !== "submitting")
+          void inspectRef.current(entry.id, true);
+    };
+    check();
+    const timer = setInterval(check, 2000);
+    window.addEventListener("focus", check);
+    return () => {
+      clearInterval(timer);
+      window.removeEventListener("focus", check);
+    };
+  }, [
+    s.authenticated,
+    s.connected,
+    Object.values(s.pendingRuns)
+      .map((r) => r.id + ":" + r.state)
+      .join(","),
+  ]);
   async function abandonSubmission() {
     const id = useApp.getState().pendingRun;
     if (!id || canAbandon !== id || checkingRef.current) return;
@@ -684,7 +894,7 @@ export default function App() {
         s.set({ authenticated: false });
         return;
       }
-      const result = await response.json();
+      const result = await responseJson(response);
       if (!response.ok || !["abandoned", "rejected"].includes(result.state)) {
         setCanAbandon(null);
         setRecoveryNotice("已有提交记录，无法直接放弃；请读取任务状态。");
@@ -716,7 +926,13 @@ export default function App() {
   if (!s.authenticated) return <Login />;
   return (
     <div className={`workspace ${s.sidebar ? "sidebar-open" : ""}`}>
-      {s.pendingRun && (
+      {privateAccess && (
+        <SessionPrivateAccess
+          threadId={privateAccess}
+          onClose={() => setPrivateAccess(null)}
+        />
+      )}
+      {pendingSubmission?.state === "unknown" && (
         <div className="pending-run" role="status">
           <span>上次发送等待确认</span>
           <button
@@ -735,6 +951,26 @@ export default function App() {
           )}
         </div>
       )}
+      <div className="pending-navigation-list">
+        {Object.values(s.pendingRuns)
+          .filter((r) => r.id !== s.pendingRun && r.state !== "submitting")
+          .map((r) => (
+            <button
+              key={r.id}
+              className="pending-navigation"
+              onClick={() => {
+                navigation.current++;
+                if (r.status?.threadId) void loadThread(r.status.threadId);
+                else if (r.origin.startsWith("$new")) newChat(r.origin);
+                else void loadThread(r.origin);
+              }}
+            >
+              {r.state === "awaiting_credentials"
+                ? "待授权的任务"
+                : "待确认的发送"}
+            </button>
+          ))}
+      </div>
       <a
         className="skip-link"
         href="#message-input"
@@ -764,6 +1000,14 @@ export default function App() {
             <span>Minimal Agent</span>
           </button>
           <button
+            className="icon-button sidebar-search"
+            title="搜索聊天"
+            aria-label="搜索聊天"
+            onClick={() => setSearch(true)}
+          >
+            <Search size={19} />
+          </button>
+          <button
             className="icon-button"
             title="收起侧栏"
             aria-label="收起侧栏"
@@ -779,42 +1023,33 @@ export default function App() {
             <span>新聊天</span>
             <kbd>{appleKeys ? "⇧ ⌘ O" : "Ctrl ⇧ O"}</kbd>
           </button>
-          <button onClick={() => setSearch(true)}>
-            <Search size={19} />
-            <span>搜索聊天</span>
-            <kbd>{appleKeys ? "⌘ K" : "Ctrl K"}</kbd>
-          </button>
-          <button onClick={() => setSettings("mcp")}>
+
+          <button onClick={() => setSettings("extensions")}>
             <Blocks size={19} />
-            <span>工具连接</span>
-          </button>
-          <button onClick={() => setSettings("skills")}>
-            <BookOpen size={19} />
-            <span>技能</span>
+            <span>扩展</span>
           </button>
         </nav>
         <div className="history">
-          {s.threadsLoading && (
-            <p className="muted" role="status">
-              正在读取对话…
-            </p>
-          )}
-          {s.threadsError && (
-            <p className="inline-error" role="alert">
-              {s.threadsError}
-              <button onClick={() => void loadThreads().catch(() => {})}>
-                重试
-              </button>
-            </p>
-          )}
-          <h2>最近对话</h2>
-          {s.threads.length === 0 ? (
+          <div className="history-heading">
+            <h2>最近对话</h2>
+            <ReadIndicator
+              busy={s.threadsLoading}
+              error={s.threadsError}
+              label="正在读取对话"
+              onRetry={() => void loadThreads().catch(() => {})}
+            />
+          </div>
+          <span className="sr-only" role="alert">
+            {s.threadsError}
+          </span>
+          {s.threads.length === 0 && !s.threadsLoading && !s.threadsError ? (
             <p className="history-empty">新的想法，从这里开始。</p>
           ) : (
             s.threads.map((t) => (
               <div
                 className={`history-row ${s.selectedId === t.id ? "selected" : ""}`}
                 key={t.id}
+                data-thread-id={t.id}
               >
                 <button
                   className="history-link"
@@ -822,7 +1057,8 @@ export default function App() {
                   title={t.title}
                   aria-current={s.selectedId === t.id ? "page" : undefined}
                 >
-                  {t.title}
+                  <span className="history-title">{t.title}</span>
+                  <ThreadStatus activity={t.activity} />
                 </button>
                 <Dropdown.Root>
                   <Dropdown.Trigger
@@ -900,6 +1136,24 @@ export default function App() {
             <strong className="workspace-title">Minimal Agent</strong>
           </div>
           <div className="topbar-right">
+            {s.selectedId && (
+              <button
+                className="icon-button"
+                aria-label="会话私密授权"
+                title="会话私密授权"
+                onClick={() => setPrivateAccess(s.selectedId)}
+              >
+                <ShieldCheck size={17} />
+              </button>
+            )}
+            <ReadIndicator
+              busy={s.loading}
+              error={s.threadError}
+              label="正在更新对话"
+              onRetry={() => {
+                if (s.selectedId) void loadThread(s.selectedId);
+              }}
+            />
             <span
               className={`runtime-status ${s.runtime === "ready" && s.connected ? "ready" : ""}`}
             >
@@ -914,6 +1168,22 @@ export default function App() {
             </span>
           </div>
         </header>
+        <div className="chat-notifications">
+          {!s.error && <BackgroundNotice />}
+          {s.error && (
+            <div className="error-banner" role="alert">
+              <AlertCircle size={16} />
+              <span>{s.error}</span>
+              <button
+                className="icon-button"
+                aria-label="关闭错误提示"
+                onClick={() => s.set({ error: "" })}
+              >
+                <X size={15} />
+              </button>
+            </div>
+          )}
+        </div>
         {s.connectionResourceError && (
           <div className="connection-banner" role="alert">
             <span>
@@ -948,8 +1218,26 @@ export default function App() {
               el.scrollHeight - el.scrollTop - el.clientHeight < 120;
             setShowDown(!pinned.current);
           }}
+          onClickCapture={(event) => {
+            if (
+              (event.target as Element).closest(
+                ".process-toggle, .tool-item > summary",
+              )
+            ) {
+              pinned.current = false;
+              setShowDown(true);
+            }
+          }}
         >
-          {!s.thread && !s.loading ? (
+          {pendingSubmission?.state === "awaiting_credentials" ? (
+            <ChatPrivateInputs
+              runId={pendingSubmission.id}
+              status={pendingSubmission.status || {}}
+              onChanged={() =>
+                void inspectSubmission(pendingSubmission.id, true)
+              }
+            />
+          ) : !s.thread && !s.loading && !s.selectedId ? (
             <div className="welcome">
               <div className="welcome-mark">
                 <Mark size={43} />
@@ -993,12 +1281,28 @@ export default function App() {
               </div>
             </div>
           ) : (
-            <div className="message-column">
+            <div
+              className="message-column"
+              aria-busy={s.loading}
+              inert={!!s.thread && (s.loading || !!s.threadError)}
+            >
               <HistoryPager scroll={scroll} pinned={pinned} />
               {s.loading && !s.thread && (
-                <div className="loading-history">
-                  <LoaderCircle size={20} className="spin" />
-                  正在恢复对话…
+                <div className="loading-history" role="status">
+                  <LoaderCircle size={20} className="spin" aria-hidden="true" />
+                  <span className="sr-only">正在读取对话</span>
+                </div>
+              )}
+              {s.threadError && !s.thread && (
+                <div className="history-read-error" role="alert">
+                  <p>{s.threadError}</p>
+                  <button
+                    type="button"
+                    className="secondary"
+                    onClick={() => void loadThread(s.selectedId!)}
+                  >
+                    重新读取对话
+                  </button>
                 </div>
               )}
               {s.thread?.turns.map((turn, turnIndex) => (
@@ -1040,20 +1344,6 @@ export default function App() {
             >
               <ArrowDown size={18} />
             </button>
-          )}
-          {!s.error && <BackgroundNotice />}
-          {s.error && (
-            <div className="error-banner" role="alert">
-              <AlertCircle size={16} />
-              <span>{s.error}</span>
-              <button
-                className="icon-button"
-                aria-label="关闭错误提示"
-                onClick={() => s.set({ error: "" })}
-              >
-                <X size={15} />
-              </button>
-            </div>
           )}
           {stopTask.entry && (
             <div className="composer-feedback" role="status">
@@ -1189,9 +1479,7 @@ export default function App() {
                         <span title={a.error}>上传失败</span>
                         <button
                           type="button"
-                          disabled={
-                            uploading || running || sending || !!s.pendingRun
-                          }
+                          disabled={uploading || sending || !!s.pendingRun}
                           onClick={() => {
                             setAttachments((prev) =>
                               prev.filter((v) => v.id !== a.id),
@@ -1207,6 +1495,53 @@ export default function App() {
                 ))}
               </div>
             )}
+            {selectedExpert && (
+              <div
+                className="skill-draft-list expert-draft"
+                aria-label="当前会话的专家"
+              >
+                <span>
+                  <button
+                    type="button"
+                    className="expert-chip-detail"
+                    title="查看专家"
+                    onClick={() => setExpertDetail(selectedExpert)}
+                  >
+                    <UsersRound size={15} />
+                    {selectedExpert.name}
+                  </button>
+                  <button
+                    type="button"
+                    title="更换专家"
+                    aria-label="更换专家"
+                    disabled={selectionDisabled}
+                    onClick={(e) => mentions.open("plugins", e.currentTarget)}
+                  >
+                    <ChevronDown size={14} />
+                  </button>
+                  <button
+                    type="button"
+                    title="移除专家"
+                    aria-label="移除会话专家"
+                    disabled={selectionDisabled}
+                    onClick={() => void chooseExpert(null).catch(s.notify)}
+                  >
+                    <X size={14} />
+                  </button>
+                </span>
+              </div>
+            )}
+            {expertDetail && (
+              <DeferredPanel
+                label="专家详情"
+                onClose={() => setExpertDetail(null)}
+              >
+                <ExpertDetails
+                  value={expertDetail}
+                  onClose={() => setExpertDetail(null)}
+                />
+              </DeferredPanel>
+            )}
             {selectedPlugins.length > 0 && (
               <div className="skill-draft-list" aria-label="下一条消息的插件">
                 {selectedPlugins.map((p) => (
@@ -1215,14 +1550,14 @@ export default function App() {
                     {p.displayName}
                     <button
                       type="button"
-                      disabled={sending || !!s.pendingRun}
+                      disabled={selectionDisabled}
                       aria-label={`移除插件 ${p.displayName}`}
                       onClick={() => {
-                        composer.store.setPlugins(
+                        void saveInputs(
                           composer.key,
+                          selectedSkills,
                           selectedPlugins.filter((v) => v.id !== p.id),
-                        );
-                        composer.refresh();
+                        ).catch(s.notify);
                       }}
                     >
                       <X size={14} />
@@ -1252,11 +1587,13 @@ export default function App() {
                       <button
                         type="button"
                         aria-label={`移除技能 ${skill.displayName}`}
-                        disabled={sending || !!s.pendingRun}
+                        disabled={selectionDisabled}
                         onClick={() =>
-                          setSelectedSkills((prev) =>
-                            prev.filter((s) => s.id !== skill.id),
-                          )
+                          void saveInputs(
+                            composer.key,
+                            selectedSkills.filter((s) => s.id !== skill.id),
+                            selectedPlugins,
+                          ).catch(s.notify)
                         }
                       >
                         <X size={14} aria-hidden="true" />
@@ -1326,7 +1663,7 @@ export default function App() {
                     id="composer-add"
                     aria-label="添加附件"
                     title="添加附件与工具"
-                    disabled={uploading || sending || running || !!s.pendingRun}
+                    disabled={uploading || sending || !!s.pendingRun}
                   >
                     {uploading ? (
                       <LoaderCircle size={20} className="spin" />
@@ -1365,7 +1702,7 @@ export default function App() {
                       <ActionMenuItem
                         icon={Blocks}
                         separated
-                        disabled={!s.pluginSelection}
+                        disabled={!s.pluginSelection && !s.expertSelection}
                         onSelect={() =>
                           mentions.open(
                             "plugins",
@@ -1373,7 +1710,7 @@ export default function App() {
                           )
                         }
                       >
-                        选择插件
+                        选择专家或插件
                       </ActionMenuItem>
                       <ActionMenuItem
                         icon={BookOpen}
@@ -1393,10 +1730,13 @@ export default function App() {
                 <button
                   type="button"
                   className="icon-button"
-                  aria-label="选择插件"
+                  aria-label="选择专家或插件"
                   data-composer-picker
-                  title="选择插件"
-                  disabled={selectionDisabled || !s.pluginSelection}
+                  title="选择专家或插件"
+                  disabled={
+                    selectionDisabled ||
+                    (!s.pluginSelection && !s.expertSelection)
+                  }
                   onClick={(e) => mentions.open("plugins", e.currentTarget)}
                 >
                   <Blocks size={18} />
@@ -1416,6 +1756,7 @@ export default function App() {
                 )}
               </div>
               <RuntimeSelector
+                onBusy={setRuntimeBusy}
                 panel={composerPanel}
                 setPanel={setComposerPanel}
                 disabled={selectionDisabled}
@@ -1428,7 +1769,13 @@ export default function App() {
                   className="send-button"
                   aria-label="停止回答"
                   title="停止回答"
-                  disabled={!activeTurn || !s.connected || stopTask.disabled}
+                  disabled={
+                    !activeTurn ||
+                    !s.connected ||
+                    stopTask.disabled ||
+                    s.loading ||
+                    !!s.threadError
+                  }
                   onClick={() => void stopTask.stop()}
                 >
                   <Square size={15} fill="currentColor" />
@@ -1441,13 +1788,18 @@ export default function App() {
                   title="发送消息"
                   disabled={
                     !draft.trim() ||
+                    expertBusy ||
+                    inputsBusy ||
+                    runtimeBusy ||
                     !!s.pendingRun ||
                     sending ||
                     uploading ||
                     attachments.some((a) => !!a.state) ||
                     !s.connected ||
                     !s.settings ||
-                    s.runtime !== "ready"
+                    s.runtime !== "ready" ||
+                    s.loading ||
+                    !!s.threadError
                   }
                 >
                   {sending ? (
@@ -1464,33 +1816,25 @@ export default function App() {
           </p>
         </div>
       </main>
-      <Modal open={search} onOpenChange={setSearch} title="搜索聊天">
+      <Modal
+        open={search}
+        onOpenChange={setSearch}
+        title="搜索聊天"
+        className="chat-search-modal"
+      >
         <div className="search-input">
           <Search size={19} />
           <input
             autoFocus
             data-autofocus
-            placeholder="搜索你的对话…"
+            placeholder="搜索对话名称…"
             aria-label="搜索对话"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
           />
+          <ReadIndicator busy={s.threadsLoading} label="正在读取对话" />
         </div>
-        <p className="muted">搜索已保存的对话名称</p>
-        {s.threadsLoading && (
-          <p role="status" className="muted">
-            正在读取对话…
-          </p>
-        )}
-        {s.threadsError && (
-          <p role="alert" className="inline-error">
-            {s.threadsError}
-            <button onClick={() => void loadThreads().catch(() => {})}>
-              重试
-            </button>
-          </p>
-        )}
-        <div className="search-results">
+        <div className="search-results" aria-busy={s.threadsLoading}>
           {s.threads
             .filter((t) =>
               t.title
@@ -1500,7 +1844,7 @@ export default function App() {
             )
             .map((t) => (
               <button key={t.id} onClick={() => chooseThread(t.id)}>
-                <SquarePen size={17} />
+                <MessageSquare size={17} aria-hidden="true" />
                 <span>{t.title}</span>
                 <ArrowRight size={15} />
               </button>
@@ -1512,7 +1856,21 @@ export default function App() {
                 .normalize("NFKC")
                 .toLocaleLowerCase()
                 .includes(query.trim().normalize("NFKC").toLocaleLowerCase()),
-            ) && <p className="muted">没有找到匹配的对话</p>}
+            ) && (
+              <p className="muted">
+                {query.trim() ? "没有找到匹配的对话" : "还没有对话"}
+              </p>
+            )}
+        </div>
+        <div className="search-feedback" aria-live="polite">
+          {s.threadsError && (
+            <p role="alert" className="inline-error">
+              {s.threadsError}
+              <button onClick={() => void loadThreads().catch(() => {})}>
+                重试
+              </button>
+            </p>
+          )}
         </div>
       </Modal>
       {rename && (

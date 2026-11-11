@@ -14,6 +14,13 @@ export class FakeCodex extends Codex {
     this.emit("status");
   }
   override stop() {}
+  override async inspectExtensions<M extends Method>(
+    method: M,
+    params: Params<M>,
+    _overrides: Record<string, { enabled: boolean }> = {},
+  ): Promise<Result<M>> {
+    return this.call(method, params);
+  }
   override async call<M extends Method>(
     method: M,
     params: Params<M>,
@@ -78,7 +85,7 @@ export class FakeCodex extends Codex {
                 _meta: {
                   ui: {
                     resourceUri: "ui://other",
-                    visibility: ["model", "app"],
+                    visibility: ["model"],
                   },
                 },
               },

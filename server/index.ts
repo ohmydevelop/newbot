@@ -1,3 +1,12 @@
+import { privateFields } from "./private-fields.js";
+import { certificateInspector } from "./certificates.js";
+import { randomUUID } from "node:crypto";
+import { configurationOperations } from "./configuration-operations.js";
+import { extensionImports } from "./imports.js";
+import { IMPORT_LIMITS } from "../shared/imports.js";
+import { mediaStore } from "./media.js";
+import { ExtensionRuntime } from "./extension-runtime.js";
+import { workspaces } from "./workspaces.js";
 import { PublicError, publicErrorMessage } from "./public-error.js";
 import { ProviderRuntime } from "./provider-runtime.js";
 import {
@@ -49,6 +58,11 @@ import { credentialBroker, CredentialFailure } from "./credentials.js";
 import { providerCredentialConsumer } from "./credential-provider.js";
 import { sudoIdentity } from "./credential-sudo.js";
 import { A2UI_ACTIONS } from "../shared/a2ui-chat.js";
+import {
+  A2UI_CATALOG_ID,
+  A2UI_RICH_CATALOG_ID,
+} from "../shared/a2ui-policy.js";
+import { a2uiApis, richA2uiApis } from "../shared/a2ui-catalog.js";
 
 export async function createServer(
   options: {
@@ -57,6 +71,8 @@ export async function createServer(
     password?: string;
     codex?: Codex;
     origins?: string[];
+    /** Local embedding/tests may serve an isolated build without publishing live assets. */
+    webDirectory?: string;
     credentialCa?: string;
     sudoIdentity?: ReturnType<typeof sudoIdentity>;
     /** null is retained for native configuration adapter contract tests. */
@@ -74,6 +90,8 @@ export async function createServer(
   const verify = auth(db, directory, options.password);
   const files = fileStore(directory, db);
   const runs = runStore(db);
+  const configOperations = configurationOperations(db);
+  const inspectCertificate = certificateInspector();
   files.cleanup();
   const vault = credentialVault(db, directory, cwd);
   const runtime =
@@ -109,6 +127,8 @@ export async function createServer(
         },
       ]);
   }
+  if (runtime.providerRuntime)
+    runtime.extensionRuntime = new ExtensionRuntime(db);
   runtime.credentialSource = async () => {
     if (!vault.hasEntries) return {};
     const probe =
@@ -122,13 +142,17 @@ export async function createServer(
       if (probe.state !== "ready") throw new PublicError("凭证配置暂不可读");
       const raw = await probe.call("config/read", { cwd, includeLayers: true });
       return vault.nativeEnv(
-        runtime.providerRuntime?.effective(raw.config) || raw.config,
+        runtime.providerRuntime?.effective(
+          runtime.extensionRuntime?.overlay(raw).config || raw.config,
+        ) || raw.config,
       );
     } finally {
       if (probe !== runtime) await probe.stopAndWait();
     }
   };
-  const artifacts = artifactStore(directory, cwd, db);
+  const workspaceStore = workspaces(directory, cwd, db);
+  const artifacts = artifactStore(directory, cwd, db, workspaceStore.root);
+  const media = mediaStore(db, artifacts);
   await artifacts.maintenance(true, () => files.cleanup());
   let credentials: ReturnType<typeof credentialBroker>;
   const service = bridge(
@@ -139,8 +163,19 @@ export async function createServer(
     artifacts,
     () => credentials?.pending || 0,
     vault,
+    workspaceStore,
+    media,
   );
+  const imports = extensionImports(directory, db, runtime, service);
+  await imports.init();
   const managedCredentials = credentialManagement(service, vault);
+  const privateFieldStore = privateFields(db, vault, service.configuration);
+  runtime.privateFieldInfo = privateFieldStore.info;
+  if (runtime.providerRuntime) {
+    runtime.privateConfiguration = privateFieldStore.inject;
+    runtime.privateVersion = privateFieldStore.version;
+    runtime.credentialSource = async () => ({});
+  }
   const sudo =
     options.sudoIdentity ||
     sudoIdentity({ enabled: process.env.SUDO_IDENTITY_CHECK === "true" });
@@ -151,6 +186,47 @@ export async function createServer(
         .get(owner, Date.now()),
     audit: (id, state) => db.audit("credentials/private-operation", id, state),
     prepare: async (input) => {
+      if (input.operation === "plugin.configuration.save") {
+        const detail = await service.plugins.read(input.pluginId);
+        if (!detail.installed || !detail.available)
+          throw new PublicError("插件不可配置");
+        const consumer = await service.pluginConnections.prepare(input);
+        return {
+          ...consumer,
+          run: async (...args: Parameters<typeof consumer.run>) => {
+            const result = await consumer.run(...args);
+            if (result.state === "succeeded")
+              service.events.publish({
+                type: EventType.CUSTOM,
+                name: "newbot.configuration.changed",
+                value: { scope: "extensions", pluginId: input.pluginId },
+              });
+            return result;
+          },
+        };
+      }
+      if (
+        input.operation === "credential.fields.save" ||
+        input.operation === "credential.authorize"
+      ) {
+        const consumer = await privateFieldStore.prepare(input);
+        return {
+          ...consumer,
+          run: async (...args: Parameters<typeof consumer.run>) => {
+            const result = await consumer.run(...args);
+            if (
+              result.state === "succeeded" &&
+              input.operation === "credential.fields.save"
+            )
+              service.events.publish({
+                type: EventType.CUSTOM,
+                name: "newbot.configuration.changed",
+                value: { scope: input.scope, targetId: input.targetId },
+              });
+            return result;
+          },
+        };
+      }
       if (input.operation === "sudo.identity")
         return sudo.prepare(
           input.expectedPolicy,
@@ -176,7 +252,7 @@ export async function createServer(
   const artifactsChanged = (threadId: string) => {
     const thread = service.events.threads.get(threadId);
     if (thread) {
-      artifacts.decorate(thread);
+      artifacts.decorate(media.decorate(thread));
       service.events.publish(service.events.snapshot(threadId));
     }
   };
@@ -242,6 +318,7 @@ export async function createServer(
     { session: string; threadId?: string }
   >();
   const initialEvents = (): Event[] => [
+    service.activity.snapshot(),
     {
       type: EventType.CUSTOM,
       name: "newbot.runtime",
@@ -283,6 +360,7 @@ export async function createServer(
   runtime.on("status", () => {
     operational("runtime.status", runtime.state);
     if (runtime.state === "offline") {
+      service.activity.offline();
       service.ui.stopped();
       credentials.revoke();
       for (const thread of service.events.threads.values())
@@ -303,20 +381,33 @@ export async function createServer(
     service.events.runtime(runtime.state, runtime.reason);
   });
   runtime.on("approval", (request: ServerRequest) => {
-    if (db.owns((request.params as Json).threadId))
+    if (db.owns((request.params as Json).threadId)) {
+      service.activity.approval(
+        request.id,
+        request.params as Json,
+        request.method,
+      );
       service.events.approval(service.elicitation.publicApproval(request));
+    }
   });
-  runtime.on("resolved", (id: string | number) => service.events.resolved(id));
+  runtime.on("resolved", (id: string | number) => {
+    service.activity.resolved(id);
+    service.events.resolved(id);
+  });
   runtime.on("tool", (request: ToolRequest) => service.ui.handle(request));
   runtime.on("toolResolved", (id: string | number) => service.ui.resolved(id));
   runtime.on("event", (message: ServerNotification) => {
     const p = message.params as Json;
     if (message.method === "serverRequest/resolved") {
+      service.activity.resolved(p.requestId);
       service.events.resolved(p.requestId);
       return;
     }
     if (!db.owns(p.threadId || p.thread?.id)) return;
     if (message.method === "item/completed") {
+      media.completed(p.threadId, p.turnId, p.item, () =>
+        artifactsChanged(p.threadId),
+      );
       service.apps.register(p.threadId, p.item);
       if (p.item.type === "userMessage" && p.item.clientId) {
         const row = db.raw
@@ -333,9 +424,18 @@ export async function createServer(
       traces.turnStart(p.threadId, p.turn.id);
     if (message.method === "turn/completed") {
       service.ui.stopped(p.threadId);
+      const run = db.raw
+        .prepare("SELECT request_id FROM runs WHERE thread_id=? AND turn_id=?")
+        .get(p.threadId, p.turn.id) as { request_id: string } | undefined;
+      if (run) {
+        const ephemeralThread = privateFieldStore.finish(run.request_id);
+        if (ephemeralThread)
+          void runtime.unload(ephemeralThread).catch(() => {});
+      }
       db.touch(p.threadId);
       traces.turnEnd(p.turn.id, p.turn.status);
     }
+    service.activity.notification(message);
     service.events.notification(message);
     const uiThread = service.events.threads.get(p.threadId);
     if (uiThread && service.ui.anchors(uiThread))
@@ -537,16 +637,50 @@ export async function createServer(
         sensitiveInput: false,
         urlMode: false,
       },
+      presentation: {
+        catalogs: [A2UI_CATALOG_ID, A2UI_RICH_CATALOG_ID],
+        newThreads: A2UI_RICH_CATALOG_ID,
+        threadCapability: "uiCatalog",
+      },
+      media: {
+        authenticatedSnapshots: true,
+        publicHttps: true,
+        maxBytes: 8 * 1024 * 1024,
+        formats: ["png", "jpeg", "webp"],
+      },
+      imports: {
+        available: !!runtime.extensionRuntime,
+        sources: ["directory", "zip", "public-github"],
+        limits: IMPORT_LIMITS,
+        nativePluginFormats: ["portable", "codex"],
+      },
       models: true,
       plugins: {
         experimental: true,
         available: service.plugins.enabled(),
         configuredMarketplacesOnly: true,
+        componentManagement: true,
+        upgrades: {
+          importedPackages: true,
+          marketplaceVersionRequired: true,
+          automatic: false,
+        },
+        configuration: {
+          descriptor: "mcpb-manifest",
+          manifestVersions: ["0.3"],
+          certificateInspection: true,
+          fields: ["string", "number", "boolean"],
+          privateInput: !!runtime.privateConfiguration,
+        },
       },
       sessionSettings: {
         available: runtime.state === "ready",
-        sameThreadProviderSwitch: CODEX_VERSION === "codex-cli 0.165.0",
+        sameThreadProviderSwitch: runtime.runtimeCapabilities?.sameThreadProviderSwitch === true,
+        liveSettings: runtime.runtimeCapabilities?.liveModelRoutes === true,
+        pinnedPluginResources: runtime.runtimeCapabilities?.pinnedPluginRoots === true,
         revisioned: true,
+        nextTurnSettings: true,
+        persistentInputReferences: true,
       },
       providerManagement: {
         storage: runtime.providerRuntime?.storage || "native",
@@ -576,6 +710,7 @@ export async function createServer(
         history: true,
         maxPerMessage: 8,
       },
+      experts: { available: true, perSession: 1 },
       skillDocuments: { read: true, maxBytes: 262144 },
       skillManagement: { uninstall: "personalArchive", sourceChecked: true },
       mcpApps: sandboxOrigins.size > 0,
@@ -625,6 +760,13 @@ export async function createServer(
         operations: [
           "provider.models.test",
           "credential.save",
+          ...(runtime.privateConfiguration
+            ? [
+                "plugin.configuration.save",
+                "credential.fields.save",
+                "credential.authorize",
+              ]
+            : []),
           ...(sudo.capability().available ? ["sudo.identity"] : []),
         ],
         apiKeyProbe: true,
@@ -634,17 +776,23 @@ export async function createServer(
           encrypted: vault.encryptionAvailable,
           providerBearer: true,
           mcpHttpBearer: true,
-          stdio: false,
+          stdio: !!runtime.privateConfiguration,
+          httpHeaders: !!runtime.privateConfiguration,
         },
-        agentRequests: false,
+        agentRequests: !!runtime.privateConfiguration,
+        fields: !!runtime.privateConfiguration,
         sudo: sudo.capability().available,
         sudoIdentity: sudo.capability(),
       },
       a2ui: {
         available: true,
         protocol: "v0.9",
-        catalog: "newbot:ui/v1",
-        components: 6,
+        catalog: A2UI_RICH_CATALOG_ID,
+        components: Object.keys(richA2uiApis).length,
+        catalogs: [
+          { id: A2UI_CATALOG_ID, components: Object.keys(a2uiApis) },
+          { id: A2UI_RICH_CATALOG_ID, components: Object.keys(richA2uiApis) },
+        ],
         actions: A2UI_ACTIONS,
         nativeDynamicTools: true,
         newThreadsOnly: true,
@@ -667,12 +815,51 @@ export async function createServer(
     )
       throw new CredentialFailure("私密输入需要安全连接", 403);
   };
+  app.post("/api/plugins/certificate", { bodyLimit: 8192 }, async (req) =>
+    service.pluginConnections.certificate(req.body, inspectCertificate),
+  );
   app.post("/api/credentials/requests", { bodyLimit: 8192 }, async (req) => {
     privateOrigin(req.headers.origin);
-    return credentials.create(
-      hash(req.cookies.ma_session!),
-      credentialCreate.parse(req.body),
-    );
+    const input = credentialCreate.parse(req.body),
+      owner = hash(req.cookies.ma_session!);
+    if (
+      [
+        "plugin.configuration.save",
+        "credential.fields.save",
+        "credential.authorize",
+      ].includes(input.operation) &&
+      !runtime.privateConfiguration
+    )
+      throw new PublicError(
+        "此运行模式暂不支持私密字段，请启用 SQLite 运行配置。",
+      );
+    if (
+      input.operation === "credential.fields.save" ||
+      input.operation === "plugin.configuration.save"
+    ) {
+      const fingerprint = hash(JSON.stringify(input));
+      const prior = db.raw
+        .prepare(
+          "SELECT owner,fingerprint,result FROM private_operations WHERE id=?",
+        )
+        .get(input.requestId) as
+        | { owner: string; fingerprint: string; result: string | null }
+        | undefined;
+      if (prior) {
+        if (prior.owner !== owner || prior.fingerprint !== fingerprint)
+          throw new PublicError("请勿复用私密请求标识");
+        if (prior.result) return JSON.parse(prior.result);
+        try {
+          return credentials.read(input.requestId, owner);
+        } catch {
+          throw new PublicError("保存结果未确认，请刷新凭证设置后重新操作。");
+        }
+      } else
+        db.raw
+          .prepare("INSERT INTO private_operations VALUES(?,?,?,NULL,?)")
+          .run(input.requestId, owner, fingerprint, Date.now());
+    }
+    return credentials.create(owner, input);
   });
   app.get("/api/runtime/config", async () => ({
     storage: runtime.providerRuntime?.storage || "native",
@@ -729,15 +916,18 @@ export async function createServer(
     privateOrigin(req.headers.origin);
     return managedCredentials.clear(credentialClear.parse(req.body));
   });
-  app.get("/api/credentials/:id", async (req) =>
-    credentials.read(
-      z
+  app.get("/api/credentials/:id", async (req) => {
+    const id = z
         .string()
         .uuid()
-        .parse((req.params as { id: string }).id),
-      hash(req.cookies.ma_session!),
-    ),
-  );
+        .parse((req.params as Json).id),
+      owner = hash(req.cookies.ma_session!);
+    const saved = db.raw
+      .prepare("SELECT result FROM private_operations WHERE id=? AND owner=?")
+      .get(id, owner) as { result: string | null } | undefined;
+    if (saved?.result) return JSON.parse(saved.result);
+    return credentials.read(id, owner);
+  });
   app.delete("/api/credentials/:id", async (req) =>
     credentials.cancel(
       z
@@ -747,30 +937,34 @@ export async function createServer(
       hash(req.cookies.ma_session!),
     ),
   );
-  app.post("/api/credentials/:id/input", { bodyLimit: 4096 }, async (req) => {
-    const body = req.body;
-    try {
-      privateOrigin(req.headers.origin);
-      if (
-        !Buffer.isBuffer(body) ||
-        req.headers["content-type"] !== "application/octet-stream"
-      )
-        throw new CredentialFailure("私密输入格式无效", 400);
-      return await traces.operation("bridge.credentials.consume", () =>
-        credentials.fulfill(
-          z
-            .string()
-            .uuid()
-            .parse((req.params as { id: string }).id),
-          hash(req.cookies.ma_session!),
-          body,
-        ),
-      );
-    } finally {
-      if (Buffer.isBuffer(body)) body.fill(0);
-      req.body = undefined;
-    }
-  });
+  app.post(
+    "/api/credentials/:id/input",
+    { bodyLimit: 1048576 },
+    async (req) => {
+      const body = req.body;
+      try {
+        privateOrigin(req.headers.origin);
+        if (
+          !Buffer.isBuffer(body) ||
+          req.headers["content-type"] !== "application/octet-stream"
+        )
+          throw new CredentialFailure("私密输入格式无效", 400);
+        return await traces.operation("bridge.credentials.consume", () =>
+          credentials.fulfill(
+            z
+              .string()
+              .uuid()
+              .parse((req.params as { id: string }).id),
+            hash(req.cookies.ma_session!),
+            body,
+          ),
+        );
+      } finally {
+        if (Buffer.isBuffer(body)) body.fill(0);
+        req.body = undefined;
+      }
+    },
+  );
   app.get("/api/skills/:id", async (req) =>
     service.handle("skills/read", { id: (req.params as { id: string }).id }),
   );
@@ -791,9 +985,58 @@ export async function createServer(
   app.delete("/api/a2ui/draft", { bodyLimit: 80 * 1024 }, async (req) =>
     service.ui.draft(req.body, true),
   );
-  app.get("/api/config", async () =>
-    traces.operation("bridge.config.read", service.settings),
+  app.get("/api/imports", async () => imports.list());
+  app.post("/api/imports", { bodyLimit: 8192 }, async (req) =>
+    imports.create(req.body),
   );
+  app.get("/api/imports/:id", async (req) =>
+    imports.get((req.params as { id: string }).id),
+  );
+  app.put(
+    "/api/imports/:id/file",
+    { bodyLimit: IMPORT_LIMITS.fileBytes },
+    async (req) =>
+      imports.upload(
+        (req.params as { id: string }).id,
+        z.string().parse((req.query as any).path),
+        req.body as Buffer,
+      ),
+  );
+  app.put(
+    "/api/imports/:id/archive",
+    { bodyLimit: IMPORT_LIMITS.archiveBytes },
+    async (req) =>
+      imports.upload(
+        (req.params as { id: string }).id,
+        "",
+        req.body as Buffer,
+        true,
+      ),
+  );
+  app.post("/api/imports/:id/scan", { bodyLimit: 1024 }, async (req) =>
+    imports.scan((req.params as { id: string }).id),
+  );
+  app.post("/api/imports/:id/install", { bodyLimit: 512 * 1024 }, async (req) =>
+    imports.install((req.params as { id: string }).id, req.body),
+  );
+  app.delete("/api/imports/:id", async (req) => {
+    await imports.discard((req.params as { id: string }).id);
+    return { ok: true };
+  });
+  app.get("/api/config", async (req) => {
+    const query = z
+      .object({ view: z.literal("saved").optional() })
+      .parse(req.query);
+    return traces.operation("bridge.config.read", () =>
+      service.settings(query.view !== "saved"),
+    );
+  });
+  app.get("/api/config/discovery", async (req) => {
+    const { section } = z
+      .object({ section: z.enum(["models", "skills", "mcp"]) })
+      .parse(req.query);
+    return service.discoverSettings(section);
+  });
   app.post("/api/config", async (req) => {
     const p = z
       .object({
@@ -810,8 +1053,19 @@ export async function createServer(
       })
       .passthrough()
       .parse(req.body);
-    return service.handle(p.action, p);
+    return configOperations.run(
+      req.headers["x-newbot-operation-id"],
+      hash(req.cookies.ma_session!),
+      p,
+      () => service.handle(p.action, p),
+    );
   });
+  app.get("/api/config/operations/:id", async (req) =>
+    configOperations.read(
+      (req.params as { id: string }).id,
+      hash(req.cookies.ma_session!),
+    ),
+  );
   app.get("/api/threads", async () => service.handle("thread/list", {}));
   app.get("/api/threads/:id", async (req) => {
     const { id } = req.params as { id: string };
@@ -821,6 +1075,144 @@ export async function createServer(
     return service.read(id, cursor);
   });
   const runningRequests = new Map<string, Promise<Json>>();
+  const waitingRuns = new Map<
+    string,
+    { start: () => Promise<Json>; cancel: () => void; expires: number }
+  >();
+  const authorizationRequests = new Map<
+    string,
+    { threadId: string; state: string; expires: number }
+  >();
+  async function authorizationContext(threadId: string) {
+    if (!db.owns(threadId)) throw new PublicError("会话不存在");
+    if (!runtime.privateConfiguration)
+      throw new PublicError("当前运行模式不支持会话私密授权");
+    return {
+      runId: "",
+      threadId,
+      provider: service.runtimeSettings.get(threadId).provider,
+      config: (await service.configuration.read()).response.config,
+    };
+  }
+  app.get("/api/credentials/threads/:id", async (req) => {
+    const context = await authorizationContext(
+      z.string().parse((req.params as Json).id),
+    );
+    return {
+      targets: privateFieldStore.targets(context),
+      authorized: privateFieldStore.hasThreadGrant(context.threadId),
+    };
+  });
+  app.post("/api/credentials/threads/:id/requests", async (req) => {
+    const context = await authorizationContext(
+      z.string().parse((req.params as Json).id),
+    );
+    const target = z
+      .strictObject({
+        scope: z.enum(["provider", "mcp"]),
+        targetId: z.string(),
+      })
+      .parse(req.body);
+    if (
+      !privateFieldStore
+        .targets(context)
+        .some((t) => t.scope === target.scope && t.targetId === target.targetId)
+    )
+      throw new PublicError("此接收方没有可授权的字段");
+    if (authorizationRequests.size >= 32)
+      throw new PublicError("请先关闭已有授权请求");
+    const id = randomUUID();
+    privateFieldStore.bind({
+      ...context,
+      runId: id,
+      force: `${target.scope}:${target.targetId}`,
+      only: `${target.scope}:${target.targetId}`,
+    });
+    authorizationRequests.set(id, {
+      threadId: context.threadId,
+      state: "waiting",
+      expires: Date.now() + 120000,
+    });
+    return { requestId: id, privateInputs: privateFieldStore.pending(id) };
+  });
+  app.get("/api/credentials/authorizations/:id", async (req) => {
+    const id = z
+        .string()
+        .uuid()
+        .parse((req.params as Json).id),
+      entry = authorizationRequests.get(id);
+    if (!entry) throw new PublicError("授权请求已结束");
+    return { state: entry.state, privateInputs: privateFieldStore.pending(id) };
+  });
+  app.delete("/api/credentials/authorizations/:id", async (req) => {
+    const id = z
+      .string()
+      .uuid()
+      .parse((req.params as Json).id);
+    authorizationRequests.delete(id);
+    privateFieldStore.finish(id);
+    return { state: "closed" };
+  });
+  db.raw
+    .prepare(
+      "UPDATE runs SET state='rejected' WHERE state='awaiting_credentials'",
+    )
+    .run();
+  privateFieldStore.onReady = (requestId) => {
+    const authorization = authorizationRequests.get(requestId);
+    if (authorization) {
+      authorization.state = "authorized";
+      privateFieldStore.finish(requestId);
+      return;
+    }
+    const held = waitingRuns.get(requestId);
+    if (!held || privateFieldStore.pending(requestId).length) return;
+    waitingRuns.delete(requestId);
+    const operation = held.start();
+    runningRequests.set(requestId, operation);
+    void operation
+      .catch((error) => {
+        db.set(`run-failure:${requestId}`, publicErrorMessage(error));
+      })
+      .finally(() => runningRequests.delete(requestId));
+  };
+  app.post("/api/credentials/runs/:id/cancel", async (req) => {
+    const id = z
+      .string()
+      .uuid()
+      .parse((req.params as Json).id);
+    const held = waitingRuns.get(id);
+    if (held) {
+      waitingRuns.delete(id);
+      held.cancel();
+    }
+    return { state: runs.get(id)?.state || "unseen" };
+  });
+  app.delete("/api/credentials/threads/:id", async (req) => {
+    const id = z.string().parse((req.params as Json).id);
+    if (!db.owns(id)) throw new PublicError("会话不存在");
+    privateFieldStore.revoke(id);
+    for (const [runId, held] of waitingRuns)
+      if (runs.get(runId)?.thread_id === id) {
+        waitingRuns.delete(runId);
+        held.cancel();
+      }
+    for (const [requestId, entry] of authorizationRequests)
+      if (entry.threadId === id) {
+        authorizationRequests.delete(requestId);
+        privateFieldStore.finish(requestId);
+      }
+    const active = service.events.threads
+      .get(id)
+      ?.turns.find((t) => t.status === "inProgress");
+    if (active)
+      await service.handle("turn/interrupt", {
+        threadId: id,
+        turnId: active.id,
+      });
+    else await runtime.unload(id);
+    return { state: "revoked" };
+  });
   app.post(
     "/api/agent/runs/:requestId/abandon",
     { bodyLimit: 1024 },
@@ -870,7 +1262,12 @@ export async function createServer(
       return reply.code(404).send({ error: "请求不存在" });
     }
     // A positive client message match proves submission. An absent match never proves non-submission.
-    if (run.thread_id && !run.turn_id && runtime.state === "ready") {
+    if (
+      run.thread_id &&
+      !run.turn_id &&
+      ["dispatching", "unknown"].includes(run.state) &&
+      runtime.state === "ready"
+    ) {
       let cursor: string | undefined;
       try {
         for (let page = 0; page < 10; page++) {
@@ -901,7 +1298,13 @@ export async function createServer(
       }
     }
     const current = runs.get(requestId)!;
-    const value = runs.view(current);
+    const value: Json = {
+      ...runs.view(current),
+      privateInputs: privateFieldStore.pending(requestId),
+      ...(db.get(`run-failure:${requestId}`)
+        ? { error: db.get(`run-failure:${requestId}`) }
+        : {}),
+    };
     const turn =
       current.thread_id &&
       service.events.threads
@@ -919,6 +1322,9 @@ export async function createServer(
         model: z.string().max(200).optional(),
         effort: z.string().max(40).optional(),
         runtimeRevision: z.number().int().nonnegative().optional(),
+        expertId: z.string().uuid().nullable().optional(),
+        extensionRevision: z.number().int().nonnegative().optional(),
+        inputRevision: z.number().int().nonnegative().optional(),
         approval: z.enum(["ask", "review", "full"]).optional(),
         attachments: z.array(z.string().uuid()).max(8).default([]),
         skills: skillSelections.optional(),
@@ -950,8 +1356,22 @@ export async function createServer(
         1,
         Math.min(5, Number(process.env.MAX_ACTIVE_TURNS) || 2),
       );
-      if (runningRequests.size + runtime.active.size >= limit)
+      if (
+        runningRequests.size + runtime.active.size >= limit ||
+        waitingRuns.size >= 10
+      )
         return reply.code(429).send({ error: "并行任务已满，请等待任务结束" });
+      if (
+        p.threadId &&
+        db.raw
+          .prepare(
+            "SELECT 1 FROM runs WHERE thread_id=? AND state='awaiting_credentials'",
+          )
+          .get(p.threadId)
+      )
+        return reply
+          .code(409)
+          .send({ error: "此会话有等待授权的任务，请先授权或取消。" });
       if (p.threadId && !db.owns(p.threadId))
         throw new PublicError("会话不存在");
       files.inputs(p.attachments); // Validate before creating a durable reservation.
@@ -964,15 +1384,49 @@ export async function createServer(
     const releaseProviderConfig = !prior
       ? runtime.providerRuntime?.retain(providerConfigRevision)
       : undefined;
+    let ownsReservation = false;
     try {
+      const expertSelection = prior ? null : await service.experts.capture(p);
       const bound = prior
         ? null
-        : await service.runtimeSettings.capture(p, providerConfigRevision);
+        : {
+            ...service.inputs.capture(p),
+            ...(await service.runtimeSettings.capture(
+              p,
+              providerConfigRevision,
+            )),
+            ...expertSelection!,
+            extensionSnapshot: await service.extensions?.capture(expertSelection!.plugins),
+          };
+      if (bound)
+        await service.pluginConnections.requireConfigured(
+          bound.plugins || [],
+          bound.extensionSnapshot?.config,
+        );
+      // Recheck after asynchronous preparation. A reservation is the per-thread
+      // fence even while the first request is still preparing its private inputs.
+      if (
+        !runs.get(p.requestId) &&
+        p.threadId &&
+        db.raw
+          .prepare(
+            "SELECT 1 FROM runs WHERE thread_id=? AND state IN ('reserved','awaiting_credentials','dispatching','unknown')",
+          )
+          .get(p.threadId)
+      )
+        return reply
+          .code(409)
+          .send({ error: "此会话有待处理的发送，请先确认或取消。" });
       const { run, fresh } = runs.reserve(p.requestId, p);
+      ownsReservation = fresh;
       if (runningRequests.has(p.requestId))
         return runningRequests.get(p.requestId);
       if (!fresh) {
-        if (run.turn_id) return runs.view(run);
+        if (run.turn_id || run.state === "awaiting_credentials")
+          return {
+            ...runs.view(run),
+            privateInputs: privateFieldStore.pending(p.requestId),
+          };
         return reply.code(409).send({
           ...runs.view(run),
           error: "该请求可能已经提交，请查询请求状态；系统不会重复执行",
@@ -982,63 +1436,136 @@ export async function createServer(
         .prepare("INSERT INTO run_context VALUES(?,?)")
         .run(p.requestId, JSON.stringify(bound));
       files.bind(p.requestId, p.attachments);
-      const operation = traces.operation("bridge.agent.run", async () => {
-        let threadId = run.thread_id;
-        let dispatched = false;
-        try {
-          if (!threadId) {
-            const thread = (await service.handle("thread/start", {
+      service.experts.bind(p.requestId, bound!.expertSnapshot);
+      const raw = (await service.configuration.read()).response.config;
+      const privateConfig = {
+        ...raw,
+        ...(bound?.providerConfigRevision
+          ? runtime.providerRuntime?.snapshot(bound.providerConfigRevision)
+              .values
+          : {}),
+        ...(bound?.extensionSnapshot?.config || {}),
+      };
+      privateFieldStore.bind({
+        runId: p.requestId,
+        threadId: run.thread_id || undefined,
+        provider:
+          bound?.provider || p.provider || raw.model_provider || "openai",
+        config: privateConfig,
+      });
+      let holding = false;
+      const execute = () =>
+        traces.operation("bridge.agent.run", async () => {
+          let threadId = run.thread_id;
+          let dispatched = false;
+          try {
+            if (!threadId) {
+              const thread = (await service.handle("thread/start", {
+                ...bound,
+                privateRunId: p.requestId,
+              })) as Thread;
+              threadId = thread.id;
+              runs.update(p.requestId, "reserved", threadId);
+              privateFieldStore.assign(p.requestId, threadId);
+              // Creation already carried these private parameters. Empty native threads
+              // cannot be unloaded/resumed before their first persisted turn.
+              runtime.privateRevisions.set(
+                threadId,
+                privateFieldStore.version(threadId),
+              );
+            }
+            privateFieldStore.assign(p.requestId, threadId);
+            service.activity.prepare(threadId, p.requestId);
+            const result = (await service.handle("turn/start", {
+              ...p,
               ...bound,
-            })) as Thread;
-            threadId = thread.id;
-            runs.update(p.requestId, "reserved", threadId);
+              ...(run.thread_id ? {} : { runtimeRevision: undefined }),
+              threadId,
+              clientUserMessageId: run.client_message_id,
+              onDispatch: (
+                refs: SkillReference[],
+                plugins: import("../shared/types.js").PluginReference[],
+              ) => {
+                service.skillUses.bind(p.requestId, refs);
+                service.pluginUses.bind(p.requestId, plugins);
+                service.inputs.consume(threadId!, bound?.inputRevision);
+                runs.update(p.requestId, "dispatching", threadId!);
+                dispatched = true;
+              },
+            })) as Json;
+            runs.update(p.requestId, "accepted", threadId, result.turn.id);
+            return { ...runs.view(runs.get(p.requestId)!), turn: result.turn };
+          } catch (e) {
+            if (threadId)
+              service.activity.rejected(threadId, p.requestId, dispatched);
+            if (!dispatched) {
+              files.unbind(p.requestId);
+              service.skillUses.unbind(p.requestId);
+              service.pluginUses.unbind(p.requestId);
+              service.experts.unbind(p.requestId);
+            }
+            if (!runs.get(p.requestId)?.turn_id)
+              runs.update(
+                p.requestId,
+                dispatched ? "unknown" : "rejected",
+                threadId || undefined,
+              );
+            privateFieldStore.finish(p.requestId);
+            db.audit(
+              "agent/run",
+              p.requestId,
+              dispatched ? "unknown" : "rejected",
+            );
+            throw e;
           }
-          const result = (await service.handle("turn/start", {
-            ...p,
-            ...bound,
-            ...(run.thread_id ? {} : { runtimeRevision: undefined }),
-            threadId,
-            clientUserMessageId: run.client_message_id,
-            onDispatch: (
-              refs: SkillReference[],
-              plugins: import("../shared/types.js").PluginReference[],
-            ) => {
-              service.skillUses.bind(p.requestId, refs);
-              service.pluginUses.bind(p.requestId, plugins);
-              runs.update(p.requestId, "dispatching", threadId!);
-              dispatched = true;
-            },
-          })) as Json;
-          runs.update(p.requestId, "accepted", threadId, result.turn.id);
-          return { ...runs.view(runs.get(p.requestId)!), turn: result.turn };
-        } catch (e) {
-          if (!dispatched) {
+        });
+      const operationStart = async () => {
+        try {
+          return await execute();
+        } finally {
+          if (holding) releaseProviderConfig?.();
+        }
+      };
+      if (privateFieldStore.pending(p.requestId).length) {
+        // A new thread is allocated only after authorization; its grant is attached
+        // atomically to the resulting native identity before the first turn.
+        runs.update(p.requestId, "awaiting_credentials");
+        holding = true;
+        waitingRuns.set(p.requestId, {
+          start: operationStart,
+          expires: Date.now() + 30 * 60_000,
+          cancel: () => {
+            runs.update(p.requestId, "rejected");
+            privateFieldStore.finish(p.requestId);
             files.unbind(p.requestId);
             service.skillUses.unbind(p.requestId);
             service.pluginUses.unbind(p.requestId);
-          }
-          if (!runs.get(p.requestId)?.turn_id)
-            runs.update(
-              p.requestId,
-              dispatched ? "unknown" : "rejected",
-              threadId || undefined,
-            );
-          db.audit(
-            "agent/run",
-            p.requestId,
-            dispatched ? "unknown" : "rejected",
-          );
-          throw e;
-        }
-      });
+            service.experts.unbind(p.requestId);
+            releaseProviderConfig?.();
+          },
+        });
+        return {
+          ...runs.view(runs.get(p.requestId)!),
+          privateInputs: privateFieldStore.pending(p.requestId),
+        };
+      }
+      const operation = operationStart();
       runningRequests.set(p.requestId, operation);
       try {
         return await operation;
       } finally {
         runningRequests.delete(p.requestId);
       }
+    } catch (error) {
+      if (ownsReservation && runs.get(p.requestId)?.state === "reserved") {
+        runs.update(p.requestId, "rejected");
+        privateFieldStore.finish(p.requestId);
+        files.unbind(p.requestId);
+        service.experts.unbind(p.requestId);
+      }
+      throw error;
     } finally {
-      releaseProviderConfig?.();
+      if (!waitingRuns.has(p.requestId)) releaseProviderConfig?.();
     }
   });
   const actions = new Set([
@@ -1046,11 +1573,21 @@ export async function createServer(
     "gateway/catalog",
     "gateway/defaults",
     "session/update",
+    "session/extensions",
+    "session/inputs",
+    "expert/list",
+    "expert/read",
+    "expert/save",
+    "expert/delete",
     "runtime/presets",
     "skills/uninstall",
     "plugin/list",
     "plugin/read",
+    "plugin/skill/read",
+    "plugin/skill/enabled",
+    "plugin/connection/test",
     "plugin/install",
+    "plugin/update",
     "plugin/uninstall",
     "plugin/enabled",
     "bridge/status",
@@ -1076,9 +1613,31 @@ export async function createServer(
       .passthrough()
       .parse(req.body);
     if (!actions.has(p.action)) throw new PublicError("不支持的控制操作");
-    return traces.operation("bridge.agent.action", () =>
-      service.handle(p.action, p),
+    const result = await traces.operation("bridge.agent.action", () =>
+      p.action === "gateway/defaults"
+        ? configOperations.run(
+            req.headers["x-newbot-operation-id"],
+            hash(req.cookies.ma_session!),
+            p,
+            () => service.handle(p.action, p),
+          )
+        : service.handle(p.action, p),
     );
+    if (p.action === "thread/archive") {
+      const id = z.string().parse(p.threadId);
+      privateFieldStore.revoke(id);
+      for (const [runId, held] of waitingRuns)
+        if (runs.get(runId)?.thread_id === id) {
+          waitingRuns.delete(runId);
+          held.cancel();
+        }
+      for (const [requestId, entry] of authorizationRequests)
+        if (entry.threadId === id) {
+          authorizationRequests.delete(requestId);
+          privateFieldStore.finish(requestId);
+        }
+    }
+    return result;
   });
   app.post("/api/mcp-apps/:action", async (req) => {
     const action = (req.params as { action: string }).action;
@@ -1142,13 +1701,14 @@ export async function createServer(
     return files.save(name, req.body);
   });
   app.get("/api/workspace/files", async (req) => {
-    const { path, offset } = z
+    const { path, offset, threadId } = z
       .object({
+        threadId: z.string().min(1).max(200),
         path: z.string().max(1024).default(""),
         offset: z.coerce.number().int().min(0).max(100000).default(0),
       })
       .parse(req.query);
-    return artifacts.workspaceFiles(path, offset);
+    return artifacts.workspaceFiles(path, offset, threadId);
   });
   app.get("/api/threads/:id/artifacts", async (req) => {
     const { id } = req.params as { id: string };
@@ -1339,6 +1899,7 @@ export async function createServer(
         name: "newbot.approval.request",
         value: approval,
       });
+    write(res, service.activity.snapshot());
     for (const id of service.events.threads.keys())
       if (!threadId || id === threadId) write(res, service.events.snapshot(id));
   });
@@ -1353,13 +1914,23 @@ export async function createServer(
   }, 3600000);
   cleanup.unref();
   const heartbeat = setInterval(() => {
+    for (const [id, entry] of authorizationRequests)
+      if (entry.expires < Date.now()) {
+        authorizationRequests.delete(id);
+        privateFieldStore.finish(id);
+      }
+    for (const [id, held] of waitingRuns)
+      if (held.expires < Date.now()) {
+        waitingRuns.delete(id);
+        held.cancel();
+      }
     for (const [res, { session }] of streams) {
       if (!db.validSession(session)) res.end();
       else if (!res.writableEnded) res.write(": heartbeat\n\n");
     }
   }, 20000);
   heartbeat.unref();
-  const root = resolve("dist/web");
+  const root = resolve(options.webDirectory || "dist/web");
   if (existsSync(root)) {
     await app.register(staticFiles, {
       root,
@@ -1394,18 +1965,34 @@ export async function createServer(
   app.addHook("onClose", async () => {
     clearInterval(heartbeat);
     clearInterval(cleanup);
+    for (const held of waitingRuns.values()) held.cancel();
+    waitingRuns.clear();
     credentials.close();
     vault.close();
+    await imports.close();
     service.elicitation.close();
     service.ui.close();
     previews.clear();
     runtime.removeAllListeners();
     await runtime.stopAndWait();
+    await media.close();
     await artifacts.close();
     await traces.close();
     db.raw.close();
   });
-  return { app, runtime, db, service, artifacts, previews, credentials, vault };
+  return {
+    app,
+    runtime,
+    db,
+    service,
+    artifacts,
+    imports,
+    previews,
+    credentials,
+    privateFields: privateFieldStore,
+    vault,
+    workspaces: workspaceStore,
+  };
 }
 if (
   process.argv[1] &&

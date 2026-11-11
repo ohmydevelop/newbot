@@ -42,7 +42,7 @@ export default function WorkspaceFiles({
     setSelected("");
     setListing(null);
     void artifactFetch(
-      `/api/workspace/files?${new URLSearchParams({ path, offset: String(offset) })}`,
+      `/api/workspace/files?${new URLSearchParams({ threadId, path, offset: String(offset) })}`,
       { signal: controller.signal },
     )
       .then((r) => r.json())
@@ -59,7 +59,12 @@ export default function WorkspaceFiles({
         }
       });
     return () => controller.abort();
-  }, [path, offset, revision]);
+  }, [threadId, path, offset, revision]);
+  useEffect(() => {
+    setPath("");
+    setOffset(0);
+    setSelected("");
+  }, [threadId]);
   function navigate(next: string) {
     setPath(next);
     setOffset(0);

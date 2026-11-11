@@ -4,17 +4,20 @@ import type { Skill, SkillDocument, SkillReference } from "../../shared/types";
 import { readSkill } from "../skills";
 import { skillMarkdown, skillScopes, skillLabel } from "../../shared/skills";
 import { Renderer } from "./Renderer";
+import { request } from "../store";
 export default function SkillReader({
   skill,
   reference,
   onBack,
   backLabel = "返回技能列表",
+  pluginId,
 }: {
   skill: Pick<Skill, "id" | "name" | "scope"> &
     Partial<Skill> & { displayName?: string };
   reference?: SkillReference;
   onBack: () => void;
   backLabel?: string;
+  pluginId?: string;
 }) {
   const [document, setDocument] = useState<SkillDocument | null>(null);
   const [busy, setBusy] = useState(true);
@@ -39,7 +42,14 @@ export default function SkillReader({
       setBusy(false);
       controller.abort();
     }, 20000);
-    void readSkill(skill.id, controller.signal)
+    void (
+      pluginId
+        ? request<SkillDocument>("plugin/skill/read", {
+            pluginId,
+            id: skill.id,
+          })
+        : readSkill(skill.id, controller.signal)
+    )
       .then((value) => {
         if (active && !controller.signal.aborted) setDocument(value);
       })
@@ -60,7 +70,7 @@ export default function SkillReader({
       clearTimeout(timer);
       controller.abort();
     };
-  }, [skill.id, revision]);
+  }, [skill.id, revision, pluginId]);
   const current = document?.skill || skill;
   const markdown = document ? skillMarkdown(document.content) : "";
   return (
@@ -98,11 +108,11 @@ export default function SkillReader({
           {skillLabel(current)}
         </h3>
         <p className="skill-description">{current.description}</p>
-        {current.removalReason && (
+        {current.removalReason && !pluginId && (
           <p className="skill-origin-note muted">{current.removalReason}</p>
         )}
         <p className="skill-metadata">
-          {skillScopes[current.scope] || "已发现技能"} ·{" "}
+          {pluginId ? "插件技能" : skillScopes[current.scope] || "已发现技能"} ·{" "}
           {typeof current.enabled === "boolean"
             ? current.enabled
               ? "已启用"

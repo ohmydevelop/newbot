@@ -1,0 +1,78 @@
+{
+  "at": "2026-11-10T16:24:50.649Z",
+  "asset": "/assets/index-DUhiMicX.js",
+  "publicBuildMatches": true,
+  "activePluginChunk": "assets/ToolsSettings-B1XSogFH.js",
+  "oldCopyAbsent": true,
+  "pluginPreserved": true,
+  "standaloneConnectors": [
+    "newbot_test"
+  ],
+  "details": [
+    {
+      "id": "github@openai-api-curated",
+      "version": "0.1.12",
+      "update": {
+        "kind": "marketplace",
+        "available": false,
+        "currentVersion": "0.1.12",
+        "latestVersion": null,
+        "reason": "此插件由来源目录管理，目录更新后读取新内容"
+      },
+      "skills": [],
+      "connections": []
+    },
+    {
+      "id": "cloudwalker@newbot-imports",
+      "version": "0.5.2",
+      "update": {
+        "kind": "import",
+        "available": true
+      },
+      "skills": [
+        {
+          "name": "cloudwalker:cloudwalker-investigate",
+          "enabled": true
+        },
+        {
+          "name": "cloudwalker:cloudwalker-posture",
+          "enabled": true
+        }
+      ],
+      "connections": [
+        {
+          "name": "cloudwalker",
+          "source": "package",
+          "configured": true,
+          "fields": [
+            {
+              "id": "base_url"
+            },
+            {
+              "id": "api_token",
+              "stored": true
+            },
+            {
+              "id": "tls_certificate_sha256"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "configuration": {
+    "descriptor": "mcpb-manifest",
+    "manifestVersions": [
+      "0.3"
+    ],
+    "certificateInspection": true,
+    "fields": [
+      "string",
+      "number",
+      "boolean"
+    ],
+    "privateInput": true
+  },
+  "uiVerification": "API + referenced build only; Work browser control disabled",
+  "businessToolsCalled": 0
+}

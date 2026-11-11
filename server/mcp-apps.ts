@@ -1,7 +1,7 @@
 import { randomBytes } from "node:crypto";
 import type { Codex } from "./codex.js";
 import type { ThreadItem } from "../generated/codex/v2/ThreadItem.js";
-import type { Json, Thread } from "../shared/types.js";
+import type { Item, Json, Thread } from "../shared/types.js";
 import { appFail } from "./app-error.js";
 export function appToolResult(result: Json): Json {
   if (result.isError === true)
@@ -30,10 +30,16 @@ export type AppRecord = Descriptor & {
   owner?: string;
   requestId?: string;
 };
-type Catalog = Map<string, Map<string, { uri: string; app: boolean }>>;
+type Catalog = Map<string, Map<string, { uri?: string; app: boolean }>>;
 export function appRegistry(
   codex: Codex,
-  options: { now?: () => number; ttlMs?: number; maxViews?: number } = {},
+  options: {
+    now?: () => number;
+    ttlMs?: number;
+    maxViews?: number;
+    onCatalog?: (threadId: string, servers: Json[]) => void;
+    decorateItem?: (threadId: string, item: Item) => Item;
+  } = {},
 ) {
   const now = options.now || Date.now,
     ttl = options.ttlMs || 15 * 60000,
@@ -76,9 +82,11 @@ export function appRegistry(
       item.error
     )
       return;
-    const tool =
-      catalogs.get(threadId)?.get(item.server)?.get(item.tool) ||
-      catalogs.get("")?.get(item.server)?.get(item.tool);
+    const tool = (
+      catalogs.has(threadId) ? catalogs.get(threadId) : catalogs.get("")
+    )
+      ?.get(item.server)
+      ?.get(item.tool);
     const uri =
       item.mcpAppUi?.resourceUri || item.mcpAppResourceUri || tool?.uri;
     if (
@@ -111,11 +119,7 @@ export function appRegistry(
         "unavailable",
         "原工具当前未提供此应用，请检查 MCP 连接后重新打开",
       );
-    return new Set(
-      [...server]
-        .filter(([, t]) => t.uri === r.uri && t.app)
-        .map(([name]) => name),
-    );
+    return new Set([...server].filter(([, t]) => t.app).map(([name]) => name));
   }
   return {
     records,
@@ -170,7 +174,7 @@ export function appRegistry(
       prune();
       return records.get(token);
     },
-    async refresh(threadId?: string) {
+    async refresh(threadId?: string, catalogKey = threadId || "") {
       const found: Json[] = [];
       let cursor: string | undefined;
       const seen = new Set<string>();
@@ -200,25 +204,33 @@ export function appRegistry(
           ].includes(server.runtimeStatus)
         )
           continue;
-        const tools = new Map<string, { uri: string; app: boolean }>();
+        const tools = new Map<string, { uri?: string; app: boolean }>();
         for (const [name, raw] of Object.entries(server.tools || {}) as [
           string,
           Json,
         ][]) {
-          const ui = raw?._meta?.ui;
-          if (
-            typeof ui?.resourceUri === "string" &&
-            ui.resourceUri.startsWith("ui://")
-          )
-            tools.set(name, {
-              uri: ui.resourceUri,
-              app:
-                !Array.isArray(ui.visibility) || ui.visibility.includes("app"),
-            });
+          if (!raw || typeof raw !== "object" || Array.isArray(raw)) continue;
+          const ui = raw._meta?.ui,
+            visibility = ui?.visibility;
+          // resourceUri chooses the result's UI; visibility governs calls from
+          // Apps on this server connection, including ordinary data tools.
+          tools.set(name, {
+            uri:
+              typeof ui?.resourceUri === "string" &&
+              ui.resourceUri.startsWith("ui://")
+                ? ui.resourceUri
+                : undefined,
+            app:
+              visibility === undefined ||
+              (Array.isArray(visibility) &&
+                visibility.every((v) => v === "model" || v === "app") &&
+                visibility.includes("app")),
+          });
         }
         catalog.set(server.name, tools);
       }
-      catalogs.set(threadId || "", catalog);
+      catalogs.set(catalogKey, catalog);
+      options.onCatalog?.(catalogKey, found);
       while (catalogs.size > 32) catalogs.delete(catalogs.keys().next().value!);
       return found;
     },
@@ -239,12 +251,14 @@ export function appRegistry(
     },
     decorate(thread: Thread) {
       for (const turn of thread.turns)
-        for (const item of turn.items)
+        for (const item of turn.items) {
+          options.decorateItem?.(thread.id, item);
           if (item.type === "mcpToolCall" && item.result) {
             if (descriptors.has(key(thread.id, item.id)))
               item.appAvailable = true;
             else delete item.appAvailable;
           }
+        }
       return thread;
     },
     open(

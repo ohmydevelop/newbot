@@ -1,0 +1,1 @@
+{"checks":["normal submission has no unknown notice; late response preserves newer typing","lost accepted response resolves automatically without duplicate execution","unknown request does not lock other conversation","original draft restored; abandonment fences delayed request","refresh resolves accepted state using GET only"],"errors":[]}

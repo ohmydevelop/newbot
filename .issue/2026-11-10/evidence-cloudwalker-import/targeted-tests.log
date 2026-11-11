@@ -1,0 +1,15 @@
+✔ ZIP extraction preserves ordinary resources and mode; rejects traversal, links, bombs, duplicate names and bad CRC (17.660899ms)
+✔ native-sized resources survive ZIP and session capture while oversized files stay rejected (260.68378ms)
+✔ import paths and GitHub references stay inside a selected package and fixed public service (0.752549ms)
+✔ staging budget includes abandoned sources, releases cancelled content and keeps retained sources reachable (103.286447ms)
+✔ SQLite journal restores package, preferences and interrupted import without claiming success (84.875ms)
+✔ new conversations isolate cwd, sandbox roots, live browsing and captured files; old threads retain their directory through restart (237.125227ms)
+✔ SQLite extension edits defer to the next turn, project skills are copied, disabled skills cannot be cited, and another active thread is untouched (103.697124ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 926.355395

@@ -1,0 +1,49 @@
+{
+  "version": "0.165.0",
+  "syntheticUpstream": true,
+  "realProviderCalls": 0,
+  "checks": [
+    "expert skill, plugin mention and connector reach the actual native thread and synthetic Responses request",
+    "globally disabled expert member blocks the next run without a model call or shared process restart",
+    "restart restores the expert and native history; re-enabling applies on the next turn with no config file rewrite",
+    "a manually saved model executes on the same native thread with a failing /models endpoint and no fabricated reasoning parameter"
+  ],
+  "passed": 4,
+  "requests": [
+    {
+      "path": "/a/responses",
+      "model": "gpt-6.1-sol",
+      "effort": "low",
+      "history": [
+        false,
+        false
+      ],
+      "skill": true,
+      "plugin": true,
+      "bundle": true
+    },
+    {
+      "path": "/a/responses",
+      "model": "gpt-6.1-sol",
+      "effort": "low",
+      "history": [
+        false,
+        false
+      ],
+      "skill": true,
+      "plugin": true,
+      "bundle": true
+    },
+    {
+      "path": "/a/responses",
+      "model": "manual-fixture-model",
+      "history": [
+        false,
+        false
+      ],
+      "skill": true,
+      "plugin": true,
+      "bundle": true
+    }
+  ]
+}

@@ -18,7 +18,9 @@ View 到期、配置重载、Codex 重连及缓存页面恢复均提供重新打
 - 每次打开产生独立随机 token，有效期 15 分钟，绑定当前 Web Session 的服务端摘要。最多同时存在 32 个 View；达到上限时要求关闭已有 View，不驱逐活跃页面。
 - 最多 32 个未完成打开请求。取消记录保留 5 分钟、最多 256 个；操作还会在每次异步返回时检查取消状态。登出撤销该 Session 的 View 及未完成加载。
 - 只从属于工作台的线程读取原始结果。优先带 turnId，通过原生 `thread/items/list` 分页查找，每页 100 条、最多 50 页；未找到时明确失败，不退回其他工具结果。
-- 打开、申请工具授权及批准执行前重新读取对应线程的 MCP 目录。来源工具必须仍关联同一 `ui://`，允许的工具必须属于同一 Server、同一资源且具备 App visibility。来源关联变化使旧 View 失效。
+- 打开、申请工具授权及批准执行前重新读取对应线程的 MCP 目录。来源工具必须仍关联原 `ui://`，关联变化使旧 View 失效。后续可申请的工具属于同一 Server 连接，并具备 App visibility；不要求数据工具也关联 UI 资源。省略 visibility 默认为 model/app，model-only、空列表和非法值不授予 App 调用权限；每次操作仍需单次批准。
+
+资源关联决定如何显示工具结果，visibility 决定谁可调用工具，两者独立。上述范围遵循 [MCP Apps 稳定规范](https://github.com/modelcontextprotocol/ext-apps/blob/main/specification/2026-01-26/apps.mdx#visibility)，适用于普通数据工具、App 专用工具及关联其他 UI 的工具，不增加插件专属规则。Host 产品策略版本为 2，不改变标准协议版本。
 - 每次 App 工具请求仍需用户单次批准。授权最多 2 分钟，且不超过 View 到期；拒绝、超时、取消、View 关闭或配置重置使未消费授权失效。批准前再次校验 Session 与最新工具权限。
 - 资源必须匹配请求 URI，并为 `text/html`（允许 MIME 参数）；原始参数/结果及 HTML 分别限制 2 MiB。原始结果中的 App 私有 `_meta` 仅通过显式打开交付给 Host/View，不扩散到普通聊天 DTO。
 - 独立 origin、`sandbox="allow-scripts"`、严格 CSP、禁止网络和第三方依赖的现有约束保持有效。沙箱文档同时验证 View 与所属登录仍有效；关闭、登出或到期后旧 URL 返回 404。

@@ -1,0 +1,12 @@
+{
+  "at": "2026-11-10T15:49:17.916Z",
+  "target": "cloudwalker@newbot-imports",
+  "removedVersion": "0.5.1",
+  "installedAfter": false,
+  "otherInstalled": [
+    {
+      "id": "github@openai-api-curated",
+      "version": "0.1.12"
+    }
+  ]
+}

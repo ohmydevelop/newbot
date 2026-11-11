@@ -1,3 +1,4 @@
+import { customModelIds } from "../shared/gateways.js";
 import { z } from "zod";
 import type { Store } from "./db.js";
 import { configFail } from "./configuration-error.js";
@@ -63,6 +64,7 @@ const definition = z.strictObject({
 });
 const values = z
   .strictObject({
+    newbot_models: z.record(id, customModelIds).optional(),
     model_provider: id.optional(),
     model: model.nullable().optional(),
     model_reasoning_effort: z.string().min(1).max(40).nullable().optional(),

@@ -1,0 +1,50 @@
+{
+  "modelRequests": 2,
+  "synthetic": true,
+  "connectors": [
+    {
+      "name": "plugin_1a551d290f9e140c87a9e74281483a6e",
+      "owner": {
+        "pluginId": "remote@newbot-imports",
+        "server": "same",
+        "source": "newbot-plugin"
+      },
+      "nativePluginId": null,
+      "connected": true,
+      "privateParametersMatched": true,
+      "appResource": true
+    },
+    {
+      "name": "plugin_5735e5e1ef8a0b2b4005b096a7929bc4",
+      "owner": {
+        "pluginId": "second@newbot-imports",
+        "server": "same",
+        "source": "newbot-plugin"
+      },
+      "nativePluginId": null,
+      "connected": true,
+      "privateParametersMatched": true,
+      "appResource": true
+    },
+    {
+      "name": "plugin_a9dbf17da1322e1b45d6250fc7ec643f",
+      "owner": {
+        "pluginId": "first@newbot-imports",
+        "server": "same",
+        "source": "newbot-plugin"
+      },
+      "nativePluginId": null,
+      "connected": true,
+      "privateParametersMatched": true,
+      "appResource": true
+    }
+  ],
+  "nextTurnDisable": true,
+  "originalThreadUnaffected": true,
+  "nativeSkillsRetained": true,
+  "skillDisableInThreadConfiguration": true,
+  "disabledSkillAbsentFromModelRequest": true,
+  "noSecretsInModelRequests": true,
+  "enabledSkillInModelRequest": true,
+  "noSecretsInNativeState": true
+}

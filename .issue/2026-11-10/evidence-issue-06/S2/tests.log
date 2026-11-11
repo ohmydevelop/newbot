@@ -1,0 +1,46 @@
+✔ vault encrypts at rest with a separate protected key and authenticates ciphertext and metadata (5.59217ms)
+✔ encrypted entries restore after restart, memory entries do not, and unknown refs never activate (2.485992ms)
+✔ receiver changes, cross-provider reuse and forwarding to stdio prevent native secret injection (1.906203ms)
+✔ lost or symlinked master key locks encrypted credentials without silently regenerating a key (2.171844ms)
+✔ vault writes fail closed inside the agent workspace and do not permit persistence (1.733971ms)
+✔ Provider save writes only a reference, refreshes native credentials, and clear removes the value and reference (164.289592ms)
+✔ HTTPS MCP bearer credentials use the native environment reference and remain absent from normal config (81.256798ms)
+✔ stale configuration or credential version cannot overwrite or clear an existing key (68.653751ms)
+✔ a lost native write acknowledgment keeps the staged value until the authoritative outcome can be read (73.296604ms)
+✔ restart failure reports saved but unapplied and preserves the encrypted credential (69.130158ms)
+✔ Bridge restart reloads encrypted credentials but requires memory credentials to be entered again (201.182596ms)
+✔ external binding changes terminate stale native authorization before a new turn (65.944048ms)
+✔ normal configuration APIs cannot retarget managed references or bypass the private clear path (78.415456ms)
+✔ stdio and non-user-owned credential targets fail before any secret is staged (70.839144ms)
+✔ v4 database upgrade preserves sessions and existing data while adding only encrypted credential storage (2.078227ms)
+✔ master key removal during a running service locks reads and new encrypted writes (2.112774ms)
+✔ saved configuration and defaults do not wait for remote discovery, or touch existing native threads (155.941474ms)
+✔ HTML and malformed JSON responses never leak parser errors or HTML bodies (1.722192ms)
+✔ object revisions allow unrelated edits but reject a stale edit of the same gateway (1.806168ms)
+✔ MCP edits use native CAS leaves and preserve private commands, arguments, environment and headers (96.496376ms)
+✔ MCP create supports stdio/HTTP, strict schemas, safe endpoint syntax and no transport conversion (43.737918ms)
+✔ MCP environment references require explicit authorization and can be removed without clearing private values (43.6854ms)
+✔ non-user and overridden MCP definitions are read-only and cannot be edited or deleted (37.881448ms)
+✔ MCP enable, disable and delete change only their versioned configuration (33.72766ms)
+✔ MCP public inventory and connection diagnostics strip raw errors, schemas and metadata (31.10274ms)
+✔ testing disabled MCP does not reload or start discovery, and stale reload tokens fail closed (27.19961ms)
+✔ MCP management blocks tasks, approvals and pending OAuth, releasing guards after each error (33.005691ms)
+✔ MCP reload failure retains saved state, invalidates old App records and recovers through native reconnect (33.922175ms)
+✔ lost MCP write responses reload authoritative configuration without a duplicate write (33.475047ms)
+✔ MCP maintenance rejects new work during a pending mutation, then releases it (35.138844ms)
+✔ MCP HTTP routes require login and allowed Origin and return only the redacted effective configuration (79.046578ms)
+✔ paginated MCP catalogs keep App permissions discoverable and reload invalidates the old App capability (37.013226ms)
+✔ v6 migration preserves existing session, model selection and credential data while adding SQLite Provider state (3.111318ms)
+✔ SQLite commits precede snapshot publication; failed writes preserve both RAM and leased execution configuration (7.846567ms)
+✔ a stale process cannot overwrite a newer durable configuration or publish its rejected snapshot (2.421146ms)
+✔ ordinary Provider SQLite state rejects plaintext credentials, arbitrary native settings and credential-bearing URLs (2.5895ms)
+✔ invalid persisted state fails explicitly without resetting configuration or falling back to native files (1.672083ms)
+✔ product APIs persist edits, defaults and deletion; restart restores SQLite and write failures remain unchanged (182.450212ms)
+ℹ tests 38
+ℹ suites 0
+ℹ pass 38
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1299.793041

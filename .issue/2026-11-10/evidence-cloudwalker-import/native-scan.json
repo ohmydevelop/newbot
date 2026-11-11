@@ -1,0 +1,19 @@
+{
+  "source": "cloudwalker-0.5.0-linux-amd64.zip",
+  "files": 39,
+  "bytes": 9565036,
+  "installed": false,
+  "entries": [
+    {
+      "kind": "plugin",
+      "name": "cloudwalker",
+      "skills": [
+        "cloudwalker:cloudwalker-investigate",
+        "cloudwalker:cloudwalker-posture"
+      ],
+      "mcp": [],
+      "hooks": [],
+      "blocked": null
+    }
+  ]
+}

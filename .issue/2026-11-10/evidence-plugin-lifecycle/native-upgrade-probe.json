@@ -1,0 +1,122 @@
+[
+  {
+    "phase": "installed",
+    "summary": {
+      "id": "sample@upgrade-test",
+      "remotePluginId": null,
+      "version": null,
+      "localVersion": "1.0.0",
+      "name": "sample",
+      "shareContext": null,
+      "source": {
+        "type": "local",
+        "path": "/tmp/newbot-upgrade-probe-HUbaP6/market/plugin"
+      },
+      "installed": true,
+      "installedAt": null,
+      "enabled": true,
+      "installPolicy": "AVAILABLE",
+      "installPolicySource": null,
+      "mustShowInstallationInterstitial": null,
+      "authPolicy": "ON_INSTALL",
+      "availability": "AVAILABLE",
+      "disabledReason": null,
+      "eligiblePlanTypes": null,
+      "interface": null,
+      "keywords": []
+    },
+    "detailVersion": "1.0.0",
+    "skillPath": "<probe>/home/plugins/cache/upgrade-test/sample/1.0.0/skills/note/SKILL.md",
+    "skill": "---\nname: note\ndescription: test\n---\nVERSION_1.0.0"
+  },
+  {
+    "phase": "new-source-before-install",
+    "summary": {
+      "id": "sample@upgrade-test",
+      "remotePluginId": null,
+      "version": null,
+      "localVersion": "2.0.0",
+      "name": "sample",
+      "shareContext": null,
+      "source": {
+        "type": "local",
+        "path": "/tmp/newbot-upgrade-probe-HUbaP6/market/plugin"
+      },
+      "installed": true,
+      "installedAt": null,
+      "enabled": true,
+      "installPolicy": "AVAILABLE",
+      "installPolicySource": null,
+      "mustShowInstallationInterstitial": null,
+      "authPolicy": "ON_INSTALL",
+      "availability": "AVAILABLE",
+      "disabledReason": null,
+      "eligiblePlanTypes": null,
+      "interface": null,
+      "keywords": []
+    },
+    "detailVersion": "2.0.0",
+    "skillPath": "<probe>/home/plugins/cache/upgrade-test/sample/2.0.0/skills/note/SKILL.md",
+    "skill": "---\nname: note\ndescription: test\n---\nVERSION_2.0.0"
+  },
+  {
+    "phase": "upgraded",
+    "summary": {
+      "id": "sample@upgrade-test",
+      "remotePluginId": null,
+      "version": null,
+      "localVersion": "2.0.0",
+      "name": "sample",
+      "shareContext": null,
+      "source": {
+        "type": "local",
+        "path": "/tmp/newbot-upgrade-probe-HUbaP6/market/plugin"
+      },
+      "installed": true,
+      "installedAt": null,
+      "enabled": true,
+      "installPolicy": "AVAILABLE",
+      "installPolicySource": null,
+      "mustShowInstallationInterstitial": null,
+      "authPolicy": "ON_INSTALL",
+      "availability": "AVAILABLE",
+      "disabledReason": null,
+      "eligiblePlanTypes": null,
+      "interface": null,
+      "keywords": []
+    },
+    "detailVersion": "2.0.0",
+    "skillPath": "<probe>/home/plugins/cache/upgrade-test/sample/2.0.0/skills/note/SKILL.md",
+    "skill": "---\nname: note\ndescription: test\n---\nVERSION_2.0.0"
+  },
+  {
+    "phase": "repeated",
+    "summary": {
+      "id": "sample@upgrade-test",
+      "remotePluginId": null,
+      "version": null,
+      "localVersion": "2.0.0",
+      "name": "sample",
+      "shareContext": null,
+      "source": {
+        "type": "local",
+        "path": "/tmp/newbot-upgrade-probe-HUbaP6/market/plugin"
+      },
+      "installed": true,
+      "installedAt": null,
+      "enabled": true,
+      "installPolicy": "AVAILABLE",
+      "installPolicySource": null,
+      "mustShowInstallationInterstitial": null,
+      "authPolicy": "ON_INSTALL",
+      "availability": "AVAILABLE",
+      "disabledReason": null,
+      "eligiblePlanTypes": null,
+      "interface": null,
+      "keywords": []
+    },
+    "detailVersion": "2.0.0",
+    "skillPath": "<probe>/home/plugins/cache/upgrade-test/sample/2.0.0/skills/note/SKILL.md",
+    "skill": "---\nname: note\ndescription: test\n---\nVERSION_2.0.0"
+  }
+]

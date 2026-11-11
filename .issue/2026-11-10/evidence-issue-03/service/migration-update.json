@@ -1,0 +1,23 @@
+{
+  "at": "2026-11-10T06:27:45.460Z",
+  "pid": 806280,
+  "schema": 9,
+  "counts": {
+    "threads": 20,
+    "runs": 54,
+    "attachments": 7
+  },
+  "providersUnchanged": true,
+  "credentialsUnchanged": true,
+  "passwordUnchanged": true,
+  "instanceConfigUnchanged": true,
+  "personalConfigPredatesUpdate": true,
+  "historiesVerified": 3,
+  "turnsVerified": 8,
+  "legacyWorkspacePreserved": true,
+  "priorSessionAcceptedAfterRestart": true,
+  "asset": "/assets/index-B-cWmD3y.js",
+  "modelTurnsCreated": 0,
+  "backup": "/home/a/Documents/ChatGPT/newbot/.data/restart-backups/issue03-1794291754126",
+  "verification": "Compared authoritative SQLite backup and native turn IDs; revision and new empty fields are expected schema changes"
+}

@@ -1,0 +1,98 @@
+{
+  "dialog": {
+    "scrollWidth": 368,
+    "width": 370,
+    "x": 10
+  },
+  "overflow": [
+    {
+      "className": "skill-import-body",
+      "clientWidth": 368,
+      "cssWidth": "368px",
+      "display": "block",
+      "grid": "none",
+      "minWidth": "auto",
+      "scrollWidth": 396,
+      "tag": "DIV",
+      "width": 368
+    },
+    {
+      "className": "import-github",
+      "clientWidth": 336,
+      "cssWidth": "336px",
+      "display": "grid",
+      "grid": "336px",
+      "minWidth": "0px",
+      "scrollWidth": 380,
+      "tag": "FORM",
+      "width": 336
+    },
+    {
+      "className": "github-source-fields",
+      "clientWidth": 336,
+      "cssWidth": "336px",
+      "display": "grid",
+      "grid": "380px",
+      "minWidth": "0px",
+      "scrollWidth": 380,
+      "tag": "DIV",
+      "width": 336
+    },
+    {
+      "className": "field-label",
+      "clientWidth": 380,
+      "cssWidth": "380px",
+      "display": "grid",
+      "grid": "380px",
+      "minWidth": "auto",
+      "scrollWidth": 380,
+      "tag": "LABEL",
+      "width": 380
+    },
+    {
+      "className": "",
+      "clientWidth": 378,
+      "cssWidth": "380px",
+      "display": "block",
+      "grid": "none",
+      "minWidth": "0px",
+      "scrollWidth": 378,
+      "tag": "INPUT",
+      "width": 380
+    },
+    {
+      "className": "github-reference-toolbar",
+      "clientWidth": 380,
+      "cssWidth": "380px",
+      "display": "flex",
+      "grid": "none",
+      "minWidth": "auto",
+      "scrollWidth": 380,
+      "tag": "DIV",
+      "width": 380
+    },
+    {
+      "className": "icon-button",
+      "clientWidth": 44,
+      "cssWidth": "44px",
+      "display": "flex",
+      "grid": "none",
+      "minWidth": "auto",
+      "scrollWidth": 44,
+      "tag": "BUTTON",
+      "width": 44
+    },
+    {
+      "className": "",
+      "clientWidth": 378,
+      "cssWidth": "380px",
+      "display": "block",
+      "grid": "none",
+      "minWidth": "0px",
+      "scrollWidth": 378,
+      "tag": "SELECT",
+      "width": 380
+    }
+  ],
+  "viewport": 390
+}

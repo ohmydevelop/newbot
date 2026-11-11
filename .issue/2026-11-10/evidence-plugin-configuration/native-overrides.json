@@ -1,0 +1,71 @@
+[
+  {
+    "mode": "base",
+    "servers": [
+      {
+        "name": "owned",
+        "pluginId": "probe@scope-test",
+        "status": "connected",
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "{\"marker\":\"bundled\"}"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "mode": "nested",
+    "servers": [
+      {
+        "name": "owned",
+        "pluginId": "probe@scope-test",
+        "status": "connected",
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "{\"marker\":\"bundled\"}"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "mode": "top",
+    "servers": [
+      {
+        "name": "owned",
+        "pluginId": null,
+        "status": "connected",
+        "error": null,
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "{\"marker\":\"top\"}"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "mode": "disabled",
+    "servers": [
+      {
+        "name": "owned",
+        "pluginId": "probe@scope-test",
+        "status": "disabled",
+        "error": null,
+        "result": null
+      }
+    ]
+  }
+]

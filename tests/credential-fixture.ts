@@ -89,6 +89,7 @@ export async function credentialFixture(
   const endpoint = `https://127.0.0.1:${(upstream.address() as any).port}/v1`;
   const codex = new ProviderCodex(endpoint);
   const context = await createServer({
+    webDirectory: process.env.UI_TEST_CANDIDATE,
     providerRuntime: null,
     directory,
     cwd: join(directory, "workspace"),

@@ -1,3 +1,4 @@
+import { customModelIds } from "../shared/gateways.js";
 import { PublicError } from "./public-error.js";
 import type { credentialVault } from "./credential-vault.js";
 import {
@@ -44,8 +45,10 @@ export const providerSave = z
     expectedRevision: revision,
     id: providerId,
     create: z.boolean(),
+    rebindCredentials: z.boolean().optional(),
     patch: z
       .object({
+        customModels: customModelIds.optional(),
         name: name.optional(),
         baseUrl: baseUrl.optional(),
         envKey: envKey.nullable().optional(),
@@ -154,7 +157,7 @@ export function providerManager(
 ) {
   async function checked(expectedRevision: string, id: string) {
     const snapshot = await config.read();
-    if (snapshot.publicView.revision !== expectedRevision)
+    if (!config.matches(snapshot, expectedRevision, `provider:${id}`))
       configFail("配置已变化，请重新读取后再操作", 409, "conflict");
     if (
       !(
@@ -170,144 +173,202 @@ export function providerManager(
     const data = providerSave.parse(params);
     if (reserved.has(data.id))
       providerError("内置 Provider 由 Codex 管理，不能通过此入口修改");
-    return config.mutate(data.expectedRevision, async (snapshot) => {
-      const definitions = record(snapshot.response.config.model_providers);
-      const exists =
-        Object.hasOwn(definitions, data.id) ||
-        snapshot.publicView.defaults.provider === data.id;
-      if (data.create && exists)
-        providerError("Provider 标识已存在，请使用其他标识");
-      if (!data.create && !editableProvider(snapshot, data.id))
-        providerError("此 Provider 不属于可编辑用户配置，请在其来源中修改");
-      if (data.patch.envKey && !allowedEnv(snapshot, data.patch.envKey))
-        providerError("凭证引用未授权，请先在服务端配置允许列表");
-      const previous = record(definitions[data.id]);
-      if (data.patch.envKey?.startsWith(MANAGED_CREDENTIAL_PREFIX))
-        providerError("托管凭证引用请通过私密入口管理");
-      if (
-        managedCredential(previous.env_key) &&
-        (data.patch.envKey !== undefined ||
-          (data.patch.baseUrl !== undefined &&
-            data.patch.baseUrl !== previous.base_url))
-      )
-        providerError("请先通过私密入口清除托管凭证，再修改接收方或引用");
-      const root = `model_providers.${data.id}`;
-      const fields = {
-        ...(data.patch.name !== undefined ? { name: data.patch.name } : {}),
-        ...(data.patch.baseUrl !== undefined
-          ? { base_url: data.patch.baseUrl.replace(/\/+$/, "") }
-          : {}),
-        ...(data.patch.envKey !== undefined
-          ? { env_key: data.patch.envKey }
-          : {}),
-      };
-      if (data.create && fields.env_key === null) delete fields.env_key;
-      const edits: ConfigEdit[] = [];
-      if (data.create) {
-        if (!fields.name || !fields.base_url)
-          providerError("新增 Provider 需要名称和端点", 400);
-        const definition = {
-          ...fields,
-          wire_api: "responses",
-          requires_openai_auth: false,
+    return config.mutate(
+      data.create ? "absent" : data.expectedRevision,
+      async (snapshot) => {
+        const definitions = record(snapshot.response.config.model_providers);
+        const exists =
+          Object.hasOwn(definitions, data.id) ||
+          snapshot.publicView.defaults.provider === data.id;
+        if (data.create && exists)
+          providerError("Provider 标识已存在，请使用其他标识");
+        if (!data.create && !editableProvider(snapshot, data.id))
+          providerError("此 Provider 不属于可编辑用户配置，请在其来源中修改");
+        if (data.patch.envKey && !allowedEnv(snapshot, data.patch.envKey))
+          providerError("凭证引用未授权，请先在服务端配置允许列表");
+        const previous = record(definitions[data.id]);
+        const retarget =
+          data.patch.baseUrl !== undefined &&
+          data.patch.baseUrl.replace(/\/+$/, "") !==
+            previous.base_url?.replace(/\/+$/, "");
+        if (data.patch.envKey?.startsWith(MANAGED_CREDENTIAL_PREFIX))
+          providerError("托管凭证引用请通过私密入口管理");
+        if (
+          managedCredential(previous.env_key) &&
+          (data.patch.envKey !== undefined ||
+            (retarget && !data.rebindCredentials))
+        )
+          providerError("请先通过私密入口清除托管凭证，再修改接收方或引用");
+        if (
+          retarget &&
+          (previous.api_key ||
+            previous.experimental_bearer_token ||
+            previous.auth ||
+            Object.keys(record(previous.http_headers)).length ||
+            Object.keys(record(previous.env_http_headers)).length ||
+            (previous.env_key && !managedCredential(previous.env_key)))
+        )
+          providerError("此网关含外部管理的认证配置，请为新地址另建网关");
+        const root = `model_providers.${data.id}`;
+        const fields = {
+          ...(retarget &&
+          data.rebindCredentials &&
+          managedCredential(previous.env_key)
+            ? { env_key: null }
+            : {}),
+          ...(data.patch.name !== undefined ? { name: data.patch.name } : {}),
+          ...(data.patch.baseUrl !== undefined
+            ? { base_url: data.patch.baseUrl.replace(/\/+$/, "") }
+            : {}),
+          ...(data.patch.envKey !== undefined
+            ? { env_key: data.patch.envKey }
+            : {}),
         };
-        vault?.restoreProviderReferences({
-          model_providers: { [data.id]: definition },
-        });
-        edits.push({
-          keyPath: root,
-          value: definition,
-          mergeStrategy: "replace",
-        });
-      } else
-        for (const [key, value] of Object.entries(fields))
+        if (data.create && fields.env_key === null) delete fields.env_key;
+        const edits: ConfigEdit[] = [];
+        if (data.patch.customModels !== undefined) {
+          if (!config.runtime && data.patch.customModels.length)
+            providerError("自定义模型需要 SQLite 配置模式");
+          if (config.runtime)
+            edits.push({
+              keyPath: `newbot_models.${data.id}`,
+              value: data.patch.customModels,
+              mergeStrategy: "replace",
+            });
+        }
+        if (data.create) {
+          if (!fields.name || !fields.base_url)
+            providerError("新增 Provider 需要名称和端点", 400);
+          const definition = {
+            ...fields,
+            wire_api: "responses",
+            requires_openai_auth: false,
+          };
+          vault?.restoreProviderReferences({
+            model_providers: { [data.id]: definition },
+          });
           edits.push({
-            keyPath: `${root}.${key}`,
-            value,
+            keyPath: root,
+            value: definition,
             mergeStrategy: "replace",
           });
-      return {
-        edits,
-        effective: (after) => {
-          const actual = record(
-            record(after.response.config.model_providers)[data.id],
-          );
-          return Object.entries(fields).every(([key, value]) =>
-            value === null ? actual[key] == null : actual[key] === value,
-          );
-        },
-      };
-    });
+        } else
+          for (const [key, value] of Object.entries(fields))
+            edits.push({
+              keyPath: `${root}.${key}`,
+              value,
+              mergeStrategy: "replace",
+            });
+        return {
+          edits,
+          effective: (after) => {
+            const actual = record(
+              record(after.response.config.model_providers)[data.id],
+            );
+            return Object.entries(fields).every(([key, value]) =>
+              value === null ? actual[key] == null : actual[key] === value,
+            );
+          },
+        };
+      },
+      `provider:${data.id}`,
+    );
   }
   async function remove(params: unknown) {
     const data = providerDelete.parse(params);
-    return config.mutate(data.expectedRevision, async (snapshot) => {
-      if (!editableProvider(snapshot, data.id))
-        providerError("此 Provider 不能从用户配置中删除");
-      if (
-        managedCredential(
-          record(record(snapshot.response.config.model_providers)[data.id])
-            .env_key,
-        ) ||
-        vault?.info("provider", data.id, snapshot.response.config).stored
-      )
-        providerError("请先清除托管凭证，再删除 Provider");
-      if (snapshot.publicView.defaults.provider === data.id)
-        providerError("请先切换到其他 Provider，再删除当前 Provider");
-      if (
-        db.raw
-          .prepare("SELECT 1 FROM threads WHERE provider=? LIMIT 1")
-          .get(data.id)
-      )
-        providerError("历史会话仍引用此 Provider，暂不能删除");
-      if (
-        usedInConfig(snapshot.response.config, data.id) ||
-        snapshot.response.layers?.some((l) => usedInConfig(l.config, data.id))
-      )
-        providerError("其他配置仍引用此 Provider，请先处理引用");
-      for (const archived of [false, true]) {
-        let result;
-        try {
-          result = await codex.call("thread/list", {
-            modelProviders: [data.id],
-            archived,
-            limit: 1,
-            sourceKinds: [
-              "cli",
-              "vscode",
-              "exec",
-              "appServer",
-              "subAgent",
-              "subAgentReview",
-              "subAgentCompact",
-              "subAgentThreadSpawn",
-              "subAgentOther",
-              "unknown",
-            ],
-          });
-        } catch {
-          providerError("无法核对原生历史引用，请恢复连接后重试");
+    return config.mutate(
+      data.expectedRevision,
+      async (snapshot) => {
+        if (!editableProvider(snapshot, data.id))
+          providerError("此 Provider 不能从用户配置中删除");
+        if (
+          managedCredential(
+            record(record(snapshot.response.config.model_providers)[data.id])
+              .env_key,
+          ) ||
+          vault?.info("provider", data.id, snapshot.response.config).stored
+        )
+          providerError("请先清除托管凭证，再删除 Provider");
+        if (snapshot.publicView.defaults.provider === data.id)
+          providerError("请先切换到其他 Provider，再删除当前 Provider");
+        if (
+          db.raw
+            .prepare("SELECT 1 FROM threads WHERE provider=? LIMIT 1")
+            .get(data.id) ||
+          db.raw
+            .prepare(
+              "SELECT 1 FROM session_runtime_pending WHERE json_extract(candidate,'$.provider')=? LIMIT 1",
+            )
+            .get(data.id)
+        )
+          providerError("历史会话仍引用此 Provider，暂不能删除");
+        const referenceConfig = structuredClone(snapshot.response.config);
+        if (config.runtime && referenceConfig.profiles)
+          delete (referenceConfig.profiles as any)[`newbot_gateway_${data.id}`];
+        if (
+          usedInConfig(referenceConfig, data.id) ||
+          snapshot.response.layers?.some((l) => usedInConfig(l.config, data.id))
+        )
+          providerError("其他配置仍引用此 Provider，请先处理引用");
+        for (const archived of [false, true]) {
+          let result;
+          try {
+            result = await codex.call("thread/list", {
+              modelProviders: [data.id],
+              archived,
+              limit: 1,
+              sourceKinds: [
+                "cli",
+                "vscode",
+                "exec",
+                "appServer",
+                "subAgent",
+                "subAgentReview",
+                "subAgentCompact",
+                "subAgentThreadSpawn",
+                "subAgentOther",
+                "unknown",
+              ],
+            });
+          } catch {
+            providerError("无法核对原生历史引用，请恢复连接后重试");
+          }
+          if (!Array.isArray(result.data))
+            providerError("无法核对原生历史引用，请稍后重试");
+          if (result.data.length)
+            providerError("Codex 历史会话仍引用此 Provider，暂不能删除");
         }
-        if (!Array.isArray(result.data))
-          providerError("无法核对原生历史引用，请稍后重试");
-        if (result.data.length)
-          providerError("Codex 历史会话仍引用此 Provider，暂不能删除");
-      }
-      return {
-        edits: [
-          {
-            keyPath: `model_providers.${data.id}`,
-            value: null,
-            mergeStrategy: "replace",
-          },
-        ],
-        effective: (after) =>
-          !Object.hasOwn(
-            record(after.response.config.model_providers),
-            data.id,
-          ),
-      };
-    });
+        return {
+          edits: [
+            ...(config.runtime
+              ? [
+                  {
+                    keyPath: `profiles.newbot_gateway_${data.id}`,
+                    value: null,
+                    mergeStrategy: "replace" as const,
+                  },
+                  {
+                    keyPath: `newbot_models.${data.id}`,
+                    value: null,
+                    mergeStrategy: "replace" as const,
+                  },
+                ]
+              : []),
+            {
+              keyPath: `model_providers.${data.id}`,
+              value: null,
+              mergeStrategy: "replace",
+            },
+          ],
+          effective: (after) =>
+            !Object.hasOwn(
+              record(after.response.config.model_providers),
+              data.id,
+            ),
+        };
+      },
+      `provider:${data.id}`,
+    );
   }
   async function probe(
     params: unknown,
@@ -318,9 +379,15 @@ export function providerManager(
     const data = providerProbe.parse(params);
     const snapshot = await checked(data.expectedRevision, data.id);
     const current = snapshot.publicView.defaults.provider === data.id;
-    const definition = record(
-      record(snapshot.response.config.model_providers)[data.id],
-    );
+    const source = codex.privateConfiguration
+      ? (
+          await codex.privateConfiguration({
+            modelProvider: data.id,
+            config: snapshot.response.config,
+          })
+        ).config
+      : snapshot.response.config;
+    const definition = record(record(source.model_providers)[data.id]);
     if (!responseTest && current && !preferUpstream)
       return {
         source: "codex" as const,

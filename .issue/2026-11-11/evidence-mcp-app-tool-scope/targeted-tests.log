@@ -1,0 +1,41 @@
+✔ authentication, origin checks, safe configuration, method boundaries (162.954243ms)
+✔ AG-UI text and tool event contracts; one run; snapshot survives disconnect (105.613034ms)
+✔ pending native approval persists without clients and cannot be replayed (65.795299ms)
+✔ MCP App tool grants bind server/tool/arguments, deny bypass and replay (67.968277ms)
+✔ attachments reject traversal, unsupported active content and oversized text (67.329396ms)
+✔ MCP HTML uses separate origin and its own CSP, without main-session access (64.758804ms)
+✔ failed and interrupted runs have valid terminal events and recoverable state (65.572009ms)
+✔ polling is authenticated and returns the same AG-UI events with reconnect snapshots (63.923531ms)
+✔ HTTPS logins always set Secure cookies when local HTTP is also allowed (58.783374ms)
+✔ the real SDK handshake advertises only scoped tool calls, inline presentation and an empty sandbox permission set (13.170404ms)
+✔ message, link and download requests return explicit standard error results without reflecting application data (6.24004ms)
+✔ unavailable context, resources, prompts, sampling and unknown methods fail with bounded JSON-RPC errors and leave the connection usable (3.733612ms)
+✔ fullscreen and picture-in-picture requests return the actual inline mode instead of false success (1.00252ms)
+✔ logging and unknown notifications are discarded, and capability handlers do not grant tool access (1.205006ms)
+✔ runtime diagnostics report disabled embedding and never advertise extra privileges when no independent App origin is configured (140.711113ms)
+✔ App data tools use same-connection visibility independently of their UI resource (110.474651ms)
+✔ data-tool grants recheck visibility, removal and server availability at approval (155.984206ms)
+✔ history descriptors carry no live permissions; each explicit view gets an independent lease (0.514764ms)
+✔ incidental history reads cannot extend or revive expired App permissions (0.278198ms)
+✔ view limits fail explicitly without silently evicting active views (0.21462ms)
+✔ opening paginates the requested Turn and uses its original result rather than another matching item (37.257019ms)
+✔ metadata-only App discovery adds a safe view hint and is restored from history without tool execution (35.806139ms)
+✔ resource and tool failures clean up permissions and never forward raw MCP diagnostics (28.929962ms)
+✔ malformed resources and oversized results fail before an active UI is exposed (32.095125ms)
+✔ closing during resource loading discards the late result and prevents a capability leak (37.278364ms)
+✔ cancel arriving before an open request prevents late creation (35.722663ms)
+✔ closing revokes pending grants immediately and is allowed while maintenance is active (30.28583ms)
+✔ permission changes are rechecked at approval and invalidate the former resource association (33.203493ms)
+✔ denial and cancellation consume a grant without another MCP request (34.943616ms)
+✔ a call already approved may finish after closing, while future calls and replay remain denied (34.216549ms)
+✔ App HTML, controls and grants are bound to the opening Web session and logout revokes its resources (115.125462ms)
+✔ expired or closed leases remove their sandbox document and cannot be revived by reopening history (66.459307ms)
+✔ App lifecycle controls enforce Origin and the independent App host cannot invoke them (59.838537ms)
+ℹ tests 33
+ℹ suites 0
+ℹ pass 33
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1271.095182

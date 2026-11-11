@@ -1,0 +1,20 @@
+{
+  "at": "2026-11-10T15:14:06.012Z",
+  "oldPid": 1612106,
+  "pid": 1673356,
+  "schema": 14,
+  "counts": {
+    "threads": 23,
+    "runs": 68,
+    "attachments": 5
+  },
+  "passwordUnchanged": true,
+  "credentialsUnchanged": true,
+  "personalConfigUnchanged": true,
+  "instanceConfigUnchanged": true,
+  "providersUnchanged": true,
+  "historiesVerified": 3,
+  "modelTurnsCreated": 0,
+  "asset": "/assets/index-DVvWXta9.js",
+  "backup": "/home/a/Documents/ChatGPT/newbot/.data/restart-backups/plugin-lifecycle-1794323645110"
+}

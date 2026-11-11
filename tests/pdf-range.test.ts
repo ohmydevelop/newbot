@@ -33,8 +33,8 @@ test("single byte ranges handle inclusive bounds, suffixes, huge integers and in
   assert.equal(byteRange("bytes=0-", 0), null);
 });
 async function setup() {
-  const directory = mkdtempSync(join(tmpdir(), "newbot-pdf-range-")),
-    cwd = join(directory, "workspace");
+  const directory = mkdtempSync(join(tmpdir(), "newbot-pdf-range-"));
+  let cwd = join(directory, "workspace");
   const c = await createServer({
     providerRuntime: null,
     directory,
@@ -59,6 +59,7 @@ async function setup() {
     provider: "fixture",
     model: "fixture-model",
   });
+  cwd = c.workspaces.root(thread.id);
   const turn: any = await c.service.handle("turn/start", {
     threadId: thread.id,
     text: "PDF ranges",

@@ -1,0 +1,45 @@
+✖ App data tools use same-connection visibility independently of their UI resource (129.316018ms)
+✖ data-tool grants recheck visibility, removal and server availability at approval (50.008197ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 0
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 700.85192
+
+✖ failing tests:
+
+test at tests/mcp-app-lifecycle.test.ts:1:1875
+✖ App data tools use same-connection visibility independently of their UI resource (129.316018ms)
+  AssertionError [ERR_ASSERTION]: list_groups can request approval
+      at <anonymous> (/home/a/Documents/ChatGPT/newbot/tests/mcp-app-lifecycle.test.ts:97:14)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async fixture (/home/a/Documents/ChatGPT/newbot/tests/mcp-app-lifecycle.test.ts:49:5)
+      at async TestContext.<anonymous> (/home/a/Documents/ChatGPT/newbot/tests/mcp-app-lifecycle.test.ts:74:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/mcp-app-lifecycle.test.ts:1:4248
+✖ data-tool grants recheck visibility, removal and server availability at approval (50.008197ms)
+  Error: 应用无权调用该工具
+      at appFail (/home/a/Documents/ChatGPT/newbot/server/app-error.ts:17:9)
+      at Object.authorize (/home/a/Documents/ChatGPT/newbot/server/mcp-apps.ts:342:9)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Object.handle (/home/a/Documents/ChatGPT/newbot/server/bridge.ts:2271:28)
+      at async <anonymous> (/home/a/Documents/ChatGPT/newbot/tests/mcp-app-lifecycle.test.ts:138:51)
+      at async fixture (/home/a/Documents/ChatGPT/newbot/tests/mcp-app-lifecycle.test.ts:49:5)
+      at async TestContext.<anonymous> (/home/a/Documents/ChatGPT/newbot/tests/mcp-app-lifecycle.test.ts:122:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    statusCode: 403,
+    appIssue: { code: 'permission' }
+  }

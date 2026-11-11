@@ -1,0 +1,20 @@
+{
+  "at": "2026-11-10T16:00:14.479Z",
+  "version": "0.165.0",
+  "upstream": "synthetic Responses, real native runtime and MCP",
+  "checks": [
+    "single skill native discovery and install",
+    "ZIP upload, original executable assets, native scan and confirmed installation; completed staging released",
+    "129 skills scanned, 128 selected; import is independent of the eight-reference limit",
+    "portable + compatibility plugins installed with full packages, selected skills and no persistent config.toml preference",
+    "actual Responses request contains enabled standalone/plugin skills, excludes disabled siblings; >128 resources can start a native thread and preserve shared relative assets",
+    "installed plugin MCP executes echo through its owned runtime mapping and actual thread configuration",
+    "scan completes alongside a real active turn; installation waits for idle and succeeds afterwards",
+    "content changes after preview are rejected before installation and cancelled staging is released",
+    "identical imports skip installed items",
+    "native uninstall removes actual discovery; same package can be imported again without false duplicate skip",
+    "same-version plugin replacement requires explicit consent and verifies installed file hashes",
+    "partial install keeps successes, repeated operation does not reinstall, retry processes failed package only",
+    "SQLite import provenance and skill choices restore after complete service restart"
+  ]
+}

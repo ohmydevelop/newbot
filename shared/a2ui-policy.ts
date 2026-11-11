@@ -1,6 +1,13 @@
 import { z } from "zod";
 
 export const A2UI_CATALOG_ID = "newbot:ui/v1";
+export const A2UI_RICH_CATALOG_ID = "newbot:ui/v2";
+export function a2uiCatalogId(messages: readonly any[]): string {
+  return (
+    messages.find((m) => m.createSurface)?.createSurface.catalogId ||
+    A2UI_CATALOG_ID
+  );
+}
 export const A2UI_LIMITS = Object.freeze({
   bytes: 65_536,
   string: 4096,
@@ -100,7 +107,7 @@ export const a2uiEnvelope = z.union([
     version,
     createSurface: z.strictObject({
       surfaceId: id,
-      catalogId: z.literal(A2UI_CATALOG_ID),
+      catalogId: z.enum([A2UI_CATALOG_ID, A2UI_RICH_CATALOG_ID]),
     }),
   }),
   z.strictObject({

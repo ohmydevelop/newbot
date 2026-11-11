@@ -1,0 +1,31 @@
+[
+  {
+    "variable": "diagnostic",
+    "servers": [
+      {
+        "name": "cloudwalker",
+        "status": "connected",
+        "error": null,
+        "toolNames": [
+          "open_security_workspace",
+          "summarize_security_posture",
+          "search_hosts",
+          "get_host_security_context",
+          "search_security_alerts",
+          "inspect_security_alert",
+          "list_business_groups"
+        ]
+      }
+    ],
+    "diagnostic": {
+      "args": [
+        "${PLUGIN_ROOT}",
+        "${CLAUDE_PLUGIN_ROOT}",
+        "${CODEX_PLUGIN_ROOT}",
+        "${pluginRoot}"
+      ],
+      "cwd": "/tmp/newbot-cloudwalker-native-lwth9I/work",
+      "env": {}
+    }
+  }
+]

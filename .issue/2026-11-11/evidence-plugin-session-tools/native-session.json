@@ -1,0 +1,164 @@
+{
+  "at": "2026-11-10T16:23:18.733Z",
+  "version": "0.165.0",
+  "realModelRequests": 0,
+  "realBusinessRequests": 0,
+  "syntheticModelRequests": 24,
+  "syntheticToolCalls": 7,
+  "checks": [
+    "missing required private input cannot be saved as success; selected plugin/expert fails before model dispatch or reservation, unrelated chat remains available",
+    "same native thread exposes the current code-mode entry; model-driven ALL_TOOLS discovery finds the configured MCP tool and executes it exactly once; second thread remains unchanged",
+    "changing non-secret connection parameters without reauthorizing preserves old configuration and ciphertext; authorized update reaches the next turn in the original thread",
+    "explicit credential clear is reported as unconfigured and cannot dispatch; intentional component disable allows other plugin capabilities; re-enable republishes tools without new thread",
+    "native startup failure is detected before model dispatch; corrected connector recovers on the next turn",
+    "package upgrade keeps connector/native thread identity, requires fresh credentials, and actual model call reaches new code exactly once without shared runtime restart",
+    "uninstall removes the old model-visible registry; same-version reinstall requires configuration and restores calls in the original thread with stable identity and no shared restart",
+    "full service restart restores SQLite configuration, private credentials, original thread/history and currently callable tools; isolated config.toml remains empty"
+  ],
+  "requests": [
+    {
+      "case": "ORIGINAL_HISTORY",
+      "codeMode": true,
+      "history": true,
+      "result": false
+    },
+    {
+      "case": "ORIGINAL_HISTORY",
+      "codeMode": true,
+      "history": true,
+      "result": false
+    },
+    {
+      "case": "SECOND_THREAD",
+      "codeMode": true,
+      "history": false,
+      "result": false
+    },
+    {
+      "case": "SECOND_THREAD",
+      "codeMode": true,
+      "history": false,
+      "result": false
+    },
+    {
+      "case": "UNRELATED_CHAT",
+      "codeMode": true,
+      "history": true,
+      "result": false
+    },
+    {
+      "case": "UNRELATED_CHAT",
+      "codeMode": true,
+      "history": true,
+      "result": false
+    },
+    {
+      "case": "FIRST_TOOL",
+      "codeMode": true,
+      "history": true,
+      "result": false
+    },
+    {
+      "case": "FIRST_TOOL",
+      "codeMode": true,
+      "history": true,
+      "result": true
+    },
+    {
+      "case": "UPDATED_CONFIGURATION",
+      "codeMode": true,
+      "history": true,
+      "result": true
+    },
+    {
+      "case": "UPDATED_CONFIGURATION",
+      "codeMode": true,
+      "history": true,
+      "result": true
+    },
+    {
+      "case": "INTENTIONALLY_DISABLED",
+      "codeMode": true,
+      "history": true,
+      "result": true
+    },
+    {
+      "case": "INTENTIONALLY_DISABLED",
+      "codeMode": true,
+      "history": true,
+      "result": true
+    },
+    {
+      "case": "REENABLED",
+      "codeMode": true,
+      "history": true,
+      "result": true
+    },
+    {
+      "case": "REENABLED",
+      "codeMode": true,
+      "history": true,
+      "result": true
+    },
+    {
+      "case": "AFTER_STARTUP_FAILURE",
+      "codeMode": true,
+      "history": true,
+      "result": true
+    },
+    {
+      "case": "AFTER_STARTUP_FAILURE",
+      "codeMode": true,
+      "history": true,
+      "result": true
+    },
+    {
+      "case": "AFTER_UPGRADE",
+      "codeMode": true,
+      "history": true,
+      "result": true
+    },
+    {
+      "case": "AFTER_UPGRADE",
+      "codeMode": true,
+      "history": true,
+      "result": true
+    },
+    {
+      "case": "AFTER_UNINSTALL",
+      "codeMode": true,
+      "history": true,
+      "result": true
+    },
+    {
+      "case": "AFTER_UNINSTALL",
+      "codeMode": true,
+      "history": true,
+      "result": true
+    },
+    {
+      "case": "AFTER_REINSTALL",
+      "codeMode": true,
+      "history": true,
+      "result": true
+    },
+    {
+      "case": "AFTER_REINSTALL",
+      "codeMode": true,
+      "history": true,
+      "result": true
+    },
+    {
+      "case": "AFTER_RESTART",
+      "codeMode": true,
+      "history": true,
+      "result": true
+    },
+    {
+      "case": "AFTER_RESTART",
+      "codeMode": true,
+      "history": true,
+      "result": true
+    }
+  ]
+}

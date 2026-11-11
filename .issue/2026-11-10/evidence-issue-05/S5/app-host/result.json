@@ -1,0 +1,23 @@
+{
+  "checks": [
+    "process disclosure preserves the connected App iframe and never repeats resources or tools",
+    "standard SDK initialization and runtime diagnostics agree on tool scope, sandbox and unadvertised capabilities",
+    "the compact capability disclosure is keyboard operable and shows per-view tool scope without claiming permission",
+    "message returns an explicit denied result and a safe Host notice",
+    "link returns an explicit denied result and a safe Host notice",
+    "download returns an explicit denied result and a safe Host notice",
+    "context, resource enumeration, resource reads, prompt/tool discovery, sampling and unknown methods return JSON-RPC errors without disconnecting",
+    "fullscreen and picture-in-picture requests report inline as the actual mode",
+    "logging is not collected and unsupported actions cause no extra model, resource, tool, download or navigation activity",
+    "a tool linked to another UI resource is refused without an approval dialog or tool execution",
+    "an unsupported App request cannot dismiss, replace or approve a pending tool decision",
+    "a permitted tool still requires a fresh one-use approval and runs once",
+    "reopening with no App-visible tools removes serverTools from the handshake and does not grant tool access",
+    "mobile dark-mode capability disclosure stays readable, within the viewport and has a 44px keyboard target",
+    "Host restrictions preserve lifecycle close/reopen and isolate browser execution and network access"
+  ],
+  "pageErrors": [],
+  "externalRequests": [],
+  "downloads": [],
+  "popups": []
+}

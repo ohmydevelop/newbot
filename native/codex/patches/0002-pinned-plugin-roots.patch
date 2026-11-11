@@ -1,0 +1,155 @@
+diff --git i/codex-rs/app-server-protocol/src/protocol/v1.rs w/codex-rs/app-server-protocol/src/protocol/v1.rs
+index cdf6ca2..68d0122 100644
+--- i/codex-rs/app-server-protocol/src/protocol/v1.rs
++++ w/codex-rs/app-server-protocol/src/protocol/v1.rs
+@@ -76,6 +76,8 @@ pub struct InitializeCapabilities {
+ #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, JsonSchema, TS)]
+ #[serde(rename_all = "camelCase")]
+ pub struct InitializeResponse {
++    /// Runtime extensions supported by this fixed host build.
++    pub runtime_capabilities: std::collections::BTreeMap<String, bool>,
+     pub user_agent: String,
+     /// Absolute path to the server's $CODEX_HOME directory.
+     pub codex_home: AbsolutePathBuf,
+diff --git i/codex-rs/app-server/src/request_processors/initialize_processor.rs w/codex-rs/app-server/src/request_processors/initialize_processor.rs
+index f6b282e..9f9e64b 100644
+--- i/codex-rs/app-server/src/request_processors/initialize_processor.rs
++++ w/codex-rs/app-server/src/request_processors/initialize_processor.rs
+@@ -213,6 +213,7 @@ impl InitializeRequestProcessor {
+ 
+         let user_agent = get_codex_user_agent();
+         let response = InitializeResponse {
++            runtime_capabilities: [("pinnedPluginRoots".to_string(), true)].into_iter().collect(),
+             user_agent,
+             codex_home,
+             platform_family: std::env::consts::FAMILY.to_string(),
+diff --git i/codex-rs/config/src/types.rs w/codex-rs/config/src/types.rs
+index 60e713f..ceac4e1 100644
+--- i/codex-rs/config/src/types.rs
++++ w/codex-rs/config/src/types.rs
+@@ -1132,6 +1132,10 @@ impl PluginsConfigToml {
+ #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq, JsonSchema)]
+ #[schemars(deny_unknown_fields)]
+ pub struct PluginConfig {
++    /// Host-pinned immutable local resource. Does not grant activation or bypass policy.
++    #[serde(default, skip_serializing_if = "Option::is_none")]
++    pub local_root: Option<AbsolutePathBuf>,
++
+     /// Explicit activation override. Omission inherits the installed-plugin default.
+     #[serde(default, skip_serializing_if = "Option::is_none")]
+     pub enabled: Option<bool>,
+diff --git i/codex-rs/core-plugins/src/loader.rs w/codex-rs/core-plugins/src/loader.rs
+index 896e20b..fbb77a6 100644
+--- i/codex-rs/core-plugins/src/loader.rs
++++ w/codex-rs/core-plugins/src/loader.rs
+@@ -393,6 +393,7 @@ pub fn remote_installed_plugins_to_config(
+             Some((
+                 plugin_id.as_key(),
+                 PluginConfig {
++                    local_root: None,
+                     enabled: Some(plugin.enabled),
+                     remote_plugin_id: None,
+                     release_id: None,
+@@ -863,7 +864,10 @@ async fn load_plugin(
+     let active_plugin_installation = plugin_id
+         .as_ref()
+         .ok()
+-        .and_then(|plugin_id| store.active_plugin_installation(plugin_id));
++        .and_then(|plugin_id| match &plugin.local_root {
++            Some(root) => Some(store.pinned_installation(plugin_id, root.clone())),
++            None => store.active_plugin_installation(plugin_id),
++        });
+     let root = active_plugin_installation
+         .as_ref()
+         .map(|installation| installation.root.clone())
+diff --git i/codex-rs/core-plugins/src/loader_tests.rs w/codex-rs/core-plugins/src/loader_tests.rs
+index dd48045..e1dde9c 100644
+--- i/codex-rs/core-plugins/src/loader_tests.rs
++++ w/codex-rs/core-plugins/src/loader_tests.rs
+@@ -525,6 +525,7 @@ fn configured_plugins_from_stack_merges_enabled_effective_layers() {
+             (
+                 "base".to_string(),
+                 PluginConfig {
++                    local_root: None,
+                     enabled: Some(true),
+                     remote_plugin_id: None,
+                     release_id: None,
+@@ -536,6 +537,7 @@ fn configured_plugins_from_stack_merges_enabled_effective_layers() {
+             (
+                 "profile".to_string(),
+                 PluginConfig {
++                    local_root: None,
+                     enabled: Some(true),
+                     remote_plugin_id: None,
+                     release_id: None,
+@@ -547,6 +549,7 @@ fn configured_plugins_from_stack_merges_enabled_effective_layers() {
+             (
+                 "system".to_string(),
+                 PluginConfig {
++                    local_root: None,
+                     enabled: Some(true),
+                     remote_plugin_id: None,
+                     release_id: None,
+diff --git i/codex-rs/core-plugins/src/manager.rs w/codex-rs/core-plugins/src/manager.rs
+index 3fcc3fd..cf21a61 100644
+--- i/codex-rs/core-plugins/src/manager.rs
++++ w/codex-rs/core-plugins/src/manager.rs
+@@ -3071,7 +3071,8 @@ impl PluginsManager {
+                 &config.config_layer_stack,
+                 self.codex_home.as_path(),
+             )
+-            .into_keys()
++            .into_iter()
++            .filter_map(|(id, plugin)| plugin.local_root.is_none().then_some(id))
+             .collect::<Vec<_>>();
+             configured_plugin_keys.sort_unstable();
+             match refresh_non_curated_plugin_cache_force_reinstall_detailed(
+diff --git i/codex-rs/core-plugins/src/manager_tests.rs w/codex-rs/core-plugins/src/manager_tests.rs
+index e75b552..a4c3e30 100644
+--- i/codex-rs/core-plugins/src/manager_tests.rs
++++ w/codex-rs/core-plugins/src/manager_tests.rs
+@@ -3429,6 +3429,7 @@ fn loaded_plugins_cache_evicts_least_recently_used_configuration() {
+             configured_plugins: HashMap::from([(
+                 format!("plugin-{index}@test"),
+                 PluginConfig {
++                    local_root: None,
+                     enabled: Some(true),
+                     remote_plugin_id: None,
+                     release_id: None,
+diff --git i/codex-rs/core-plugins/src/marketplace_context.rs w/codex-rs/core-plugins/src/marketplace_context.rs
+index bab5781..ab27b42 100644
+--- i/codex-rs/core-plugins/src/marketplace_context.rs
++++ w/codex-rs/core-plugins/src/marketplace_context.rs
+@@ -107,7 +107,8 @@ impl PluginMarketplaceContext {
+                     &scope.config.config_layer_stack,
+                     manager.codex_home.as_path(),
+                 )
+-                .into_keys()
++                .into_iter()
++                .filter_map(|(id, plugin)| plugin.local_root.is_none().then_some(id))
+             })
+             .collect::<HashSet<_>>();
+ 
+diff --git i/codex-rs/core-plugins/src/store.rs w/codex-rs/core-plugins/src/store.rs
+index 087eae6..6d89a03 100644
+--- i/codex-rs/core-plugins/src/store.rs
++++ w/codex-rs/core-plugins/src/store.rs
+@@ -170,6 +170,18 @@ impl PluginStore {
+         })
+     }
+ 
++    pub(crate) fn pinned_installation(
++        &self,
++        plugin_id: &PluginId,
++        root: AbsolutePathBuf,
++    ) -> ActivePluginInstallation {
++        ActivePluginInstallation {
++            plugin_id: plugin_id.clone(),
++            remote_plugin_install_metadata_path: root.join(".newbot-install-metadata.json"),
++            root,
++        }
++    }
++
+     pub fn is_installed(&self, plugin_id: &PluginId) -> bool {
+         self.active_plugin_version(plugin_id).is_some()
+     }

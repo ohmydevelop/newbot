@@ -127,7 +127,11 @@ export function credentialVault(db: Store, directory: string, cwd: string) {
       workspace = realpathSync(cwd);
     if (data === workspace || data.startsWith(workspace + sep))
       throw new Error();
-    if (!existsSync(path) && !persisted().length) {
+    if (
+      !existsSync(path) &&
+      !persisted().length &&
+      !sql.prepare("SELECT 1 FROM private_field_sets LIMIT 1").get()
+    ) {
       const descriptor = openSync(
         path,
         constants.O_CREAT |
@@ -308,6 +312,37 @@ export function credentialVault(db: Store, directory: string, cwd: string) {
       }
     },
     info,
+    sealPrivate(value: Buffer, context: string) {
+      if (!masterAvailable()) throw new PublicError("凭证存储已锁定");
+      const nonce = randomBytes(12),
+        cipher = createCipheriv("aes-256-gcm", master!, nonce);
+      cipher.setAAD(Buffer.from(context));
+      const data = Buffer.concat([cipher.update(value), cipher.final()]);
+      return JSON.stringify({
+        nonce: nonce.toString("base64"),
+        data: data.toString("base64"),
+        tag: cipher.getAuthTag().toString("base64"),
+      });
+    },
+    openPrivate(packet: string, context: string) {
+      if (!masterAvailable()) throw new PublicError("凭证存储已锁定");
+      try {
+        const value = JSON.parse(packet),
+          cipher = createDecipheriv(
+            "aes-256-gcm",
+            master!,
+            Buffer.from(value.nonce, "base64"),
+          );
+        cipher.setAAD(Buffer.from(context));
+        cipher.setAuthTag(Buffer.from(value.tag, "base64"));
+        return Buffer.concat([
+          cipher.update(Buffer.from(value.data, "base64")),
+          cipher.final(),
+        ]);
+      } catch {
+        throw new PublicError("凭证无法解密，请重新设置");
+      }
+    },
     get encryptionAvailable() {
       return masterAvailable();
     },

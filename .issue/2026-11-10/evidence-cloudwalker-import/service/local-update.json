@@ -1,0 +1,20 @@
+{
+  "at": "2026-11-10T13:18:02.061Z",
+  "oldPid": 1444262,
+  "pid": 1494072,
+  "schema": 13,
+  "counts": {
+    "threads": 23,
+    "runs": 68,
+    "attachments": 5
+  },
+  "passwordUnchanged": true,
+  "credentialsUnchanged": true,
+  "personalConfigUnchanged": true,
+  "instanceConfigUnchanged": true,
+  "providersUnchanged": true,
+  "historiesVerified": 3,
+  "modelTurnsCreated": 0,
+  "asset": "/assets/index-nylPB7D1.js",
+  "backup": "/home/a/Documents/ChatGPT/newbot/.data/restart-backups/cloudwalker-import-1794316658259"
+}

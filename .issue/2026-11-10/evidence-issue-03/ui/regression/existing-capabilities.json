@@ -1,0 +1,103 @@
+{
+  "candidate": ".data/issue-03-web",
+  "fixtures": true,
+  "suites": {
+    "app-host": {
+      "count": 15,
+      "checks": [
+        "process disclosure preserves the connected App iframe and never repeats resources or tools",
+        "standard SDK initialization and runtime diagnostics agree on tool scope, sandbox and unadvertised capabilities",
+        "the compact capability disclosure is keyboard operable and shows per-view tool scope without claiming permission",
+        "message returns an explicit denied result and a safe Host notice",
+        "link returns an explicit denied result and a safe Host notice",
+        "download returns an explicit denied result and a safe Host notice",
+        "context, resource enumeration, resource reads, prompt/tool discovery, sampling and unknown methods return JSON-RPC errors without disconnecting",
+        "fullscreen and picture-in-picture requests report inline as the actual mode",
+        "logging is not collected and unsupported actions cause no extra model, resource, tool, download or navigation activity",
+        "a tool linked to another UI resource is refused without an approval dialog or tool execution",
+        "an unsupported App request cannot dismiss, replace or approve a pending tool decision",
+        "a permitted tool still requires a fresh one-use approval and runs once",
+        "reopening with no App-visible tools removes serverTools from the handshake and does not grant tool access",
+        "mobile dark-mode capability disclosure stays readable, within the viewport and has a 44px keyboard target",
+        "Host restrictions preserve lifecycle close/reopen and isolate browser execution and network access"
+      ],
+      "source": ".data/app-host-ui/result.json"
+    },
+    "credential-isolation": {
+      "count": 5,
+      "checks": [
+        "gateway private save consumes a key once; failed model discovery cannot echo it",
+        "failed tool diagnostics remain hidden in actual poll events and visible chat",
+        "successful structured tool content stays available beside the fixed failure message",
+        "refresh restores sanitized history without submitting the credential again",
+        "browser storage, API responses and logs contain no submitted or reflected credential"
+      ],
+      "source": ".data/credential-isolation-ui/result.json"
+    },
+    "artifacts": {
+      "count": 19,
+      "checks": [
+        "sending waits for model configuration",
+        "file cards from native events",
+        "Markdown preview/source, inert HTML and explicit focus restoration",
+        "keyboard focus remains inside the preview",
+        "code syntax highlighting",
+        "JSON formatting and byte-preserving download",
+        "download failures are visible and retryable",
+        "CSV table with multiline and quoted cells",
+        "HTML source never executes at the main origin",
+        "empty, invalid JSON and large preview feedback",
+        "authenticated image decoding",
+        "content failure, visible retry and recovery",
+        "closing a loading preview cancels stale content",
+        "workspace listing failure, retry, file selection and registration",
+        "refresh restores cards and immutable versions after workspace changes",
+        "dark theme",
+        "375px mobile layout and touch controls",
+        "landscape modal stays inside the viewport",
+        "session expiry during file reads returns to login"
+      ],
+      "source": ".data/artifact-ui/result.json"
+    },
+    "pdf": {
+      "count": 13,
+      "checks": [
+        "PDF renderer and worker load only when opened",
+        "real canvas, Chinese text and inert PDF actions",
+        "pagination, page jump and landscape page",
+        "zoom and bounded canvas memory",
+        "large PDF uses authenticated verified byte ranges",
+        "malformed, encrypted and excessive-page PDFs have clear feedback",
+        "oversized workspace PDF is refused without creating a card",
+        "range failures and inconsistent headers support retry",
+        "closing an in-flight PDF leaves no stale renderer",
+        "PDF versions remain distinct after switching and refresh",
+        "dark theme and mobile portrait controls",
+        "mobile landscape keeps document and download reachable",
+        "session expiry during range read returns to login"
+      ],
+      "source": ".data/pdf-preview/result.json"
+    },
+    "conversation-recovery": {
+      "count": 15,
+      "checks": [
+        "title search handles normalized whitespace and keeps failed list reads recoverable",
+        "page failure preserves current content and retry deduplicates without jumping the reader",
+        "late history page cannot replace another selected conversation",
+        "rename failure retains its draft and a confirmed retry refreshes title",
+        "archive failure keeps its row and late archive acknowledgement never clears another draft",
+        "partial batch upload retains success, reports failures and stays with its draft",
+        "cancel upload keeps prior successes and cannot send a half-uploaded batch",
+        "upload limit is enforced before another batch is sent",
+        "late accepted response preserves newer typing while transferring the new-conversation draft",
+        "checking a hung accepted send releases the composer and its late response cannot clear a newer pending request",
+        "unknown accepted response can be checked without losing edits or dispatching twice",
+        "404 leaves the request stable until explicit abandonment fences late submission",
+        "stop acknowledgement remains pending until authority changes and never silently resends",
+        "lost stop request stays unconfirmed and needs a read before another explicit attempt",
+        "mobile dark recovery controls fit the viewport and preserve keyboard input"
+      ],
+      "source": ".data/conversation-recovery-ui/result.json"
+    }
+  }
+}

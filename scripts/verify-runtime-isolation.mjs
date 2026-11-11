@@ -17,7 +17,7 @@ import { Codex } from "../server/codex.ts";
 const root = await mkdtemp(join(tmpdir(), "newbot-isolation-native-"));
 const owned = join(root, "codex"),
   work = join(root, "work"),
-  output = resolve(".issue/2026-11-09/evidence-04");
+  output = resolve(process.env.RUNTIME_ISOLATION_OUTPUT || ".issue/2026-11-09/evidence-04");
 await mkdir(work);
 await mkdir(output, { recursive: true });
 await rm(join(output, "runtime-isolation-failure.json"), { force: true });

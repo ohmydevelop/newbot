@@ -1,0 +1,11 @@
+{
+  "status": "complete",
+  "unitTests": 355,
+  "nativeChecks": 18,
+  "browserGroups": 90,
+  "nativeUpstream": "local simulated Responses and MCP with real Codex 0.165.0",
+  "realProviderCalls": 0,
+  "servicePid": 817676,
+  "schema": 9,
+  "deploymentAcceptance": "deferred"
+}

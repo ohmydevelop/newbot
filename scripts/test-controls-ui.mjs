@@ -82,7 +82,7 @@ async function inspectMenu() {
         .map((animation) => animation.finished.catch(() => {})),
     );
   });
-  const items = menu().getByRole("menuitem");
+  const items = menu().locator(".action-menu-item");
   const rows = await items.evaluateAll((nodes) =>
     nodes.map((n) => {
       const rect = n.getBoundingClientRect(),
@@ -240,10 +240,13 @@ try {
           .getByRole("button", { name: "会话审批：请求批准", exact: true })
           .click();
         await menu()
-          .getByRole("menuitem", { name: "请求批准", exact: true })
+          .getByRole("menuitemradio", { name: "请求批准", exact: true })
           .waitFor();
         await inspectMenu();
-        assert.equal(await menu().locator(".action-menu-trailing").count(), 1);
+        assert.equal(
+          await menu().getByRole("menuitemradio", { checked: true }).count(),
+          1,
+        );
         await snapshot("approval-menu-desktop-dark");
         await closeMenu();
       },

@@ -1,0 +1,12 @@
+{
+  "fixture": true,
+  "stage": "pickers",
+  "checks": [
+    "reasoning save keeps picker and slider fixed while actual value commits",
+    "approval chip, checked item and explanatory copy follow all three presets",
+    "failed approval update preserves active preset and disabled policy explains why",
+    "skill and plugin pickers use compact search rows and stable cached refresh"
+  ],
+  "metrics": [],
+  "errors": []
+}

@@ -53,7 +53,7 @@ after(() => {
     else Reflect.deleteProperty(globalThis, k);
 });
 const response = (value: unknown, status = 200) =>
-  new Response(JSON.stringify(value), { status });
+  new Response(JSON.stringify(value), { status,headers:{"Content-Type":"application/json"} });
 const cap = (transport = "sse") => ({
   webTransport: transport,
   capabilities: { runRecovery: { abandonUnseen: true } },

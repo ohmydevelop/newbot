@@ -1,3 +1,4 @@
+import { connectorLabel } from "../../shared/tool-display";
 import { isMcpToolConsent } from "../../shared/approvals";
 import { lazy, Suspense, useState } from "react";
 import {
@@ -50,16 +51,20 @@ export function ApprovalCard({ approval }: { approval: Approval }) {
     }
   }
   return (
-    <section className="approval-card" aria-label="待处理授权">
+    <section
+      className="approval-card"
+      data-wait-id={`approval:${approval.id}`}
+      aria-label="待处理授权"
+    >
       <header>
         <ShieldCheck size={19} />
         <strong>
           {question
             ? "需要你的补充"
             : toolConsent
-              ? "MCP 工具需要你的授权"
+              ? "允许这次操作？"
               : elicitation
-                ? "MCP 请求信息"
+                ? "需要补充信息"
                 : "需要你的授权"}
         </strong>
       </header>
@@ -95,28 +100,43 @@ export function ApprovalCard({ approval }: { approval: Approval }) {
         ))
       ) : (
         <>
-          <p>
-            {p.reason ||
-              p.message ||
-              (approval.method.includes("fileChange")
-                ? "Codex 请求修改工作目录中的文件。"
-                : "Codex 请求执行以下操作。")}
-          </p>
+          {!toolConsent && (
+            <p>
+              {p.reason ||
+                p.message ||
+                (approval.method.includes("fileChange")
+                  ? "助手请求修改以下文件。"
+                  : "助手请求执行以下操作。")}
+            </p>
+          )}
           {(p.command || p.permissions) && (
             <pre className="approval-detail">
               {p.command || JSON.stringify(p.permissions, null, 2)}
             </pre>
           )}
           {toolConsent && (
-            <pre className="approval-detail">
-              {p.serverName} / {p._meta?.tool_title || "MCP 工具"}
-              {"\n"}
-              {JSON.stringify(p._meta?.tool_params || {}, null, 2)}
-            </pre>
+            <>
+              <p>
+                {approval.display?.toolTitle ||
+                  p._meta?.tool_title ||
+                  "调用工具"}
+              </p>
+              <p className="muted">
+                接收方：
+                {approval.display?.serverTitle || connectorLabel(p.serverName)}
+              </p>
+              <details className="approval-operation-details">
+                <summary>查看操作参数</summary>
+                <p className="muted">{p.serverName}</p>
+                <pre className="approval-detail">
+                  {JSON.stringify(p._meta?.tool_params || {}, null, 2)}
+                </pre>
+              </details>
+            </>
           )}
           {elicitation && !toolConsent && (
             <p className="muted">
-              此请求的表单类型无法安全显示，不能直接批准。普通输入请使用受支持的表单；私密凭证请使用设置中的独立通道。
+              此表单暂不支持，无法提交。若需要填写密钥，请前往对应插件或连接器的设置。
             </p>
           )}
         </>

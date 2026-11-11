@@ -1,0 +1,55 @@
+{
+  "version": "0.165.0",
+  "syntheticUpstream": true,
+  "realProviderCalls": 0,
+  "checks": [
+    "global extension edits leave an active native thread, its MCP inventory, and its resource snapshot unchanged",
+    "a new native thread applies disabled connector/skill settings and has its own cwd, without restarting Codex",
+    "the next turn updates the original native thread and retains its history and cwd",
+    "actual native workspaces and authenticated artifacts keep same-named files separate",
+    "restart restores SQLite extension choices, stable skill identity, cwd, and native thread without writing config.toml"
+  ],
+  "passed": 5,
+  "requests": [
+    {
+      "path": "/a/responses",
+      "model": "gpt-6.1-sol",
+      "effort": "low",
+      "history": [
+        false,
+        false
+      ],
+      "skill": true
+    },
+    {
+      "path": "/a/responses",
+      "model": "gpt-6.1-sol",
+      "effort": "low",
+      "history": [
+        false,
+        false
+      ],
+      "skill": false
+    },
+    {
+      "path": "/a/responses",
+      "model": "gpt-6.1-sol",
+      "effort": "low",
+      "history": [
+        false,
+        false
+      ],
+      "skill": true
+    },
+    {
+      "path": "/a/responses",
+      "model": "gpt-6.1-sol",
+      "effort": "low",
+      "history": [
+        false,
+        false
+      ],
+      "skill": true
+    }
+  ]
+}

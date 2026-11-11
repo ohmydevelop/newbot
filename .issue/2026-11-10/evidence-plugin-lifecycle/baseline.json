@@ -1,0 +1,344 @@
+{
+  "at": "2026-11-10T14:53:49.645Z",
+  "sameBuild": true,
+  "publicMatches": true,
+  "asset": "/assets/index-BjJxw1dN.js",
+  "mcp": [
+    {
+      "name": "github",
+      "plugin": true,
+      "pluginId": "github@openai-api-curated"
+    },
+    {
+      "name": "plugin_653b596318a40bf8c2ef1541b10f9c87",
+      "plugin": true,
+      "pluginId": "cloudwalker@newbot-imports",
+      "ownershipSource": "newbot-plugin"
+    }
+  ],
+  "configured": [
+    {
+      "id": "newbot_test",
+      "name": "newbot_test"
+    }
+  ],
+  "plugins": [
+    {
+      "id": "game-studio@openai-api-curated",
+      "version": "0.1.2",
+      "tools": [],
+      "installed": false
+    },
+    {
+      "id": "superpowers@openai-api-curated",
+      "version": "6.3.0",
+      "tools": [],
+      "installed": false
+    },
+    {
+      "id": "circleci@openai-api-curated",
+      "version": "1.0.4",
+      "tools": [],
+      "installed": false
+    },
+    {
+      "id": "sentry@openai-api-curated",
+      "version": "0.1.2",
+      "tools": [],
+      "installed": false
+    },
+    {
+      "id": "build-ios-apps@openai-api-curated",
+      "version": "0.1.2",
+      "tools": [],
+      "installed": false
+    },
+    {
+      "id": "build-macos-apps@openai-api-curated",
+      "version": "0.1.4",
+      "tools": [],
+      "installed": false
+    },
+    {
+      "id": "build-web-apps@openai-api-curated",
+      "version": "0.1.2",
+      "tools": [],
+      "installed": false
+    },
+    {
+      "id": "build-web-data-visualization@openai-api-curated",
+      "version": "0.1.21",
+      "tools": [],
+      "installed": false
+    },
+    {
+      "id": "test-android-apps@openai-api-curated",
+      "version": "0.1.2",
+      "tools": [],
+      "installed": false
+    },
+    {
+      "id": "life-science-research@openai-api-curated",
+      "version": "1.0.3",
+      "tools": [],
+      "installed": false
+    },
+    {
+      "id": "zotero@openai-api-curated",
+      "version": "0.1.2",
+      "tools": [],
+      "installed": false
+    },
+    {
+      "id": "expo@openai-api-curated",
+      "version": "1.0.2",
+      "tools": [],
+      "installed": false
+    },
+    {
+      "id": "coderabbit@openai-api-curated",
+      "version": "1.1.4",
+      "tools": [],
+      "installed": false
+    },
+    {
+      "id": "remotion@openai-api-curated",
+      "version": "1.0.7",
+      "tools": [],
+      "installed": false
+    },
+    {
+      "id": "plugin-eval@openai-api-curated",
+      "version": "0.1.2",
+      "tools": [],
+      "installed": false
+    },
+    {
+      "id": "temporal@openai-api-curated",
+      "version": "0.4.0",
+      "tools": [],
+      "installed": false
+    },
+    {
+      "id": "hyperframes@openai-api-curated",
+      "version": "0.1.2",
+      "tools": [],
+      "installed": false
+    },
+    {
+      "id": "codex-security@openai-api-curated",
+      "version": "0.1.32",
+      "tools": [],
+      "installed": false
+    },
+    {
+      "id": "twilio-developer-kit@openai-api-curated",
+      "version": "0.2.2",
+      "tools": [],
+      "installed": false
+    },
+    {
+      "id": "openai-developers@openai-api-curated",
+      "version": "1.2.3",
+      "tools": [],
+      "installed": false
+    },
+    {
+      "id": "mixpanel-headless@openai-api-curated",
+      "version": "0.1.2",
+      "tools": [],
+      "installed": false
+    },
+    {
+      "id": "nvidia@openai-api-curated",
+      "version": "1.0.4",
+      "tools": [],
+      "installed": false
+    },
+    {
+      "id": "ngs-analysis@openai-api-curated",
+      "version": "1.0.3",
+      "tools": [],
+      "installed": false
+    },
+    {
+      "id": "magicpath@openai-api-curated",
+      "version": "0.1.2",
+      "tools": [],
+      "installed": false
+    },
+    {
+      "id": "openai-ads-conversions@openai-api-curated",
+      "version": "0.1.2",
+      "tools": [],
+      "installed": false
+    },
+    {
+      "id": "boltz-api-cli@openai-api-curated",
+      "version": "0.1.1",
+      "tools": [],
+      "installed": false
+    },
+    {
+      "id": "linear@openai-api-curated",
+      "version": "5.0.1",
+      "tools": [],
+      "installed": false
+    },
+    {
+      "id": "figma@openai-api-curated",
+      "version": "2.0.20",
+      "tools": [],
+      "installed": false
+    },
+    {
+      "id": "notion@openai-api-curated",
+      "version": "0.1.7",
+      "tools": [],
+      "installed": false
+    },
+    {
+      "id": "slack@openai-api-curated",
+      "version": "0.1.7",
+      "tools": [],
+      "installed": false
+    },
+    {
+      "id": "atlassian-rovo@openai-api-curated",
+      "version": "1.0.6",
+      "tools": [],
+      "installed": false
+    },
+    {
+      "id": "datadog@openai-api-curated",
+      "version": "10.0.0",
+      "tools": [],
+      "installed": false
+    },
+    {
+      "id": "dropbox@openai-api-curated",
+      "version": "5.0.1",
+      "tools": [],
+      "installed": false
+    },
+    {
+      "id": "granola@openai-api-curated",
+      "version": "1.0.0",
+      "tools": [],
+      "installed": false
+    },
+    {
+      "id": "vercel@openai-api-curated",
+      "version": "0.21.4",
+      "tools": [],
+      "installed": false
+    },
+    {
+      "id": "canva@openai-api-curated",
+      "version": "14.0.0",
+      "tools": [],
+      "installed": false
+    },
+    {
+      "id": "cloudflare@openai-api-curated",
+      "version": "0.1.2",
+      "tools": [],
+      "installed": false
+    },
+    {
+      "id": "monday-com@openai-api-curated",
+      "version": "2.0.0",
+      "tools": [],
+      "installed": false
+    },
+    {
+      "id": "posthog@openai-api-curated",
+      "version": "1.0.0",
+      "tools": [],
+      "installed": false
+    },
+    {
+      "id": "stripe@openai-api-curated",
+      "version": "7.0.0",
+      "tools": [],
+      "installed": false
+    },
+    {
+      "id": "supabase@openai-api-curated",
+      "version": "1.0.0",
+      "tools": [],
+      "installed": false
+    },
+    {
+      "id": "product-design@openai-api-curated",
+      "version": "0.1.52",
+      "tools": [],
+      "installed": false
+    },
+    {
+      "id": "clickup@openai-api-curated",
+      "version": "1.0.3",
+      "tools": [],
+      "installed": false
+    },
+    {
+      "id": "consensus@openai-api-curated",
+      "version": "4.0.0",
+      "tools": [],
+      "installed": false
+    },
+    {
+      "id": "higgsfield@openai-api-curated",
+      "version": "1.2.1",
+      "tools": [],
+      "installed": false
+    },
+    {
+      "id": "chatcut@openai-api-curated",
+      "version": "1.0.4",
+      "tools": [],
+      "installed": false
+    },
+    {
+      "id": "crowdstrike-falcon-foundry@openai-api-curated",
+      "version": null,
+      "tools": [],
+      "installed": false
+    },
+    {
+      "id": "crowdstrike-falcon-fusion@openai-api-curated",
+      "version": null,
+      "tools": [],
+      "installed": false
+    },
+    {
+      "id": "qodo@openai-api-curated",
+      "version": null,
+      "tools": [],
+      "installed": false
+    },
+    {
+      "id": "github@openai-api-curated",
+      "version": "0.1.12",
+      "tools": [
+        "github"
+      ],
+      "installed": true
+    },
+    {
+      "id": "aws-core@openai-api-curated",
+      "version": null,
+      "tools": [],
+      "installed": false
+    },
+    {
+      "id": "cloudwalker@newbot-imports",
+      "version": "0.5.0",
+      "tools": [
+        "plugin_653b596318a40bf8c2ef1541b10f9c87"
+      ],
+      "installed": true
+    }
+  ],
+  "catalogWarnings": 0
+}

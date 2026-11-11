@@ -24,3 +24,6 @@ deploy/production.env
 # Local agent state is separate from project instructions and example plugins.
 /.codex/
 /.agents/
+
+# Local attachments from agent conversations.
+/.codex-attachments/

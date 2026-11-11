@@ -19,14 +19,14 @@ node --import tsx scripts/migrate-codex-home.mjs --source-home /absolute/old/cod
 
 ## 热更新能力
 
-2026-11-10 更新：Provider/模型使用 SQLite 持久化快照，重启自动恢复，不写 Provider config.toml/Profile。线程通过原生参数热更新，会话选择与历史保留。当前用法及凭证边界见 [配置持久化与热更新](provider-memory-config.md)。原生文件接口继续用于 MCP、插件、技能等管理。
+2026-11-10 更新：Provider/模型使用 SQLite 持久化快照，重启自动恢复，不写 Provider config.toml/Profile。线程通过原生参数热更新，会话选择与历史保留。当前用法及凭证边界见 [配置持久化与热更新](provider-memory-config.md)。普通扩展定义和启停也已迁入 SQLite，并在下一轮同步目标线程；安装缓存、技能文件和认证状态继续保留原生格式，见 [会话工作区与扩展](session-extensions.md)。
 
 | 设置                 | 可用机制                                                     | 生效边界                                                 |
 | -------------------- | ------------------------------------------------------------ | -------------------------------------------------------- |
 | 模型、推理和审批     | 线程/Turn 参数及会话修订号                                   | 下一轮，保留正在执行的设置                               |
 | 网关定义             | `thread/start.config`、空闲线程卸载后 `thread/resume.config` | 可从服务端内存传入，无需写个人或实例 config.toml         |
 | 线程 MCP 定义        | 线程 `config.mcp_servers`                                    | 新建/恢复目标线程；不会自动改变其他线程                  |
-| 新增或轮换凭证       | 私密 Broker 与受控重连                                       | 当前环境变量引用需由新子进程载入；等待空闲，不承诺无重启 |
+| 新增或轮换凭证       | 私密 Broker 与线程派发参数                                   | SQLite 模式下供下一轮注入，不重启共享子进程；见 [私密字段](private-runtime-fields.md) |
 | 全局 MCP 重载        | `config/mcpServer/reload`                                    | 原生接口从磁盘重读，不能把 Bridge 内存缓存当成已生效     |
 | 全局配置热重载       | `config/batchWrite.reloadUserConfig`                         | 仍会写实例文件；部分线程静态默认值不重载                 |
 | 插件、技能安装和登录 | 原生管理接口                                                 | 原生仍管理文件、缓存或认证状态                           |

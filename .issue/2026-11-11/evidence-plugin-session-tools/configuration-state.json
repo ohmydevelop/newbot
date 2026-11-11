@@ -1,0 +1,90 @@
+{
+  "at": "2026-11-10T16:13:19.934Z",
+  "rows": [
+    {
+      "plugin": "cloudwalker@newbot-imports",
+      "server": "cloudwalker",
+      "revision": "3a075dd5-b858-4bab-adcb-5ba909027bbd",
+      "enabled": true,
+      "fields": {
+        "base_url": {
+          "present": true,
+          "type": "string"
+        },
+        "tls_certificate_sha256": {
+          "present": true,
+          "type": "string"
+        }
+      }
+    }
+  ],
+  "privateMeta": [
+    {
+      "scope": "mcp",
+      "target": "plugin_653b596318a40bf8c2ef1541b10f9c87",
+      "revision": "98b3ea92-d63d-4eb0-8492-4b24900ca8da",
+      "specs": [
+        {
+          "kind": "env",
+          "name": "CLOUDWALKER_API_TOKEN"
+        }
+      ],
+      "hasPacket": 1
+    }
+  ],
+  "ops": [
+    {
+      "at": "2026-11-10T16:12:13.199Z",
+      "operation": "plugin.configuration.save",
+      "state": "succeeded",
+      "committed": true,
+      "targetId": "plugin_653b596318a40bf8c2ef1541b10f9c87"
+    },
+    {
+      "at": "2026-11-10T16:08:30.142Z",
+      "operation": "plugin.configuration.save",
+      "state": "succeeded",
+      "committed": true,
+      "targetId": "plugin_653b596318a40bf8c2ef1541b10f9c87"
+    },
+    {
+      "at": "2026-11-10T16:07:49.622Z",
+      "operation": "plugin.configuration.save",
+      "state": "succeeded",
+      "committed": true,
+      "targetId": "plugin_653b596318a40bf8c2ef1541b10f9c87"
+    },
+    {
+      "at": "2026-11-10T15:22:11.836Z",
+      "operation": "plugin.configuration.save",
+      "state": "succeeded",
+      "committed": true,
+      "targetId": "plugin_653b596318a40bf8c2ef1541b10f9c87"
+    }
+  ],
+  "view": [
+    {
+      "id": "plugin_653b596318a40bf8c2ef1541b10f9c87",
+      "configured": true,
+      "reviewRequired": false,
+      "fields": [
+        {
+          "id": "base_url",
+          "required": true,
+          "sensitive": false
+        },
+        {
+          "id": "api_token",
+          "required": true,
+          "sensitive": true,
+          "stored": true
+        },
+        {
+          "id": "tls_certificate_sha256",
+          "required": false,
+          "sensitive": false
+        }
+      ]
+    }
+  ]
+}

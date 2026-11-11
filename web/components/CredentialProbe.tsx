@@ -1,3 +1,4 @@
+import {responseJson} from "../http";
 import { useEffect, useRef, useState } from "react";
 import { Modal } from "./ui";
 import { useApp, loadSettings, request, acceptSettings } from "../store";
@@ -18,7 +19,7 @@ async function api(
   });
   if (response.status === 401) useApp.setState({ authenticated: false });
   if (!response.ok) throw new Error("私密请求未完成，请读取状态后重新发起。");
-  return response.json();
+  return responseJson(response);
 }
 export default function CredentialProbe({
   providerId,

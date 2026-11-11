@@ -1,0 +1,27 @@
+✔ expert bundles become native inputs, persist per chat, deduplicate references and respect disabled/deleted dependencies and revisions (335.492231ms)
+✔ expert draft changes survive delayed acknowledgement; session events and older reads cannot replace newer bindings (0.398792ms)
+✔ field vault injects only selected recipients, encrypts at rest and binds to endpoint (190.48359ms)
+✔ chat authorization holds dispatch, isolates run and thread grants, cancels and survives disconnect without replay (120.87344ms)
+✔ manual reauthorization uses configured recipients without replay; revocation invalidates pending inputs (80.193608ms)
+✔ unsafe private field names and stale field revisions are rejected before private input (72.027903ms)
+✔ plugin settings preserve ownership, encrypt credentials and recover without config files (77.94756ms)
+✔ same-name connectors in different plugins stay isolated, including disable and uninstall (44.88579ms)
+✔ plugin saves reject missing or invalidated credentials atomically instead of reporting success (74.442492ms)
+✔ selected plugin readiness uses the captured configuration and leaves unrelated or intentionally disabled connectors alone (34.543793ms)
+✔ endpoint/package changes cannot inherit secrets and concurrent writes preserve the first save (37.148275ms)
+✔ upgrades preserve compatible ordinary fields while invalidating code-bound credentials (22.586316ms)
+✔ MCPB numeric/optional fields and HTTP runtime headers bind only declared destinations (18.147536ms)
+✔ unsupported descriptors, sensitive command templates and protected env fail closed (16.941236ms)
+✔ configuration-free connectors need no credential, and declared manifest paths stay within the package (15.166294ms)
+✔ MCPB discovery uses declared names and manifest-relative roots, rejects obsolete pointers and malformed bundles (10.719475ms)
+✔ certificate observation validates ownership, field privacy and revision before and after network work (22.08503ms)
+✔ marketplace upgrade checks versions and idle state, reconciles a lost native reply and retains preferences (123.797972ms)
+✔ plugin API owns child skills and connectors; private saves have durable owner-bound receipts (209.594544ms)
+ℹ tests 19
+ℹ suites 0
+ℹ pass 19
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1152.19709

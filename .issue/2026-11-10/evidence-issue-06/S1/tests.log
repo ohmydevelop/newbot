@@ -1,0 +1,40 @@
+✔ configuration views whitelist non-sensitive metadata, strip endpoint credentials/path/query and hide raw layer contents and native versions (2.943551ms)
+✔ defaults edits use only generated native keys with a trusted target/version and preserve unrelated private configuration (1.80028ms)
+✔ stale or missing revisions, forbidden fields and concurrent saves cannot silently overwrite configuration (1.283787ms)
+✔ native CAS rejects a write racing the final read; changed project layers also invalidate proposals (1.385755ms)
+✔ read-only configuration and overridden writes report real effective state without exposing native diagnostics (0.878631ms)
+✔ failed or unconfirmed writes preserve server truth, release the lock and require an explicit reload (1.483589ms)
+✔ versioned defaults API is authenticated, validates current models, blocks busy runtimes and makes saved effort effective for new threads (125.045203ms)
+✔ pending approvals and in-flight saves block new turns without creating request reservations (73.407806ms)
+✔ saved configuration and defaults do not wait for remote discovery, or touch existing native threads (157.864155ms)
+✔ HTML and malformed JSON responses never leak parser errors or HTML bodies (1.627328ms)
+✔ object revisions allow unrelated edits but reject a stale edit of the same gateway (1.504864ms)
+✔ MCP edits use native CAS leaves and preserve private commands, arguments, environment and headers (105.719427ms)
+✔ MCP create supports stdio/HTTP, strict schemas, safe endpoint syntax and no transport conversion (44.902613ms)
+✔ MCP environment references require explicit authorization and can be removed without clearing private values (41.348622ms)
+✔ non-user and overridden MCP definitions are read-only and cannot be edited or deleted (40.468716ms)
+✔ MCP enable, disable and delete change only their versioned configuration (28.399728ms)
+✔ MCP public inventory and connection diagnostics strip raw errors, schemas and metadata (36.065708ms)
+✔ testing disabled MCP does not reload or start discovery, and stale reload tokens fail closed (33.915082ms)
+✔ MCP management blocks tasks, approvals and pending OAuth, releasing guards after each error (27.00021ms)
+✔ MCP reload failure retains saved state, invalidates old App records and recovers through native reconnect (27.433736ms)
+✔ lost MCP write responses reload authoritative configuration without a duplicate write (26.364979ms)
+✔ MCP maintenance rejects new work during a pending mutation, then releases it (26.044651ms)
+✔ MCP HTTP routes require login and allowed Origin and return only the redacted effective configuration (65.603986ms)
+✔ paginated MCP catalogs keep App permissions discoverable and reload invalidates the old App capability (25.308231ms)
+✔ sqlite: model defaults cannot inject an unsupported effort, while explicit choices remain validated (207.480796ms)
+✔ native: model defaults cannot inject an unsupported effort, while explicit choices remain validated (102.116763ms)
+✔ v6 migration preserves existing session, model selection and credential data while adding SQLite Provider state (3.135956ms)
+✔ SQLite commits precede snapshot publication; failed writes preserve both RAM and leased execution configuration (8.136979ms)
+✔ a stale process cannot overwrite a newer durable configuration or publish its rejected snapshot (2.478139ms)
+✔ ordinary Provider SQLite state rejects plaintext credentials, arbitrary native settings and credential-bearing URLs (2.576858ms)
+✔ invalid persisted state fails explicitly without resetting configuration or falling back to native files (1.69853ms)
+✔ product APIs persist edits, defaults and deletion; restart restores SQLite and write failures remain unchanged (186.546175ms)
+ℹ tests 32
+ℹ suites 0
+ℹ pass 32
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1006.225547

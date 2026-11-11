@@ -20,18 +20,16 @@ import {
 import type { Json, Model } from "../../shared/types";
 import { useApp, loadSettings, request, disconnect, newChat } from "../store";
 import { Modal } from "./ui";
-const McpSettings = lazy(() => import("./ToolsSettings"));
+const ExtensionsSettings = lazy(() => import("./ExtensionsSettings"));
 const ProviderSettings = lazy(() => import("./ProviderSettings"));
-const SkillsSettings = lazy(() => import("./SkillsSettings"));
 const StorageSettings = lazy(() => import("./StorageSettings"));
 const SudoSettings = lazy(() => import("./SudoSettings"));
 const tabs = [
   { id: "general", label: "通用", icon: SlidersHorizontal },
-  { id: "models", label: "模型网关", icon: Cpu },
-  { id: "mcp", label: "工具连接", icon: Blocks },
-  { id: "skills", label: "技能", icon: BookOpen },
+  { id: "models", label: "网关", icon: Cpu },
+  { id: "extensions", label: "扩展", icon: Blocks },
   { id: "storage", label: "文件存储", icon: HardDrive },
-  { id: "security", label: "安全与运行", icon: Shield },
+  { id: "security", label: "安全", icon: Shield },
 ];
 export default function Settings({
   open,
@@ -44,7 +42,11 @@ export default function Settings({
 }) {
   const s = useApp();
   const contentId = useId();
-  const [tab, setTab] = useState(initialTab === "plugins" ? "mcp" : initialTab);
+  const [tab, setTab] = useState(
+    ["plugins", "mcp", "skills", "experts", "connectors"].includes(initialTab)
+      ? "extensions"
+      : initialTab,
+  );
   const [busy, setBusy] = useState("");
   const [notice, setNotice] = useState("");
   async function action(key: string, fn: () => Promise<unknown>) {
@@ -146,156 +148,22 @@ export default function Settings({
             </>
           )}
           {tab === "models" && (
-            <Suspense fallback={<p role="status">正在加载模型网关…</p>}>
+            <Suspense fallback={<p role="status">正在加载网关…</p>}>
               <ProviderSettings />
             </Suspense>
           )}
-          {tab === "mcp" &&
-            (s.mcpManagement ? (
-              <Suspense fallback={<p role="status">正在加载 MCP…</p>}>
-                <McpSettings />
-              </Suspense>
-            ) : (
-              <>
-                <div className="section-heading">
-                  <h3>工具连接</h3>
-                  <button
-                    className="icon-button"
-                    aria-label="刷新 MCP"
-                    disabled={!!busy}
-                    onClick={() =>
-                      void action("mcp", async () => {
-                        await request("mcp/reload");
-                        await loadSettings();
-                      })
-                    }
-                  >
-                    <RefreshCw
-                      size={17}
-                      className={busy === "mcp" ? "spin" : ""}
-                    />
-                  </button>
-                </div>
-                <p className="muted">
-                  复用 Codex 管理的连接、工具和 OAuth 授权。
-                </p>
-                {s.settings?.mcp.length === 0 && (
-                  <div className="empty-settings">
-                    <Blocks size={28} />
-                    <strong>尚未添加工具连接</strong>
-                    <p>
-                      在 Codex config.toml 的 mcp_servers 中添加连接，然后刷新。
-                    </p>
-                  </div>
-                )}
-                {s.settings?.mcp.map((server: Json) => (
-                  <div className="inventory-row" key={server.name}>
-                    <div className="inventory-icon">
-                      <Blocks size={18} />
-                    </div>
-                    <div>
-                      <strong>{server.name}</strong>
-                      <p>
-                        {server.toolCount ??
-                          Object.keys(server.tools || {}).length}{" "}
-                        个工具 · {server.authStatus}
-                      </p>
-                      {server.toolsError && (
-                        <p className="inline-error">{server.toolsError}</p>
-                      )}
-                    </div>
-                    {server.authStatus === "notLoggedIn" ? (
-                      <button
-                        disabled={!!busy}
-                        onClick={() =>
-                          void action(server.name, async () => {
-                            const r = await request("mcp/oauth", {
-                              name: server.name,
-                            });
-                            if (r.authorizationUrl) {
-                              const u = new URL(r.authorizationUrl);
-                              if (
-                                u.protocol === "https:" ||
-                                u.protocol === "http:"
-                              )
-                                window.open(
-                                  u.href,
-                                  "_blank",
-                                  "noopener,noreferrer",
-                                );
-                            }
-                            setNotice("完成授权后点击刷新");
-                          })
-                        }
-                      >
-                        连接
-                      </button>
-                    ) : (
-                      <span className="badge">
-                        {server.runtimeStatus || "已发现"}
-                      </span>
-                    )}
-                  </div>
-                ))}
-                <p className="footnote">
-                  MCP Apps 在工具调用返回 UI
-                  资源后显示在对话中。当前仅允许内联依赖，应用网络默认关闭。
-                </p>
-              </>
-            ))}
-          {tab === "skills" && (
-            <Suspense fallback={<p role="status">正在加载技能设置…</p>}>
-              <SkillsSettings />
+          {tab === "extensions" && (
+            <Suspense fallback={<p role="status">正在加载扩展…</p>}>
+              <ExtensionsSettings initialTab={initialTab} />
             </Suspense>
           )}
+
           {tab === "security" && (
             <>
-              <h3>安全与运行</h3>
+              <h3>安全</h3>
               <div className="setting-row">
-                <div>
-                  <strong>运行内核</strong>
-                  <p>Codex</p>
-                </div>
-                <span className="badge">
-                  {s.runtime === "ready" ? "已连接" : s.runtime}
-                </span>
+                <div><strong>凭证保护</strong><p>密钥由服务端加密保存，原值不会回显。</p></div>
               </div>
-              <div className="setting-row">
-                <div>
-                  <strong>执行策略</strong>
-                  <p>{approvalLabels[s.thread?.runtime?.approval || "ask"]}</p>
-                </div>
-                <Shield size={17} />
-              </div>
-              <div className="setting-row">
-                <div>
-                  <strong>断线恢复</strong>
-                  <p>关闭浏览器不会中断后台任务；进程重启后需重新确认状态。</p>
-                </div>
-              </div>
-              <div className="setting-row">
-                <div>
-                  <strong>工作目录</strong>
-                  <p className="path">{s.settings?.cwd || "—"}</p>
-                </div>
-              </div>
-              <div className="setting-row">
-                <div>
-                  <strong>私密输入</strong>
-                  <p>
-                    {s.credentialManagement
-                      ? "凭证由服务端保存，原值不可回读。"
-                      : s.credentialProbe
-                        ? "可临时验证 API Key，用后丢弃，不保存。"
-                        : "凭证请在服务端配置，私密输入暂不可用。"}
-                  </p>
-                </div>
-              </div>
-              {s.sudoIdentity?.available && (
-                <Suspense fallback={<p role="status">正在加载受控检查…</p>}>
-                  <SudoSettings />
-                </Suspense>
-              )}
               <button
                 className="settings-logout danger-text"
                 onClick={() =>

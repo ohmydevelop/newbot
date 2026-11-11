@@ -12,7 +12,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { createServer } from "../server/index.js";
-import { database } from "../server/db.js";
+import { database, DATABASE_VERSION } from "../server/db.js";
 import { fileStore } from "../server/files.js";
 import { storedBytes, STORAGE_LIMIT } from "../server/storage.js";
 import { FakeCodex } from "./fixture.js";
@@ -45,19 +45,40 @@ async function setup(
   await ctx.service.settings();
   const post = (url: string, payload: any) =>
     ctx.app.inject({ method: "POST", url, payload, headers });
-  const get = (url: string) => ctx.app.inject({ url, headers });
+  let latestThread = "",
+    activeCwd = cwd;
+  const get = (url: string) =>
+    ctx.app.inject({
+      url: url.startsWith("/api/workspace/files")
+        ? url + (url.includes("?") ? "&" : "?") + "threadId=" + latestThread
+        : url,
+      headers,
+    });
   async function turn() {
     const thread: any = await ctx.service.handle("thread/start", {
       provider: "fixture",
       model: "fixture-model",
     });
+    latestThread = thread.id;
+    activeCwd = ctx.workspaces.root(thread.id);
     const run: any = await ctx.service.handle("turn/start", {
       threadId: thread.id,
       text: "create artifact",
     });
     return { threadId: thread.id as string, turnId: run.turn.id as string };
   }
-  return { ...ctx, codex, directory, cwd, headers, post, get, turn };
+  return {
+    ...ctx,
+    codex,
+    directory,
+    get cwd() {
+      return activeCwd;
+    },
+    headers,
+    post,
+    get,
+    turn,
+  };
 }
 
 test("artifact API binds real turns, rejects forged provenance, protects auth and serves HTML as inert text", async () => {
@@ -352,7 +373,8 @@ test("upload and artifact quotas are shared and snapshots deduplicate across con
     const one = await c.turn();
     c.codex.finish(one.threadId);
     const two = await c.turn();
-    writeFileSync(join(c.cwd, "small.txt"), "shared");
+    writeFileSync(join(c.workspaces.root(one.threadId), "small.txt"), "shared");
+    writeFileSync(join(c.workspaces.root(two.threadId), "small.txt"), "shared");
     const a = (
       await c.post(`/api/threads/${one.threadId}/artifacts`, {
         turnId: one.turnId,
@@ -421,20 +443,20 @@ test("v1 database migration preserves sessions, threads, attachments and rejects
     assert.equal(db.owns("old"), true);
     assert.equal(
       (db.raw.prepare("PRAGMA user_version").get() as any).user_version,
-      7,
+      DATABASE_VERSION,
     );
     assert.equal(
       (db.raw.prepare("SELECT COUNT(*) n FROM sessions").get() as any).n,
       1,
     );
     assert.equal(storedBytes(db), 3);
-    db.raw.exec("PRAGMA user_version=8");
+    db.raw.exec("PRAGMA user_version=99");
     db.raw.close();
     assert.throws(() => database(dir), /数据库版本较新/);
     const check = new DatabaseSync(path);
     assert.equal(
       (check.prepare("PRAGMA user_version").get() as any).user_version,
-      8,
+      99,
     );
     check.close();
   } finally {

@@ -1,0 +1,29 @@
+{
+  "at": "2026-11-10T09:03:52.918Z",
+  "environment": "Chromium + isolated IssueCodex; synthetic providers",
+  "checks": [
+    "专家 1440 light: one toolbar, search, no overflow",
+    "插件 1440 light: one toolbar, search, no overflow",
+    "技能 1440 light: one toolbar, search, no overflow",
+    "连接器 1440 light: one toolbar, search, no overflow",
+    "专家 1440 dark: one toolbar, search, no overflow",
+    "插件 1440 dark: one toolbar, search, no overflow",
+    "技能 1440 dark: one toolbar, search, no overflow",
+    "连接器 1440 dark: one toolbar, search, no overflow",
+    "专家 390 light: one toolbar, search, no overflow",
+    "插件 390 light: one toolbar, search, no overflow",
+    "技能 390 light: one toolbar, search, no overflow",
+    "连接器 390 light: one toolbar, search, no overflow",
+    "专家 390 dark: one toolbar, search, no overflow",
+    "插件 390 dark: one toolbar, search, no overflow",
+    "技能 390 dark: one toolbar, search, no overflow",
+    "连接器 390 dark: one toolbar, search, no overflow",
+    "gateway aligned 1440",
+    "gateway aligned 768",
+    "gateway aligned 390",
+    "bounded process, semantic tools, append preserves reading position",
+    "latest step control and approvals outside collapsed process",
+    "keyboard region, mobile bounded height and reload history"
+  ],
+  "errors": []
+}

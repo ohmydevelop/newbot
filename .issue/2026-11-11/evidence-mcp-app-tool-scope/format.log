@@ -1,0 +1,4 @@
+server/mcp-apps.ts 68ms
+shared/mcp-app-host.ts 3ms (unchanged)
+tests/mcp-app-lifecycle.test.ts 39ms
+scripts/test-app-tool-scope-native.mjs 63ms

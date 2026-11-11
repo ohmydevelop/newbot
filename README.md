@@ -12,6 +12,7 @@ D1–D7 功能开发已完成，保留 Codex 作为唯一 Agent 内核。支持�
 
 - [使用指南](docs/user-guide.md)：聊天、草稿、审批、文件、表单、私密输入与故障恢复。
 - [能力与限制](docs/capability-matrix.md)：实例条件、开放范围与明确关闭项。
+- [2026-11-10 工作区与扩展改进](.issue/2026-11-10/issue-03-plan.md)：手工模型、专家组合、会话目录、热更新和侧栏状态；[验证记录](.issue/2026-11-10/issue-03-progress.md)。
 - [2026-11-09 用户反馈改进](.issue/2026-11-09/plan.md)：缩略图预览、模型网关、审批、插件与界面整理；[验证记录](.issue/2026-11-09/progress.md)。
 - [第二轮设置体验改进](.issue/2026-11-09/plan-02.md)：直接填写 API Key、自动网关标识、统一工具/插件目录与技能条目；[验证记录](.issue/2026-11-09/progress-02.md)。
 - [菜单与按钮打磨](.issue/2026-11-09/plan-03.md)：统一操作图标、危险分组、按钮与手机状态；[效果与证据](.issue/2026-11-09/progress-03.md)。
@@ -40,7 +41,7 @@ npm start
 CODEX_HOME=/absolute/path/to/newbot/.data/codex npx codex -c 'cli_auth_credentials_store="file"' login
 ```
 
-使用其他实例目录时设置 `NEWBOT_CODEX_HOME`。宿主的 `~/.codex`、`~/.agents` 及其子目录不可作为实例目录，也不会自动导入个人配置、账号或历史。已有共享 Home 的安装应先备份并选择性迁移应用会话，再切换；详见 [运行隔离与热更新](docs/runtime-isolation.md)。Provider 由 Bridge SQLite 管理并注入原生线程；MCP、Skills 继续使用实例原生配置。普通配置不回读凭证明文；Provider/HTTPS MCP 使用独立私密通道设置内存或加密凭证。
+使用其他实例目录时设置 `NEWBOT_CODEX_HOME`。宿主的 `~/.codex`、`~/.agents` 及其子目录不可作为实例目录，也不会自动导入个人配置、账号或历史。已有共享 Home 的安装应先备份并选择性迁移应用会话，再切换；详见 [运行隔离与热更新](docs/runtime-isolation.md)。Provider 由 Bridge SQLite 管理并注入原生线程；普通扩展配置和启停状态也保存到 SQLite，每轮同步到对应原生线程；技能与插件包保持原生文件结构。新聊天使用独立工作目录，详见 [会话工作区与扩展](docs/session-extensions.md)。普通配置不回读凭证明文；Provider 与 MCP 的请求头、stdio 环境变量通过独立私密通道加密保存；聊天授权可限本次任务或当前会话，见 [私密运行参数](docs/private-runtime-fields.md)。
 
 ## 单容器
 
@@ -72,7 +73,7 @@ agent.example.com, apps.agent.example.com {
 
 ## API 与协议
 
-- `POST /api/agent/run`：新建/继续 Turn，接受 `requestId`、`threadId?`、`text`、`model?`、`effort?`、`provider?`、`attachments?`、`skills?`。
+- `POST /api/agent/run`：新建/继续 Turn，接受 `requestId`、`threadId?`、`text`、`model?`、`effort?`、`provider?`、`attachments?`、`skills?`、`plugins?`、`expertId?`、`extensionRevision?`。
 - `GET /api/agent/runs/:requestId`：核对发送回执；`POST /api/agent/runs/:requestId/abandon` 只放弃尚未登记的发送，并阻止迟到请求执行。
 - `GET /api/agent/events`：AG-UI SSE；可用 `threadId` 筛选，重连后同步状态快照。
 - `POST /api/agent/action`：白名单内的中断、审批、重命名、归档、恢复与 MCP OAuth 操作。
@@ -106,6 +107,8 @@ npm audit
 
 已提供一个使用官方 SDK 的真实测试 Server 和 App，见 [测试 MCP 示例](examples/test-mcp/README.md)。设置 `ENABLE_TEST_MCP=true` 后，只在本工作台的 Codex 进程启用 `newbot_test`。聊天中调用 `show_metrics` 即可显示 CPU、内存、磁盘图表；服务器选择、时间范围和刷新继续走宿主授权。数据全部为模拟值，不读取真实系统指标。
 
+插件内的连接器、技能和自动操作统一在插件详情中管理。插件作者可用 MCPB `user_config` 声明必要字段，用户只需填写地址、Key 等设置；配置和私密参数从下一轮生效。格式与边界见 [插件配置说明](docs/plugin-configuration.md)。
+
 每个 App 的“权限与能力”展示实际工具范围及宿主限制。未开放的外链、下载、聊天写入、额外资源和模型请求会明确失败；工具调用仍逐次批准。标准握手、结果与测试边界见 [Host 能力记录](docs/mcp-app-host.md)。
 
 MCP 的普通 Elicitation 请求支持有限表单、提交、拒绝、取消和服务端超时，见 [普通输入记录](docs/mcp-elicitation.md)及[独立测试 MCP](examples/test-elicitation/README.md)。这是可能进入模型上下文的普通信息输入；私密输入使用独立的 [受信通道](docs/trusted-input.md)，不复用此表单。
@@ -114,7 +117,7 @@ MCP 的普通 Elicitation 请求支持有限表单、提交、拒绝、取消和
 
 A2UI 已完成 D5.1 官方样例和协议基线验证：`npm run dev:a2ui` 启动回环地址实验室，`npm run test:a2ui-ui` 运行浏览器检查。见 [样例说明](examples/a2ui/README.md) 和 [版本与依赖决策](docs/a2ui-foundation.md)。D5.2 组件目录与资源限额已完成，可通过 `npm run dev:a2ui-catalog` 查看，见 [组件记录](docs/a2ui-catalog.md)。D5.3 已接入真实 Agent，能力范围见下文。
 
-D5.3 已启用新对话中的真实 Agent 表单：直接请求可填写的表单，填入普通信息后提交，Codex 在同一个 Turn 中继续。增量更新、原消息关联、服务端字段重建、单次消费、取消和重试均已接通。见 [真实 Agent 接入记录](docs/a2ui-agent.md)。`npm run test:a2ui-chat-ui` 使用模拟 Agent 做浏览器矩阵；`npm run test:a2ui-live` 使用已配置模型执行真实流程。D5.4 已支持表单快照、服务端草稿、冲突提示、到期禁用和重启只读恢复；旧表单不会重新获得提交权限。见 [恢复记录](docs/a2ui-recovery.md)。临时 Provider 检查及 Provider/HTTPS MCP 的独立私密保存均已开放，原值不可回读；内存为默认、加密保存需明确选择，见 [受信输入记录](docs/trusted-input.md) 和 [保存记录](docs/credential-storage.md)。可显式启用单次 sudo 身份检查，见 [受控 sudo 记录](docs/sudo-input.md)。stdio 私密环境、Agent 任意私密请求及任意 sudo 命令尚未开放。
+D5.3 已启用新对话中的真实 Agent 表单：直接请求可填写的表单，填入普通信息后提交，Codex 在同一个 Turn 中继续。增量更新、原消息关联、服务端字段重建、单次消费、取消和重试均已接通。见 [真实 Agent 接入记录](docs/a2ui-agent.md)。`npm run test:a2ui-chat-ui` 使用模拟 Agent 做浏览器矩阵；`npm run test:a2ui-live` 使用已配置模型执行真实流程。D5.4 已支持表单快照、服务端草稿、冲突提示、到期禁用和重启只读恢复；旧表单不会重新获得提交权限。见 [恢复记录](docs/a2ui-recovery.md)。临时 Provider 检查和独立私密保存继续可用。SQLite 模式支持加密保存网关密钥、MCP 请求头和 stdio 环境变量，也支持聊天中对已配置接收方进行本次任务/当前会话授权；不接入通用 sudo 执行器，详见 [私密字段与任务授权](docs/private-runtime-fields.md)。
 
 ## 遥测
 

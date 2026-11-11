@@ -1,0 +1,16 @@
+[
+  "https://api.github.com/repos/newbot-fixture/demo/commits/feature%2Fapi%2Fskills%2Fstandalone",
+  "https://api.github.com/repos/newbot-fixture/demo/commits/feature%2Fapi%2Fskills",
+  "https://api.github.com/repos/newbot-fixture/demo/commits/feature%2Fapi",
+  "https://codeload.github.com/newbot-fixture/demo/zip/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+  "https://api.github.com/repos/newbot-fixture/demo/git/ref/tags/v1",
+  "https://codeload.github.com/newbot-fixture/demo/zip/cccccccccccccccccccccccccccccccccccccccc",
+  "https://api.github.com/repos/newbot-fixture/demo/commits/feature%2Fapi%2Fplugins%2Fdemo",
+  "https://api.github.com/repos/newbot-fixture/demo/commits/feature%2Fapi%2Fplugins",
+  "https://api.github.com/repos/newbot-fixture/demo/commits/feature%2Fapi",
+  "https://codeload.github.com/newbot-fixture/demo/zip/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+  "https://api.github.com/repos/newbot-fixture/demo/commits/missing",
+  "https://api.github.com/repos/newbot-fixture/demo",
+  "https://api.github.com/repos/newbot-fixture/demo/commits/main",
+  "https://codeload.github.com/newbot-fixture/demo/zip/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+]

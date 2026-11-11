@@ -4,7 +4,7 @@ import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { randomUUID } from "node:crypto";
-import { database } from "../server/db.js";
+import { database, DATABASE_VERSION } from "../server/db.js";
 import {
   ProviderRuntime,
   providerRuntimeValues,
@@ -59,7 +59,7 @@ test("v6 migration preserves existing session, model selection and credential da
     db = database(directory);
     assert.equal(
       (db.raw.prepare("PRAGMA user_version").get() as any).user_version,
-      7,
+      DATABASE_VERSION,
     );
     assert.equal(db.get("password"), "existing-hash");
     assert.equal(db.provider("original"), "saved_gateway");

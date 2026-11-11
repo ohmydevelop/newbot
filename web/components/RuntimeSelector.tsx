@@ -1,37 +1,31 @@
 import { useEffect, useRef, useState } from "react";
 import * as Popover from "@radix-ui/react-popover";
 import * as Slider from "@radix-ui/react-slider";
-import * as Dropdown from "@radix-ui/react-dropdown-menu";
 import {
+  Brain,
   Check,
   ChevronDown,
   ChevronRight,
   RefreshCw,
   RotateCcw,
-  ShieldCheck,
-  Shield,
-  ShieldAlert,
+  LoaderCircle,
+  Search,
   X,
 } from "lucide-react";
 import type { Json } from "../../shared/types";
 import {
-  approvalLabels,
   type ApprovalPreset,
   type SessionRuntime,
+  runtimeIsNewer,
 } from "../../shared/runtime-settings";
 import { useApp, request } from "../store";
-import { ActionMenuContent, ActionMenuItem } from "./ActionMenu";
+import { ApprovalChoice } from "./ApprovalChoice";
 import { PickerContent, type ComposerPanel, type PanelSetter } from "./Picker";
-const efforts: Record<string, string> = {
-  none: "关闭",
-  minimal: "极简",
-  low: "低",
-  medium: "中",
-  high: "高",
-  xhigh: "极高",
-  max: "Max",
-  ultra: "Ultra",
-};
+import {
+  reasoningLabels as efforts,
+  reasoningOptions,
+  effortSupport,
+} from "../../shared/reasoning";
 const orderedEfforts = Object.keys(efforts);
 export default function RuntimeSelector({
   disabled,
@@ -39,12 +33,14 @@ export default function RuntimeSelector({
   onApproval,
   panel,
   setPanel,
+  onBusy,
 }: {
   disabled: boolean;
   newApproval: ApprovalPreset;
   onApproval: (value: ApprovalPreset) => void;
   panel: ComposerPanel;
   setPanel: PanelSetter;
+  onBusy: (busy: boolean) => void;
 }) {
   const s = useApp(),
     [entries, setEntries] = useState<Json[]>([]),
@@ -92,7 +88,7 @@ export default function RuntimeSelector({
     }
   }
   useEffect(() => {
-    if (panel === "runtime") {
+    if (panel === "runtime" || panel === "reasoning") {
       setQuery("");
       void read();
     } else {
@@ -108,7 +104,9 @@ export default function RuntimeSelector({
   }, [panel]);
   useEffect(() => {
     if (disabled)
-      setPanel((p) => (p === "runtime" || p === "approval" ? null : p));
+      setPanel((p) =>
+        p === "runtime" || p === "reasoning" || p === "approval" ? null : p,
+      );
   }, [disabled]);
   useEffect(() => {
     setPreview(null);
@@ -124,6 +122,7 @@ export default function RuntimeSelector({
     if (disabled || posting.current) return;
     const threadId = s.selectedId;
     posting.current = true;
+    onBusy(true);
     setMutating(true);
     setError("");
     setPresetError("");
@@ -131,28 +130,31 @@ export default function RuntimeSelector({
       if (threadId) {
         const runtime = await request<SessionRuntime>("session/update", {
           threadId,
-          expectedRevision: s.thread?.runtime?.revision || 0,
+          expectedRevision: useApp.getState().thread?.runtime?.revision || 0,
           ...patch,
         });
         useApp.setState((state) => {
           if (
             state.selectedId !== threadId ||
             state.thread?.id !== threadId ||
-            (state.thread.runtime?.revision || 0) > runtime.revision
+            !runtimeIsNewer(runtime, state.thread.runtime)
           )
             return {};
           return {
             thread: {
               ...state.thread,
               runtime,
-              modelProvider: runtime.provider,
+              modelProvider: runtime.applied?.provider || runtime.provider,
             },
             provider: runtime.provider,
             model: runtime.model,
             effort: runtime.effort,
             threads: state.threads.map((thread) =>
               thread.id === threadId
-                ? { ...thread, provider: runtime.provider }
+                ? {
+                    ...thread,
+                    provider: runtime.applied?.provider || runtime.provider,
+                  }
                 : thread,
             ),
           };
@@ -171,6 +173,7 @@ export default function RuntimeSelector({
       }
     } finally {
       posting.current = false;
+      onBusy(false);
       setMutating(false);
       setPreview(null);
     }
@@ -180,7 +183,7 @@ export default function RuntimeSelector({
       .find((g) => g.id === s.provider)
       ?.models.find((m: Json) => m.model === s.model) ||
     s.settings?.models.find((m: Json) => m.model === s.model);
-  const supported: Json[] = selected?.supportedReasoningEfforts || [];
+  const supported: Json[] = reasoningOptions(selected);
   const known = supported
     .filter((e) => orderedEfforts.includes(e.reasoningEffort))
     .sort(
@@ -222,6 +225,7 @@ export default function RuntimeSelector({
     options[next].focus();
   }
   const filter = query.trim().toLowerCase();
+  const candidate = s.thread?.runtime;
   const groups: Json[] = entries
     .map(
       (gateway, index): Json => ({
@@ -247,18 +251,17 @@ export default function RuntimeSelector({
           type="button"
           className="runtime-picker-trigger"
           disabled={disabled}
-          aria-label="选择模型与推理强度"
-          title="选择模型与推理强度"
+          aria-label="选择模型"
+          title="选择模型"
         >
           <span>{selected?.displayName || s.model || "选择模型"}</span>
-          {s.effort && <small>{efforts[s.effort] || s.effort}</small>}
           <ChevronDown size={14} aria-hidden="true" />
         </Popover.Trigger>
         <PickerContent
           className="runtime-panel"
           align="end"
           side="top"
-          aria-label="选择模型与推理强度"
+          aria-label="选择模型"
           onOpenAutoFocus={(e) => {
             e.preventDefault();
             search.current?.focus();
@@ -266,6 +269,7 @@ export default function RuntimeSelector({
           onEscapeKeyDown={() => setPreview(null)}
         >
           <div className="picker-search">
+            <Search size={17} aria-hidden="true" />
             <input
               ref={search}
               type="search"
@@ -299,7 +303,9 @@ export default function RuntimeSelector({
             </Popover.Close>
           </div>
           <div className="picker-feedback" aria-live="polite">
-            {reading && <p role="status">正在读取模型目录…</p>}
+            <span role="status" className="sr-only">
+              {reading ? "正在读取模型目录" : ""}
+            </span>
             {error && (
               <p role="alert" className="inline-error">
                 {error}
@@ -384,10 +390,48 @@ export default function RuntimeSelector({
             })}
             {!reading && !groups.length && (
               <p className="menu-empty">
-                {filter ? "没有匹配的模型" : "没有可用的模型网关"}
+                {filter ? "没有匹配的模型" : "没有可用的网关"}
               </p>
             )}
           </div>
+          {candidate?.pending && (
+            <p className="picker-note" role="status">
+              {candidate.pending.error ||
+                (candidate.pending.state === "accepted"
+                  ? "设置已确认，等待后续请求采用"
+                  : candidate.pending.state === "applying"
+                    ? "正在应用设置…"
+                    : "设置已保存")}
+            </p>
+          )}
+        </PickerContent>
+      </Popover.Root>
+      <Popover.Root
+        open={panel === "reasoning" && !disabled}
+        onOpenChange={(open) =>
+          setPanel((p) => (open ? "reasoning" : p === "reasoning" ? null : p))
+        }
+      >
+        <Popover.Trigger
+          type="button"
+          className="icon-button reasoning-trigger"
+          disabled={disabled}
+          aria-label={`推理强度：${efforts[s.effort] || "默认"}`}
+          title={`推理强度：${efforts[s.effort] || "默认"}`}
+        >
+          <Brain size={18} aria-hidden="true" />
+        </Popover.Trigger>
+        <PickerContent
+          className="reasoning-panel"
+          align="end"
+          side="top"
+          aria-label="推理强度"
+        >
+          {error && (
+            <p className="inline-error" role="alert">
+              {error}
+            </p>
+          )}
           <section className="reasoning-picker" aria-label="推理强度">
             <header>
               <span>推理强度</span>
@@ -402,11 +446,15 @@ export default function RuntimeSelector({
                 disabled={mutating || reading || !supported.length}
                 onClick={() =>
                   void update({
-                    effort: selected?.defaultReasoningEffort || "",
+                    effort: "",
                   })
                 }
               >
-                <RotateCcw size={15} aria-hidden="true" />
+                {mutating ? (
+                  <LoaderCircle size={15} className="spin" aria-hidden="true" />
+                ) : (
+                  <RotateCcw size={15} aria-hidden="true" />
+                )}
               </button>
             </header>
             {known.length > 1 ? (
@@ -483,68 +531,35 @@ export default function RuntimeSelector({
               </div>
             )}
             {mutating && (
-              <p role="status" className="picker-note">
+              <span role="status" className="sr-only">
                 正在保存设置…
-              </p>
+              </span>
+            )}
+            {!!s.effort && effortSupport(selected, s.effort) === "unknown" && (
+              <small
+                className="picker-note"
+                title="已保存请求参数；网关是否采用该参数尚未验证"
+              >
+                此网关的推理参数待验证
+              </small>
             )}
           </section>
         </PickerContent>
       </Popover.Root>
-      <Dropdown.Root
+      <ApprovalChoice
+        value={approval}
         open={panel === "approval" && !disabled}
         onOpenChange={(open) =>
           setPanel((p) => (open ? "approval" : p === "approval" ? null : p))
         }
-      >
-        <Dropdown.Trigger
-          type="button"
-          className="icon-button"
-          disabled={disabled || mutating}
-          aria-label={`会话审批：${approvalLabels[approval]}`}
-          title={approvalLabels[approval]}
-        >
-          <ShieldCheck size={18} aria-hidden="true" />
-        </Dropdown.Trigger>
-        <Dropdown.Portal>
-          <ActionMenuContent>
-            <Dropdown.Label className="action-menu-heading">
-              会话审批
-            </Dropdown.Label>
-            {presetReading && (
-              <p className="menu-empty" role="status">
-                正在读取…
-              </p>
-            )}
-            {presetError && (
-              <div className="menu-empty" role="alert">
-                {presetError}
-                <button type="button" onClick={() => void readPresets()}>
-                  重试
-                </button>
-              </div>
-            )}
-            {presets.map((p) => (
-              <ActionMenuItem
-                key={p.id}
-                icon={
-                  p.id === "full"
-                    ? ShieldAlert
-                    : p.id === "review"
-                      ? ShieldCheck
-                      : Shield
-                }
-                disabled={!p.allowed || mutating || presetReading}
-                title={p.reason || undefined}
-                description={p.reason || undefined}
-                trailing={approval === p.id ? <Check size={16} /> : undefined}
-                onSelect={() => void update({ approval: p.id })}
-              >
-                {approvalLabels[p.id as ApprovalPreset]}
-              </ActionMenuItem>
-            ))}
-          </ActionMenuContent>
-        </Dropdown.Portal>
-      </Dropdown.Root>
+        disabled={disabled}
+        busy={mutating}
+        reading={presetReading}
+        error={presetError}
+        presets={presets as { id: string; allowed: boolean; reason?: string }[]}
+        onRetry={() => void readPresets()}
+        onChange={(approval) => void update({ approval })}
+      />
     </div>
   );
 }

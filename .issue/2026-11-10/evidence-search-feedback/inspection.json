@@ -1,0 +1,77 @@
+{
+  "at": "2026-11-10T02:53:25.546Z",
+  "scope": "diagnostic only; public service; real thread-list response deliberately held to inspect pending layout; no model run, config edits or service restart",
+  "origin": "https://frequencies-alumni-prior-rna.trycloudflare.com",
+  "asset": "/assets/index-Buh0x2VX.js",
+  "sameAsDisk": true,
+  "sha256": "10f8cd5540a59c20aff67a4aab9d122dcdd50ba11361941cadc2c670260299ce",
+  "helperInBundle": true,
+  "initialSidebar": {
+    "x": 10,
+    "y": 301.75,
+    "width": 208,
+    "height": 37.5
+  },
+  "during": {
+    "helperVisible": true,
+    "modal": {
+      "x": 470,
+      "y": 377.25,
+      "width": 500,
+      "height": 345.5
+    },
+    "input": {
+      "x": 536,
+      "y": 456.25,
+      "width": 397,
+      "height": 41
+    },
+    "firstResult": {
+      "x": 494,
+      "y": 568.25,
+      "width": 452,
+      "height": 43.5
+    },
+    "firstSidebar": {
+      "x": 10,
+      "y": 322.75,
+      "width": 208,
+      "height": 37.5
+    },
+    "loadingParagraphCount": 2
+  },
+  "settled": {
+    "modal": {
+      "x": 470,
+      "y": 394.25,
+      "width": 500,
+      "height": 311.5
+    },
+    "input": {
+      "x": 536,
+      "y": 473.25,
+      "width": 397,
+      "height": 41
+    },
+    "firstResult": {
+      "x": 494,
+      "y": 551.25,
+      "width": 452,
+      "height": 43.5
+    },
+    "firstSidebar": {
+      "x": 10,
+      "y": 301.75,
+      "width": 208,
+      "height": 37.5
+    }
+  },
+  "shift": {
+    "inputY": 17,
+    "firstResultY": -17,
+    "sidebarY": -21
+  },
+  "emptyStateVisible": true,
+  "escapeCloses": true,
+  "pageErrors": []
+}

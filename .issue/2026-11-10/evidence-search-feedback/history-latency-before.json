@@ -1,0 +1,70 @@
+{
+  "at": "2026-11-10T03:26:00.650Z",
+  "note": "Real read-only HTTP history requests, no model turns; excludes DOM render time",
+  "checks": [
+    {
+      "origin": "http://127.0.0.1:3100",
+      "thread": "54a7d778",
+      "sample": 0,
+      "ms": 20,
+      "status": 200,
+      "bytes": 95478
+    },
+    {
+      "origin": "http://127.0.0.1:3100",
+      "thread": "54a7d778",
+      "sample": 1,
+      "ms": 15,
+      "status": 200,
+      "bytes": 95478
+    },
+    {
+      "origin": "http://127.0.0.1:3100",
+      "thread": "f0357d02",
+      "sample": 0,
+      "ms": 67,
+      "status": 200,
+      "bytes": 1786657
+    },
+    {
+      "origin": "http://127.0.0.1:3100",
+      "thread": "f0357d02",
+      "sample": 1,
+      "ms": 55,
+      "status": 200,
+      "bytes": 1786657
+    },
+    {
+      "origin": "https://frequencies-alumni-prior-rna.trycloudflare.com",
+      "thread": "54a7d778",
+      "sample": 0,
+      "ms": 675,
+      "status": 200,
+      "bytes": 95478
+    },
+    {
+      "origin": "https://frequencies-alumni-prior-rna.trycloudflare.com",
+      "thread": "54a7d778",
+      "sample": 1,
+      "ms": 243,
+      "status": 200,
+      "bytes": 95478
+    },
+    {
+      "origin": "https://frequencies-alumni-prior-rna.trycloudflare.com",
+      "thread": "f0357d02",
+      "sample": 0,
+      "ms": 1603,
+      "status": 200,
+      "bytes": 1786657
+    },
+    {
+      "origin": "https://frequencies-alumni-prior-rna.trycloudflare.com",
+      "thread": "f0357d02",
+      "sample": 1,
+      "ms": 1981,
+      "status": 200,
+      "bytes": 1786657
+    }
+  ]
+}

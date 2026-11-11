@@ -1,0 +1,9 @@
+{
+  "stage": "native marketplace install while active",
+  "error": "Error: 插件版本与确认时不同，请刷新后重新选择",
+  "checks": [
+    "scanning/installing/unselected turns do not start plugin MCP or hooks; plugin skills absent from actual model input",
+    "explicit plugin activation starts native MCP and hooks and includes only enabled skills",
+    "upgrade publishes while a real model request remains in flight, without changing its pinned files"
+  ]
+}

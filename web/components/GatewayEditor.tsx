@@ -1,180 +1,171 @@
-import { useEffect, useRef, useState } from "react";
-import { LoaderCircle, Trash2 } from "lucide-react";
+import { useRef, useState } from "react";
+import { LoaderCircle, RefreshCw } from "lucide-react";
 import { Modal } from "./ui";
-import { request, useApp, loadSettings, acceptSettings } from "../store";
-import type { ConfigurationView } from "../../shared/configuration";
+import { request, useApp } from "../store";
+import type {
+  ConfigurationView,
+  DefaultsSaveResult,
+} from "../../shared/configuration";
+import { customModelIds } from "../../shared/gateways";
+import PrivateFieldEditor, {
+  type PrivateFieldsHandle,
+} from "./PrivateFieldEditor";
 import {
-  credentialPending,
-  credentialStatus,
-  type CredentialTicket,
-} from "../../shared/credentials";
+  sendPrivateFields,
+  PrivateOutcomeUnknown,
+  privateApi,
+} from "../private-input";
 type Provider = ConfigurationView["providers"][number];
-async function privateApi(path: string, options?: RequestInit): Promise<any> {
-  const r = await fetch(path, {
-    ...options,
-    credentials: "same-origin",
-    cache: "no-store",
-  });
-  if (r.status === 401) useApp.setState({ authenticated: false });
-  if (!r.ok) throw new Error("操作未完成，请读取状态确认结果。");
-  return r.json();
-}
 export default function GatewayEditor({
   provider,
   revision: initialRevision,
   onClose,
   onSaved,
   children,
-  onProbe,
 }: {
   provider?: Provider;
   revision: string;
   onClose: () => void;
   onSaved: () => Promise<void>;
   children?: React.ReactNode;
-  onProbe?: () => void;
 }) {
-  const s = useApp(),
-    key = useRef<HTMLInputElement>(null),
+  const fields = useRef<PrivateFieldsHandle>(null),
     posting = useRef(false),
-    mounted = useRef(true);
+    requestId = useRef(crypto.randomUUID());
   const [name, setName] = useState(
       provider?.missing ? "" : provider?.name || "",
     ),
-    [url, setUrl] = useState(""),
-    [revision, setRevision] = useState(initialRevision),
-    [vaultVersion, setVaultVersion] = useState(
-      provider?.managedCredential?.version,
-    ),
-    [retention, setRetention] = useState<"encrypted" | "memory">(
-      s.credentialEncryption ? "encrypted" : "memory",
-    ),
-    [busy, setBusy] = useState(false),
+    [url, setUrl] = useState(provider?.editableEndpoint || ""),
+    [customModels, setCustomModels] = useState(
+      (provider?.customModels || []).join("\n"),
+    );
+  const [busy, setBusy] = useState(false),
     [error, setError] = useState(""),
-    [confirmClear, setConfirmClear] = useState(false),
-    [ticket, setTicket] = useState<CredentialTicket | null>(null);
-  const privateId = useRef<string | null>(null),
-    requestId = useRef(crypto.randomUUID());
+    [modelError, setModelError] = useState(""),
+    [models, setModels] = useState<string[]>([]),
+    [unknown, setUnknown] = useState<string | null>(null);
+  const [saved, setSaved] = useState<
+    (DefaultsSaveResult & { id: string }) | null
+  >(null);
   const readOnly = !!provider && !provider.editable;
-  const active =
-    busy ||
-    (!!ticket && credentialPending(ticket.state) && ticket.state !== "waiting");
-  useEffect(() => {
-    mounted.current = true;
-    return () => {
-      mounted.current = false;
-      if (key.current) key.current.value = "";
-      if (privateId.current)
-        void fetch(`/api/credentials/${privateId.current}`, {
-          method: "DELETE",
-          keepalive: true,
-        }).catch(() => {});
-    };
-  }, []);
-  async function receive(value: CredentialTicket) {
-    if (!mounted.current) return;
-    setTicket(value);
-    if (value.state === "succeeded") {
-      await onSaved();
-      if (value.applied) onClose();
-    }
-  }
-  async function readStatus() {
-    if (!privateId.current) return;
-    setBusy(true);
-    setError("");
+  const [rebind, setRebind] = useState(false);
+  const [unknownWrite, setUnknownWrite] = useState<string | null>(null);
+  const changedReceiver =
+    !!provider?.editableEndpoint &&
+    url.replace(/\/+$/, "") !== provider.editableEndpoint.replace(/\/+$/, "");
+  async function finish() {
+    fields.current?.clear();
     try {
-      await receive(await privateApi(`/api/credentials/${privateId.current}`));
+      await onSaved();
     } catch {
-      setError("结果暂不可读，请恢复连接后重试；不会重复发送密钥。");
-    } finally {
-      if (mounted.current) setBusy(false);
+      useApp.getState().notify("网关已保存，列表暂未刷新。");
     }
+    onClose();
   }
   async function save(e: React.FormEvent) {
     e.preventDefault();
-    if (posting.current || readOnly) return;
-    const bytes = new TextEncoder().encode(key.current?.value || "");
-    if (key.current) key.current.value = "";
+    if (posting.current || readOnly || unknown || unknownWrite) return;
     posting.current = true;
     setBusy(true);
     setError("");
+    let ordinary = saved;
     try {
-      const metadata = {
-        requestId: requestId.current,
-        targetId: provider?.id,
-        expectedRevision: revision,
-        name,
-        ...(url ? { baseUrl: url } : {}),
-      };
-      if (bytes.length || privateId.current) {
-        if (!bytes.length) throw new Error("请重新填写 API Key。");
-        if (url && new URL(url).protocol !== "https:")
-          throw new Error("填写 API Key 时请使用 HTTPS 连接地址。");
-        if (!privateId.current) {
-          privateId.current = requestId.current;
-          const created = await privateApi("/api/credentials/requests", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              ...metadata,
-              operation: "provider.save",
-              expectedVaultVersion: vaultVersion,
-              retention,
-            }),
-          });
-          setTicket(created);
-          if (created.state !== "waiting")
-            throw new Error("保存条件已变化，请关闭后重新读取配置。");
-        }
-        await receive(
-          await privateApi(`/api/credentials/${privateId.current}/input`, {
-            method: "POST",
-            headers: { "Content-Type": "application/octet-stream" },
-            body: bytes,
-          }),
+      const manual = customModelIds.safeParse(
+        customModels
+          .split(/[\n,，]/)
+          .map((v) => v.trim())
+          .filter(Boolean),
+      );
+      if (!manual.success)
+        throw new Error("请输入有效的模型 ID，每行一个，不含空格。");
+      ordinary ||= await request<DefaultsSaveResult & { id: string }>(
+        "gateway/save",
+        {
+          requestId: requestId.current,
+          targetId: provider?.id,
+          expectedRevision: initialRevision,
+          name,
+          ...(url && url !== provider?.editableEndpoint
+            ? { baseUrl: url }
+            : {}),
+          customModels: manual.data,
+          ...(changedReceiver ? { rebindCredentials: rebind } : {}),
+        },
+        { operationId: requestId.current },
+      );
+      setSaved(ordinary);
+      const draft = fields.current!.read(),
+        target = ordinary.configuration.providers.find(
+          (p) => p.id === ordinary!.id,
+        )!;
+      if (
+        draft.fields.length ||
+        target.privateFields?.fields.length ||
+        target.managedCredential?.stored
+      )
+        await sendPrivateFields(
+          {
+            operation: "credential.fields.save",
+            scope: "provider",
+            targetId: ordinary.id,
+            expectedRevision:
+              ordinary.configuration.revisions?.[`provider:${ordinary.id}`] ||
+              ordinary.configuration.revision,
+            expectedFieldsRevision: target.privateFields?.revision || "absent",
+            fields: draft.fields,
+            clearValues: draft.clearValues,
+            removeFields: draft.removeFields,
+          },
+          draft.values,
         );
-      } else {
-        await request("gateway/save", metadata);
-        await onSaved();
-        onClose();
-      }
-    } catch (e) {
-      if (mounted.current)
-        setError(e instanceof Error ? e.message : "保存未确认，请刷新配置。");
+      await finish();
+    } catch (err) {
+      if (err instanceof PrivateOutcomeUnknown) setUnknown(err.ticketId);
+      else if ((err as { operationId?: string })?.operationId)
+        setUnknownWrite((err as { operationId: string }).operationId);
+      else if (!ordinary) requestId.current = crypto.randomUUID();
+      setError(
+        `${ordinary ? "网关信息已保存；" : ""}${err instanceof Error ? err.message : "保存未完成"}`,
+      );
     } finally {
-      bytes.fill(0);
       posting.current = false;
-      if (mounted.current) setBusy(false);
+      setBusy(false);
     }
   }
-  async function clear() {
+  async function refresh() {
+    const id = saved?.id || provider?.id;
+    if (!id) return;
     setBusy(true);
-    setError("");
+    setModelError("");
     try {
-      const result = await privateApi("/api/credentials/clear", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          scope: "provider",
-          targetId: provider!.id,
-          expectedRevision: revision,
-          expectedVaultVersion: vaultVersion,
-          confirm: true,
-        }),
+      const result = await request<{ models: string[] }>("provider/models", {
+        id,
+        expectedRevision:
+          saved?.configuration.revisions?.[`provider:${id}`] || initialRevision,
       });
-      await loadSettings();
-      const config = useApp.getState().settings
-        ?.configuration as ConfigurationView;
-      setRevision(config.revision);
-      setVaultVersion(
-        config.providers.find((p) => p.id === provider!.id)?.managedCredential
-          ?.version,
-      );
-      setConfirmClear(false);
-      if (!result.applied) setError("密钥已清除，连接尚未恢复，请刷新后确认。");
+      setModels(result.models);
+      if (!result.models.length) setModelError("目录为空，可添加自定义模型。");
     } catch {
-      setError("清除结果未确认，请刷新配置确认后再操作。");
+      setModelError("模型目录暂不可用，可重试或添加自定义模型。");
+    } finally {
+      setBusy(false);
+    }
+  }
+  async function read() {
+    setBusy(true);
+    try {
+      const ticket = await privateApi(`/api/credentials/${unknown}`);
+      if (ticket.state === "succeeded") await finish();
+      else if (
+        ["waiting", "failed", "cancelled", "invalidated", "expired"].includes(
+          ticket.state,
+        )
+      ) {
+        setUnknown(null);
+        setError("凭证未保存，请重新输入后保存。");
+      } else setError("正在保存，请稍后再次读取。");
+    } catch {
+      setError("状态暂不可读，请恢复连接后重试。");
     } finally {
       setBusy(false);
     }
@@ -182,212 +173,194 @@ export default function GatewayEditor({
   return (
     <Modal
       open
-      title={provider ? provider.name : "添加模型网关"}
+      title={provider ? provider.name : "添加网关"}
       wide
       className="connection-editor-modal gateway-editor-modal"
-      dismissible={!active}
+      dismissible={!busy}
       onOpenChange={(open) => {
-        if (!open && !active) onClose();
+        if (!open && !busy) onClose();
       }}
     >
       <form
         className="provider-editor"
-        aria-label={provider ? "编辑模型网关 表单" : "新增模型网关 表单"}
-        onSubmit={(e) => void save(e)}
+        aria-label={provider ? "编辑网关 表单" : "新增网关 表单"}
+        onSubmit={save}
       >
-        <label className="field-label">
-          名称
-          <input
-            autoFocus
-            required
-            maxLength={80}
-            value={name}
-            disabled={busy || readOnly || !!privateId.current}
-            onChange={(e) => setName(e.target.value)}
-          />
-        </label>
-        {provider && !provider.missing && (
-          <div className="current-endpoint">
-            <span>当前连接地址</span>
-            <code>
-              {provider.endpointOrigin ||
-                (provider.requiresAccountAuth ? "账户授权" : "未配置")}
-            </code>
-            {onProbe && (
-              <button
-                type="button"
-                className="secondary"
-                disabled={active || !!url || !!privateId.current}
-                title={
-                  url
-                    ? "先保存新的连接地址，再验证凭证"
-                    : "仅验证当前已保存连接，不保存凭证"
-                }
-                aria-label={`临时验证 ${provider.id} 的凭证`}
-                onClick={onProbe}
-              >
-                临时验证当前凭证
-              </button>
-            )}
-          </div>
-        )}
-        {!readOnly && (
+        <div className="connection-editor-body">
           <label className="field-label">
-            {provider && !provider.missing ? "替换连接地址" : "连接地址"}
+            名称
             <input
-              type="url"
-              required={!provider || provider.missing}
-              value={url}
-              disabled={busy || !!privateId.current}
-              placeholder={
-                provider && !provider.missing
-                  ? "留空保留当前完整地址"
-                  : "https://api.example.com/v1"
-              }
-              onChange={(e) => setUrl(e.target.value)}
+              autoFocus
+              required
+              maxLength={80}
+              value={name}
+              disabled={busy || readOnly || !!saved}
+              onChange={(e) => setName(e.target.value)}
             />
           </label>
-        )}
-        {!readOnly && (
-          <>
-            <label className="field-label">
-              API Key
-              <input
-                ref={key}
-                aria-label="API Key"
-                type="password"
-                autoComplete="off"
-                autoCapitalize="none"
-                spellCheck={false}
-                maxLength={4096}
-                disabled={
-                  busy ||
-                  !s.credentialManagement ||
-                  (!!ticket && ticket.state !== "waiting")
-                }
-                placeholder={
-                  provider && provider.credentials !== "none"
-                    ? "留空保留现有密钥"
-                    : "可选"
-                }
-              />
-            </label>
-            {s.credentialManagement && (
-              <label className="field-label credential-storage-select">
-                密钥保存方式
-                <select
-                  aria-label="密钥保存方式"
-                  value={retention}
-                  disabled={busy || !!privateId.current}
-                  onChange={(e) =>
-                    setRetention(e.target.value as typeof retention)
+          {provider && !provider.missing && readOnly && (
+            <div className="current-endpoint">
+              <span>当前连接地址</span>
+              <code>
+                {provider.endpointOrigin ||
+                  (provider.requiresAccountAuth ? "账户授权" : "未配置")}
+              </code>
+            </div>
+          )}
+          {!readOnly && (
+            <>
+              <label className="field-label">
+                连接地址
+                <input
+                  type="url"
+                  required={!provider || provider.missing}
+                  value={url}
+                  disabled={busy || !!saved}
+                  placeholder={
+                    provider && !provider.missing
+                      ? "留空保留当前完整地址"
+                      : "https://api.example.com/v1"
                   }
-                >
-                  {s.credentialEncryption && (
-                    <option value="encrypted">本机加密保存</option>
-                  )}
-                  <option value="memory">仅本次运行</option>
-                </select>
+                  onChange={(e) => {
+                    setUrl(e.target.value);
+                    setRebind(false);
+                  }}
+                />
               </label>
-            )}
-          </>
-        )}
-        {readOnly && <p className="muted">此网关由账户或其他配置来源管理。</p>}
-        {provider?.managedCredential?.stored &&
-          !provider.missing &&
-          !ticket && (
-            <button
-              type="button"
-              className="secondary danger-text"
-              disabled={busy}
-              onClick={() => setConfirmClear(true)}
-            >
-              <Trash2 size={14} />
-              清除已保存密钥
-            </button>
+              {changedReceiver && (
+                <label className="provider-checkbox">
+                  <input
+                    type="checkbox"
+                    checked={rebind}
+                    disabled={busy || !!saved}
+                    required
+                    onChange={(e) => setRebind(e.target.checked)}
+                  />
+                  使用新地址，重新配置其凭证
+                </label>
+              )}
+              <PrivateFieldEditor
+                ref={fields}
+                transport="http"
+                provider
+                initial={provider?.privateFields}
+                authentication={provider?.authentication}
+                legacyBearer={
+                  (!provider?.privateFields ||
+                    provider.privateFields.revision === "absent") &&
+                  provider?.authentication?.source === "managed"
+                }
+                disabled={busy || !!unknown}
+              />
+            </>
           )}
-        {confirmClear && (
-          <div role="group" aria-label="确认清除密钥">
-            <p>清除后需要重新填写，是否继续？</p>
-            <button
-              type="button"
-              className="secondary"
-              onClick={() => setConfirmClear(false)}
-            >
-              保留
-            </button>
-            <button
-              type="button"
-              className="secondary danger-text"
-              disabled={busy}
-              onClick={() => void clear()}
-            >
-              清除
-            </button>
-          </div>
-        )}
-        {children && (
-          <section className="gateway-connection-tools" aria-label="连接管理">
-            {children}
-          </section>
-        )}
-        {error && (
-          <p className="inline-error" role="alert">
-            {error}
-          </p>
-        )}
-        {ticket && <p role="status">{credentialStatus(ticket)}</p>}
-        <div className="configuration-actions editor-actions">
-          {privateId.current && (
-            <button
-              type="button"
-              className="secondary"
-              disabled={busy}
-              onClick={() => void readStatus()}
-            >
-              读取状态
-            </button>
+          {(provider || saved) && (
+            <div className="model-directory-control">
+              <select
+                aria-label="已发现模型"
+                disabled={!models.length}
+                defaultValue=""
+              >
+                <option value="" disabled>
+                  模型目录
+                </option>
+                {models.map((m) => (
+                  <option key={m}>{m}</option>
+                ))}
+              </select>
+              <button
+                type="button"
+                className="icon-button"
+                title="获取模型"
+                aria-label="获取模型"
+                disabled={busy}
+                onClick={() => void refresh()}
+              >
+                <RefreshCw size={18} className={busy ? "spin" : ""} />
+              </button>
+            </div>
           )}
-          {ticket?.state === "succeeded" && !ticket.applied && (
+          <details
+            className="advanced-settings"
+            open={customModels.trim() ? true : undefined}
+          >
+            <summary>自定义模型</summary>
+            <label className="field-label">
+              模型 ID
+              <textarea
+                aria-label="自定义模型"
+                value={customModels}
+                rows={3}
+                spellCheck={false}
+                disabled={busy || readOnly || !!saved}
+                onChange={(e) => setCustomModels(e.target.value)}
+                placeholder="每行一个模型 ID，例如 my-model"
+              />
+              <span className="muted">
+                无法获取目录时可手动添加。实际可用性由网关决定。
+              </span>
+            </label>
+          </details>
+          {readOnly && (
+            <p className="muted">此网关由账户或其他配置来源管理。</p>
+          )}
+          {children && (
+            <section className="gateway-connection-tools" aria-label="连接管理">
+              {children}
+            </section>
+          )}
+          {error && (
+            <p className="inline-error" role="alert">
+              {error}
+            </p>
+          )}
+          {modelError && <p className="inline-error">{modelError}</p>}
+        </div>
+        <div className="editor-actions">
+          {unknownWrite && (
             <button
               type="button"
               className="secondary"
               disabled={busy}
-              onClick={() => {
-                void (async () => {
-                  setBusy(true);
-                  try {
-                    const r = await request<{ settings: any }>(
-                      "configuration/recover",
-                      { mode: "reconnect" },
-                    );
-                    acceptSettings(r.settings);
-                    await onSaved();
-                    onClose();
-                  } catch {
-                    setError("连接未恢复，请重试。");
-                  } finally {
-                    setBusy(false);
-                  }
-                })();
+              onClick={async () => {
+                setBusy(true);
+                try {
+                  const receipt = await privateApi(
+                    `/api/config/operations/${unknownWrite}`,
+                  );
+                  if (receipt.state === "saved") {
+                    setSaved(receipt.result);
+                    setUnknownWrite(null);
+                    setError("网关信息已保存，请继续完成凭证设置。");
+                  } else if (["unseen", "unchanged"].includes(receipt.state)) {
+                    setUnknownWrite(null);
+                    requestId.current = crypto.randomUUID();
+                    setError("此次修改未保存，可以重新提交。");
+                  } else setError("保存结果仍未确认，请稍后再次读取。");
+                } catch {
+                  setError("状态暂不可读，请恢复连接后重试。");
+                } finally {
+                  setBusy(false);
+                }
               }}
             >
-              重新连接
+              读取保存状态
             </button>
           )}
-          <button
-            type="button"
-            className="secondary"
-            disabled={active}
-            onClick={onClose}
-          >
-            {readOnly ? "关闭" : "取消"}
-          </button>
+          {unknown && (
+            <button
+              type="button"
+              className="secondary"
+              disabled={busy}
+              onClick={() => void read()}
+            >
+              读取保存状态
+            </button>
+          )}
           {!readOnly && (
             <button
-              type="submit"
               className="primary"
-              disabled={busy || (!!ticket && ticket.state !== "waiting")}
+              disabled={busy || !!unknown || !!unknownWrite}
             >
               {busy && <LoaderCircle size={16} className="spin" />}保存
             </button>

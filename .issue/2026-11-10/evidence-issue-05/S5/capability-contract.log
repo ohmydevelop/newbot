@@ -1,0 +1,29 @@
+✔ native thread registers generated dynamic tool contract and waits without a second model turn (168.211303ms)
+✔ model updates remain attached to the original native message and stream as AG-UI snapshots (80.590532ms)
+✔ bad model UI is rejected to the native tool without browser rendering or exposing rejected values (63.692491ms)
+✔ invalid client fields and forged context fail before consuming a pending native request (72.543664ms)
+✔ authentication, Origin, scope, revision and token are checked for every form action (67.848449ms)
+✔ concurrent submission and exact retries return at most one native tool response (71.909813ms)
+✔ host cancellation returns an ordinary cancel event with no user-provided context (72.075144ms)
+✔ native interruption or process loss disables forms and rejects late submissions (137.687653ms)
+✔ only one pending form per thread and configuration maintenance remains blocked (62.89145ms)
+✔ oversized action values are rejected by the product boundary without native dispatch (62.135206ms)
+✔ pending form timeout releases the native request and rejects late browser input (66.981232ms)
+✔ server drafts validate editable fields, preserve native waiting state and never reach model context (66.209816ms)
+✔ draft CAS and clear tombstones prevent another tab or late save from replacing the saved draft (73.917586ms)
+✔ Bridge restart restores saved form and draft read-only without reviving native token or RPC (101.868752ms)
+✔ accepted durable receipts acknowledge exact retries after restart without executing again (100.159574ms)
+✔ unknown native pipe outcome is durably fenced and cannot be replayed after restart (98.649036ms)
+✔ pending UI owner survives the bounded event item cache and restores from persisted indexes (140.251564ms)
+✔ expiry retains the saved ordinary draft but revokes submission and draft writes (63.903426ms)
+✔ storage failure before native consume leaves the waiting request retryable (63.870728ms)
+✔ storage failure after native consume preserves an unknown durable fence (98.284778ms)
+✔ A2UI waiting joins the sidebar lifecycle and clears on submit, native resolution and stop (187.198946ms)
+ℹ tests 21
+ℹ suites 0
+ℹ pass 21
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2346.201329

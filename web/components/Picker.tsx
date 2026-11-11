@@ -4,6 +4,7 @@ export type ComposerPanel =
   | "plugins"
   | "skills"
   | "runtime"
+  | "reasoning"
   | "approval"
   | "attachments"
   | null;

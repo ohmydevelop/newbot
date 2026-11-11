@@ -1,0 +1,66 @@
+{
+  "at": "2026-11-10T13:36:35.656Z",
+  "installedPlugins": [
+    {
+      "id": "github@openai-api-curated",
+      "name": "github",
+      "version": "0.1.12",
+      "tools": [
+        "github"
+      ]
+    },
+    {
+      "id": "cloudwalker@newbot-imports",
+      "name": "cloudwalker",
+      "version": "0.5.0",
+      "tools": []
+    }
+  ],
+  "packages": [
+    {
+      "kind": "plugin",
+      "name": "cloudwalker",
+      "path": "/home/a/Documents/ChatGPT/newbot/.data/imports/marketplace/packages/88b70a78298b1bbc3dc4a402cb3093b414cd814e0dc304e3ac8ba60e50799e00/16bc8a03f8c45d297a6c6bb1db5d82b1f2e28df57dff28303b3c1b379229a519",
+      "source": {
+        "kind": "zip",
+        "name": "cloudwalker-0.5.0-linux-amd64 (1).zip"
+      },
+      "skills": [
+        "cloudwalker:cloudwalker-investigate",
+        "cloudwalker:cloudwalker-posture"
+      ],
+      "mcp": [],
+      "selected": 2,
+      "installed": true,
+      "manifests": {
+        "plugin.json": {
+          "sha256": "d7de2fd190bd943af83b6f1331a45ef28457e1332c1ccb097f1d9aa7974fa848",
+          "keys": [
+            "$schema",
+            "name",
+            "version",
+            "description",
+            "extensions"
+          ],
+          "servers": [],
+          "userConfigDeclared": false
+        },
+        "mcp.json": {
+          "sha256": "8b77ec4ee40d5b7e08c129d7c9de95fbdf3ada37a1ce0522fd761a140be481b4",
+          "keys": [
+            "$schema",
+            "mcpServers"
+          ],
+          "servers": [
+            "cloudwalker"
+          ],
+          "userConfigDeclared": false
+        }
+      }
+    }
+  ],
+  "standaloneMcp": [],
+  "privateBindings": [],
+  "runningAsset": "/assets/index-nylPB7D1.js",
+  "localBuildMatches": true
+}

@@ -1,0 +1,13 @@
+{
+  "compared": 19,
+  "unknown": 1,
+  "mismatch": [],
+  "source": "read-only instance native SQLite; authenticated product API intentionally omits cwd",
+  "missingNative": [
+    {
+      "id": "01a1b630-34bb-7193-aab6-cbdaa5095802",
+      "archived": 0,
+      "runs": []
+    }
+  ]
+}

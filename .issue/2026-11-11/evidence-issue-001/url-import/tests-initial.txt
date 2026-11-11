@@ -1,0 +1,24 @@
+✔ only repository homepages discover defaults; tree links resolve slash refs, tags, commits and directories without a catalog (4.657517ms)
+✔ release links resolve the exact tag, including annotated slash tags, without a same-name branch (0.657937ms)
+✔ an explicit missing ref never falls back to default; malformed and cyclic tag objects fail (0.91549ms)
+✔ URL and upstream validation reject credentials, unrelated hosts, malformed JSON and oversized responses (1.342795ms)
+✔ existing pinned sources keep captured ref/path; unpinned legacy drafts and traversal fail (0.203947ms)
+✖ new imports reject overrides; restart and scanning download the pinned commit and exact directory (212.082685ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 5
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 707.993065
+
+✖ failing tests:
+
+test at tests/issue001-github.test.ts:1:4835
+✖ new imports reject overrides; restart and scanning download the pinned commit and exact directory (212.082685ms)
+  Error: 隔离的原生扫描器未就绪，请检查固定 Codex 版本
+      at Object.scan (/home/a/Documents/ChatGPT/newbot/server/imports.ts:532:13)
+      at async TestContext.<anonymous> (/home/a/Documents/ChatGPT/newbot/tests/issue001-github.test.ts:114:21)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)

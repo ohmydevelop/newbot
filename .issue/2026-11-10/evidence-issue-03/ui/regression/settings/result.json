@@ -1,0 +1,11 @@
+{
+  "fixture": true,
+  "stage": "settings",
+  "checks": [
+    "compact gateways omit storage implementation copy and preserve responsive actions",
+    "gateway save discovers models; discovery failure retries without rewriting configuration",
+    "MCP tools are directly visible and connection metadata is not duplicated"
+  ],
+  "metrics": [],
+  "errors": []
+}

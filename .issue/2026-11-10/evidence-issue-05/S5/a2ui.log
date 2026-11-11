@@ -1,0 +1,21 @@
+PASS chat creates a form linked to its native item and applies a later native update
+PASS browser submits editable field values and no trusted action context
+PASS native tool completion keeps the submitted form visible and read-only
+PASS reload reads the current authoritative submitted state without sending another action
+PASS pending browser refresh rejoins the same backend request
+PASS autosave preserves keyboard focus and refresh restores server draft without a model action
+PASS another tab cannot silently overwrite a newer draft and keeps its own unsaved input
+PASS clear removes the stored draft and leaves current controls intact until refresh
+PASS failed draft transport keeps input and reports unsaved state until a manual retry
+PASS host cancel resumes the task with a structured cancellation
+PASS model-provided cancel button returns its allowed event through the same path
+PASS failed transport keeps fields and retries the same idempotency key
+PASS a stale browser request cannot consume the native request and can reload authority
+PASS mobile form follows product theme, wraps fields and keeps the input notice
+PASS native interruption disables the old form and sends no automatic user action
+PASS Bridge restart restores pending draft read-only and never recreates an old authorization
+PASS submitted form survives a full Bridge restart with user values and no duplicate action
+PASS corrupted historical descriptions use a fixed fallback without blocking the conversation
+PASS expired browser view disables input and explains that saved draft is read-only
+PASS normal Markdown remains available and browser errors/external requests stay absent
+20 A2UI chat browser checks passed

@@ -1,0 +1,25 @@
+{
+  "unitTests": {
+    "passed": 347,
+    "failed": 0
+  },
+  "typecheck": "passed",
+  "build": "passed",
+  "format": "passed",
+  "diffWhitespace": "passed",
+  "browserChecks": {
+    "search": 3,
+    "pickers": 4,
+    "settings": 3,
+    "navigation": 3,
+    "issue": 22,
+    "controls": 6,
+    "regression": 16,
+    "recovery": 15,
+    "apps": 15,
+    "credentials": 5
+  },
+  "browserTotal": 92,
+  "nativeCodexChecks": 12,
+  "fixtures": "Browser checks use isolated synthetic Codex; native checks use pinned Codex with loopback Responses, no paid upstream. Public service verification is read-only except login/logout and one idle restart."
+}

@@ -1,0 +1,39 @@
+{"at":"2026-11-10T12:32:44.056Z","event":"runtime.status","status":"ready"}
+{"at":"2026-11-10T12:32:44.092Z","event":"http.request","status":200,"requestId":"req-1","route":"/api/login","method":"POST","durationMs":30}
+{"at":"2026-11-10T12:32:44.097Z","event":"http.request","status":200,"requestId":"req-2","route":"/api/config","method":"GET","durationMs":5}
+{"at":"2026-11-10T12:32:44.102Z","event":"http.request","status":200,"requestId":"req-3","route":"/api/config","method":"POST","durationMs":4}
+{"at":"2026-11-10T12:32:44.102Z","event":"http.request","status":200,"requestId":"req-4","route":"/api/config","method":"GET","durationMs":1}
+{"at":"2026-11-10T12:32:44.104Z","event":"http.request","status":200,"requestId":"req-5","route":"/api/config","method":"POST","durationMs":2}
+{"at":"2026-11-10T12:32:44.105Z","event":"http.request","status":200,"requestId":"req-6","route":"/api/config","method":"GET","durationMs":1}
+{"at":"2026-11-10T12:32:44.107Z","event":"http.request","status":200,"requestId":"req-7","route":"/api/credentials/requests","method":"POST","durationMs":2}
+{"at":"2026-11-10T12:32:44.109Z","event":"http.request","status":200,"requestId":"req-8","route":"/api/credentials/:id/input","method":"POST","durationMs":2}
+{"at":"2026-11-10T12:32:44.111Z","event":"http.request","status":200,"requestId":"req-9","route":"/api/config","method":"GET","durationMs":1}
+{"at":"2026-11-10T12:32:44.112Z","event":"http.request","status":200,"requestId":"req-a","route":"/api/credentials/requests","method":"POST","durationMs":1}
+{"at":"2026-11-10T12:32:44.113Z","event":"http.request","status":200,"requestId":"req-b","route":"/api/credentials/:id/input","method":"POST","durationMs":1}
+{"at":"2026-11-10T12:32:44.115Z","event":"http.request","status":200,"requestId":"req-c","route":"/api/config","method":"GET","durationMs":1}
+{"at":"2026-11-10T12:32:44.116Z","event":"http.request","status":200,"requestId":"req-d","route":"/api/credentials/requests","method":"POST","durationMs":1}
+{"at":"2026-11-10T12:32:44.117Z","event":"http.request","status":200,"requestId":"req-e","route":"/api/credentials/:id/input","method":"POST","durationMs":1}
+{"at":"2026-11-10T12:32:44.118Z","event":"http.request","status":200,"requestId":"req-f","route":"/api/config","method":"GET","durationMs":1}
+{"at":"2026-11-10T12:32:44.142Z","event":"http.request","status":200,"requestId":"req-g","route":"/api/agent/action","method":"POST","durationMs":24}
+Native skill discovery: Error: 原生扩展检查未就绪
+{"at":"2026-11-10T12:32:44.237Z","event":"http.request","status":503,"requestId":"req-h","route":"/api/agent/run","method":"POST","durationMs":95}
+node:internal/modules/run_main:111
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: {"error":"技能列表读取失败，请刷新或检查 Codex 状态"}
+
+503 !== 200
+
+    at run (file:///home/a/Documents/ChatGPT/newbot/scripts/test-issue06-native.mjs:281:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async file:///home/a/Documents/ChatGPT/newbot/scripts/test-issue06-native.mjs:331:17 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 503,
+  expected: 200,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v26.12.0

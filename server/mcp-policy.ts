@@ -1,6 +1,9 @@
 import type { ConfigReadResponse } from "../generated/codex/v2/ConfigReadResponse.js";
 export function mcpEditable(response: ConfigReadResponse, id: string) {
+  if ((response.config as any).newbot_plugin_connections?.[id]) return false;
   if (!/^[a-z][a-z0-9_-]{0,63}$/.test(id)) return false;
+  if ((response as any).runtimeExtensionRevision)
+    return (response as any).runtimeMcpIds?.includes(id) || false;
   const users =
     response.layers?.filter(
       (l) =>

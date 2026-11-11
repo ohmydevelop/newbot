@@ -7,7 +7,7 @@ import { randomUUID } from "node:crypto";
 import { createServer } from "../server/index.js";
 import { SkillsCodex } from "./skill-fixture.js";
 import { runStore } from "../server/runs.js";
-import { database } from "../server/db.js";
+import { database, DATABASE_VERSION } from "../server/db.js";
 import type { Json } from "../shared/types.js";
 const origin = "http://127.0.0.1:3100",
   password = "skill-run-test-password";
@@ -341,7 +341,7 @@ test("v2 database upgrade adds only the skill reference table and keeps existing
     const after = database(directory);
     assert.equal(
       (after.raw.prepare("PRAGMA user_version").get() as any).user_version,
-      7,
+      DATABASE_VERSION,
     );
     assert.equal(after.owns("old"), true);
     assert.equal(
@@ -355,5 +355,124 @@ test("v2 database upgrade adds only the skill reference table and keeps existing
     after.raw.close();
   } finally {
     rmSync(directory, { recursive: true, force: true });
+  }
+});
+
+test("next-message references survive restart, reject stale sends, and are consumed exactly once by dispatch", async () => {
+  const c = await setup();
+  try {
+    const first = await c.post({
+      requestId: randomUUID(),
+      text: "first without references",
+    });
+    assert.equal(first.statusCode, 200, first.body);
+    const threadId = first.json().threadId;
+    const action = (payload: any) =>
+      c.ctx.app.inject({
+        method: "POST",
+        url: "/api/agent/action",
+        headers: c.headers,
+        payload,
+      });
+    const chosen = await action({
+      action: "session/inputs",
+      threadId,
+      expectedRevision: 0,
+      skills: [c.selected],
+      plugins: [],
+    });
+    assert.equal(chosen.statusCode, 200, chosen.body);
+    assert.equal(
+      c.codex.calls
+        .filter((v) => v.method === "turn/start")
+        .at(-1)!
+        .params.input.filter((v: Json) => v.type === "skill").length,
+      0,
+    );
+    c.codex.finish(threadId);
+    await c.restart();
+    assert.equal(
+      c.ctx.service.inputs.get(threadId).skills[0].sha256,
+      c.selected.sha256,
+    );
+    const stale = await c.post({
+      requestId: randomUUID(),
+      threadId,
+      text: "stale",
+      inputRevision: 0,
+      skills: [c.selected],
+    });
+    assert.notEqual(stale.statusCode, 200);
+    assert.equal(c.ctx.service.inputs.get(threadId).revision, 1);
+    const request = {
+      requestId: randomUUID(),
+      threadId,
+      text: "selected next",
+      inputRevision: 1,
+      skills: [c.selected],
+    };
+    const result = await c.post(request);
+    assert.equal(result.statusCode, 200, result.body);
+    assert.equal(
+      c.codex.calls
+        .filter((v) => v.method === "turn/start")
+        .at(-1)!
+        .params.input.filter((v: Json) => v.type === "skill").length,
+      1,
+    );
+    assert.deepEqual(c.ctx.service.inputs.get(threadId), {
+      revision: 2,
+      skills: [],
+      plugins: [],
+    });
+    const count = c.codex.calls.filter((v) => v.method === "turn/start").length;
+    assert.equal((await c.post(request)).statusCode, 200);
+    assert.equal(
+      c.codex.calls.filter((v) => v.method === "turn/start").length,
+      count,
+    );
+    assert.equal(
+      (
+        await action({
+          action: "session/inputs",
+          threadId,
+          expectedRevision: 2,
+          skills: [c.selected],
+          plugins: [],
+        })
+      ).statusCode,
+      200,
+    );
+    c.ctx.service.inputs.consume(threadId, 1);
+    assert.equal(c.ctx.service.inputs.get(threadId).skills.length, 1);
+    c.codex.finish(threadId);
+    writeFileSync(c.doc.skill.path, "Changed after selection");
+    const invalid = await c.post({
+      requestId: randomUUID(),
+      threadId,
+      text: "stale skill",
+      inputRevision: 3,
+      skills: [c.selected],
+    });
+    assert.notEqual(invalid.statusCode, 200);
+    assert.equal(c.ctx.service.inputs.get(threadId).revision, 3);
+    assert.equal(
+      c.codex.calls.filter((v) => v.method === "turn/start").length,
+      count,
+    );
+    assert.equal(
+      (
+        await action({
+          action: "session/inputs",
+          threadId,
+          expectedRevision: 3,
+          skills: [],
+          plugins: [],
+        })
+      ).statusCode,
+      200,
+    );
+  } finally {
+    await c.close();
   }
 });

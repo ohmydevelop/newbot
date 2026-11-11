@@ -32,6 +32,8 @@ for (const [id, name, count] of [
     id,
     name,
     modelProvider: "fixture",
+    model:"fixture-model",
+    reasoningEffort:"medium",
     status: { type: "idle" },
     preview: name,
     updatedAt: Date.now() / 1000,
@@ -112,7 +114,8 @@ codex.call = (async (method: any, p: any) => {
   return result;
 }) as typeof codex.call;
 const ctx = await createServer({
-    providerRuntime: null,
+  webDirectory: process.env.UI_TEST_CANDIDATE,
+  providerRuntime: null,
   directory,
   cwd,
   codex,

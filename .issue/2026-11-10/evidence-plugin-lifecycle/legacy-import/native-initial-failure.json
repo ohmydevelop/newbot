@@ -1,0 +1,12 @@
+{
+  "stage": "mcp",
+  "error": "Error: Codex 操作失败：请求 28，请检查 Provider、配置和权限",
+  "stack": "Error: Codex 操作失败：请求 28，请检查 Provider、配置和权限\n    at Codex.receive (/home/a/Documents/ChatGPT/newbot/server/codex.ts:288:13)\n    at Interface.<anonymous> (/home/a/Documents/ChatGPT/newbot/server/codex.ts:201:40)\n    at Interface.emit (node:events:514:20)\n    at [_onLine] [as _onLine] (node:internal/readline/interface:477:12)\n    at [_normalWrite] [as _normalWrite] (node:internal/readline/interface:675:18)\n    at Socket.ondata (node:internal/readline/interface:271:23)\n    at Socket.emit (node:events:514:20)\n    at addChunk (node:internal/streams/readable:605:12)\n    at readableAddChunkPushByteMode (node:internal/streams/readable:556:3)\n    at Readable.push (node:internal/streams/readable:436:5)",
+  "checks": [
+    "single skill native discovery and install",
+    "ZIP upload, original executable assets, native scan and confirmed installation; completed staging released",
+    "129 skills scanned, 128 selected; import is independent of the eight-reference limit",
+    "portable + compatibility plugins installed with full packages, selected skills and no persistent config.toml preference",
+    "actual Responses request contains enabled standalone/plugin skills, excludes disabled siblings; >128 resources can start a native thread and preserve shared relative assets"
+  ]
+}

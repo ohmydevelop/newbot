@@ -1,8 +1,26 @@
+import { presentationInstructions } from "./presentation.js";
+import type { MediaStore } from "./media.js";
+import { experts as expertLibrary, expertContextText } from "./experts.js";
+import {
+  sessionExtensions,
+  type ExtensionSnapshot,
+} from "./session-extensions.js";
+import type { Workspaces } from "./workspaces.js";
+import { threadActivity } from "./thread-activity.js";
+import { effortSupport } from "../shared/reasoning.js";
 import { pluginUses } from "./plugin-uses.js";
 import { gatewaySave, newGatewayId } from "../shared/gateways.js";
 import { pluginLibrary } from "./plugins.js";
+import {
+  pluginConnections,
+  pluginConnectorInstructions,
+} from "./plugin-connections.js";
 import { sessionRuntime } from "./session-runtime.js";
-import { approvalParameters } from "../shared/runtime-settings.js";
+import { sessionInputs } from "./session-inputs.js";
+import {
+  approvalParameters,
+  compatibleDefaultEffort,
+} from "../shared/runtime-settings.js";
 import { PublicError } from "./public-error.js";
 import type { credentialVault } from "./credential-vault.js";
 import { credentialBinding } from "./credential-vault.js";
@@ -41,6 +59,7 @@ import type { Json, Thread, Turn, Item } from "../shared/types.js";
 import { AgentEvents } from "./ag-ui.js";
 import { publicThread } from "./view.js";
 import { appRegistry, sandboxDocument, appToolResult } from "./mcp-apps.js";
+import { toolDisplay } from "./tool-display.js";
 const id = z.string().min(1).max(200);
 export function bridge(
   codex: Codex,
@@ -50,13 +69,58 @@ export function bridge(
   artifacts: ArtifactStore,
   privateBusy: () => number = () => 0,
   vault?: ReturnType<typeof credentialVault>,
+  workspaces?: Workspaces,
+  media?: MediaStore,
 ) {
-  const apps = appRegistry(codex);
+  const threadCwd = (id: string) => workspaces?.root(id) || cwd;
+  codex.executionContext = (id) => ({
+    cwd: threadCwd(id),
+    developerInstructions: presentationInstructions(
+      db.get(`thread-ui:${id}`) === "v2",
+    ),
+    revision: workspaces?.saved(id).revision || "",
+    config: workspaces?.saved(id).snapshot.config || {},
+  });
   const library = skillLibrary(codex, cwd);
-  const configStore = configuration(codex, cwd, codex.providerRuntime);
+  const configStore = configuration(codex, cwd, codex.providerRuntime, vault);
   const mcpStore = mcpManager(codex, configStore, vault);
   const providerStore = providerManager(codex, db, configStore, vault);
-  const plugins = pluginLibrary(codex, cwd, configStore);
+  const connections = pluginConnections(db, configStore.extensions, vault);
+  const toolNames = toolDisplay(db, (threadId, server) => {
+    const snapshot =
+      threadId && db.owns(threadId)
+        ? workspaces?.saved(threadId).snapshot.config
+        : undefined;
+    return (
+      snapshot?.connector_names?.[server] ||
+      snapshot?.newbot_plugin_connections?.[server]?.server ||
+      connections.owner(server)?.server ||
+      configStore.extensions?.snapshot().values.connector_names?.[server]
+    );
+  });
+  const apps = appRegistry(codex, {
+    onCatalog: toolNames.remember,
+    decorateItem: toolNames.item,
+  });
+  if (configStore.extensions) codex.pluginConfiguration = connections.overlay;
+  const plugins = pluginLibrary(
+    codex,
+    cwd,
+    configStore,
+    db,
+    connections,
+    library,
+  );
+  const extensions = workspaces
+    ? sessionExtensions(codex, workspaces, configStore, library, plugins)
+    : undefined;
+  const extensionContext = codex.executionContext!;
+  codex.executionContext = (threadId) => ({
+    ...extensionContext(threadId),
+    developerInstructions:
+      presentationInstructions(db.get(`thread-ui:${threadId}`) === "v2") +
+      pluginConnectorInstructions(extensionContext(threadId).config),
+  });
   const runtimeSettings = sessionRuntime(
     codex,
     db,
@@ -64,27 +128,63 @@ export function bridge(
     configStore,
     providerStore,
     catalog,
+    threadCwd,
+    (threadId, runtime) =>
+      events.publish({
+        type: EventType.CUSTOM,
+        name: "newbot.session.runtime",
+        value: { threadId, runtime },
+        metadata: { threadId },
+      }),
+  );
+  const experts = expertLibrary(db, library, plugins, configStore);
+  const inputs = sessionInputs(db, library, plugins, (threadId, nextInput) =>
+    events.publish({
+      type: EventType.CUSTOM,
+      name: "newbot.session.inputs",
+      value: { threadId, nextInput },
+      metadata: { threadId },
+    }),
   );
   const uses = skillUses(db);
   const pluginRefs = pluginUses(db);
   const decorate = (thread: Thread) =>
-    pluginRefs.decorate(
-      Object.assign(
-        ui.decorate(
-          apps.decorate(
-            artifacts.decorate(files.decorate(uses.decorate(thread))),
+    experts.decorate(
+      pluginRefs.decorate(
+        Object.assign(
+          ui.decorate(
+            apps.decorate(
+              artifacts.decorate(
+                media
+                  ? media.decorate(files.decorate(uses.decorate(thread)))
+                  : files.decorate(uses.decorate(thread)),
+              ),
+            ),
           ),
+          {
+            uiCatalog: db.get(`thread-ui:${thread.id}`) || "v1",
+            runtime: runtimeSettings.get(thread.id),
+            nextInput: inputs.get(thread.id),
+          },
         ),
-        { runtime: runtimeSettings.get(thread.id) },
       ),
     );
   const events = new AgentEvents((threadId, turnId, item) =>
-    ui.decorateItem(threadId, turnId, item),
+    ui.decorateItem(
+      threadId,
+      turnId,
+      toolNames.item(
+        threadId,
+        media ? media.decorateItem(threadId, turnId, item) : item,
+      ),
+    ),
   );
+  const activity = threadActivity(db, (event) => events.publish(event));
   const ui = a2uiManager(
     codex,
     db,
     (threadId) => {
+      activity.uiWaiting(threadId, ui.waiting(threadId));
       const thread = events.threads.get(threadId);
       if (thread) {
         ui.decorate(thread);
@@ -97,14 +197,19 @@ export function bridge(
         ?.turns.some(
           (turn) => turn.id === turnId && turn.status === "inProgress",
         ) || false,
+    media?.resolveImage,
   );
-  const elicitation = elicitations(codex, db, (id, threadId) =>
-    events.publish({
-      type: EventType.CUSTOM,
-      name: "newbot.elicitation.expired",
-      value: { id, threadId },
-      metadata: { threadId },
-    }),
+  const elicitation = elicitations(
+    codex,
+    db,
+    (id, threadId) =>
+      events.publish({
+        type: EventType.CUSTOM,
+        name: "newbot.elicitation.expired",
+        value: { id, threadId },
+        metadata: { threadId },
+      }),
+    toolNames.approval,
   );
   const starting = new Set<string>();
   let models: Json[] = [];
@@ -126,8 +231,29 @@ export function bridge(
   let skills: Json[] = [];
   const grants = new Map<
     string,
-    { recordToken: string; tool: string; args: Json; expires: number }
+    { recordToken: string; tool: string; args: Json; expires: number; automatic?: { version: number; privateRevision?: string } }
   >();
+  async function appAutomaticPolicy(threadId: string) {
+    const selected = runtimeSettings.get(threadId);
+    if (selected.approval !== "full" || selected.applied?.approval !== "full") return undefined;
+    if (!(await runtimeSettings.presets(selected.model)).some((preset) => preset.id === "full" && preset.allowed)) return undefined;
+    const current = runtimeSettings.get(threadId);
+    if (current.version !== selected.version || current.approval !== "full" || current.applied?.approval !== "full") return undefined;
+    return { version: current.version || 0, privateRevision: codex.privateVersion?.(threadId) };
+  }
+  async function checkAppConfiguration(threadId: string, server: string) {
+    if (!configStore.extensions) return;
+    const current = (await configStore.read()).response.config as Json;
+    if (current.mcp_servers?.[server]?.enabled === false)
+      appFail("permission", "连接器已停用，请重新启用后操作", 403);
+    const snapshot = workspaces?.saved(threadId).snapshot.config;
+    const owner = snapshot?.newbot_plugin_connections?.[server] || connections.owner(server);
+    if (owner && (snapshot?.plugins?.[owner.pluginId]?.enabled !== true || current.plugins?.[owner.pluginId]?.enabled === false || configStore.extensions.snapshot().values.plugins[owner.pluginId]?.installed === false))
+      appFail("permission", "此会话未启用该插件，请在对话中引用后再操作", 403);
+  }
+  const appConfigurationRevision = (threadId: string) => JSON.stringify([
+    configStore.extensions?.revision, connections.version(), codex.privateVersion?.(threadId),
+  ]);
   apps.onRevoke((token) => {
     for (const [id, grant] of grants)
       if (grant.recordToken === token) grants.delete(id);
@@ -165,9 +291,48 @@ export function bridge(
       );
     }
   }
-  async function settings() {
-    await ensurePrivateBindings();
-    if (codex.state !== "ready")
+  type Discovery = { threadId: string; revision: string };
+  const discovery = new Map<string, Discovery>();
+  const discovering = new Map<string, Promise<string | undefined>>();
+  async function discoveryThread(refresh = false, pluginId = ""): Promise<string | undefined> {
+    if (!configStore.extensions) return undefined;
+    const existing = discovering.get(pluginId);
+    if (existing) return existing;
+    const operation = (async () => {
+      const before = await configStore.read();
+      const config = configStore.extensions!.config(before.response);
+      // Directory/status discovery is not a user plugin invocation. A plugin's
+      // explicit diagnostic may initialize its connectors, but never its hooks.
+      for (const plugin of Object.values(config.plugins || {}) as Json[]) plugin.enabled = false;
+      if (codex.runtimeCapabilities?.pinnedPluginRoots) config.plugins._default = {enabled:false};
+      for (const skill of config.skills?.config || []) skill.enabled = false;
+      for (const [name, owner] of Object.entries(config.newbot_plugin_connections || {}) as [string,Json][])
+        if (owner.pluginId !== pluginId && config.mcp_servers?.[name]) config.mcp_servers[name].enabled = false;
+      const revision = JSON.stringify([config, connections.version(), codex.privateVersion?.()]);
+      const previous = discovery.get(pluginId);
+      if (!refresh && previous?.revision === revision && codex.loaded.has(previous.threadId)) return previous.threadId;
+      if (previous) {
+        await codex.call("thread/unsubscribe", {threadId:previous.threadId}).catch(() => {});
+        codex.loaded.delete(previous.threadId);
+        discovery.delete(pluginId);
+      }
+      const result = await codex.call("thread/start", {cwd,ephemeral:true,config});
+      codex.loaded.add(result.thread.id);
+      discovery.set(pluginId,{threadId:result.thread.id,revision});
+      return result.thread.id;
+    })();
+    discovering.set(pluginId,operation);
+    try { return await operation; }
+    finally { if (discovering.get(pluginId) === operation) discovering.delete(pluginId); }
+  }
+  async function discoverMcp(pluginId = "") {
+    return apps.refresh(await discoveryThread(false,pluginId), pluginId ? `diagnostic:${pluginId}` : "");
+  }
+  let discoveredMcp: any[] = [];
+  let skillsWarnings = 0;
+  async function settings(discover = true) {
+    if (discover) await ensurePrivateBindings();
+    if (discover && codex.state !== "ready")
       configFail(
         "Codex 尚未就绪，请稍候",
         503,
@@ -176,10 +341,14 @@ export function bridge(
         "reconnect",
       );
     const results = await Promise.allSettled([
-      codex.call("model/list", { limit: 100 }),
+      discover
+        ? codex.call("model/list", { limit: 100 })
+        : Promise.resolve({ data: models }),
       configStore.read(),
-      library.list(),
-      apps.refresh(),
+      discover
+        ? library.list()
+        : Promise.resolve({ skills, warnings: skillsWarnings }),
+      discover ? discoverMcp() : Promise.resolve(discoveredMcp),
     ]);
     const values: any[] = results.map((r) =>
       r.status === "fulfilled" ? r.value : null,
@@ -208,32 +377,6 @@ export function bridge(
             credentials: "none",
           });
     }
-    if (vault && values[1]?.publicView) {
-      for (const p of values[1].publicView.providers)
-        Object.assign(p, {
-          managedCredential: vault.info(
-            "provider",
-            p.id,
-            values[1].response.config,
-            codex.credentialRefs,
-          ),
-          credentialEditable:
-            p.editable &&
-            !!credentialBinding("provider", p.id, values[1].response.config),
-        });
-      for (const m of values[1].publicView.mcp)
-        Object.assign(m, {
-          managedCredential: vault.info(
-            "mcp",
-            m.id,
-            values[1].response.config,
-            codex.credentialRefs,
-          ),
-          credentialEditable:
-            m.editable &&
-            !!credentialBinding("mcp", m.id, values[1].response.config),
-        });
-    }
     const config = values[1]?.response.config || {};
     if (values[1]) currentProvider = config.model_provider || "openai";
     if (values[1])
@@ -260,6 +403,8 @@ export function bridge(
         models.find((m) => m.model === currentModel)?.defaultReasoningEffort ||
         "";
     skills = values[2]?.skills || [];
+    skillsWarnings = values[2]?.warnings || 0;
+    discoveredMcp = values[3] || [];
     return {
       models,
       configuration: values[1]?.publicView || null,
@@ -274,9 +419,9 @@ export function bridge(
       })),
       model: config.model || currentModel,
       effort: currentEffort,
-      skills,
+      skills: skills.filter((s) => !s.pluginId),
       skillsWarnings: values[2]?.warnings || 0,
-      mcp: (values[3] || []).map(publicMcpStatus),
+      mcp: (values[3] || []).map(pluginMcpStatus),
       errors: results.flatMap((r, i) =>
         r.status === "rejected"
           ? [
@@ -290,6 +435,44 @@ export function bridge(
       cwd,
       maxActiveTurns: maxTurns,
       maintenance,
+    };
+  }
+  async function discoverSettings(section: string) {
+    if (section === "skills") {
+      const result = await library.list();
+      skills = result.skills;
+      skillsWarnings = result.warnings;
+      return { skills: skills.filter((s) => !s.pluginId), skillsWarnings };
+    }
+    if (section === "mcp") {
+      discoveredMcp = await discoverMcp();
+      return { mcp: discoveredMcp.map(pluginMcpStatus) };
+    }
+    if (section === "models") {
+      const result = await codex.call("model/list", { limit: 100 });
+      models = result.data.filter((m) => !m.hidden);
+      let cursor = result.nextCursor;
+      while (cursor) {
+        const page = await codex.call("model/list", { limit: 100, cursor });
+        models.push(...page.data.filter((m) => !m.hidden));
+        cursor = page.nextCursor;
+      }
+      return { models };
+    }
+    throw new PublicError("未知目录");
+  }
+  function pluginMcpStatus(raw: any) {
+    const owner = connections.owner(raw.name);
+    return {
+      ...publicMcpStatus(raw),
+      ...(owner
+        ? {
+            plugin: true,
+            pluginId: owner.pluginId,
+            pluginServer: owner.server,
+            ownershipSource: owner.source,
+          }
+        : {}),
     };
   }
   async function read(threadId: string, cursor?: string) {
@@ -331,14 +514,21 @@ export function bridge(
     if (cursor) return thread;
     return events.seed(thread);
   }
-  function requireIdle(ownPrivate = false) {
+  async function readObserved(threadId: string, cursor?: string) {
+    const observed = activity.revision(threadId);
+    const thread = await read(threadId, cursor);
+    if (!cursor)
+      activity.reconcile(thread, codex.active.has(thread.id), true, observed);
+    return thread;
+  }
+  function requireIdle(ownPrivate = false, ownStart?: string) {
     for (const [key, grant] of grants)
       if (grant.expires < Date.now()) grants.delete(key);
     if (
       maintenance ||
       draining ||
       inflight > 1 ||
-      starting.size ||
+      [...starting].some((id) => id !== ownStart) ||
       codex.active.size ||
       codex.approvals.size ||
       codex.toolRequests.size ||
@@ -428,7 +618,12 @@ export function bridge(
       events.publish({
         type: EventType.CUSTOM,
         name: "newbot.configuration.changed",
-        value: { storage: configStore.runtime.storage },
+        value: {
+          scope: "provider",
+          targetId: params.id,
+          configuration: result.configuration,
+          storage: configStore.runtime.storage,
+        },
       });
       return { state: result.state, configuration: result.configuration };
     }
@@ -485,16 +680,24 @@ export function bridge(
       maintenance = false;
     }
   }
-  async function ensureProviderAuthentication(provider: string) {
-    if (!configStore.runtime || !vault) return;
+  async function ensureProviderAuthentication(
+    provider: string,
+    ownStart?: string,
+  ) {
+    if (!configStore.runtime || !vault || codex.privateConfiguration) return;
     const snapshot = await configStore.read();
     const ref = (snapshot.response.config.model_providers as any)?.[provider]
       ?.env_key;
     if (!managedCredential(ref) || codex.credentialRefs.has(ref)) return;
     if (!vault.validRefs(snapshot.response.config).has(ref))
       throw new PublicError("此网关的凭证尚未就绪，请重新设置私密凭证");
-    requireIdle();
-    await reloadProviderConfiguration();
+    requireIdle(false, ownStart);
+    maintenance = true;
+    try {
+      await reloadProviderConfiguration();
+    } finally {
+      maintenance = false;
+    }
     if (!codex.credentialRefs.has(ref))
       throw new PublicError("此网关的凭证尚未载入，请重新连接后再试");
   }
@@ -515,6 +718,38 @@ export function bridge(
     apps.clear();
   }
   async function mcpOperation(method: string, params: Json) {
+    if (configStore.extensions && ["mcp/test", "mcp/reload"].includes(method)) {
+      await mcpStore.check(params, method === "mcp/test");
+      const threadId = await discoveryThread(true);
+      if (method === "mcp/test") return mcpStore.test(params, threadId);
+      await apps.refresh(threadId, "");
+      return {
+        state: "reloaded",
+        configuration: (await configStore.read()).publicView,
+      };
+    }
+
+    if (
+      configStore.extensions &&
+      ["mcp/save", "mcp/delete", "mcp/enabled"].includes(method)
+    ) {
+      const saved =
+        method === "mcp/save"
+          ? await mcpStore.save(params)
+          : method === "mcp/delete"
+            ? await mcpStore.remove(params)
+            : await mcpStore.enabled(params);
+      events.publish({
+        type: EventType.CUSTOM,
+        name: "newbot.configuration.changed",
+        value: {
+          scope: "mcp",
+          targetId: params.id,
+          configuration: saved.configuration,
+        },
+      });
+      return { state: saved.state, configuration: saved.configuration };
+    }
     requireIdle();
     maintenance = true;
     let baseline: string | undefined,
@@ -628,7 +863,7 @@ export function bridge(
           "unconfirmed",
           "reconnect",
         );
-      const actual = await settings();
+      const actual = await settings(!configStore.runtime);
       if (!actual.configuration) {
         codex.offline("配置仍不可读，请修复配置后重新连接");
         configFail(
@@ -901,6 +1136,17 @@ export function bridge(
       const before = await configStore.read();
       const values = providerRuntimeValues(data);
       const prior = (before.response.config.model_providers || {}) as Json;
+      for (const id of Object.keys(prior)) {
+        if (
+          !values.model_providers[id] &&
+          db.raw
+            .prepare(
+              "SELECT 1 FROM session_runtime_pending WHERE json_extract(candidate,'$.provider')=? LIMIT 1",
+            )
+            .get(id)
+        )
+          throw new PublicError("待应用的会话设置仍引用此网关，请先撤销或修改");
+      }
       for (const p of data.providers) {
         if (
           providerReserved.has(p.id) ||
@@ -980,16 +1226,36 @@ export function bridge(
       return (await configStore.read()).publicView;
     },
     ui,
+    async publishExtensionAssets<T>(fn: (core: ReturnType<typeof configuration>) => Promise<T>) {
+      if (!codex.runtimeCapabilities?.pinnedPluginRoots || !configStore.extensions)
+        throw new PublicError("运行时尚不支持资源版本隔离");
+      const result = await fn(configStore);
+      events.publish({ type: EventType.CUSTOM, name: "newbot.configuration.changed", value: { scope: "extensions" } });
+      return result;
+    },
+    async mutateExtensionAssets<T>(
+      fn: (core: ReturnType<typeof configuration>) => Promise<T>,
+    ) {
+      requireIdle();
+      maintenance = true;
+      try {
+        return await fn(configStore);
+      } finally {
+        apps.clear();
+        maintenance = false;
+      }
+    },
     async inspectPrivateConfiguration<T>(
       fn: (core: ReturnType<typeof configuration>) => Promise<T>,
     ) {
-      requireIdle(true);
+      if (!codex.privateConfiguration) requireIdle(true);
       return fn(configStore);
     },
     async privateConfiguration<T>(
       own: boolean,
       fn: (core: ReturnType<typeof configuration>) => Promise<T>,
     ) {
+      if (codex.privateConfiguration) return fn(configStore);
       requireIdle(own);
       maintenance = true;
       try {
@@ -999,6 +1265,7 @@ export function bridge(
       }
     },
     async reloadPrivateRuntime() {
+      if (codex.privateConfiguration) return settings(false);
       return reloadProviderConfiguration();
     },
     async preparePrivateProbe(revision: string, providerId: string) {
@@ -1015,10 +1282,17 @@ export function bridge(
       return maintenance || draining;
     },
     events,
+    activity,
     settings,
+    configuration: configStore,
+    discoverSettings,
     runtimeSettings,
+    inputs,
+    extensions,
+    experts,
     plugins,
-    read,
+    pluginConnections: connections,
+    read: readObserved,
     async handle(method: string, p: Json, context?: { sessionId: string }) {
       if (method === "app/close") {
         const data = z
@@ -1112,18 +1386,114 @@ export function bridge(
             );
             return { maintenance: draining };
           }
+          case "expert/list":
+            return experts.list();
+          case "expert/read":
+            return experts.read(id.parse(p.id));
+          case "expert/save": {
+            const { action, ...data } = p;
+            const result = await experts.save(data);
+            events.publish({
+              type: EventType.CUSTOM,
+              name: "newbot.configuration.changed",
+              value: { scope: "experts" },
+            });
+            return result;
+          }
+          case "expert/delete": {
+            const { action, ...data } = p;
+            const result = experts.remove(data);
+            events.publish({
+              type: EventType.CUSTOM,
+              name: "newbot.configuration.changed",
+              value: { scope: "experts" },
+            });
+            return result;
+          }
+          case "session/extensions": {
+            const threadId = id.parse(p.threadId);
+            own(threadId);
+            const { action, ...data } = p;
+            const result = await experts.update(data);
+            events.publish({
+              type: EventType.CUSTOM,
+              name: "newbot.session.extensions",
+              value: { threadId, extensions: result },
+              metadata: { threadId },
+            });
+            return result;
+          }
+          case "session/inputs":
+            return inputs.update(p);
           case "plugin/list":
             return plugins.list(p.includeTools === true);
           case "plugin/read":
             return plugins.read(id.parse(p.id));
+          case "plugin/skill/read":
+          case "plugin/skill/enabled": {
+            const result = await plugins.skill(method, p);
+            if (method === "plugin/skill/enabled")
+              events.publish({
+                type: EventType.CUSTOM,
+                name: "newbot.configuration.changed",
+                value: { scope: "extensions" },
+              });
+            return result;
+          }
+          case "plugin/connection/test": {
+            const detail = await plugins.read(id.parse(p.pluginId));
+            const connection = detail.connections.find(
+              (c) => c.id === p.connectionId,
+            );
+            if (
+              !detail.enabled ||
+              !connection?.enabled ||
+              !connection.configured ||
+              connection.reason
+            )
+              throw new PublicError("请先启用插件并完成连接器配置");
+            const statuses = await discoverMcp(detail.id);
+            const status = statuses.find((s) => s.name === connection.id);
+            if (!status)
+              throw new PublicError("连接器尚未就绪，请检查配置后重试");
+            const result = pluginMcpStatus(status);
+            if (
+              result.authStatus !== "notLoggedIn" &&
+              result.runtimeStatus !== "authenticationRequired" &&
+              (result.runtimeStatus === "failed" || result.toolsError)
+            )
+              throw new PublicError("连接未成功，请核对插件配置后重试");
+            return result;
+          }
           case "plugin/install":
+          case "plugin/update":
           case "plugin/uninstall":
           case "plugin/enabled": {
+            if (
+              method === "plugin/uninstall" &&
+              !codex.runtimeCapabilities?.pinnedPluginRoots &&
+              inputs.references("plugins", id.parse(p.id))
+            )
+              throw new PublicError("下一条消息仍引用此插件，请先移除引用");
+            if ((method === "plugin/enabled" || codex.runtimeCapabilities?.pinnedPluginRoots) && configStore.extensions) {
+              const result = await plugins.mutate(method, p);
+              events.publish({
+                type: EventType.CUSTOM,
+                name: "newbot.configuration.changed",
+                value: { scope: "extensions" },
+              });
+              return result;
+            }
             requireIdle();
             maintenance = true;
             try {
               const result = await plugins.mutate(method, p);
               apps.clear();
+              events.publish({
+                type: EventType.CUSTOM,
+                name: "newbot.configuration.changed",
+                value: { scope: "extensions" },
+              });
               return result;
             } finally {
               maintenance = false;
@@ -1134,7 +1504,10 @@ export function bridge(
               p.model === undefined ? undefined : id.parse(p.model),
             );
           case "gateway/catalog":
-            return runtimeSettings.catalog(p.refresh === true);
+            return runtimeSettings.catalog(
+              p.refresh === true,
+              typeof p.id === "string" ? p.id : undefined,
+            );
           case "gateway/defaults": {
             if (!configStore.runtime) requireIdle();
             const result = await runtimeSettings.defaults(p);
@@ -1142,14 +1515,18 @@ export function bridge(
               events.publish({
                 type: EventType.CUSTOM,
                 name: "newbot.configuration.changed",
-                value: { storage: configStore.runtime.storage },
+                value: {
+                  scope: "defaults",
+                  configuration: result.configuration,
+                  storage: configStore.runtime.storage,
+                },
               });
             return result;
           }
           case "session/update": {
             const threadId = id.parse(p.threadId);
             own(threadId);
-            if (
+            const defer = !!(
               starting.has(threadId) ||
               codex.active.has(threadId) ||
               privateBusy() ||
@@ -1157,13 +1534,12 @@ export function bridge(
                 ...codex.approvals.values(),
                 ...codex.toolRequests.values(),
               ].some((a) => (a.params as Json).threadId === threadId)
-            )
-              throw new PublicError("当前会话有任务或授权待处理");
-            starting.add(threadId);
+            );
+            if (!defer) starting.add(threadId);
             try {
-              return await runtimeSettings.update(p);
+              return await runtimeSettings.update(p, defer);
             } finally {
-              starting.delete(threadId);
+              if (!defer) starting.delete(threadId);
             }
           }
           case "configuration/recover":
@@ -1185,9 +1561,13 @@ export function bridge(
             const result = await providerOperation("provider/save", {
               id: gatewayId,
               create: !data.targetId || restoring,
+              rebindCredentials: data.rebindCredentials,
               expectedRevision: data.expectedRevision,
               patch: {
                 name: data.name,
+                ...(data.customModels !== undefined
+                  ? { customModels: data.customModels }
+                  : {}),
                 ...(data.baseUrl ? { baseUrl: data.baseUrl } : {}),
               },
             });
@@ -1274,46 +1654,75 @@ export function bridge(
             );
             const requestedEffort =
               p.effort ||
-              (configStore.runtime
-                ? configStore.runtime.snapshot(p.providerConfigRevision).values
-                    .model_reasoning_effort
-                : "");
+              compatibleDefaultEffort(
+                selected,
+                selectedProvider === currentProvider &&
+                  selected?.model === currentModel
+                  ? currentEffort
+                  : undefined,
+              );
             if (
               requestedEffort &&
-              !selected?.supportedReasoningEfforts?.some(
-                (e: Json) => e.reasoningEffort === requestedEffort,
-              )
+              effortSupport(selected, requestedEffort) === "unsupported"
             )
               throw new PublicError("模型不支持该推理强度，请重新选择");
-            const r = await codex.call("thread/start", {
-              ...(configStore.runtime
-                ? { providerConfigRevision: p.providerConfigRevision }
-                : {}),
-              dynamicTools: [a2uiTool],
-              cwd,
-              model: selected?.model,
-              ...(selected?.defaultReasoningEffort
-                ? {
-                    config: {
-                      model_reasoning_effort:
-                        requestedEffort ||
-                        (selected.model === currentModel &&
-                        selected.supportedReasoningEfforts.some(
-                          (e: Json) => e.reasoningEffort === currentEffort,
-                        )
-                          ? currentEffort
-                          : selected.defaultReasoningEffort),
-                    },
-                  }
-                : {}),
-              modelProvider: data.provider || undefined,
-              approvalPolicy: approvalParameters(selectedApproval, cwd)
-                .approvalPolicy,
-              approvalsReviewer: approvalParameters(selectedApproval, cwd)
-                .approvalsReviewer,
-              sandbox: approvalParameters(selectedApproval, cwd).sandbox,
-            });
+            const workspace = workspaces?.allocate();
+            const runCwd = workspace?.root || cwd;
+            const extensionSnapshot =
+              p.extensionSnapshot || (await extensions?.capture(p.plugins || []));
+            const preparedExtensions = extensionSnapshot
+              ? await extensions!.prepare(runCwd, extensionSnapshot)
+              : undefined;
+            let r;
+            try {
+              r = await codex.call("thread/start", {
+                ...(codex.privateConfiguration
+                  ? { privateRunId: p.privateRunId }
+                  : {}),
+                ...(configStore.runtime
+                  ? { providerConfigRevision: p.providerConfigRevision }
+                  : {}),
+                dynamicTools: [a2uiTool],
+                developerInstructions:
+                  presentationInstructions(true) +
+                  pluginConnectorInstructions(
+                    preparedExtensions?.snapshot.config,
+                  ),
+                cwd: runCwd,
+                model: selected?.model,
+                config: {
+                  ...preparedExtensions?.snapshot.config,
+                  ...(requestedEffort
+                    ? { model_reasoning_effort: requestedEffort }
+                    : {}),
+                },
+                modelProvider: data.provider || undefined,
+                approvalPolicy: approvalParameters(selectedApproval, runCwd)
+                  .approvalPolicy,
+                approvalsReviewer: approvalParameters(selectedApproval, runCwd)
+                  .approvalsReviewer,
+                sandbox: approvalParameters(selectedApproval, runCwd).sandbox,
+              });
+            } catch (error) {
+              await preparedExtensions?.rollback();
+              throw error;
+            }
             db.addThread(r.thread.id, r.thread.modelProvider);
+            db.set(`thread-ui:${r.thread.id}`, "v2");
+            if (workspace) workspaces!.bind(r.thread.id, workspace);
+            experts.attach(r.thread.id, p.expertId);
+            if (preparedExtensions && workspaces) {
+              workspaces.confirm(
+                r.thread.id,
+                preparedExtensions.snapshot.revision,
+                preparedExtensions.snapshot,
+              );
+              await preparedExtensions.commit();
+            }
+            codex.threadExecutionRevisions.set(
+              r.thread.id,
+              preparedExtensions?.snapshot.revision || "",
+            );
             db.raw
               .prepare(
                 "INSERT OR REPLACE INTO session_runtime VALUES(?,0,?,?,?,?)",
@@ -1322,7 +1731,7 @@ export function bridge(
                 r.thread.id,
                 r.thread.modelProvider,
                 selected?.model || "",
-                p.effort || selected?.defaultReasoningEffort || "",
+                requestedEffort || "",
                 selectedApproval,
               );
             codex.loaded.add(r.thread.id);
@@ -1331,11 +1740,11 @@ export function bridge(
             return view;
           }
           case "thread/read":
-            return read(id.parse(p.threadId), p.cursor);
+            return readObserved(id.parse(p.threadId), p.cursor);
           case "thread/resume": {
             const threadId = id.parse(p.threadId);
             own(threadId);
-            const session = runtimeSettings.get(threadId);
+            const session = runtimeSettings.applied(threadId);
             const resumed = await codex.resume(
               threadId,
               session.provider,
@@ -1382,12 +1791,27 @@ export function bridge(
               throw new PublicError("当前任务正在执行");
             if (new Set([...codex.active, ...starting]).size >= maxTurns)
               throw new PublicError("并行任务已满，请等待任务结束");
-            await ensureProviderAuthentication(
-              runtimeSettings.get(data.threadId).provider,
-            );
             starting.add(data.threadId);
             try {
+              if (
+                p.extensionRevision !== undefined &&
+                p.extensionRevision !== experts.session(data.threadId).revision
+              )
+                throw new PublicError("会话专家已变化，请重新读取后发送");
+              if (
+                p.inputRevision !== undefined &&
+                p.inputRevision !== inputs.get(data.threadId).revision
+              )
+                throw new PublicError(
+                  "下一条消息的扩展已变化，请重新读取后发送",
+                );
               const session = runtimeSettings.get(data.threadId);
+              data.model ??= session.model || undefined;
+              data.effort ??= session.effort || undefined;
+              await ensureProviderAuthentication(
+                session.provider,
+                data.threadId,
+              );
               if (
                 p.runtimeRevision !== undefined &&
                 p.runtimeRevision !== session.revision
@@ -1410,6 +1834,7 @@ export function bridge(
               const model = discovered.find(
                 (m: Json) => m.model === data.model,
               );
+              data.effort ||= model?.defaultReasoningEffort || undefined;
               if (data.model && !model)
                 throw new PublicError("请从已发现的模型中选择");
               if (
@@ -1417,11 +1842,26 @@ export function bridge(
                 !(
                   data.model === session.model && data.effort === session.effort
                 ) &&
-                !model?.supportedReasoningEfforts.some(
-                  (e: Json) => e.reasoningEffort === data.effort,
-                )
+                effortSupport(model, data.effort) === "unsupported"
               )
                 throw new PublicError("模型不支持该推理强度");
+              await runtimeSettings.apply(
+                data.threadId,
+                session.revision,
+                p.providerConfigRevision,
+              );
+              const extensionSnapshot: ExtensionSnapshot | undefined =
+                p.extensionSnapshot || (await extensions?.capture(p.plugins || []));
+              await connections.requireConfigured(
+                data.plugins,
+                extensionSnapshot?.config,
+              );
+              await extensions?.sync(
+                data.threadId,
+                extensionSnapshot,
+                session,
+                p.providerConfigRevision,
+              );
               const resumed = await codex.resume(
                 data.threadId,
                 session.provider,
@@ -1430,6 +1870,44 @@ export function bridge(
                 p.providerConfigRevision,
               );
               if (!session.model) runtimeSettings.adopt(data.threadId, resumed);
+              const pluginConnectors = Object.entries(
+                extensionSnapshot?.config.newbot_plugin_connections || {},
+              ).filter(
+                ([name, owner]: [string, any]) =>
+                  data.plugins.includes(owner.pluginId) &&
+                  extensionSnapshot?.config.mcp_servers?.[name]?.enabled !==
+                    false,
+              );
+              if (extensionSnapshot || p.connectorIds?.length) {
+                const available = await apps.refresh(data.threadId);
+                for (const name of new Set([
+                  ...(p.connectorIds || []),
+                  ...pluginConnectors.map(([name]) => name),
+                ])) {
+                  const server = available.find((s) => s.name === name);
+                  if (
+                    !server ||
+                    [
+                      "disabled",
+                      "failed",
+                      "cancelled",
+                      "authenticationRequired",
+                      "notStarted",
+                      "starting",
+                    ].includes(server.runtimeStatus) ||
+                    server.toolsError
+                  ) {
+                    const owner = pluginConnectors.find(
+                      ([id]) => id === name,
+                    )?.[1] as any;
+                    throw new PublicError(
+                      owner
+                        ? `插件的连接器“${owner.server}”未就绪，请在插件设置中检查连接后重试`
+                        : `专家的连接器“${name}”未就绪，请检查连接后重试`,
+                    );
+                  }
+                }
+              }
               await read(data.threadId);
               db.touch(data.threadId);
               const row = db.raw
@@ -1449,8 +1927,21 @@ export function bridge(
               const selectedPlugins = await plugins.prepare(data.plugins);
               const input = [
                 { type: "text" as const, text: data.text, text_elements: [] },
+                ...(p.expertSnapshot && p.connectorIds?.length
+                  ? [
+                      {
+                        type: "text" as const,
+                        text: expertContextText(
+                          p.expertSnapshot,
+                          p.connectorIds,
+                        ),
+                        text_elements: [],
+                      },
+                    ]
+                  : []),
                 ...files.inputs(data.attachments),
-                ...prepared.inputs,
+                ...(extensions?.inputPaths(data.threadId, prepared.inputs) ||
+                  prepared.inputs),
                 ...selectedPlugins.inputs,
               ];
               if (typeof p.onDispatch === "function")
@@ -1459,15 +1950,24 @@ export function bridge(
                 threadId: data.threadId,
                 clientUserMessageId: data.clientUserMessageId,
                 input,
+                ...(extensionSnapshot
+                  ? { disabledPluginIds: extensionSnapshot.disabledPluginIds }
+                  : {}),
                 model: data.model,
                 effort:
                   data.effort || model?.defaultReasoningEffort || undefined,
-                approvalPolicy: approvalParameters(session.approval, cwd)
-                  .approvalPolicy,
-                approvalsReviewer: approvalParameters(session.approval, cwd)
-                  .approvalsReviewer,
-                sandboxPolicy: approvalParameters(session.approval, cwd)
-                  .sandboxPolicy,
+                approvalPolicy: approvalParameters(
+                  session.approval,
+                  threadCwd(data.threadId),
+                ).approvalPolicy,
+                approvalsReviewer: approvalParameters(
+                  session.approval,
+                  threadCwd(data.threadId),
+                ).approvalsReviewer,
+                sandboxPolicy: approvalParameters(
+                  session.approval,
+                  threadCwd(data.threadId),
+                ).sandboxPolicy,
               });
               const observedStatus = events.threads
                 .get(data.threadId)
@@ -1563,11 +2063,24 @@ export function bridge(
               .parse(p);
             if (!skills.some((s) => s.path === data.path))
               throw new PublicError("未知 Skill");
+            if (skills.some((s) => s.path === data.path && s.pluginId))
+              throw new PublicError("请在所属插件中管理此技能");
+            if (codex.extensionRuntime) {
+              codex.extensionRuntime.setSkill(data.path, data.enabled);
+              events.publish({
+                type: EventType.CUSTOM,
+                name: "newbot.configuration.changed",
+                value: { scope: "extensions" },
+              });
+              return {};
+            }
             return codex.call(method, data);
           }
           case "skills/uninstall": {
-            requireIdle();
-            maintenance = true;
+            const selected = await library.read(z.string().regex(/^[a-f0-9]{64}$/).parse(p.id));
+            const versioned = codex.runtimeCapabilities?.pinnedPluginRoots && configStore.extensions?.resources.packages().some((pkg) => pkg.kind === "skills" && selected.skill.path.startsWith(pkg.path + "/"));
+            if (!versioned) requireIdle();
+            if (!versioned) maintenance = true;
             try {
               const data = z
                 .strictObject({
@@ -1576,24 +2089,30 @@ export function bridge(
                   sha256: z.string().regex(/^[a-f0-9]{64}$/),
                 })
                 .parse(p);
+              if (!versioned && inputs.references("skills", data.id))
+                throw new PublicError("下一条消息仍引用此技能，请先移除引用");
               const result = await library.uninstall(data.id, data.sha256);
               db.audit("skills/uninstall", data.id, "archived");
               return result;
             } finally {
-              maintenance = false;
+              if (!versioned) maintenance = false;
             }
           }
           case "mcp/oauth": {
             requireIdle();
             const name = id.parse(p.name);
-            const catalog = await apps.refresh();
+            const probeThread = await discoveryThread(false, connections.owner(name)?.pluginId || "");
+            const catalog = await apps.refresh(probeThread, "");
             if (!catalog.some((s) => s.name === name))
               throw new PublicError("未知 MCP Server");
             if (oauthUntil > Date.now())
               throw new PublicError("已有 OAuth 授权正在进行");
             oauthUntil = Date.now() + 600000;
             try {
-              return await codex.call("mcpServer/oauth/login", { name });
+              return await codex.call("mcpServer/oauth/login", {
+                name,
+                ...(probeThread ? { threadId: probeThread } : {}),
+              });
             } catch (e) {
               oauthUntil = 0;
               throw e;
@@ -1680,7 +2199,7 @@ export function bridge(
                   "Codex 暂不可用，请恢复连接后重新打开应用",
                   503,
                 );
-              const session = runtimeSettings.get(data.threadId);
+              const session = runtimeSettings.applied(data.threadId);
               await codex.resume(
                 data.threadId,
                 session.provider,
@@ -1740,6 +2259,11 @@ export function bridge(
                 tools: [...record.tools],
                 expiresAt: record.expires,
                 hostPolicy: appHostPolicy(record.tools.size > 0),
+                display: toolNames.get(
+                  record.threadId,
+                  record.server,
+                  record.tool,
+                ),
                 source: {
                   threadId: record.threadId,
                   turnId: record.turnId,
@@ -1770,6 +2294,12 @@ export function bridge(
               context?.sessionId,
             );
             own(record.threadId);
+            const receiverRevision = appConfigurationRevision(record.threadId);
+            await checkAppConfiguration(record.threadId, record.server);
+            const automatic = await appAutomaticPolicy(record.threadId);
+            if (receiverRevision !== appConfigurationRevision(record.threadId))
+              appFail("permission", "连接器配置已变化，请重新发起操作", 403);
+            apps.validate(data.token, data.tool, context?.sessionId);
             for (const [key, grant] of grants)
               if (grant.expires < Date.now()) grants.delete(key);
             if (grants.size >= 100) throw new PublicError("待审批请求过多");
@@ -1779,17 +2309,20 @@ export function bridge(
               tool: data.tool,
               args: data.arguments,
               expires: Math.min(Date.now() + 120000, record.expires),
+              automatic,
             });
             return {
               grant,
+              authorization: automatic ? "session-policy" : "user",
               server: record.server,
               tool: data.tool,
+              display: toolNames.get(record.threadId, record.server, data.tool),
               expiresAt: Math.min(Date.now() + 120000, record.expires),
             };
           }
           case "app/call/approve": {
             const data = z
-              .object({ grant: id, allow: z.boolean() })
+              .object({ grant: id, allow: z.boolean(), authorization: z.enum(["user", "session-policy"]).optional() })
               .strict()
               .parse(p);
             const grant = grants.get(data.grant);
@@ -1815,10 +2348,20 @@ export function bridge(
               context?.sessionId,
             );
             own(record.threadId);
+            const receiverRevision = appConfigurationRevision(record.threadId);
+            await checkAppConfiguration(record.threadId, record.server);
+            if (data.authorization === "session-policy") {
+              const policy = await appAutomaticPolicy(record.threadId);
+              if (!grant.automatic || !policy || policy.version !== grant.automatic.version || policy.privateRevision !== grant.automatic.privateRevision)
+                appFail("permission", "会话权限或凭证已变化，请重新发起操作", 403);
+            }
+            if (receiverRevision !== appConfigurationRevision(record.threadId))
+              appFail("permission", "连接器配置已变化，请重新发起操作", 403);
+            apps.validate(grant.recordToken, grant.tool, context?.sessionId);
             db.audit(
               "mcp-app-tool",
               `${record.server}/${grant.tool}`,
-              "allow-once",
+              data.authorization === "session-policy" ? "session-policy:full" : "allow-once",
             );
             try {
               return appToolResult(

@@ -1,11 +1,17 @@
+import ChartView from "../Chart";
+import { MediaImage } from "../MediaImage";
 import { createContext, useContext, useId } from "react";
 import { Catalog } from "@a2ui/web_core/v0_9";
 import {
   createComponentImplementation,
   type ReactCatalogComponent,
 } from "@a2ui/react/v0_9";
-import { a2uiApis } from "../../../shared/a2ui-catalog.js";
-import { A2UI_CATALOG_ID, A2UI_LIMITS } from "../../../shared/a2ui-policy.js";
+import { a2uiApis, richA2uiApis } from "../../../shared/a2ui-catalog.js";
+import {
+  A2UI_RICH_CATALOG_ID,
+  A2UI_CATALOG_ID,
+  A2UI_LIMITS,
+} from "../../../shared/a2ui-policy.js";
 
 export const A2uiControls = createContext({
   disabled: false,
@@ -157,6 +163,58 @@ const Button = createComponentImplementation(
   },
 );
 
+const Image = createComponentImplementation(richA2uiApis.Image, ({ props }) => (
+  <MediaImage
+    media={{
+      id: props.source,
+      state: "ready",
+      url: props.source,
+      label: props.alt,
+    }}
+  />
+));
+const Metric = createComponentImplementation(
+  richA2uiApis.Metric,
+  ({ props }) => (
+    <div className="a2ui-metric">
+      <span>{props.label}</span>
+      <strong>{props.value}</strong>
+      {props.detail && <small>{props.detail}</small>}
+    </div>
+  ),
+);
+const SourceLink = createComponentImplementation(
+  richA2uiApis.SourceLink,
+  ({ props }) => (
+    <a href={props.url} target="_blank" rel="noopener noreferrer">
+      {props.label}
+    </a>
+  ),
+);
+const Chart = createComponentImplementation(richA2uiApis.Chart, ({ props }) => (
+  <ChartView
+    code={JSON.stringify({
+      title: { text: props.title, textStyle: { fontSize: 14 } },
+      tooltip: {},
+      legend: { bottom: 0 },
+      grid: { left: 48, right: 20, top: 48, bottom: 64 },
+      ...(props.kind !== "pie"
+        ? {
+            xAxis: { type: "category", data: props.labels },
+            yAxis: { type: "value" },
+          }
+        : {}),
+      series: props.series.map((s) => ({
+        name: s.name,
+        type: props.kind,
+        data:
+          props.kind === "pie"
+            ? s.values.map((value, i) => ({ name: props.labels[i], value }))
+            : s.values,
+      })),
+    })}
+  />
+));
 // 0.14's React factory drops parent/child policy fields; copy them explicitly.
 const implementations = [
   Text,
@@ -169,11 +227,19 @@ const implementations = [
   ...a2uiApis[implementation.name as keyof typeof a2uiApis],
   ...implementation,
 }));
-export function createA2uiCatalog() {
+export function createA2uiCatalog(id: string = A2UI_CATALOG_ID) {
   return new Catalog<ReactCatalogComponent>(
-    A2UI_CATALOG_ID,
+    id,
     "0.9",
-    implementations,
+    id === A2UI_RICH_CATALOG_ID
+      ? [
+          ...implementations,
+          ...[Image, Metric, Chart, SourceLink].map((i) => ({
+            ...richA2uiApis[i.name as keyof typeof richA2uiApis],
+            ...i,
+          })),
+        ]
+      : implementations,
     [],
   );
 }

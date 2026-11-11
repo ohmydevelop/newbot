@@ -2,22 +2,17 @@ import ConfigurationFeedback, {
   useConfigurationRecovery,
   savedReadFailure,
 } from "./ConfigurationFeedback";
-import { useState, useEffect, lazy } from "react";
-import { Plus, RefreshCw, Pencil } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Plus, RefreshCw, Pencil, CloudDownload, Trash2 } from "lucide-react";
 import type {
   ConfigurationView,
   DefaultsSaveResult,
 } from "../../shared/configuration";
 import GatewayEditor from "./GatewayEditor";
-import CatalogIcon from "./CatalogIcon";
-import { DeferredPanel } from "./DeferredPanel";
 import { useApp, loadSettings, request } from "../store";
 type Draft = { id: string; revision: string };
-const CredentialProbe = lazy(() => import("./CredentialProbe"));
-type Diagnostic = { source: string; models: string[]; note: string };
 export default function ProviderSettings() {
   const settings = useApp((s) => s.settings);
-  const canProbe = useApp((s) => s.credentialProbe);
   const [catalog, setCatalog] = useState<
     Record<
       string,
@@ -25,7 +20,7 @@ export default function ProviderSettings() {
         defaultModel: string;
         defaultRevision: string;
         profileError?: string;
-        models: { model: string; displayName: string }[];
+        models: { model: string; displayName: string; source?: string }[];
         error?: string;
       }
     >
@@ -43,25 +38,17 @@ export default function ProviderSettings() {
     return () => {
       live = false;
     };
-  }, [settings]);
+  }, [JSON.stringify(settings?.configuration?.providers.map((p: {id:string}) => [p.id, settings?.configuration?.revisions?.[`provider:${p.id}`]]))]);
   const config = settings?.configuration as ConfigurationView | null;
   const [draft, setDraft] = useState<Draft | null>(null);
   const [deleting, setDeleting] = useState<{
     id: string;
     revision: string;
   } | null>(null);
-  const [probe, setProbe] = useState<{ id: string; model: string } | null>(
-    null,
-  );
-  const [result, setResult] = useState<Diagnostic | null>(null);
   const recovery = useConfigurationRecovery();
   const [busyState, setBusy] = useState("");
   const busy = busyState || (recovery.busy ? "recovery" : "");
   const [notice, setNotice] = useState("");
-  const [privateProbe, setPrivateProbe] = useState<{
-    id: string;
-    revision: string;
-  } | null>(null);
   const providers: {
     id: string;
     current: boolean;
@@ -85,7 +72,8 @@ export default function ProviderSettings() {
     }))
     .filter(
       (p: { summary?: unknown; current: boolean }) => !!p.summary || p.current,
-    );
+    )
+    .sort((a: { id: string }, b: { id: string }) => a.id.localeCompare(b.id));
   async function action(key: string, fn: () => Promise<void>) {
     setBusy(key);
     recovery.clear();
@@ -114,7 +102,12 @@ export default function ProviderSettings() {
   }
   async function saveGatewayDefault(data: object) {
     const result = await request<DefaultsSaveResult>("gateway/defaults", data);
-    await refresh();
+    useApp.setState(s => ({settings:s.settings ? {...s.settings, configuration:result.configuration, providers:s.settings.providers.map((p: {id:string})=>({...p,current:p.id===result.configuration.defaults.provider}))}:s.settings}));
+    const selected = data as {id:string;model:string};
+    setCatalog(previous => Object.fromEntries(Object.entries(previous).map(([id, entry]) => [id, {...entry,
+      ...(id===selected.id ? {defaultModel:selected.model} : {}),
+      defaultRevision:result.configuration.revisions?.[`gateway-default:${id}`] || entry.defaultRevision,
+    }])));
     if (result.state === "overridden")
       recovery.report(
         "配置已保存，但全局默认值受其他配置或管理策略覆盖。",
@@ -132,12 +125,7 @@ export default function ProviderSettings() {
     }));
     setDraft(null);
     setDeleting(null);
-    setResult(null);
-    try {
-      await refresh();
-    } catch {
-      throw savedReadFailure("配置已写入，但刷新失败，请重新读取确认当前状态");
-    }
+
     if (saved.state === "overridden")
       recovery.report(
         "已写入用户配置，生效值受其他配置覆盖，请检查来源。",
@@ -151,11 +139,9 @@ export default function ProviderSettings() {
     recovery.clear();
     setNotice("");
     setDeleting(null);
-    setProbe(null);
-    setResult(null);
     setDraft({
       id: id || "",
-      revision: config.revision,
+      revision: id ? config.revisions?.[`provider:${id}`] || config.revision : config.revision,
     });
   }
   const feedback = (
@@ -169,22 +155,44 @@ export default function ProviderSettings() {
       onAdopt={() => {
         setDraft(null);
         setDeleting(null);
-        setProbe(null);
-        setResult(null);
         recovery.clear();
         setNotice("已采用当前生效配置，可以重新编辑。");
       }}
     />
   );
   return (
-    <section className="provider-settings" aria-label="模型网关管理">
+    <section className="provider-settings" aria-label="网关管理">
       <div className="section-heading">
-        <h3>模型网关</h3>
+        <h3>网关</h3>
         <div className="section-actions">
+          {config?.providerSourceConfigured && (
+            <button
+              type="button"
+              className="icon-button"
+              title="从配置来源刷新"
+              aria-label="从配置来源刷新"
+              disabled={!!busy}
+              onClick={() =>
+                void action("source", async () => {
+                  const response = await fetch("/api/runtime/config/reload", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ expectedRevision: config.revision }),
+                  });
+                  if (!response.ok)
+                    throw new Error("配置来源暂不可用，已保留当前参数。");
+                  await refresh();
+                })
+              }
+            >
+              <CloudDownload size={18} aria-hidden="true" />
+            </button>
+          )}
+
           <button
             className="icon-button"
-            aria-label="添加模型网关"
-            title="添加模型网关"
+            aria-label="添加网关"
+            title="添加网关"
             disabled={!!busy || recovery.blocked || !config?.writable}
             onClick={() => edit()}
           >
@@ -192,144 +200,160 @@ export default function ProviderSettings() {
           </button>
           <button
             className="icon-button"
-            aria-label="刷新模型网关"
-            title="刷新模型网关"
+            aria-label="刷新网关"
+            title="刷新网关"
             disabled={!!busy}
             onClick={() => void action("reload", refresh)}
           >
-            <RefreshCw size={18} aria-hidden="true" />
+            <RefreshCw
+              size={18}
+              className={busy ? "spin" : ""}
+              aria-hidden="true"
+            />
           </button>
         </div>
       </div>
-      {(config?.providerStorage === "memory" ||
-        config?.providerStorage === "sqlite") && (
-        <p className="muted" role="status">
-          {config.providerSourceStatus === "unavailable"
-            ? "配置来源暂不可用，当前没有已保存的网关配置。可手动添加或稍后重试。"
-            : !config.providers.some((p) => !p.missing)
-              ? "尚未配置自定义网关。添加后自动保存，服务重启时恢复。"
-              : config.providerStorage === "sqlite"
-                ? "网关参数已保存到 SQLite，修改从下一轮生效；服务重启后自动恢复。"
-                : "网关参数仅保存在服务端内存，修改从下一轮生效；后端重启后需重新下发。"}
-          {config.providerSourceConfigured && (
-            <button
-              type="button"
-              className="secondary"
-              disabled={!!busy}
-              onClick={() =>
-                void action("source", async () => {
-                  await fetch("/api/runtime/config/reload", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ expectedRevision: config.revision }),
-                  }).then(async (r) => {
-                    if (!r.ok)
-                      throw new Error("配置来源暂不可用，已保留当前参数。");
-                  });
-                  await refresh();
-                })
-              }
-            >
-              重新下发
-            </button>
-          )}
+      {config?.providerSourceStatus === "unavailable" && (
+        <p className="inline-error" role="alert">
+          配置来源暂不可用，可手动添加或稍后重试。
         </p>
+      )}
+      {config?.providerStorage === "memory" && (
+        <p className="muted">当前网关仅临时保存，服务重启后需重新配置。</p>
+      )}
+      {config && !config.providers.some((p) => !p.missing) && (
+        <p className="muted">尚未添加网关</p>
       )}
       {catalogError && (
         <p role="alert" className="inline-error">
           {catalogError}
         </p>
       )}
-      {providers.map((p: (typeof providers)[number]) => (
-        <div className="provider-row gateway-row" key={p.id}>
-          <div className="gateway-name">
-            <CatalogIcon name={p.summary?.name || p.id} kind="gateway" />
-            <strong>{p.summary?.name || p.id}</strong>
-          </div>
-          {p.summary?.missing ? (
-            <span className="muted">等待恢复配置</span>
-          ) : (
-            <select
-              aria-label={`${p.summary?.name || p.id} 默认模型`}
-              disabled={
-                !!busy ||
-                !catalog[p.id]?.models.length ||
-                !!catalog[p.id]?.profileError ||
-                !config?.writable
-              }
-              value={catalog[p.id]?.defaultModel || ""}
-              onChange={(e) =>
-                void action(`default:${p.id}`, async () => {
-                  await saveGatewayDefault({
-                    id: p.id,
-                    model: e.target.value,
-                    expectedDefaultRevision: catalog[p.id]?.defaultRevision,
-                    expectedRevision: config?.revision,
-                  });
-                })
-              }
+      <div className="gateway-grid" role="group" aria-label="选择默认网关">
+        {providers.map((p) => {
+          const entry = catalog[p.id],
+            name = p.summary?.name || p.id;
+          const disabled =
+            !!busy ||
+            recovery.blocked ||
+            !config?.writable ||
+            !!p.summary?.missing ||
+            !!entry?.profileError;
+          return (
+            <div
+              className={`gateway-card ${p.current ? "is-default" : ""}`}
+              key={p.id}
             >
-              <option value="" disabled>
-                选择模型
-              </option>
-              {catalog[p.id]?.models.map((m) => (
-                <option key={m.model} value={m.model}>
-                  {m.displayName}
-                </option>
-              ))}
-            </select>
-          )}
-          {p.current ? (
-            <span className="gateway-default" aria-label="当前默认网关">
-              默认
-            </span>
-          ) : (
-            <button
-              className="secondary gateway-default"
-              disabled={
-                !!busy ||
-                !catalog[p.id]?.defaultModel ||
-                !!catalog[p.id]?.profileError ||
-                !config?.writable
-              }
-              onClick={() =>
-                void action(`default:${p.id}`, async () => {
-                  await saveGatewayDefault({
-                    id: p.id,
-                    model: catalog[p.id]?.defaultModel,
-                    expectedDefaultRevision: catalog[p.id]?.defaultRevision,
-                    expectedRevision: config?.revision,
-                    makeDefault: true,
-                  });
-                })
-              }
-            >
-              设为默认
-            </button>
-          )}
-          <button
-            className="icon-button"
-            disabled={!!busy}
-            aria-label={`编辑 ${p.summary?.name || p.id}`}
-            data-gateway-edit
-            title={
-              p.summary?.missing
-                ? "恢复原会话的网关配置"
-                : !p.summary?.editable
-                  ? "此网关由其他配置来源管理"
-                  : "编辑"
-            }
-            onClick={() => edit(p.id)}
-          >
-            <Pencil size={16} aria-hidden="true" />
-          </button>
-          {catalog[p.id]?.profileError && (
-            <p className="inline-error gateway-details" role="alert">
-              {catalog[p.id].profileError}
-            </p>
-          )}
-        </div>
-      ))}
+              <button
+                type="button"
+                className="gateway-select"
+                aria-pressed={p.current}
+                aria-label={`${name}，${p.current ? "当前默认网关" : "选择为默认网关"}`}
+                disabled={disabled}
+                onClick={() => {
+                  if (p.current) return;
+                  if (!entry?.defaultModel) {
+                    document.getElementById(`gateway-model-${p.id}`)?.focus();
+                    return;
+                  }
+                  void action(`default:${p.id}`, () =>
+                    saveGatewayDefault({
+                      id: p.id,
+                      model: entry.defaultModel,
+                      expectedDefaultRevision: entry.defaultRevision,
+                      expectedRevision: config?.revision,
+                      makeDefault: true,
+                    }),
+                  );
+                }}
+              >
+                <span className="gateway-name">
+                  <strong title={name}>{name}</strong>
+                  <small>
+                    {!entry
+                      ? "正在读取模型"
+                      : entry.models.length
+                        ? `${entry.models.length} 个模型`
+                        : entry.error
+                          ? "目录暂不可用"
+                          : "暂无模型"}
+                  </small>
+                </span>
+              </button>
+              <div className="gateway-actions">
+                <button
+                  className="icon-button"
+                  type="button"
+                  data-gateway-edit
+                  disabled={!!busy}
+                  aria-label={`编辑 ${name}`}
+                  title={p.summary?.editable ? "编辑" : "查看连接"}
+                  onClick={() => edit(p.id)}
+                >
+                  <Pencil size={16} aria-hidden="true" />
+                </button>
+                <button
+                  className="icon-button"
+                  type="button"
+                  disabled={!!busy || !p.summary?.editable}
+                  data-variant="destructive"
+                  aria-label={`删除 ${name}`}
+                  title={
+                    p.summary?.editable ? "删除网关" : "此网关由其他来源管理"
+                  }
+                  onClick={() => {
+                    edit(p.id);
+                    setDeleting({ id: p.id, revision: config!.revision });
+                  }}
+                >
+                  <Trash2 size={16} aria-hidden="true" />
+                </button>
+              </div>
+              {p.summary?.missing ? (
+                <span className="muted">等待恢复配置</span>
+              ) : (
+                <select
+                  id={`gateway-model-${p.id}`}
+                  aria-label={`${name} 默认模型`}
+                  disabled={disabled || !entry?.models.length}
+                  value={entry?.defaultModel || ""}
+                  onChange={(e) => {
+                    const model = e.target.value;
+                    void action(`default:${p.id}`, () =>
+                      saveGatewayDefault({
+                        id: p.id,
+                        model,
+                        expectedDefaultRevision: entry?.defaultRevision,
+                        expectedRevision: config?.revision,
+                      }),
+                    );
+                  }}
+                >
+                  <option value="" disabled>
+                    选择默认模型
+                  </option>
+                  {entry?.models.map((m) => (
+                    <option key={m.model} value={m.model}>
+                      {m.displayName}
+                      {m.source === "manual" ? " · 手动" : ""}
+                    </option>
+                  ))}
+                </select>
+              )}
+              {entry?.error && (
+                <p className="gateway-details muted" role="status">
+                  {entry.error}
+                </p>
+              )}
+              {entry?.profileError && (
+                <p className="inline-error gateway-details" role="alert">
+                  {entry.profileError}
+                </p>
+              )}
+            </div>
+          );
+        })}
+      </div>
       {draft && (
         <GatewayEditor
           provider={
@@ -338,117 +362,17 @@ export default function ProviderSettings() {
               : undefined
           }
           revision={draft.revision}
-          onProbe={(() => {
-            const provider = providers.find((p) => p.id === draft.id)?.summary;
-            return canProbe &&
-              provider?.endpointOrigin?.startsWith("https://") &&
-              !provider.requiresAccountAuth &&
-              provider.wireApi === "responses"
-              ? () =>
-                  setPrivateProbe({ id: draft.id, revision: draft.revision })
-              : undefined;
-          })()}
           onClose={() => {
-            setPrivateProbe(null);
             setDraft(null);
             recovery.clear();
           }}
-          onSaved={refresh}
+          onSaved={loadSettings}
         >
           {draft.id &&
             (() => {
               const p = providers.find((p) => p.id === draft.id)?.summary;
               return (
                 <>
-                  <div className="provider-actions">
-                    <button
-                      type="button"
-                      className="secondary"
-                      disabled={!!busy}
-                      onClick={() => {
-                        setProbe({
-                          id: draft.id,
-                          model: settings?.model || "",
-                        });
-                      }}
-                    >
-                      检查连接
-                    </button>
-                    {p?.editable && (
-                      <button
-                        type="button"
-                        className="secondary danger-text"
-                        disabled={!!busy}
-                        onClick={() => {
-                          setDeleting({
-                            id: draft.id,
-                            revision: config!.revision,
-                          });
-                        }}
-                      >
-                        删除
-                      </button>
-                    )}
-                  </div>
-                  {probe && (
-                    <div className="provider-diagnostic">
-                      <label className="field-label">
-                        测试模型
-                        <input
-                          value={probe.model}
-                          onChange={(e) =>
-                            setProbe({ ...probe, model: e.target.value })
-                          }
-                        />
-                      </label>
-                      <div className="provider-actions">
-                        <button
-                          type="button"
-                          className="secondary"
-                          disabled={!!busy}
-                          onClick={() =>
-                            void action("models", async () => {
-                              setResult(
-                                await request("provider/models", {
-                                  id: probe.id,
-                                  expectedRevision: config?.revision,
-                                }),
-                              );
-                            })
-                          }
-                        >
-                          读取模型
-                        </button>
-                        <button
-                          type="button"
-                          className="secondary"
-                          disabled={!!busy || !probe.model}
-                          onClick={() =>
-                            void action("test", async () => {
-                              setResult(
-                                await request("provider/test", {
-                                  id: probe.id,
-                                  expectedRevision: config?.revision,
-                                  model: probe.model,
-                                }),
-                              );
-                            })
-                          }
-                        >
-                          测试连接
-                        </button>
-                      </div>
-                      <p className="muted">
-                        测试连接会发送少量固定文本，可能产生模型费用。
-                      </p>
-                      {result && (
-                        <p role="status">
-                          {result.note}
-                          {result.models.join("、")}
-                        </p>
-                      )}
-                    </div>
-                  )}
                   {deleting && (
                     <div role="group" aria-label="确认删除网关">
                       <p>
@@ -483,30 +407,10 @@ export default function ProviderSettings() {
             })()}
         </GatewayEditor>
       )}
-      {busy && (
-        <p className="muted" role="status">
-          正在处理网关配置…
-        </p>
-      )}
-      {privateProbe && (
-        <DeferredPanel
-          label="私密凭证验证"
-          onClose={() => setPrivateProbe(null)}
-        >
-          <CredentialProbe
-            providerId={privateProbe.id}
-            revision={privateProbe.revision}
-            onClose={() => setPrivateProbe(null)}
-          />
-        </DeferredPanel>
-      )}
+      <span className="sr-only" role="status">
+        {busy ? "正在处理网关配置" : notice}
+      </span>
       {!draft && feedback}
-
-      {notice && (
-        <p className="configuration-notice" role="status">
-          {notice}
-        </p>
-      )}
     </section>
   );
 }

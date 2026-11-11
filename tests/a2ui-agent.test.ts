@@ -92,6 +92,30 @@ async function setup() {
 test("native thread registers generated dynamic tool contract and waits without a second model turn", async () => {
   const ctx = await setup();
   try {
+    const capabilities = (
+      await ctx.app.inject({
+        url: "/api/runtime/capabilities",
+        headers: ctx.headers,
+      })
+    ).json().capabilities;
+    const thread = (
+      await ctx.app.inject({
+        url: "/api/threads/" + ctx.threadId,
+        headers: ctx.headers,
+      })
+    ).json();
+    assert.equal(
+      capabilities.a2ui.catalog,
+      capabilities.presentation.newThreads,
+    );
+    assert.equal(capabilities.a2ui.catalog, "newbot:ui/" + thread.uiCatalog);
+    assert.deepEqual(
+      capabilities.a2ui.catalogs
+        .find((c: any) => c.id.endsWith("/v2"))
+        .components.slice(-4),
+      ["Image", "Metric", "Chart", "SourceLink"],
+    );
+    assert.equal(capabilities.a2ui.components, 10);
     const events: unknown[] = [];
     ctx.service.events.on("event", (event) => {
       EventSchema.parse(event);
@@ -770,5 +794,27 @@ test("storage failure after native consume preserves an unknown durable fence", 
   } finally {
     await next?.app.close();
     await ctx.close();
+  }
+});
+
+test("A2UI waiting joins the sidebar lifecycle and clears on submit, native resolution and stop", async () => {
+  for (const end of ["submit", "resolved", "stop"]) {
+    const ctx = await setup();
+    try {
+      const request = ctx.show();
+      const activity = () =>
+        (ctx.db.list().find((r: any) => r.id === ctx.threadId) as any).activity;
+      assert.equal(activity().state, "waiting");
+      assert.equal(activity().waiting.reason, "input");
+      assert.equal(activity().waiting.target.id, ctx.view().id);
+      if (end === "submit")
+        assert.equal((await ctx.post(ctx.body())).statusCode, 200);
+      else if (end === "resolved") ctx.codex.emit("toolResolved", request.id);
+      else ctx.codex.finish(ctx.threadId, "interrupted");
+      assert.notEqual(activity().state, "waiting");
+      assert.equal(activity().waiting, undefined);
+    } finally {
+      await ctx.close();
+    }
   }
 });

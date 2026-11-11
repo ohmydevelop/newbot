@@ -1,0 +1,18 @@
+{
+  "verifiedAt": "2026-11-11T07:16:59.571886+00:00",
+  "upstreamCommit": "fe2f18520864ddbee86cdd4b103a9fefffe9c6a2",
+  "privateRepository": "https://github.com/ohmydevelop/newbot-codex",
+  "private": true,
+  "branch": "codex/newbot-runtime",
+  "forkCommit": "1d326fe135718a10a5793688eda13c4b0e103a0c",
+  "binaryVersion": "codex-cli 0.0.0",
+  "binarySha256": "784c068e2d8f517776036a5b3cd9e074f8ecf932ff1cc6e839e047bc6185d938",
+  "patchSha256": "1856acdc9acbd8f0952e6353b87d9c435cecf1c999f460c89f6f7cbd1fa43c22",
+  "reproducibility": [
+    "fixed upstream checkout and patch apply succeeded",
+    "modified source and generated schema match private repository and managed checkout",
+    "unrecorded source change is rejected before build"
+  ],
+  "liveService": "unchanged; 0.165.0",
+  "personalCodex": "all probes used isolated temporary homes"
+}

@@ -1,0 +1,502 @@
+{
+  "checks": [
+    "PDF renderer and worker load only when opened",
+    "real canvas, Chinese text and inert PDF actions",
+    "pagination, page jump and landscape page",
+    "zoom and bounded canvas memory",
+    "large PDF uses authenticated verified byte ranges",
+    "malformed, encrypted and excessive-page PDFs have clear feedback",
+    "oversized workspace PDF is refused without creating a card",
+    "range failures and inconsistent headers support retry",
+    "closing an in-flight PDF leaves no stale renderer",
+    "PDF versions remain distinct after switching and refresh",
+    "dark theme and mobile portrait controls",
+    "mobile landscape keeps document and download reachable",
+    "session expiry during range read returns to login"
+  ],
+  "pageErrors": [],
+  "externalRequests": [],
+  "ranges": [
+    {
+      "url": "http://127.0.0.1:3102/api/artifacts/406dc8fc-f79e-4823-8413-4196c4f1fe94/pdf",
+      "status": 206,
+      "headers": {
+        "content-security-policy": "sandbox; default-src 'none'",
+        "cache-control": "private, no-store",
+        "etag": "\"d065618225fce4fca29ad94c1751995e637e3564cd32272b449888e0179dc122\"",
+        "connection": "keep-alive",
+        "content-range": "bytes 0-7472/7473",
+        "x-content-type-options": "nosniff",
+        "referrer-policy": "no-referrer",
+        "permissions-policy": "camera=(), microphone=(), geolocation=()",
+        "accept-ranges": "bytes",
+        "content-length": "7473",
+        "keep-alive": "timeout=72",
+        "date": "Tue, 10 Nov 2026 08:24:40 GMT",
+        "content-type": "application/octet-stream",
+        "content-disposition": "attachment; filename*=UTF-8''preview.pdf",
+        "x-frame-options": "DENY"
+      },
+      "request": {
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "",
+        "if-range": "\"d065618225fce4fca29ad94c1751995e637e3564cd32272b449888e0179dc122\"",
+        "sec-ch-ua": "\"Not:A-Brand\";v=\"8\", \"Chromium\";v=\"156\"",
+        "range": "bytes=0-7472",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+        "sec-ch-ua-mobile": "?0"
+      }
+    },
+    {
+      "url": "http://127.0.0.1:3102/api/artifacts/fa5c5a3c-a77e-4ece-92ed-3898d67cfe6e/pdf",
+      "status": 206,
+      "headers": {
+        "content-security-policy": "sandbox; default-src 'none'",
+        "cache-control": "private, no-store",
+        "etag": "\"645ce247659d7db08786217ba8b7c6637a68d1323baf028cd50ee544f4ea7ebf\"",
+        "connection": "keep-alive",
+        "content-range": "bytes 0-131071/1600969",
+        "x-content-type-options": "nosniff",
+        "referrer-policy": "no-referrer",
+        "permissions-policy": "camera=(), microphone=(), geolocation=()",
+        "accept-ranges": "bytes",
+        "content-length": "131072",
+        "keep-alive": "timeout=72",
+        "date": "Tue, 10 Nov 2026 08:24:41 GMT",
+        "content-type": "application/octet-stream",
+        "content-disposition": "attachment; filename*=UTF-8''range.pdf",
+        "x-frame-options": "DENY"
+      },
+      "request": {
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "",
+        "if-range": "\"645ce247659d7db08786217ba8b7c6637a68d1323baf028cd50ee544f4ea7ebf\"",
+        "sec-ch-ua": "\"Not:A-Brand\";v=\"8\", \"Chromium\";v=\"156\"",
+        "range": "bytes=0-131071",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+        "sec-ch-ua-mobile": "?0"
+      }
+    },
+    {
+      "url": "http://127.0.0.1:3102/api/artifacts/fa5c5a3c-a77e-4ece-92ed-3898d67cfe6e/pdf",
+      "status": 206,
+      "headers": {
+        "content-security-policy": "sandbox; default-src 'none'",
+        "cache-control": "private, no-store",
+        "etag": "\"645ce247659d7db08786217ba8b7c6637a68d1323baf028cd50ee544f4ea7ebf\"",
+        "connection": "keep-alive",
+        "content-range": "bytes 1572864-1600968/1600969",
+        "x-content-type-options": "nosniff",
+        "referrer-policy": "no-referrer",
+        "permissions-policy": "camera=(), microphone=(), geolocation=()",
+        "accept-ranges": "bytes",
+        "content-length": "28105",
+        "keep-alive": "timeout=72",
+        "date": "Tue, 10 Nov 2026 08:24:41 GMT",
+        "content-type": "application/octet-stream",
+        "content-disposition": "attachment; filename*=UTF-8''range.pdf",
+        "x-frame-options": "DENY"
+      },
+      "request": {
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "",
+        "if-range": "\"645ce247659d7db08786217ba8b7c6637a68d1323baf028cd50ee544f4ea7ebf\"",
+        "sec-ch-ua": "\"Not:A-Brand\";v=\"8\", \"Chromium\";v=\"156\"",
+        "range": "bytes=1572864-1600968",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+        "sec-ch-ua-mobile": "?0"
+      }
+    },
+    {
+      "url": "http://127.0.0.1:3102/api/artifacts/fa5c5a3c-a77e-4ece-92ed-3898d67cfe6e/pdf",
+      "status": 206,
+      "headers": {
+        "content-security-policy": "sandbox; default-src 'none'",
+        "cache-control": "private, no-store",
+        "etag": "\"645ce247659d7db08786217ba8b7c6637a68d1323baf028cd50ee544f4ea7ebf\"",
+        "connection": "keep-alive",
+        "content-range": "bytes 131072-1572863/1600969",
+        "x-content-type-options": "nosniff",
+        "referrer-policy": "no-referrer",
+        "permissions-policy": "camera=(), microphone=(), geolocation=()",
+        "accept-ranges": "bytes",
+        "content-length": "1441792",
+        "keep-alive": "timeout=72",
+        "date": "Tue, 10 Nov 2026 08:24:41 GMT",
+        "content-type": "application/octet-stream",
+        "content-disposition": "attachment; filename*=UTF-8''range.pdf",
+        "x-frame-options": "DENY"
+      },
+      "request": {
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "",
+        "if-range": "\"645ce247659d7db08786217ba8b7c6637a68d1323baf028cd50ee544f4ea7ebf\"",
+        "sec-ch-ua": "\"Not:A-Brand\";v=\"8\", \"Chromium\";v=\"156\"",
+        "range": "bytes=131072-1572863",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+        "sec-ch-ua-mobile": "?0"
+      }
+    },
+    {
+      "url": "http://127.0.0.1:3102/api/artifacts/7ab0b9e9-76c2-4de8-a45d-3367accf73b7/pdf",
+      "status": 206,
+      "headers": {
+        "content-security-policy": "sandbox; default-src 'none'",
+        "cache-control": "private, no-store",
+        "etag": "\"20f99468d34d1ddcb2f2bfa1e5402644828cd50efd0077e341e2c62e2957ca59\"",
+        "connection": "keep-alive",
+        "content-range": "bytes 0-42/43",
+        "x-content-type-options": "nosniff",
+        "referrer-policy": "no-referrer",
+        "permissions-policy": "camera=(), microphone=(), geolocation=()",
+        "accept-ranges": "bytes",
+        "content-length": "43",
+        "keep-alive": "timeout=72",
+        "date": "Tue, 10 Nov 2026 08:24:42 GMT",
+        "content-type": "application/octet-stream",
+        "content-disposition": "attachment; filename*=UTF-8''broken.pdf",
+        "x-frame-options": "DENY"
+      },
+      "request": {
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "",
+        "if-range": "\"20f99468d34d1ddcb2f2bfa1e5402644828cd50efd0077e341e2c62e2957ca59\"",
+        "sec-ch-ua": "\"Not:A-Brand\";v=\"8\", \"Chromium\";v=\"156\"",
+        "range": "bytes=0-42",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+        "sec-ch-ua-mobile": "?0"
+      }
+    },
+    {
+      "url": "http://127.0.0.1:3102/api/artifacts/4bfc7be9-ef49-4912-b364-862e6f678ca7/pdf",
+      "status": 206,
+      "headers": {
+        "content-security-policy": "sandbox; default-src 'none'",
+        "cache-control": "private, no-store",
+        "etag": "\"604dffaf936be9f5a5618ce623096c7fafa600403ce82b1ed9dc0ffc1983a83a\"",
+        "connection": "keep-alive",
+        "content-range": "bytes 0-1817/1818",
+        "x-content-type-options": "nosniff",
+        "referrer-policy": "no-referrer",
+        "permissions-policy": "camera=(), microphone=(), geolocation=()",
+        "accept-ranges": "bytes",
+        "content-length": "1818",
+        "keep-alive": "timeout=72",
+        "date": "Tue, 10 Nov 2026 08:24:42 GMT",
+        "content-type": "application/octet-stream",
+        "content-disposition": "attachment; filename*=UTF-8''password.pdf",
+        "x-frame-options": "DENY"
+      },
+      "request": {
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "",
+        "if-range": "\"604dffaf936be9f5a5618ce623096c7fafa600403ce82b1ed9dc0ffc1983a83a\"",
+        "sec-ch-ua": "\"Not:A-Brand\";v=\"8\", \"Chromium\";v=\"156\"",
+        "range": "bytes=0-1817",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+        "sec-ch-ua-mobile": "?0"
+      }
+    },
+    {
+      "url": "http://127.0.0.1:3102/api/artifacts/87217d03-07e2-4785-b380-3b161c1095f5/pdf",
+      "status": 206,
+      "headers": {
+        "content-security-policy": "sandbox; default-src 'none'",
+        "cache-control": "private, no-store",
+        "etag": "\"0f22598e154ff3c18f4221a0358460d13611ce943602bcd151fbf88bcfc9b7a4\"",
+        "connection": "keep-alive",
+        "content-range": "bytes 0-62238/62239",
+        "x-content-type-options": "nosniff",
+        "referrer-policy": "no-referrer",
+        "permissions-policy": "camera=(), microphone=(), geolocation=()",
+        "accept-ranges": "bytes",
+        "content-length": "62239",
+        "keep-alive": "timeout=72",
+        "date": "Tue, 10 Nov 2026 08:24:42 GMT",
+        "content-type": "application/octet-stream",
+        "content-disposition": "attachment; filename*=UTF-8''many-pages.pdf",
+        "x-frame-options": "DENY"
+      },
+      "request": {
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "",
+        "if-range": "\"0f22598e154ff3c18f4221a0358460d13611ce943602bcd151fbf88bcfc9b7a4\"",
+        "sec-ch-ua": "\"Not:A-Brand\";v=\"8\", \"Chromium\";v=\"156\"",
+        "range": "bytes=0-62238",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+        "sec-ch-ua-mobile": "?0"
+      }
+    },
+    {
+      "url": "http://127.0.0.1:3102/api/artifacts/406dc8fc-f79e-4823-8413-4196c4f1fe94/pdf",
+      "status": 500,
+      "headers": {
+        "content-type": "application/json",
+        "content-length": "35"
+      },
+      "request": {
+        "accept": "*/*",
+        "cookie": "[REDACTED]",
+        "if-range": "\"d065618225fce4fca29ad94c1751995e637e3564cd32272b449888e0179dc122\"",
+        "range": "bytes=0-7472",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Not:A-Brand\";v=\"8\", \"Chromium\";v=\"156\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"Linux\""
+      }
+    },
+    {
+      "url": "http://127.0.0.1:3102/api/artifacts/406dc8fc-f79e-4823-8413-4196c4f1fe94/pdf",
+      "status": 206,
+      "headers": {
+        "etag": "\"incorrect\"",
+        "content-range": "bytes 0-1/2",
+        "content-length": "2"
+      },
+      "request": {
+        "accept": "*/*",
+        "cookie": "[REDACTED]",
+        "if-range": "\"d065618225fce4fca29ad94c1751995e637e3564cd32272b449888e0179dc122\"",
+        "range": "bytes=0-7472",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Not:A-Brand\";v=\"8\", \"Chromium\";v=\"156\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"Linux\""
+      }
+    },
+    {
+      "url": "http://127.0.0.1:3102/api/artifacts/406dc8fc-f79e-4823-8413-4196c4f1fe94/pdf",
+      "status": 206,
+      "headers": {
+        "content-security-policy": "sandbox; default-src 'none'",
+        "cache-control": "private, no-store",
+        "etag": "\"d065618225fce4fca29ad94c1751995e637e3564cd32272b449888e0179dc122\"",
+        "connection": "keep-alive",
+        "content-range": "bytes 0-7472/7473",
+        "x-content-type-options": "nosniff",
+        "referrer-policy": "no-referrer",
+        "permissions-policy": "camera=(), microphone=(), geolocation=()",
+        "accept-ranges": "bytes",
+        "content-length": "7473",
+        "keep-alive": "timeout=72",
+        "date": "Tue, 10 Nov 2026 08:24:43 GMT",
+        "content-type": "application/octet-stream",
+        "content-disposition": "attachment; filename*=UTF-8''preview.pdf",
+        "x-frame-options": "DENY"
+      },
+      "request": {
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "",
+        "if-range": "\"d065618225fce4fca29ad94c1751995e637e3564cd32272b449888e0179dc122\"",
+        "sec-ch-ua": "\"Not:A-Brand\";v=\"8\", \"Chromium\";v=\"156\"",
+        "range": "bytes=0-7472",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+        "sec-ch-ua-mobile": "?0"
+      }
+    },
+    {
+      "url": "http://127.0.0.1:3102/api/artifacts/406dc8fc-f79e-4823-8413-4196c4f1fe94/pdf",
+      "status": 206,
+      "headers": {
+        "content-security-policy": "sandbox; default-src 'none'",
+        "cache-control": "private, no-store",
+        "etag": "\"d065618225fce4fca29ad94c1751995e637e3564cd32272b449888e0179dc122\"",
+        "connection": "keep-alive",
+        "content-range": "bytes 0-7472/7473",
+        "x-content-type-options": "nosniff",
+        "referrer-policy": "no-referrer",
+        "permissions-policy": "camera=(), microphone=(), geolocation=()",
+        "accept-ranges": "bytes",
+        "content-length": "7473",
+        "keep-alive": "timeout=72",
+        "date": "Tue, 10 Nov 2026 08:24:43 GMT",
+        "content-type": "application/octet-stream",
+        "content-disposition": "attachment; filename*=UTF-8''preview.pdf",
+        "x-frame-options": "DENY"
+      },
+      "request": {
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "",
+        "if-range": "\"d065618225fce4fca29ad94c1751995e637e3564cd32272b449888e0179dc122\"",
+        "sec-ch-ua": "\"Not:A-Brand\";v=\"8\", \"Chromium\";v=\"156\"",
+        "range": "bytes=0-7472",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+        "sec-ch-ua-mobile": "?0"
+      }
+    },
+    {
+      "url": "http://127.0.0.1:3102/api/artifacts/fb1e40ab-0515-4454-add9-86a20501dbce/pdf",
+      "status": 206,
+      "headers": {
+        "content-security-policy": "sandbox; default-src 'none'",
+        "cache-control": "private, no-store",
+        "etag": "\"3767aae403ea8b5796ca5e1c8ba37a0bbbfd25fd4baf709b45ad94dd9edd2151\"",
+        "connection": "keep-alive",
+        "content-range": "bytes 0-1784/1785",
+        "x-content-type-options": "nosniff",
+        "referrer-policy": "no-referrer",
+        "permissions-policy": "camera=(), microphone=(), geolocation=()",
+        "accept-ranges": "bytes",
+        "content-length": "1785",
+        "keep-alive": "timeout=72",
+        "date": "Tue, 10 Nov 2026 08:24:44 GMT",
+        "content-type": "application/octet-stream",
+        "content-disposition": "attachment; filename*=UTF-8''preview.pdf",
+        "x-frame-options": "DENY"
+      },
+      "request": {
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "",
+        "if-range": "\"3767aae403ea8b5796ca5e1c8ba37a0bbbfd25fd4baf709b45ad94dd9edd2151\"",
+        "sec-ch-ua": "\"Not:A-Brand\";v=\"8\", \"Chromium\";v=\"156\"",
+        "range": "bytes=0-1784",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+        "sec-ch-ua-mobile": "?0"
+      }
+    },
+    {
+      "url": "http://127.0.0.1:3102/api/artifacts/406dc8fc-f79e-4823-8413-4196c4f1fe94/pdf",
+      "status": 206,
+      "headers": {
+        "content-security-policy": "sandbox; default-src 'none'",
+        "cache-control": "private, no-store",
+        "etag": "\"d065618225fce4fca29ad94c1751995e637e3564cd32272b449888e0179dc122\"",
+        "connection": "keep-alive",
+        "content-range": "bytes 0-7472/7473",
+        "x-content-type-options": "nosniff",
+        "referrer-policy": "no-referrer",
+        "permissions-policy": "camera=(), microphone=(), geolocation=()",
+        "accept-ranges": "bytes",
+        "content-length": "7473",
+        "keep-alive": "timeout=72",
+        "date": "Tue, 10 Nov 2026 08:24:44 GMT",
+        "content-type": "application/octet-stream",
+        "content-disposition": "attachment; filename*=UTF-8''preview.pdf",
+        "x-frame-options": "DENY"
+      },
+      "request": {
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "",
+        "if-range": "\"d065618225fce4fca29ad94c1751995e637e3564cd32272b449888e0179dc122\"",
+        "sec-ch-ua": "\"Not:A-Brand\";v=\"8\", \"Chromium\";v=\"156\"",
+        "range": "bytes=0-7472",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+        "sec-ch-ua-mobile": "?0"
+      }
+    },
+    {
+      "url": "http://127.0.0.1:3102/api/artifacts/fb1e40ab-0515-4454-add9-86a20501dbce/pdf",
+      "status": 206,
+      "headers": {
+        "content-security-policy": "sandbox; default-src 'none'",
+        "cache-control": "private, no-store",
+        "etag": "\"3767aae403ea8b5796ca5e1c8ba37a0bbbfd25fd4baf709b45ad94dd9edd2151\"",
+        "connection": "keep-alive",
+        "content-range": "bytes 0-1784/1785",
+        "x-content-type-options": "nosniff",
+        "referrer-policy": "no-referrer",
+        "permissions-policy": "camera=(), microphone=(), geolocation=()",
+        "accept-ranges": "bytes",
+        "content-length": "1785",
+        "keep-alive": "timeout=72",
+        "date": "Tue, 10 Nov 2026 08:24:46 GMT",
+        "content-type": "application/octet-stream",
+        "content-disposition": "attachment; filename*=UTF-8''preview.pdf",
+        "x-frame-options": "DENY"
+      },
+      "request": {
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "",
+        "if-range": "\"3767aae403ea8b5796ca5e1c8ba37a0bbbfd25fd4baf709b45ad94dd9edd2151\"",
+        "sec-ch-ua": "\"Not:A-Brand\";v=\"8\", \"Chromium\";v=\"156\"",
+        "range": "bytes=0-1784",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+        "sec-ch-ua-mobile": "?0"
+      }
+    },
+    {
+      "url": "http://127.0.0.1:3102/api/artifacts/fb1e40ab-0515-4454-add9-86a20501dbce/pdf",
+      "status": 206,
+      "headers": {
+        "content-security-policy": "sandbox; default-src 'none'",
+        "cache-control": "private, no-store",
+        "etag": "\"3767aae403ea8b5796ca5e1c8ba37a0bbbfd25fd4baf709b45ad94dd9edd2151\"",
+        "connection": "keep-alive",
+        "content-range": "bytes 0-1784/1785",
+        "x-content-type-options": "nosniff",
+        "referrer-policy": "no-referrer",
+        "permissions-policy": "camera=(), microphone=(), geolocation=()",
+        "accept-ranges": "bytes",
+        "content-length": "1785",
+        "keep-alive": "timeout=72",
+        "date": "Tue, 10 Nov 2026 08:24:47 GMT",
+        "content-type": "application/octet-stream",
+        "content-disposition": "attachment; filename*=UTF-8''preview.pdf",
+        "x-frame-options": "DENY"
+      },
+      "request": {
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "",
+        "if-range": "\"3767aae403ea8b5796ca5e1c8ba37a0bbbfd25fd4baf709b45ad94dd9edd2151\"",
+        "sec-ch-ua": "\"Not:A-Brand\";v=\"8\", \"Chromium\";v=\"156\"",
+        "range": "bytes=0-1784",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+        "sec-ch-ua-mobile": "?0"
+      }
+    },
+    {
+      "url": "http://127.0.0.1:3102/api/artifacts/fb1e40ab-0515-4454-add9-86a20501dbce/pdf",
+      "status": 206,
+      "headers": {
+        "content-security-policy": "sandbox; default-src 'none'",
+        "cache-control": "private, no-store",
+        "etag": "\"3767aae403ea8b5796ca5e1c8ba37a0bbbfd25fd4baf709b45ad94dd9edd2151\"",
+        "connection": "keep-alive",
+        "content-range": "bytes 0-1784/1785",
+        "x-content-type-options": "nosniff",
+        "referrer-policy": "no-referrer",
+        "permissions-policy": "camera=(), microphone=(), geolocation=()",
+        "accept-ranges": "bytes",
+        "content-length": "1785",
+        "keep-alive": "timeout=72",
+        "date": "Tue, 10 Nov 2026 08:24:47 GMT",
+        "content-type": "application/octet-stream",
+        "content-disposition": "attachment; filename*=UTF-8''preview.pdf",
+        "x-frame-options": "DENY"
+      },
+      "request": {
+        "sec-ch-ua-platform": "\"Linux\"",
+        "referer": "",
+        "if-range": "\"3767aae403ea8b5796ca5e1c8ba37a0bbbfd25fd4baf709b45ad94dd9edd2151\"",
+        "sec-ch-ua": "\"Not:A-Brand\";v=\"8\", \"Chromium\";v=\"156\"",
+        "range": "bytes=0-1784",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+        "sec-ch-ua-mobile": "?0"
+      }
+    },
+    {
+      "url": "http://127.0.0.1:3102/api/artifacts/fa5c5a3c-a77e-4ece-92ed-3898d67cfe6e/pdf",
+      "status": 401,
+      "headers": {
+        "content-type": "application/json",
+        "content-length": "24"
+      },
+      "request": {
+        "accept": "*/*",
+        "cookie": "[REDACTED]",
+        "if-range": "\"645ce247659d7db08786217ba8b7c6637a68d1323baf028cd50ee544f4ea7ebf\"",
+        "range": "bytes=0-131071",
+        "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Not:A-Brand\";v=\"8\", \"Chromium\";v=\"156\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"Linux\""
+      }
+    }
+  ],
+  "consoleMessages": [
+    "Failed to load resource: the server responded with a status of 400 (Bad Request)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+  ],
+  "fixtureHash": "d065618225fce4fca29ad94c1751995e637e3564cd32272b449888e0179dc122"
+}

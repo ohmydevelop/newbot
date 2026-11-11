@@ -141,8 +141,15 @@ export function credentialBroker(options: {
         e.ticket.receiver = consumer.receiver;
         e.ticket.state = "waiting";
         audit(e);
-      } catch {
+      } catch (error) {
         if (e.ticket.state === "preparing") {
+          if (
+            (input.operation === "plugin.configuration.save" ||
+              input.operation === "credential.fields.save" ||
+              input.operation === "credential.authorize") &&
+            error instanceof PublicError
+          )
+            e.ticket.message = error.message;
           e.ticket.reason = "configuration_changed";
           finish(e, "failed");
         }
@@ -157,9 +164,14 @@ export function credentialBroker(options: {
       if (e.ticket.state !== "waiting" || !e.consumer)
         throw new CredentialFailure("私密请求已处理或已失效，请重新读取状态");
       const password = e.ticket.operation === "sudo.identity";
+      const fields = [
+        "plugin.configuration.save",
+        "credential.fields.save",
+        "credential.authorize",
+      ].includes(e.ticket.operation);
       if (
         !secret.length ||
-        secret.length > (password ? 1024 : 4096) ||
+        secret.length > (fields ? 1048576 : password ? 1024 : 4096) ||
         (password
           ? !isUtf8(secret) ||
             secret.some((byte) => byte === 0 || byte === 10 || byte === 13)

@@ -54,10 +54,10 @@ try {
   await page.getByRole("button", { name: "继续", exact: true }).click();
   await page.getByPlaceholder("询问任何问题").fill("测试 MCP 应用");
   await page.getByRole("button", { name: "发送消息", exact: true }).click();
-  const app = page.frameLocator('iframe[title="MCP 应用"]');
+  const app = page.frameLocator(".mcp-app iframe");
   await app.getByText("CPU: 25%", { exact: true }).waitFor();
   await app.getByRole("button", { name: "刷新数据", exact: true }).click();
-  const approval = page.getByRole("dialog", { name: "允许应用调用工具？" });
+  const approval = page.getByRole("dialog", { name: "允许这次操作？" });
   await approval
     .getByRole("button", { name: "仅允许这一次", exact: true })
     .click();

@@ -1,3 +1,4 @@
+import { customModelIds } from "../shared/gateways.js";
 import { randomUUID } from "node:crypto";
 import { PublicError } from "./public-error.js";
 import type { ConfigReadResponse } from "../generated/codex/v2/ConfigReadResponse.js";
@@ -17,6 +18,7 @@ const keys = new Set([
   "model_provider",
   "model_reasoning_effort",
   "model_providers",
+  "newbot_models",
 ]);
 const id = z.string().regex(/^[a-z][a-z0-9_-]{0,63}$/);
 const model = z
@@ -50,6 +52,7 @@ export const providerRuntimeInput = z.strictObject({
           .regex(/^[A-Z_][A-Z0-9_]{0,127}$/)
           .optional(),
         defaultModel: model.optional(),
+        customModels: customModelIds.optional(),
       }),
     )
     .max(64)
@@ -66,6 +69,11 @@ export function providerRuntimeValues(
   input: z.infer<typeof providerRuntimeInput>,
 ) {
   return {
+    newbot_models: Object.fromEntries(
+      input.providers
+        .filter((p) => p.customModels?.length)
+        .map((p) => [p.id, p.customModels]),
+    ),
     model_providers: Object.fromEntries(
       input.providers.map((p) => [
         p.id,
@@ -134,6 +142,7 @@ export class ProviderRuntime {
         model: seed.model || null,
         model_reasoning_effort: seed.model_reasoning_effort || null,
         model_providers: record(seed.model_providers),
+        newbot_models: record(seed.newbot_models),
         profiles: Object.fromEntries(
           Object.entries(record(seed.profiles)).filter(([k]) =>
             k.startsWith("newbot_gateway_"),

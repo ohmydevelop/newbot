@@ -1,0 +1,4 @@
+{
+  "stage": "idle maintenance",
+  "error": "AssertionError [ERR_ASSERTION]: idle maintenance: /api/agent/action returned 400\n\n400 !== 200\n"
+}

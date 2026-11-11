@@ -14,11 +14,15 @@
   box-shadow: 0 12px 40px #0002;
   outline: none;
 }
+.composer-selection-panel {
+  height: min(420px, var(--radix-popover-content-available-height));
+}
 .picker-search {
   display: flex;
   align-items: center;
   gap: 4px;
-  padding: 12px;
+  padding: 8px;
+  border-bottom: 1px solid var(--line);
   flex-shrink: 0;
 }
 .picker-search input {
@@ -26,7 +30,22 @@
   width: 100%;
   height: 40px;
   border: 0;
-  background: var(--surface);
+  background: transparent;
+  padding: 8px 4px;
+  font-size: 14px;
+  border-radius: 6px;
+}
+.picker-search > svg {
+  margin-left: 8px;
+  flex-shrink: 0;
+  color: var(--muted);
+}
+.picker-search input:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+.picker-search:has(input:focus-visible) {
+  box-shadow: inset 0 -2px var(--accent);
 }
 .picker-search .icon-button {
   flex: 0 0 36px;
@@ -53,7 +72,7 @@
   overflow: auto;
   min-height: 0;
   overscroll-behavior: contain;
-  padding: 0 8px 8px;
+  padding: 8px;
 }
 .picker-results > button {
   display: flex;
@@ -116,6 +135,7 @@
 }
 .runtime-panel {
   width: min(420px, calc(100vw - 24px));
+  height: min(520px, var(--radix-popover-content-available-height));
   max-height: min(560px, var(--radix-popover-content-available-height));
 }
 .runtime-panel .model-catalog {
@@ -123,7 +143,7 @@
   min-height: 0;
   max-height: none;
   overflow: auto;
-  padding: 0 8px 8px;
+  padding: 8px;
   overscroll-behavior: contain;
 }
 .model-group + .model-group {
@@ -333,4 +353,28 @@
   background: var(--menu-bg);
   color: var(--text);
   box-shadow: 0 4px 16px #0002;
+}
+.runtime-pending {
+  color: var(--muted);
+}
+.runtime-pending-details {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px 16px;
+  border-top: 1px solid var(--border);
+  font-size: 13px;
+}
+.runtime-pending-details small {
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+.runtime-pending-details > div {
+  display: flex;
+  gap: 8px;
+}
+.runtime-pending-details button {
+  min-height: 36px;
+  border-radius: 8px;
+  padding: 6px 10px;
 }

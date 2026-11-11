@@ -1,0 +1,4 @@
+{"at":"2026-11-10T15:17:09.190Z","event":"runtime.status","status":"ready"}
+{"at":"2026-11-10T15:17:09.343Z","event":"http.request","status":200,"requestId":"req-1","route":"/api/runtime/config","method":"GET","durationMs":2}
+{"at":"2026-11-10T15:17:22.722Z","event":"runtime.status","status":"ready"}
+{"passed":13}

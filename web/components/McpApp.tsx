@@ -7,9 +7,10 @@ import {
   McpUiHostContextSchema,
   type McpUiHostContext,
 } from "@modelcontextprotocol/ext-apps";
-import { LockKeyhole, LoaderCircle, RefreshCw, X } from "lucide-react";
+import { LoaderCircle, RefreshCw, X } from "lucide-react";
 import { request, useApp } from "../store";
 import type { Json } from "../../shared/types";
+import { connectorLabel, type ToolDisplay } from "../../shared/tool-display";
 import { appIssue } from "../../shared/mcp-apps";
 import { appHostCapabilities } from "../../shared/mcp-app-host";
 import { restrictAppHost } from "./mcp-app-host";
@@ -27,6 +28,7 @@ type Approval = {
   server: string;
   tool: string;
   args: Json;
+  display?: ToolDisplay;
   resolve: (allow: boolean) => void;
   deadline: number;
   timedOut?: boolean;
@@ -49,12 +51,14 @@ export default function McpApp({
   turnId,
   server,
   tool,
+  display,
 }: {
   threadId: string;
   itemId: string;
   turnId?: string;
   server?: string;
   tool?: string;
+  display?: ToolDisplay;
 }) {
   const lifecycle = useApp((s) => s.appLifecycle),
     runtime = useApp((s) => s.runtime),
@@ -79,14 +83,14 @@ export default function McpApp({
         : issue?.code === "busy"
           ? "配置正在更新或应用仍在加载，请稍后重新打开。"
           : issue?.code === "history"
-            ? "原始工具结果暂不可读，请重新加载对应历史后打开。"
+            ? "应用数据暂不可读，请重新加载此对话后打开。"
             : issue?.code === "permission"
-              ? "当前连接不再允许此应用操作，请检查 MCP 配置后重新打开。"
+              ? "当前连接不再允许此应用操作，请检查连接器配置后重新打开。"
               : issue?.code === "runtime"
-                ? "Codex 暂不可用，恢复连接后可重新打开。"
+                ? "服务暂不可用，恢复连接后可重新打开。"
                 : issue?.code === "resource"
-                  ? "应用资源读取失败，请检查 MCP 连接后重试。"
-                  : "应用连接失败，请检查网络或 MCP 连接后重新打开。";
+                  ? "应用资源读取失败，请检查连接器后重试。"
+                  : "应用连接失败，请检查网络或连接器后重新打开。";
   }
   useEffect(() => {
     if (!opened) return;
@@ -273,7 +277,7 @@ export default function McpApp({
     const fail = () =>
       s.fail(
         "failed",
-        "应用未完成初始化，请检查是否使用标准 MCP Apps 协议并内联全部依赖。",
+        "应用未能启动，请重新打开；若仍失败，请更新或检查对应插件。",
       );
     const timeout = setTimeout(fail, 15000);
     s.cleanups.push(() => clearTimeout(timeout));
@@ -359,11 +363,13 @@ export default function McpApp({
           throw Error("应用已关闭");
         }
         let decision: Approval | undefined;
-        const allow = await new Promise<boolean>((resolve) => {
+        const automatic = result.authorization === "session-policy";
+        const allow = automatic || await new Promise<boolean>((resolve) => {
           const pending = {
             grant: grant!,
             server: result.server,
             tool: result.tool,
+            display: result.display,
             args: params.arguments || {},
             resolve,
             deadline:
@@ -387,7 +393,7 @@ export default function McpApp({
         approved = allow;
         return await request(
           "app/call/approve",
-          { grant, allow },
+          { grant, allow, authorization: automatic ? "session-policy" : "user" },
           { signal: s.abort.signal },
         );
       } catch (error) {
@@ -477,81 +483,39 @@ export default function McpApp({
     setAttempt((value) => value + 1);
   }
   const labels: Record<Phase, string> = {
-    loading: "正在读取应用资源",
-    initializing: "正在初始化应用",
-    ready: "已连接 · 隔离运行",
+    loading: "正在加载",
+    initializing: "正在加载",
+    ready: "应用已就绪",
     failed: "应用加载失败",
     expired: "应用已失效",
     closed: "应用已关闭",
   };
+  const appTitle = data?.display?.toolTitle || display?.toolTitle || "交互应用";
   return (
     <section
       ref={container}
       className="mcp-app"
-      aria-label={`MCP 应用 ${server || data?.source?.server || ""} / ${tool || data?.source?.tool || ""}`}
+      aria-label={appTitle}
       aria-busy={phase === "loading" || phase === "initializing"}
     >
       <div className="app-bar">
-        <span>
-          <LockKeyhole size={14} aria-hidden="true" />
-          MCP App
+        <span className="app-title" title={appTitle}>
+          {appTitle}
         </span>
-        <span role="status">{labels[phase]}</span>
+        <span role="status" className="sr-only">
+          {labels[phase]}
+        </span>
         {opened && (
           <button
             className="app-close"
             onClick={close}
             aria-label="关闭应用"
-            title="关闭应用；已经批准的调用可能继续执行"
+            title="关闭应用"
           >
             <X size={16} aria-hidden="true" />
           </button>
         )}
       </div>
-      {(server || data?.source?.server) && (
-        <p className="app-source">
-          {server || data?.source?.server} / {tool || data?.source?.tool} ·
-          原始工具结果
-        </p>
-      )}
-      <details className="app-capabilities">
-        <summary>权限与能力</summary>
-        <div>
-          <p>每次工具操作都需要你的单次批准，执行前会再次检查权限。</p>
-          <dl>
-            <dt>工具范围</dt>
-            <dd>
-              {data ? (
-                data.tools?.length ? (
-                  <>
-                    仅限当前 MCP 服务中与此应用关联的工具：
-                    {data.tools.slice(0, 12).join("、")}
-                    {data.tools.length > 12
-                      ? ` 等 ${data.tools.length} 项`
-                      : ""}
-                    。此列表对应本次打开时的权限。
-                  </>
-                ) : (
-                  "本次打开时没有可申请的工具。"
-                )
-              ) : (
-                "打开应用后可查看可申请的工具。"
-              )}
-            </dd>
-            <dt>显示</dt>
-            <dd>聊天内嵌、主题同步与高度调整；暂不支持全屏或画中画。</dd>
-            <dt>未开放</dt>
-            <dd>
-              外链、应用下载、发送聊天消息、更新模型上下文、调用模型、查询工具目录、提示模板或读取额外
-              MCP 资源。
-            </dd>
-            <dt>隔离</dt>
-            <dd>
-              不允许页面联网、加载外部依赖或使用摄像头、麦克风和定位；不采集应用日志。
-            </dd>
-          </dl>
-        </div>
-      </details>
       {(phase === "loading" || phase === "initializing") && (
         <div className="app-loading" role="status">
           <LoaderCircle size={17} className="spin" aria-hidden="true" />
@@ -561,7 +525,7 @@ export default function McpApp({
       {data && opened && (phase === "ready" || phase === "initializing") && (
         <iframe
           ref={frame}
-          title="MCP 应用"
+          title={appTitle}
           sandbox="allow-scripts"
           referrerPolicy="no-referrer"
           style={{ height: 280 }}
@@ -583,9 +547,8 @@ export default function McpApp({
       )}
       {phase === "closed" && (
         <div className="app-recovery">
-          <p className="muted">重新打开会读取原工具结果，并重新校验权限。</p>
           <button ref={reopenButton} className="secondary" onClick={reopen}>
-            打开交互应用
+            重新打开应用
           </button>
         </div>
       )}
@@ -614,15 +577,25 @@ export default function McpApp({
               : reopenButton.current
             )?.focus();
         }}
-        title="允许应用调用工具？"
-        description="这次操作由应用发起，不会再次调用模型。"
+        title="允许这次操作？"
+        description="仅授权本次操作，后续操作仍会询问。"
       >
-        <p>
-          {approval?.server} / {approval?.tool}
+        <p className="app-action-name">
+          {approval?.display?.toolTitle || approval?.tool}
         </p>
-        <pre className="approval-detail">
-          {JSON.stringify(approval?.args, null, 2)}
-        </pre>
+        <p className="muted">
+          接收方：
+          {approval?.display?.serverTitle || connectorLabel(approval?.server)}
+        </p>
+        <details className="approval-operation-details">
+          <summary>查看操作参数</summary>
+          <p className="muted">
+            {approval?.server} / {approval?.tool}
+          </p>
+          <pre className="approval-detail">
+            {JSON.stringify(approval?.args, null, 2)}
+          </pre>
+        </details>
         <div className="modal-actions">
           <button onClick={close}>关闭应用并取消授权</button>
           <button onClick={() => answer(false)}>拒绝</button>

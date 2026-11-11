@@ -1,0 +1,39 @@
+✔ native thread registers generated dynamic tool contract and waits without a second model turn (124.185398ms)
+✔ model updates remain attached to the original native message and stream as AG-UI snapshots (66.079617ms)
+✔ bad model UI is rejected to the native tool without browser rendering or exposing rejected values (57.339571ms)
+✔ invalid client fields and forged context fail before consuming a pending native request (66.200782ms)
+✔ authentication, Origin, scope, revision and token are checked for every form action (61.719661ms)
+✔ concurrent submission and exact retries return at most one native tool response (56.91008ms)
+✔ host cancellation returns an ordinary cancel event with no user-provided context (58.107538ms)
+✔ native interruption or process loss disables forms and rejects late submissions (114.888608ms)
+✔ only one pending form per thread and configuration maintenance remains blocked (53.096135ms)
+✔ oversized action values are rejected by the product boundary without native dispatch (54.307361ms)
+✔ pending form timeout releases the native request and rejects late browser input (57.081442ms)
+✔ server drafts validate editable fields, preserve native waiting state and never reach model context (60.728385ms)
+✔ draft CAS and clear tombstones prevent another tab or late save from replacing the saved draft (72.32858ms)
+✔ Bridge restart restores saved form and draft read-only without reviving native token or RPC (90.881942ms)
+✔ accepted durable receipts acknowledge exact retries after restart without executing again (98.964966ms)
+✔ unknown native pipe outcome is durably fenced and cannot be replayed after restart (96.405038ms)
+✔ pending UI owner survives the bounded event item cache and restores from persisted indexes (116.053565ms)
+✔ expiry retains the saved ordinary draft but revokes submission and draft writes (54.832639ms)
+✔ storage failure before native consume leaves the waiting request retryable (54.528088ms)
+✔ storage failure after native consume preserves an unknown durable fence (79.497817ms)
+✔ A2UI waiting joins the sidebar lifecycle and clears on submit, native resolution and stop (179.276017ms)
+✔ v3 migration adds bounded UI tables while preserving existing credentials and history (2.917485ms)
+✔ snapshot quota failure is atomic and preserves the last saved form (7.14617ms)
+✔ corrupt or unsupported saved descriptions degrade to fixed unavailable state (5.067897ms)
+✔ incomplete historical surface is displayed as unavailable without an active action (4.453162ms)
+✔ evicted SDK instances restore historical forms from bounded durable snapshots (76.622961ms)
+✔ drafts expire after their retention window and corrupt field types never escape storage (2.328798ms)
+✔ activity is durable, ignores stale terminal/started/read events, and reaches all subscribed conversations (5.754933ms)
+✔ accepted run is running until native completion; offline has an unknown outcome (136.368204ms)
+✔ sidebar consumes background summary updates and a late list response cannot overwrite a newer event (7.484694ms)
+✔ waiting combines approval, input and A2UI without leaking content or reviving ended turns (2.983254ms)
+ℹ tests 31
+ℹ suites 0
+ℹ pass 31
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1979.854394

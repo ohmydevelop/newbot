@@ -1,0 +1,5 @@
+Initialized empty Git repository in /home/a/Documents/ChatGPT/newbot/.data/native/managed/source/.git/
+From https://github.com/openai/codex
+ * branch            fe2f18520864ddbee86cdd4b103a9fefffe9c6a2 -> FETCH_HEAD
+HEAD is now at fe2f185 Gate plugin recommendation cache warming on feature flags (#60721)
+Verified native source fe2f18520864ddbee86cdd4b103a9fefffe9c6a2: /home/a/Documents/ChatGPT/newbot/.data/native/managed/source

@@ -1,7 +1,9 @@
-import { useRef, useState } from "react";
-import { BookOpen, RefreshCw, Trash2 } from "lucide-react";
+import SkillImport from "./SkillImport";
+import { CatalogToolbar } from "./CatalogToolbar";
+import { useRef, useState, useEffect } from "react";
+import { BookOpen, RefreshCw, Trash2, Plus } from "lucide-react";
 import type { Skill, SkillDocument } from "../../shared/types";
-import { loadSettings, request, useApp } from "../store";
+import { loadSettings, loadDiscovery, request, useApp } from "../store";
 import {
   skillScopes as scopes,
   skillLabel as displayName,
@@ -12,7 +14,11 @@ import { Modal } from "./ui";
 import { readSkill } from "../skills";
 export default function SkillsSettings() {
   const settings = useApp((s) => s.settings);
+  useEffect(() => {
+    void loadDiscovery("skills");
+  }, []);
   const readable = useApp((s) => s.skillDocuments);
+  const [importing, setImporting] = useState(false);
   const [query, setQuery] = useState("");
   const [scope, setScope] = useState("");
   const [removing, setRemoving] = useState<SkillDocument | null>(null);
@@ -52,15 +58,40 @@ export default function SkillsSettings() {
     );
   return (
     <div className="skills-settings">
-      <div className="section-heading">
-        <h3>技能</h3>
+      <CatalogToolbar
+        label="技能"
+        query={query}
+        onQuery={setQuery}
+        filters={
+          <select
+            aria-label="技能来源"
+            value={scope}
+            onChange={(e) => setScope(e.target.value)}
+          >
+            <option value="">所有来源</option>
+            {Object.entries(scopes).map(([id, label]) => (
+              <option key={id} value={id}>
+                {label}
+              </option>
+            ))}
+          </select>
+        }
+      >
+        <button
+          className="icon-button"
+          aria-label="添加技能"
+          title="添加技能"
+          onClick={() => setImporting(true)}
+        >
+          <Plus size={18} />
+        </button>
         <button
           ref={refresh}
           className="icon-button"
           aria-label="刷新技能"
           title="刷新技能"
           disabled={!!busy}
-          onClick={() => void action("refresh", loadSettings)}
+          onClick={() => void action("refresh", () => loadDiscovery("skills"))}
         >
           <RefreshCw
             size={17}
@@ -68,28 +99,8 @@ export default function SkillsSettings() {
             aria-hidden="true"
           />
         </button>
-      </div>
-      <div className="catalog-filters">
-        <input
-          type="search"
-          aria-label="搜索已安装技能"
-          placeholder="搜索技能"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-        />
-        <select
-          aria-label="技能来源"
-          value={scope}
-          onChange={(e) => setScope(e.target.value)}
-        >
-          <option value="">所有来源</option>
-          {Object.entries(scopes).map(([id, label]) => (
-            <option key={id} value={id}>
-              {label}
-            </option>
-          ))}
-        </select>
-      </div>
+      </CatalogToolbar>
+      {importing && <SkillImport onClose={() => setImporting(false)} />}
       {(error || discoveryFailed) && (
         <p className="inline-error" role="alert">
           {error || "技能列表读取失败，请刷新后重试。"}
@@ -144,6 +155,7 @@ export default function SkillsSettings() {
                   });
                   setRemoving(null);
                   await loadSettings();
+                  await loadDiscovery("skills");
                 })
               }
             >
@@ -154,6 +166,7 @@ export default function SkillsSettings() {
       )}
       <div className="skill-catalog">
         {settings?.skills
+          .filter((skill: Skill) => !skill.pluginId)
           .filter(
             (skill: Skill) =>
               (!scope || skill.scope === scope) &&
@@ -202,6 +215,7 @@ export default function SkillsSettings() {
                 <button
                   type="button"
                   className="icon-button skill-remove"
+                  data-variant="destructive"
                   aria-label={`卸载 ${skill.name}`}
                   title={
                     skill.removable
@@ -233,6 +247,7 @@ export default function SkillsSettings() {
                         enabled: !skill.enabled,
                       });
                       await loadSettings();
+                      await loadDiscovery("skills");
                     })
                   }
                 >

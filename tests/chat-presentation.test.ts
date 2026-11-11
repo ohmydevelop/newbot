@@ -1,3 +1,11 @@
+class JsonResponse extends Response {
+  constructor(body: BodyInit | null, init?: ResponseInit) {
+    super(body, {
+      ...init,
+      headers: { "Content-Type": "application/json", ...init?.headers },
+    });
+  }
+}
 import { test, after } from "node:test";
 import assert from "node:assert/strict";
 import { EventType, type Event } from "@ag-ui/core";
@@ -48,7 +56,7 @@ function reset() {
     backgroundFailure: null,
   });
   globalThis.fetch = (async () =>
-    new Response("[]", {
+    new JsonResponse("[]", {
       headers: { "content-type": "application/json" },
     })) as any;
 }
@@ -126,10 +134,10 @@ test("failure buffered during history loading stays attached to the recovered tu
   globalThis.fetch = (async (url: any) =>
     String(url).includes("/api/threads/selected")
       ? gate
-      : new Response("[]")) as any;
+      : new JsonResponse("[]")) as any;
   const loading = loadThread("selected");
   consume(failure());
-  release(new Response(JSON.stringify(thread())));
+  release(new JsonResponse(JSON.stringify(thread())));
   await loading;
   assert.equal(useApp.getState().thread!.turns[0].status, "failed");
   assert.equal(useApp.getState().error, "");
@@ -141,7 +149,7 @@ test("successful read consumes only the matching background notice and never cre
   const requests: string[] = [];
   globalThis.fetch = (async (url: any) => {
     requests.push(String(url));
-    return new Response(JSON.stringify(thread("background")));
+    return new JsonResponse(JSON.stringify(thread("background")));
   }) as any;
   await loadThread("background");
   assert.equal(useApp.getState().thread!.id, "background");
@@ -152,7 +160,7 @@ test("local status read failure preserves the conversation and independent error
   reset();
   useApp.setState({ error: "附件上传失败" });
   globalThis.fetch = (async () =>
-    new Response('{"error":"读取失败"}', { status: 503 })) as any;
+    new JsonResponse('{"error":"读取失败"}', { status: 503 })) as any;
   await assert.rejects(() =>
     loadThread("selected", false, { localError: true }),
   );
@@ -184,12 +192,12 @@ test("late older-page responses cannot enter a different conversation", async ()
   globalThis.fetch = (async (url: any) =>
     String(url).includes("cursor=")
       ? gate
-      : new Response(JSON.stringify(thread("other")))) as any;
+      : new JsonResponse(JSON.stringify(thread("other")))) as any;
   const { loadOlder } = await import("../web/store.js");
   const page = loadOlder();
   await loadThread("other");
   release(
-    new Response(
+    new JsonResponse(
       JSON.stringify({
         id: "selected",
         turns: [{ id: "old", status: "completed", items: [] }],
@@ -212,7 +220,7 @@ test("older-page failure preserves cursor and retry uses one request per click",
   let requests = 0;
   globalThis.fetch = (async () => {
     requests++;
-    return new Response("{}", { status: 503 });
+    return new JsonResponse("{}", { status: 503 });
   }) as any;
   const { loadOlder } = await import("../web/store.js");
   await Promise.all([loadOlder(), loadOlder()]);
@@ -220,7 +228,7 @@ test("older-page failure preserves cursor and retry uses one request per click",
   assert.equal(useApp.getState().thread!.historyCursor, "next");
   assert.ok(useApp.getState().olderError);
   globalThis.fetch = (async () =>
-    new Response(
+    new JsonResponse(
       JSON.stringify({
         id: "selected",
         turns: [{ id: "old", status: "completed", items: [] }],
@@ -238,14 +246,35 @@ test("an older thread-list request cannot undo a newer rename/archive refresh", 
   globalThis.fetch = (async () => {
     calls++;
     if (calls === 1) return new Promise<Response>((r) => (release = r));
-    return new Response(JSON.stringify([{ id: "latest", title: "renamed" }]));
+    return new JsonResponse(
+      JSON.stringify([{ id: "latest", title: "renamed" }]),
+    );
   }) as any;
   const { loadThreads } = await import("../web/store.js");
   const old = loadThreads();
   await loadThreads();
-  release(new Response(JSON.stringify([{ id: "archived", title: "old" }])));
+  release(new JsonResponse(JSON.stringify([{ id: "archived", title: "old" }])));
   await old;
   assert.equal(useApp.getState().threads[0].id, "latest");
+});
+
+test("concurrent submissions from one draft reserve only one execution", async () => {
+  reset();
+  useApp.setState({ pendingRuns: {} });
+  const { submitRun } = await import("../web/store.js");
+  let calls = 0;
+  globalThis.fetch = (async () => {
+    calls++;
+    return new JsonResponse(
+      JSON.stringify({ threadId: "selected", turn: { id: "one-turn" } }),
+    );
+  }) as any;
+  const results = await Promise.allSettled([
+    submitRun({ threadId: "selected", text: "same" }),
+    submitRun({ threadId: "selected", text: "same" }),
+  ]);
+  assert.equal(results.filter((r) => r.status === "fulfilled").length, 1);
+  assert.equal(calls, 1);
 });
 
 test("a late submission response cannot clear the next pending request after explicit recovery", async () => {
@@ -255,24 +284,31 @@ test("a late submission response cannot clear the next pending request after exp
   let release!: (v: Response) => void;
   const gate = new Promise<Response>((r) => (release = r));
   globalThis.fetch = (async () => gate) as any;
-  const pending = submitRun({ text: "original" });
+  const pending = submitRun({ threadId: "selected", text: "original" });
   while (!useApp.getState().pendingRun)
     await new Promise((r) => setImmediate(r));
   const old = useApp.getState().pendingRun!;
   clearPendingRun(old);
-  sessionStorage.setItem("ma_pending_run_id", "next-request");
-  sessionStorage.setItem("ma_pending_run_fingerprint", "next-fingerprint");
-  useApp.setState({ pendingRun: "next-request" });
+  useApp.setState({
+    pendingRuns: {
+      "next-request": {
+        id: "next-request",
+        origin: "selected",
+        fingerprint: "next-fingerprint",
+        state: "unknown",
+      },
+    },
+  });
   release(
-    new Response(
+    new JsonResponse(
       JSON.stringify({ threadId: "old-thread", turn: { id: "old-turn" } }),
     ),
   );
   await pending;
   assert.equal(useApp.getState().pendingRun, "next-request");
-  assert.equal(sessionStorage.getItem("ma_pending_run_id"), "next-request");
   assert.equal(
-    sessionStorage.getItem("ma_pending_run_fingerprint"),
+    JSON.parse(sessionStorage.getItem("ma_pending_runs")!)["next-request"]
+      .fingerprint,
     "next-fingerprint",
   );
   clearPendingRun();

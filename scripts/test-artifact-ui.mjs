@@ -320,8 +320,9 @@ try {
           body: JSON.stringify({ error: "测试目录读取失败" }),
         }),
       );
+      await page.getByRole("button", { name: "添加附件", exact: true }).click();
       await page
-        .getByRole("button", { name: "添加工作区文件", exact: true })
+        .getByRole("menuitem", { name: "添加工作区文件", exact: true })
         .click();
       await dialog().getByRole("alert").getByText("测试目录读取失败").waitFor();
       await page.unroute(pattern);
@@ -411,8 +412,9 @@ try {
       path: `${output}/csv-mobile.png`,
     });
     await close();
+    await page.getByRole("button", { name: "添加附件", exact: true }).click();
     await page
-      .getByRole("button", { name: "添加工作区文件", exact: true })
+      .getByRole("menuitem", { name: "添加工作区文件", exact: true })
       .click();
     await dialog()
       .getByRole("button", { name: "notes", exact: true })
@@ -429,8 +431,9 @@ try {
     const box = await dialog().boundingBox();
     assert.ok(box.y >= 0 && box.y + box.height <= 375);
     await close();
+    await page.getByRole("button", { name: "添加附件", exact: true }).click();
     await page
-      .getByRole("button", { name: "添加工作区文件", exact: true })
+      .getByRole("menuitem", { name: "添加工作区文件", exact: true })
       .click();
     await dialog()
       .getByRole("button", { name: "notes", exact: true })

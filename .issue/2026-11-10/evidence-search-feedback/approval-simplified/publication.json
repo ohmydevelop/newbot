@@ -1,0 +1,15 @@
+{
+  "results": [
+    {
+      "origin": "http://127.0.0.1:3100",
+      "entry": "/assets/index-DRtCyC7U.js",
+      "matches": true
+    },
+    {
+      "origin": "https://frequencies-alumni-prior-rna.trycloudflare.com",
+      "entry": "/assets/index-DRtCyC7U.js",
+      "matches": true
+    }
+  ],
+  "noBackendRestart": true
+}

@@ -246,8 +246,9 @@ export class AgentEvents extends EventEmitter {
                 ? { message: "工具执行失败" }
                 : obj.result
                   ? {
-                      content: obj.result.content,
-                      structuredContent: obj.result.structuredContent,
+                      content: publicItem(item).result?.content,
+                      structuredContent:
+                        publicItem(item).result?.structuredContent,
                     }
                   : obj.aggregatedOutput ||
                     (obj.error

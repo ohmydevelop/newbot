@@ -1,0 +1,26 @@
+{
+  "checks": [
+    "title search handles normalized whitespace and keeps failed list reads recoverable",
+    "page failure preserves current content and retry deduplicates without jumping the reader",
+    "late history page cannot replace another selected conversation",
+    "rename failure retains its draft and a confirmed retry refreshes title",
+    "archive failure keeps its row and late archive acknowledgement never clears another draft",
+    "partial batch upload retains success, reports failures and stays with its draft",
+    "cancel upload keeps prior successes and cannot send a half-uploaded batch",
+    "upload limit is enforced before another batch is sent",
+    "late accepted response preserves newer typing while transferring the new-conversation draft",
+    "checking a hung accepted send releases the composer and its late response cannot clear a newer pending request",
+    "unknown accepted response can be checked without losing edits or dispatching twice",
+    "404 leaves the request stable until explicit abandonment fences late submission",
+    "stop acknowledgement remains pending until authority changes and never silently resends",
+    "lost stop request stays unconfirmed and needs a read before another explicit attempt",
+    "mobile dark recovery controls fit the viewport and preserve keyboard input"
+  ],
+  "passed": 15,
+  "counts": {
+    "turns": 5,
+    "interrupts": 3,
+    "pages": 3,
+    "uploads": 4
+  }
+}

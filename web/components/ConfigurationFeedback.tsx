@@ -7,10 +7,12 @@ import {
 } from "../../shared/configuration";
 import type { Json } from "../../shared/types";
 import { useApp, acceptSettings, request } from "../store";
+import { responseJson } from "../http";
 type Failure = {
   message: string;
   issue: ConfigurationIssue | null;
   revision?: string;
+  operationId?: string;
 };
 export function savedReadFailure(message: string) {
   return Object.assign(new Error(message), {
@@ -22,14 +24,19 @@ export function savedReadFailure(message: string) {
   });
 }
 export function useConfigurationRecovery() {
+  const settings = useApp((s) => s.settings);
   const [failure, setFailure] = useState<Failure | null>(null),
     [snapshot, setSnapshot] = useState<Json | null>(null),
     [busy, setBusy] = useState("");
+  useEffect(() => {
+    if (failure && settings?.configuration) setSnapshot(settings);
+  }, [settings]);
   function report(
     message: string,
     issue: ConfigurationIssue | null,
     revision?: string,
   ) {
+    setOperationResult(null);
     setSnapshot(null);
     setFailure({ message, issue, revision });
   }
@@ -41,14 +48,32 @@ export function useConfigurationRecovery() {
       ),
       revision,
     );
+    const operationId = (reason as { operationId?: string })?.operationId;
+    if (operationId)
+      setFailure((previous) =>
+        previous ? { ...previous, operationId } : previous,
+      );
   }
   function clear() {
     setFailure(null);
     setSnapshot(null);
+    setOperationResult(null);
   }
   async function recover(mode: "read" | "reconnect") {
     setBusy(mode);
     try {
+      if (failure?.operationId) {
+        const response = await fetch(
+          `/api/config/operations/${encodeURIComponent(failure.operationId)}`,
+        );
+        const receipt = await responseJson(response);
+        if (
+          !response.ok ||
+          !["saved", "unseen", "unchanged"].includes(receipt.state)
+        )
+          throw new Error("保存结果仍未确认，请稍后再次读取。");
+        if (receipt.state === "saved") setOperationResult(receipt.result);
+      }
       const result = await request<{ settings: Json }>(
         "configuration/recover",
         { mode },
@@ -76,11 +101,13 @@ export function useConfigurationRecovery() {
                 }
               : previous?.issue || null,
         revision: previous?.revision,
+        operationId: previous?.operationId,
       }));
     } finally {
       setBusy("");
     }
   }
+  const [operationResult, setOperationResult] = useState<Json | null>(null);
   const sameVersion =
     !!snapshot &&
     !!failure?.revision &&
@@ -99,6 +126,7 @@ export function useConfigurationRecovery() {
     capture,
     clear,
     recover,
+    operationResult,
   };
 }
 export default function ConfigurationFeedback({
@@ -177,23 +205,25 @@ export default function ConfigurationFeedback({
       >
         {message}
       </p>
-      {issue?.persistence === "saved" && (
-        <p className="muted">配置已提交到服务端，请核对实际生效状态。</p>
-      )}
+      {issue?.persistence === "saved" && <p className="muted">配置已保存。</p>}
       {issue?.persistence === "unconfirmed" && (
         <p className="muted">当前结果尚未确认，请先读取配置再决定下一步。</p>
       )}
       {hasDraft && <p className="muted">输入内容已保留。</p>}
       {current && (
         <div className="configuration-current" role="status">
-          <strong>当前生效配置</strong>
+          <strong>已保存配置</strong>
           <dl>
-            <dt>Provider</dt>
-            <dd>{current.defaults.provider || "运行时默认值"}</dd>
-            <dt>模型</dt>
-            <dd>{current.defaults.model || "运行时默认值"}</dd>
-            <dt>推理强度</dt>
-            <dd>{current.defaults.effort || "运行时默认值"}</dd>
+            {scope === "defaults" && (
+              <>
+                <dt>Provider</dt>
+                <dd>{current.defaults.provider || "运行时默认值"}</dd>
+                <dt>模型</dt>
+                <dd>{current.defaults.model || "运行时默认值"}</dd>
+                <dt>推理强度</dt>
+                <dd>{current.defaults.effort || "运行时默认值"}</dd>
+              </>
+            )}
             {target && (
               <>
                 <dt>
@@ -226,15 +256,18 @@ export default function ConfigurationFeedback({
       )}
       {supported && (
         <div className="configuration-actions">
-          <button
-            type="button"
-            className="secondary"
-            disabled={disabled}
-            onClick={() => void recovery.recover("read")}
-          >
-            <RefreshCw size={15} aria-hidden="true" />
-            读取当前生效配置
-          </button>
+          {hasDraft && (
+            <button
+              type="button"
+              className="icon-button"
+              title="刷新配置"
+              aria-label="刷新配置"
+              disabled={disabled}
+              onClick={() => void recovery.recover("read")}
+            >
+              <RefreshCw size={15} aria-hidden="true" />
+            </button>
+          )}
           {reconnect && (
             <button
               type="button"

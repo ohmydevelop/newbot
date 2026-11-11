@@ -1,0 +1,23 @@
+{
+  "native": "/home/a/Documents/ChatGPT/newbot/.data/native/releases/fe2f185/codex",
+  "version": "codex-cli 0.0.0",
+  "liveSettings": true,
+  "at": "2026-11-11T08:14:48.619Z",
+  "oldPid": 2525591,
+  "pid": 3672851,
+  "schema": 16,
+  "counts": {
+    "threads": 30,
+    "runs": 88,
+    "attachments": 5
+  },
+  "passwordUnchanged": true,
+  "credentialsUnchanged": true,
+  "personalConfigUnchanged": true,
+  "instanceConfigUnchanged": true,
+  "providersUnchanged": true,
+  "historiesVerified": 3,
+  "modelTurnsCreated": 0,
+  "asset": "/assets/index-5sjcKMyx.js",
+  "backup": "/home/a/Documents/ChatGPT/newbot/.data/restart-backups/issue001-1794384862914"
+}

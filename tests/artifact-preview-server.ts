@@ -9,6 +9,7 @@ import {
   utimesSync,
   readFileSync,
   unlinkSync,
+  cpSync,
 } from "node:fs";
 import { createHash } from "node:crypto";
 import { tmpdir } from "node:os";
@@ -33,7 +34,9 @@ const original = codex.call.bind(codex);
 let revision = 0;
 codex.call = (async (method: any, params: any) => {
   const value = await original(method, params);
+  if (method === "thread/start") cpSync(cwd, params.cwd, { recursive: true });
   if (method === "turn/start") {
+    const cwd = workspaces.root(params.threadId);
     const current = ++revision;
     setTimeout(
       () => {
@@ -107,8 +110,9 @@ codex.call = (async (method: any, params: any) => {
   }
   return value;
 }) as typeof codex.call;
-const { app, artifacts } = await createServer({
-    providerRuntime: null,
+const { app, artifacts, workspaces } = await createServer({
+  webDirectory: process.env.UI_TEST_CANDIDATE,
+  providerRuntime: null,
   directory,
   cwd,
   codex,
@@ -118,6 +122,7 @@ const { app, artifacts } = await createServer({
 if (pdfFixture) {
   app.post("/api/test/pdf", async () => {
     const threadId = [...codex.threads.keys()][0];
+    const cwd = workspaces.root(threadId);
     const turn = codex.threads.get(threadId)!.turns.at(-1);
     writeFileSync(
       join(cwd, "preview.pdf"),
@@ -155,6 +160,7 @@ if (process.env.ARTIFACT_LIFECYCLE_FIXTURE) {
   app.post("/api/test/lifecycle", async (req) => {
     const action = (req.body as { action: string }).action;
     const threadId = [...codex.threads.keys()][0];
+    const cwd = workspaces.root(threadId);
     const native = codex.threads.get(threadId)!;
     const turn = native.turns.at(-1);
     const first = artifacts

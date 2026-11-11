@@ -1,0 +1,24 @@
+✔ connector creation depends on absence, edits on its own revision, and lost save responses have one receipt (201.733593ms)
+✔ saved views and mutation receipts preserve legacy authentication; omitted fields cannot erase it (116.839971ms)
+✔ field vault injects only selected recipients, encrypts at rest and binds to endpoint (209.225428ms)
+✔ chat authorization holds dispatch, isolates run and thread grants, cancels and survives disconnect without replay (124.389178ms)
+✔ manual reauthorization uses configured recipients without replay; revocation invalidates pending inputs (96.41363ms)
+✔ unsafe private field names and stale field revisions are rejected before private input (75.70748ms)
+✔ cross-provider session changes preserve native identity and another running task; revisions reject stale updates (210.414554ms)
+✔ active choices are saved without altering pending approval; failed application preserves intent and confirmed binding (86.102081ms)
+✔ session settings survive restart and model catalog discovery is not reported as verified compatibility (80.365887ms)
+✔ independent Codex does not inherit the launching agent's tool pipe, identity or Bridge secrets (0.519198ms)
+✔ a managed policy change blocks a previously saved full-access session before dispatch (78.693892ms)
+✔ legacy sessions recover the native saved model instead of adopting a changed global default (66.864875ms)
+✔ reading legacy history uses saved native metadata without restoring the execution environment (72.899081ms)
+✔ latest candidate survives restart and changes only the next native turn (114.970615ms)
+✔ competing saves use CAS after asynchronous validation (77.408013ms)
+✔ an edit arriving during native application is retained for the following turn (71.747914ms)
+ℹ tests 16
+ℹ suites 0
+ℹ pass 16
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1440.180713

@@ -1,0 +1,87 @@
+{
+  "nativeVersion": "0.165.0",
+  "localMarketplaceReady": true,
+  "bundledMcp": [
+    "bundle_probe"
+  ],
+  "mcpA": [
+    {
+      "name": "alpha",
+      "tools": 2
+    }
+  ],
+  "mcpB": [
+    {
+      "name": "beta",
+      "tools": 2
+    },
+    {
+      "name": "bundle_probe",
+      "tools": 2
+    }
+  ],
+  "skills": [
+    {
+      "workspace": "a",
+      "names": [
+        "alpha-only",
+        "newbot-test-plugin:fixture-note",
+        "imagegen",
+        "openai-docs",
+        "review-agent",
+        "skill-creator",
+        "skill-installer"
+      ]
+    },
+    {
+      "workspace": "b",
+      "names": [
+        "beta-only",
+        "newbot-test-plugin:fixture-note",
+        "imagegen",
+        "openai-docs",
+        "review-agent",
+        "skill-creator",
+        "skill-installer"
+      ]
+    }
+  ],
+  "parentInstructionsLoaded": false,
+  "crossThreadToolRejected": true,
+  "turnStatusA": "completed",
+  "turnStatusB": "completed",
+  "requests": [
+    {
+      "a": true,
+      "b": false,
+      "plugin": false
+    },
+    {
+      "a": false,
+      "b": true,
+      "plugin": true
+    }
+  ],
+  "sameThreadResumed": true,
+  "changedThreadMcp": [
+    {
+      "name": "beta",
+      "tools": 2
+    },
+    {
+      "name": "bundle_probe",
+      "tools": 2
+    }
+  ],
+  "otherThreadMcp": [
+    {
+      "name": "beta",
+      "tools": 2
+    },
+    {
+      "name": "bundle_probe",
+      "tools": 2
+    }
+  ],
+  "checks": 9
+}

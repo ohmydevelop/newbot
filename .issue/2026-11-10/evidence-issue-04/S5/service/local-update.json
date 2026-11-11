@@ -1,0 +1,20 @@
+{
+  "at": "2026-11-10T08:26:22.153Z",
+  "oldPid": 817676,
+  "pid": 987185,
+  "schema": 11,
+  "counts": {
+    "threads": 21,
+    "runs": 58,
+    "attachments": 7
+  },
+  "passwordUnchanged": true,
+  "credentialsUnchanged": true,
+  "personalConfigUnchanged": true,
+  "instanceConfigUnchanged": true,
+  "providersUnchanged": true,
+  "historiesVerified": 3,
+  "modelTurnsCreated": 0,
+  "asset": "/assets/index-LPTOYUKO.js",
+  "backup": "/home/a/Documents/ChatGPT/newbot/.data/restart-backups/issue04-1794299157704"
+}

@@ -1,0 +1,6 @@
+{
+  "stage": "start",
+  "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\ntrue !== false\n",
+  "stack": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\ntrue !== false\n\n    at file:///home/a/Documents/ChatGPT/newbot/scripts/test-plugin-upgrade-native.mjs:72:10",
+  "checks": []
+}

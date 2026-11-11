@@ -6,6 +6,7 @@ import { join } from "node:path";
 import { createServer } from "../server/index.js";
 import { FakeCodex } from "./fixture.js";
 import { testSudo } from "./sudo-fixture.js";
+import { CODEX_VERSION } from "../generated/version.js";
 const origin = "https://main.example.invalid";
 async function setup(
   appOrigin: string | undefined,
@@ -27,7 +28,7 @@ async function setup(
     codex = new FakeCodex();
   try {
     const ctx = await createServer({
-    providerRuntime: null,
+      providerRuntime: null,
       directory,
       cwd: join(directory, "workspace"),
       codex,
@@ -152,7 +153,7 @@ test("capability discovery reports the pinned runtime and never claims provider 
       }),
       c = r.json();
     assert.equal(c.agent, "codex");
-    assert.equal(c.version, "codex-cli 0.165.0");
+    assert.equal(c.version, CODEX_VERSION);
     assert.equal(c.eventProtocol.name, "AG-UI");
     assert.equal(c.mcp.negotiation, "codex-managed");
     assert.equal(c.mcp.protocolVersion, null);

@@ -510,8 +510,8 @@ try {
         .getByText("表单描述无法安全显示，请让助手重新生成", { exact: true })
         .last()
         .waitFor();
-      assert.equal(await panel().locator("input,select,textarea").count(), 0);
-      assert.equal(await panel().locator("script,iframe").count(), 0);
+      assert.equal(await page.locator(".chat-a2ui").last().locator("input,select,textarea").count(), 0);
+      assert.equal(await page.locator(".chat-a2ui").last().locator("script,iframe").count(), 0);
       await screenshot("invalid-fallback-mobile");
     },
   );

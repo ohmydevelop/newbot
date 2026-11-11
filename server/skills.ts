@@ -144,6 +144,8 @@ export function skillLibrary(codex: Codex, cwd: string) {
   }) {
     if (skill.pluginId)
       return { removable: false, removalReason: "请在所属插件中管理此技能" };
+    if (codex.extensionRuntime?.resources.packages().some((p) => p.kind === "skills" && skill.path.startsWith(p.path + "/")))
+      return { removable: true, removalReason: null };
     if (skill.scope !== "user")
       return {
         removable: false,
@@ -178,14 +180,33 @@ export function skillLibrary(codex: Codex, cwd: string) {
         ...new Map(
           result.data
             .flatMap((entry) => entry.skills)
+            .filter((skill) => skill.pluginId || codex.extensionRuntime?.resources.skillAvailable(skill.path) !== false)
             .map((skill) => [
               skill.path,
-              { ...skill, id: skillId(skill.path), ...removal(skill) },
+              {
+                ...skill,
+                id: codex.extensionRuntime?.asset(skill) || skillId(skill.path),
+                enabled:
+                  !(
+                    skill.pluginId &&
+                    codex.extensionRuntime?.pluginEnabled(
+                      skill.pluginId,
+                      true,
+                    ) === false
+                  ) &&
+                  (codex.extensionRuntime?.skillEnabled(
+                    skill.path,
+                    skill.enabled,
+                  ) ??
+                    skill.enabled),
+                ...removal(skill),
+              },
             ]),
         ).values(),
       ] satisfies Skill[];
       return {
         skills,
+        hiddenPaths: result.data.flatMap((entry) => entry.skills).filter((s) => !s.pluginId && codex.extensionRuntime?.resources.skillAvailable(s.path) === false).map((s) => s.path),
         warnings: result.data.reduce(
           (sum, entry) => sum + entry.errors.length,
           0,
@@ -199,7 +220,9 @@ export function skillLibrary(codex: Codex, cwd: string) {
   async function read(id: string): Promise<SkillDocument> {
     if (!/^[a-f0-9]{64}$/.test(id)) reject("技能标识无效，请刷新技能列表", 400);
     const { skills } = await list();
-    const skill = skills.find((entry) => entry.id === id);
+    const skill = skills.find(
+      (entry) => entry.id === (codex.extensionRuntime?.resolveAlias(id) || id),
+    );
     if (!skill) reject("技能已不在当前列表中，请刷新后重试", 404);
     return readCurrent(skill);
   }
@@ -223,7 +246,12 @@ export function skillLibrary(codex: Codex, cwd: string) {
     const { skills } = await list();
     const documents = await Promise.all(
       selections.map(async (selection) => {
-        const skill = skills.find((s) => s.id === selection.id);
+        const skill = skills.find(
+          (s) =>
+            s.id ===
+            (codex.extensionRuntime?.resolveAlias(selection.id) ||
+              selection.id),
+        );
         if (!skill) reject("所选技能已不在当前列表中，请移除后重新选择", 409);
         if (!skill.enabled)
           reject("所选技能已停用，请移除或启用后重新选择", 409);
@@ -258,6 +286,11 @@ export function skillLibrary(codex: Codex, cwd: string) {
       reject(document.skill.removalReason || "此技能无法卸载");
     if (sha256 !== document.sha256)
       reject("技能内容已变化，请重新查看后确认", 409);
+    if (codex.runtimeCapabilities?.pinnedPluginRoots && codex.extensionRuntime?.resources.packages().some((p) => p.kind === "skills" && document.skill.path.startsWith(p.path + "/"))) {
+      codex.extensionRuntime.setSkill(document.skill.path,false);
+      codex.extensionRuntime.resources.removeSkill(document.skill.path);
+      return {state:"uninstalled",...(await list())};
+    }
     const folder = dirname(document.skill.path),
       root = dirname(folder);
     await directories(folder);
@@ -267,10 +300,13 @@ export function skillLibrary(codex: Codex, cwd: string) {
     const archive = join(dirname(root), "newbot-removed-skills");
     await mkdir(archive, { recursive: true, mode: 0o700 });
     await directories(archive);
-    await codex.call("skills/config/write", {
-      path: document.skill.path,
-      enabled: false,
-    });
+    if (codex.extensionRuntime)
+      codex.extensionRuntime.setSkill(document.skill.path, false);
+    else
+      await codex.call("skills/config/write", {
+        path: document.skill.path,
+        enabled: false,
+      });
     const current = await lstat(folder);
     if (
       current.dev !== before.dev ||
@@ -282,5 +318,5 @@ export function skillLibrary(codex: Codex, cwd: string) {
     for (const threadId of [...codex.loaded]) await codex.unload(threadId);
     return { state: "uninstalled", ...(await list()) };
   }
-  return { list, read, prepare, uninstall };
+  return { list, read, readCurrent, prepare, uninstall };
 }

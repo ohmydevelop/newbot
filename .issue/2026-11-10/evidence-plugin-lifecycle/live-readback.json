@@ -1,0 +1,55 @@
+{
+  "at": "2026-11-10T15:27:10.167Z",
+  "asset": "/assets/index-DVvWXta9.js",
+  "publicBuildMatches": true,
+  "activePluginChunk": "assets/ToolsSettings-BgZAVPKX.js",
+  "oldCopyAbsent": true,
+  "standaloneConnectors": [
+    "newbot_test"
+  ],
+  "details": [
+    {
+      "id": "github@openai-api-curated",
+      "version": "0.1.12",
+      "update": {
+        "kind": "marketplace",
+        "available": false,
+        "currentVersion": "0.1.12",
+        "latestVersion": null,
+        "reason": "此插件由来源目录管理，目录更新后读取新内容"
+      },
+      "skills": [],
+      "connections": []
+    },
+    {
+      "id": "cloudwalker@newbot-imports",
+      "version": "0.5.1",
+      "update": {
+        "kind": "import",
+        "available": true
+      },
+      "skills": [
+        {
+          "name": "cloudwalker:cloudwalker-investigate",
+          "enabled": true
+        },
+        {
+          "name": "cloudwalker:cloudwalker-posture",
+          "enabled": true
+        }
+      ],
+      "connections": [
+        {
+          "name": "cloudwalker",
+          "source": "package",
+          "fields": [
+            "base_url",
+            "api_token"
+          ]
+        }
+      ]
+    }
+  ],
+  "uiVerification": "API + referenced build only; Work browser control disabled",
+  "businessToolsCalled": 0
+}

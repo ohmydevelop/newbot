@@ -1,3 +1,4 @@
+import {responseJson} from "../http";
 import { useEffect, useState } from "react";
 import { LoaderCircle, RefreshCw, Trash2 } from "lucide-react";
 import type { StorageCleanup, StorageUsage } from "../../shared/types";
@@ -14,7 +15,7 @@ export default function StorageSettings() {
     setBusy("read");
     setError("");
     void artifactFetch("/api/storage", { signal: controller.signal })
-      .then((r) => r.json())
+      .then((r) => responseJson(r))
       .then((value) => {
         if (!controller.signal.aborted) setUsage(value);
       })
@@ -34,7 +35,7 @@ export default function StorageSettings() {
       const response = await artifactFetch("/api/storage/cleanup", {
         method: "POST",
       });
-      const result = (await response.json()) as StorageCleanup;
+      const result = (await responseJson(response)) as StorageCleanup;
       setUsage(result.usage);
       setNotice(
         `已清理 ${result.removedFiles} 项，释放 ${formatFileSize(result.releasedBytes)} 配额。`,
@@ -116,6 +117,7 @@ export default function StorageSettings() {
             <button
               type="button"
               className="secondary artifact-download-button"
+              data-variant="destructive"
               disabled={!!busy || !usage.reclaimableFiles}
               onClick={() => void clean()}
             >

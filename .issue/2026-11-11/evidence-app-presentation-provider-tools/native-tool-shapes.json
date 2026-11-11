@@ -1,0 +1,1173 @@
+{
+  "runtime": "0.165.0",
+  "syntheticOnly": true,
+  "results": [
+    {
+      "name": "minimax-default",
+      "model": "minimax-m3.1-flash",
+      "features": {},
+      "requests": [
+        {
+          "tools": [
+            {
+              "type": "function",
+              "name": "exec_command"
+            },
+            {
+              "type": "function",
+              "name": "write_stdin"
+            },
+            {
+              "type": "function",
+              "name": "list_mcp_resources"
+            },
+            {
+              "type": "function",
+              "name": "list_mcp_resource_templates"
+            },
+            {
+              "type": "function",
+              "name": "read_mcp_resource"
+            },
+            {
+              "type": "function",
+              "name": "request_user_input"
+            },
+            {
+              "type": "function",
+              "name": "view_image"
+            },
+            {
+              "type": "function",
+              "name": "close_agent",
+              "namespace": "multi_agent_v1"
+            },
+            {
+              "type": "function",
+              "name": "resume_agent",
+              "namespace": "multi_agent_v1"
+            },
+            {
+              "type": "function",
+              "name": "send_input",
+              "namespace": "multi_agent_v1"
+            },
+            {
+              "type": "function",
+              "name": "spawn_agent",
+              "namespace": "multi_agent_v1"
+            },
+            {
+              "type": "function",
+              "name": "wait_agent",
+              "namespace": "multi_agent_v1"
+            },
+            {
+              "type": "function",
+              "name": "probe",
+              "namespace": "mcp__shape"
+            },
+            {
+              "type": "function",
+              "name": "get_goal"
+            },
+            {
+              "type": "function",
+              "name": "create_goal"
+            },
+            {
+              "type": "function",
+              "name": "update_goal"
+            },
+            {
+              "type": "web_search"
+            }
+          ],
+          "hasResult": false,
+          "outputs": []
+        },
+        {
+          "tools": [
+            {
+              "type": "function",
+              "name": "exec_command"
+            },
+            {
+              "type": "function",
+              "name": "write_stdin"
+            },
+            {
+              "type": "function",
+              "name": "list_mcp_resources"
+            },
+            {
+              "type": "function",
+              "name": "list_mcp_resource_templates"
+            },
+            {
+              "type": "function",
+              "name": "read_mcp_resource"
+            },
+            {
+              "type": "function",
+              "name": "request_user_input"
+            },
+            {
+              "type": "function",
+              "name": "view_image"
+            },
+            {
+              "type": "function",
+              "name": "close_agent",
+              "namespace": "multi_agent_v1"
+            },
+            {
+              "type": "function",
+              "name": "resume_agent",
+              "namespace": "multi_agent_v1"
+            },
+            {
+              "type": "function",
+              "name": "send_input",
+              "namespace": "multi_agent_v1"
+            },
+            {
+              "type": "function",
+              "name": "spawn_agent",
+              "namespace": "multi_agent_v1"
+            },
+            {
+              "type": "function",
+              "name": "wait_agent",
+              "namespace": "multi_agent_v1"
+            },
+            {
+              "type": "function",
+              "name": "probe",
+              "namespace": "mcp__shape"
+            },
+            {
+              "type": "function",
+              "name": "get_goal"
+            },
+            {
+              "type": "function",
+              "name": "create_goal"
+            },
+            {
+              "type": "function",
+              "name": "update_goal"
+            },
+            {
+              "type": "web_search"
+            }
+          ],
+          "hasResult": true,
+          "outputs": [
+            {
+              "type": "function_call_output",
+              "output": [
+                {
+                  "type": "input_text",
+                  "text": "Wall time: 0.0045 seconds\nOutput:"
+                },
+                {
+                  "type": "input_text",
+                  "text": "SHAPE_PROBE_OK"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "mcpDiscovered": [
+        "probe"
+      ],
+      "status": "completed",
+      "success": true
+    },
+    {
+      "name": "minimax-nonprefixed",
+      "model": "minimax-m3.1-flash",
+      "features": {
+        "non_prefixed_mcp_tool_names": true
+      },
+      "requests": [
+        {
+          "tools": [
+            {
+              "type": "function",
+              "name": "exec_command"
+            },
+            {
+              "type": "function",
+              "name": "write_stdin"
+            },
+            {
+              "type": "function",
+              "name": "list_mcp_resources"
+            },
+            {
+              "type": "function",
+              "name": "list_mcp_resource_templates"
+            },
+            {
+              "type": "function",
+              "name": "read_mcp_resource"
+            },
+            {
+              "type": "function",
+              "name": "request_user_input"
+            },
+            {
+              "type": "function",
+              "name": "view_image"
+            },
+            {
+              "type": "function",
+              "name": "close_agent",
+              "namespace": "multi_agent_v1"
+            },
+            {
+              "type": "function",
+              "name": "resume_agent",
+              "namespace": "multi_agent_v1"
+            },
+            {
+              "type": "function",
+              "name": "send_input",
+              "namespace": "multi_agent_v1"
+            },
+            {
+              "type": "function",
+              "name": "spawn_agent",
+              "namespace": "multi_agent_v1"
+            },
+            {
+              "type": "function",
+              "name": "wait_agent",
+              "namespace": "multi_agent_v1"
+            },
+            {
+              "type": "function",
+              "name": "probe",
+              "namespace": "shape"
+            },
+            {
+              "type": "function",
+              "name": "get_goal"
+            },
+            {
+              "type": "function",
+              "name": "create_goal"
+            },
+            {
+              "type": "function",
+              "name": "update_goal"
+            },
+            {
+              "type": "web_search"
+            }
+          ],
+          "hasResult": false,
+          "outputs": []
+        },
+        {
+          "tools": [
+            {
+              "type": "function",
+              "name": "exec_command"
+            },
+            {
+              "type": "function",
+              "name": "write_stdin"
+            },
+            {
+              "type": "function",
+              "name": "list_mcp_resources"
+            },
+            {
+              "type": "function",
+              "name": "list_mcp_resource_templates"
+            },
+            {
+              "type": "function",
+              "name": "read_mcp_resource"
+            },
+            {
+              "type": "function",
+              "name": "request_user_input"
+            },
+            {
+              "type": "function",
+              "name": "view_image"
+            },
+            {
+              "type": "function",
+              "name": "close_agent",
+              "namespace": "multi_agent_v1"
+            },
+            {
+              "type": "function",
+              "name": "resume_agent",
+              "namespace": "multi_agent_v1"
+            },
+            {
+              "type": "function",
+              "name": "send_input",
+              "namespace": "multi_agent_v1"
+            },
+            {
+              "type": "function",
+              "name": "spawn_agent",
+              "namespace": "multi_agent_v1"
+            },
+            {
+              "type": "function",
+              "name": "wait_agent",
+              "namespace": "multi_agent_v1"
+            },
+            {
+              "type": "function",
+              "name": "probe",
+              "namespace": "shape"
+            },
+            {
+              "type": "function",
+              "name": "get_goal"
+            },
+            {
+              "type": "function",
+              "name": "create_goal"
+            },
+            {
+              "type": "function",
+              "name": "update_goal"
+            },
+            {
+              "type": "web_search"
+            }
+          ],
+          "hasResult": true,
+          "outputs": [
+            {
+              "type": "function_call_output",
+              "output": [
+                {
+                  "type": "input_text",
+                  "text": "Wall time: 0.0027 seconds\nOutput:"
+                },
+                {
+                  "type": "input_text",
+                  "text": "SHAPE_PROBE_OK"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "mcpDiscovered": [
+        "probe"
+      ],
+      "status": "completed",
+      "success": true
+    },
+    {
+      "name": "minimax-no-incremental",
+      "model": "minimax-m3.1-flash",
+      "features": {
+        "incremental_tools": false
+      },
+      "requests": [
+        {
+          "tools": [
+            {
+              "type": "function",
+              "name": "exec_command"
+            },
+            {
+              "type": "function",
+              "name": "write_stdin"
+            },
+            {
+              "type": "function",
+              "name": "list_mcp_resources"
+            },
+            {
+              "type": "function",
+              "name": "list_mcp_resource_templates"
+            },
+            {
+              "type": "function",
+              "name": "read_mcp_resource"
+            },
+            {
+              "type": "function",
+              "name": "request_user_input"
+            },
+            {
+              "type": "function",
+              "name": "view_image"
+            },
+            {
+              "type": "function",
+              "name": "close_agent",
+              "namespace": "multi_agent_v1"
+            },
+            {
+              "type": "function",
+              "name": "resume_agent",
+              "namespace": "multi_agent_v1"
+            },
+            {
+              "type": "function",
+              "name": "send_input",
+              "namespace": "multi_agent_v1"
+            },
+            {
+              "type": "function",
+              "name": "spawn_agent",
+              "namespace": "multi_agent_v1"
+            },
+            {
+              "type": "function",
+              "name": "wait_agent",
+              "namespace": "multi_agent_v1"
+            },
+            {
+              "type": "function",
+              "name": "probe",
+              "namespace": "mcp__shape"
+            },
+            {
+              "type": "function",
+              "name": "get_goal"
+            },
+            {
+              "type": "function",
+              "name": "create_goal"
+            },
+            {
+              "type": "function",
+              "name": "update_goal"
+            },
+            {
+              "type": "web_search"
+            }
+          ],
+          "hasResult": false,
+          "outputs": []
+        },
+        {
+          "tools": [
+            {
+              "type": "function",
+              "name": "exec_command"
+            },
+            {
+              "type": "function",
+              "name": "write_stdin"
+            },
+            {
+              "type": "function",
+              "name": "list_mcp_resources"
+            },
+            {
+              "type": "function",
+              "name": "list_mcp_resource_templates"
+            },
+            {
+              "type": "function",
+              "name": "read_mcp_resource"
+            },
+            {
+              "type": "function",
+              "name": "request_user_input"
+            },
+            {
+              "type": "function",
+              "name": "view_image"
+            },
+            {
+              "type": "function",
+              "name": "close_agent",
+              "namespace": "multi_agent_v1"
+            },
+            {
+              "type": "function",
+              "name": "resume_agent",
+              "namespace": "multi_agent_v1"
+            },
+            {
+              "type": "function",
+              "name": "send_input",
+              "namespace": "multi_agent_v1"
+            },
+            {
+              "type": "function",
+              "name": "spawn_agent",
+              "namespace": "multi_agent_v1"
+            },
+            {
+              "type": "function",
+              "name": "wait_agent",
+              "namespace": "multi_agent_v1"
+            },
+            {
+              "type": "function",
+              "name": "probe",
+              "namespace": "mcp__shape"
+            },
+            {
+              "type": "function",
+              "name": "get_goal"
+            },
+            {
+              "type": "function",
+              "name": "create_goal"
+            },
+            {
+              "type": "function",
+              "name": "update_goal"
+            },
+            {
+              "type": "web_search"
+            }
+          ],
+          "hasResult": true,
+          "outputs": [
+            {
+              "type": "function_call_output",
+              "output": [
+                {
+                  "type": "input_text",
+                  "text": "Wall time: 0.0032 seconds\nOutput:"
+                },
+                {
+                  "type": "input_text",
+                  "text": "SHAPE_PROBE_OK"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "mcpDiscovered": [
+        "probe"
+      ],
+      "status": "completed",
+      "success": true
+    },
+    {
+      "name": "minimax-no-code-host",
+      "model": "minimax-m3.1-flash",
+      "features": {
+        "code_mode_host": false
+      },
+      "requests": [
+        {
+          "tools": [
+            {
+              "type": "function",
+              "name": "exec_command"
+            },
+            {
+              "type": "function",
+              "name": "write_stdin"
+            },
+            {
+              "type": "function",
+              "name": "list_mcp_resources"
+            },
+            {
+              "type": "function",
+              "name": "list_mcp_resource_templates"
+            },
+            {
+              "type": "function",
+              "name": "read_mcp_resource"
+            },
+            {
+              "type": "function",
+              "name": "request_user_input"
+            },
+            {
+              "type": "function",
+              "name": "view_image"
+            },
+            {
+              "type": "function",
+              "name": "close_agent",
+              "namespace": "multi_agent_v1"
+            },
+            {
+              "type": "function",
+              "name": "resume_agent",
+              "namespace": "multi_agent_v1"
+            },
+            {
+              "type": "function",
+              "name": "send_input",
+              "namespace": "multi_agent_v1"
+            },
+            {
+              "type": "function",
+              "name": "spawn_agent",
+              "namespace": "multi_agent_v1"
+            },
+            {
+              "type": "function",
+              "name": "wait_agent",
+              "namespace": "multi_agent_v1"
+            },
+            {
+              "type": "function",
+              "name": "probe",
+              "namespace": "mcp__shape"
+            },
+            {
+              "type": "function",
+              "name": "get_goal"
+            },
+            {
+              "type": "function",
+              "name": "create_goal"
+            },
+            {
+              "type": "function",
+              "name": "update_goal"
+            },
+            {
+              "type": "web_search"
+            }
+          ],
+          "hasResult": false,
+          "outputs": []
+        },
+        {
+          "tools": [
+            {
+              "type": "function",
+              "name": "exec_command"
+            },
+            {
+              "type": "function",
+              "name": "write_stdin"
+            },
+            {
+              "type": "function",
+              "name": "list_mcp_resources"
+            },
+            {
+              "type": "function",
+              "name": "list_mcp_resource_templates"
+            },
+            {
+              "type": "function",
+              "name": "read_mcp_resource"
+            },
+            {
+              "type": "function",
+              "name": "request_user_input"
+            },
+            {
+              "type": "function",
+              "name": "view_image"
+            },
+            {
+              "type": "function",
+              "name": "close_agent",
+              "namespace": "multi_agent_v1"
+            },
+            {
+              "type": "function",
+              "name": "resume_agent",
+              "namespace": "multi_agent_v1"
+            },
+            {
+              "type": "function",
+              "name": "send_input",
+              "namespace": "multi_agent_v1"
+            },
+            {
+              "type": "function",
+              "name": "spawn_agent",
+              "namespace": "multi_agent_v1"
+            },
+            {
+              "type": "function",
+              "name": "wait_agent",
+              "namespace": "multi_agent_v1"
+            },
+            {
+              "type": "function",
+              "name": "probe",
+              "namespace": "mcp__shape"
+            },
+            {
+              "type": "function",
+              "name": "get_goal"
+            },
+            {
+              "type": "function",
+              "name": "create_goal"
+            },
+            {
+              "type": "function",
+              "name": "update_goal"
+            },
+            {
+              "type": "web_search"
+            }
+          ],
+          "hasResult": true,
+          "outputs": [
+            {
+              "type": "function_call_output",
+              "output": [
+                {
+                  "type": "input_text",
+                  "text": "Wall time: 0.0024 seconds\nOutput:"
+                },
+                {
+                  "type": "input_text",
+                  "text": "SHAPE_PROBE_OK"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "mcpDiscovered": [
+        "probe"
+      ],
+      "status": "completed",
+      "success": true
+    },
+    {
+      "name": "minimax-dropping-gateway",
+      "model": "minimax-m3.1-flash",
+      "features": {},
+      "dropNamespaces": true,
+      "requests": [
+        {
+          "tools": [
+            {
+              "type": "function",
+              "name": "exec_command"
+            },
+            {
+              "type": "function",
+              "name": "write_stdin"
+            },
+            {
+              "type": "function",
+              "name": "list_mcp_resources"
+            },
+            {
+              "type": "function",
+              "name": "list_mcp_resource_templates"
+            },
+            {
+              "type": "function",
+              "name": "read_mcp_resource"
+            },
+            {
+              "type": "function",
+              "name": "request_user_input"
+            },
+            {
+              "type": "function",
+              "name": "view_image"
+            },
+            {
+              "type": "function",
+              "name": "close_agent",
+              "namespace": "multi_agent_v1"
+            },
+            {
+              "type": "function",
+              "name": "resume_agent",
+              "namespace": "multi_agent_v1"
+            },
+            {
+              "type": "function",
+              "name": "send_input",
+              "namespace": "multi_agent_v1"
+            },
+            {
+              "type": "function",
+              "name": "spawn_agent",
+              "namespace": "multi_agent_v1"
+            },
+            {
+              "type": "function",
+              "name": "wait_agent",
+              "namespace": "multi_agent_v1"
+            },
+            {
+              "type": "function",
+              "name": "probe",
+              "namespace": "mcp__shape"
+            },
+            {
+              "type": "function",
+              "name": "get_goal"
+            },
+            {
+              "type": "function",
+              "name": "create_goal"
+            },
+            {
+              "type": "function",
+              "name": "update_goal"
+            },
+            {
+              "type": "web_search"
+            }
+          ],
+          "hasResult": false,
+          "outputs": []
+        }
+      ],
+      "mcpDiscovered": [
+        "probe"
+      ],
+      "status": "completed",
+      "success": false
+    },
+    {
+      "name": "deepseek-control",
+      "model": "deepseek-flash",
+      "features": {},
+      "requests": [
+        {
+          "tools": [
+            {
+              "type": "function",
+              "name": "exec_command"
+            },
+            {
+              "type": "function",
+              "name": "write_stdin"
+            },
+            {
+              "type": "function",
+              "name": "list_mcp_resources"
+            },
+            {
+              "type": "function",
+              "name": "list_mcp_resource_templates"
+            },
+            {
+              "type": "function",
+              "name": "read_mcp_resource"
+            },
+            {
+              "type": "function",
+              "name": "request_user_input"
+            },
+            {
+              "type": "function",
+              "name": "view_image"
+            },
+            {
+              "type": "function",
+              "name": "close_agent",
+              "namespace": "multi_agent_v1"
+            },
+            {
+              "type": "function",
+              "name": "resume_agent",
+              "namespace": "multi_agent_v1"
+            },
+            {
+              "type": "function",
+              "name": "send_input",
+              "namespace": "multi_agent_v1"
+            },
+            {
+              "type": "function",
+              "name": "spawn_agent",
+              "namespace": "multi_agent_v1"
+            },
+            {
+              "type": "function",
+              "name": "wait_agent",
+              "namespace": "multi_agent_v1"
+            },
+            {
+              "type": "function",
+              "name": "probe",
+              "namespace": "mcp__shape"
+            },
+            {
+              "type": "function",
+              "name": "get_goal"
+            },
+            {
+              "type": "function",
+              "name": "create_goal"
+            },
+            {
+              "type": "function",
+              "name": "update_goal"
+            },
+            {
+              "type": "web_search"
+            }
+          ],
+          "hasResult": false,
+          "outputs": []
+        },
+        {
+          "tools": [
+            {
+              "type": "function",
+              "name": "exec_command"
+            },
+            {
+              "type": "function",
+              "name": "write_stdin"
+            },
+            {
+              "type": "function",
+              "name": "list_mcp_resources"
+            },
+            {
+              "type": "function",
+              "name": "list_mcp_resource_templates"
+            },
+            {
+              "type": "function",
+              "name": "read_mcp_resource"
+            },
+            {
+              "type": "function",
+              "name": "request_user_input"
+            },
+            {
+              "type": "function",
+              "name": "view_image"
+            },
+            {
+              "type": "function",
+              "name": "close_agent",
+              "namespace": "multi_agent_v1"
+            },
+            {
+              "type": "function",
+              "name": "resume_agent",
+              "namespace": "multi_agent_v1"
+            },
+            {
+              "type": "function",
+              "name": "send_input",
+              "namespace": "multi_agent_v1"
+            },
+            {
+              "type": "function",
+              "name": "spawn_agent",
+              "namespace": "multi_agent_v1"
+            },
+            {
+              "type": "function",
+              "name": "wait_agent",
+              "namespace": "multi_agent_v1"
+            },
+            {
+              "type": "function",
+              "name": "probe",
+              "namespace": "mcp__shape"
+            },
+            {
+              "type": "function",
+              "name": "get_goal"
+            },
+            {
+              "type": "function",
+              "name": "create_goal"
+            },
+            {
+              "type": "function",
+              "name": "update_goal"
+            },
+            {
+              "type": "web_search"
+            }
+          ],
+          "hasResult": true,
+          "outputs": [
+            {
+              "type": "function_call_output",
+              "output": [
+                {
+                  "type": "input_text",
+                  "text": "Wall time: 0.0028 seconds\nOutput:"
+                },
+                {
+                  "type": "input_text",
+                  "text": "SHAPE_PROBE_OK"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "mcpDiscovered": [
+        "probe"
+      ],
+      "status": "completed",
+      "success": true
+    },
+    {
+      "name": "gpt-control",
+      "model": "gpt-6-sol",
+      "features": {},
+      "requests": [
+        {
+          "tools": [
+            {
+              "type": "custom",
+              "name": "exec",
+              "namespace": "functions"
+            },
+            {
+              "type": "function",
+              "name": "wait",
+              "namespace": "functions"
+            },
+            {
+              "type": "function",
+              "name": "request_user_input",
+              "namespace": "functions"
+            },
+            {
+              "type": "function",
+              "name": "request_user_input_async",
+              "namespace": "functions"
+            },
+            {
+              "type": "function",
+              "name": "sleep",
+              "namespace": "clock"
+            },
+            {
+              "type": "function",
+              "name": "followup_task",
+              "namespace": "collaboration"
+            },
+            {
+              "type": "function",
+              "name": "interrupt_agent",
+              "namespace": "collaboration"
+            },
+            {
+              "type": "function",
+              "name": "list_agents",
+              "namespace": "collaboration"
+            },
+            {
+              "type": "function",
+              "name": "send_message",
+              "namespace": "collaboration"
+            },
+            {
+              "type": "function",
+              "name": "spawn_agent",
+              "namespace": "collaboration"
+            },
+            {
+              "type": "function",
+              "name": "wait_agent",
+              "namespace": "collaboration"
+            }
+          ],
+          "hasResult": false,
+          "outputs": []
+        },
+        {
+          "tools": [
+            {
+              "type": "custom",
+              "name": "exec",
+              "namespace": "functions"
+            },
+            {
+              "type": "function",
+              "name": "wait",
+              "namespace": "functions"
+            },
+            {
+              "type": "function",
+              "name": "request_user_input",
+              "namespace": "functions"
+            },
+            {
+              "type": "function",
+              "name": "request_user_input_async",
+              "namespace": "functions"
+            },
+            {
+              "type": "function",
+              "name": "sleep",
+              "namespace": "clock"
+            },
+            {
+              "type": "function",
+              "name": "followup_task",
+              "namespace": "collaboration"
+            },
+            {
+              "type": "function",
+              "name": "interrupt_agent",
+              "namespace": "collaboration"
+            },
+            {
+              "type": "function",
+              "name": "list_agents",
+              "namespace": "collaboration"
+            },
+            {
+              "type": "function",
+              "name": "send_message",
+              "namespace": "collaboration"
+            },
+            {
+              "type": "function",
+              "name": "spawn_agent",
+              "namespace": "collaboration"
+            },
+            {
+              "type": "function",
+              "name": "wait_agent",
+              "namespace": "collaboration"
+            }
+          ],
+          "hasResult": true,
+          "outputs": [
+            {
+              "type": "custom_tool_call_output",
+              "output": [
+                {
+                  "type": "input_text",
+                  "text": "Script completed\nWall time 0.0 seconds\nOutput:\n"
+                },
+                {
+                  "type": "input_text",
+                  "text": "{\"content\":[{\"type\":\"text\",\"text\":\"SHAPE_PROBE_OK\"}]}"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "mcpDiscovered": [
+        "probe"
+      ],
+      "status": "completed",
+      "success": true
+    }
+  ],
+  "mcpCalls": 6
+}

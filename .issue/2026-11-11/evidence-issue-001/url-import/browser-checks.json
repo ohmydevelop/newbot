@@ -1,0 +1,43 @@
+{
+  "browser": "Chrome via CUA",
+  "viewports": [
+    {
+      "width": 390,
+      "height": 844,
+      "theme": "light"
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "theme": "dark"
+    },
+    {
+      "width": 320,
+      "height": 740,
+      "theme": "dark"
+    }
+  ],
+  "fixture": "Synthetic GitHub API/archives with real patched Codex scanner and installer, isolated temporary home",
+  "checks": {
+    "singleLinkInput": true,
+    "noRefSearchSelectRefreshOrPagination": true,
+    "noRequestsBeforeScan": true,
+    "slashBranchSkillImported": "feature/api -> skills/standalone",
+    "releaseTagPluginInstalled": "v1 -> url-demo 1.0.0",
+    "branchPluginUpgraded": "feature/api -> plugins/demo -> url-demo 2.0.0",
+    "missingRefPreservedInput": true,
+    "missingRefDidNotFallback": true,
+    "retryWithRepositoryHomepage": "main preview",
+    "mobileHorizontalOverflow": false
+  },
+  "evidence": [
+    "browser-requests.json",
+    "mobile-source.jpg",
+    "mobile-skill-preview.jpg",
+    "mobile-tag-plugin-preview.jpg",
+    "mobile-upgrade-complete.jpg",
+    "desktop-error.jpg",
+    "desktop-default-preview.jpg",
+    "narrow-source.jpg"
+  ]
+}

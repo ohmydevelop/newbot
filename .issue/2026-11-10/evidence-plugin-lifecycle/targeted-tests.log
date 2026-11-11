@@ -1,0 +1,42 @@
+✔ independent connector membership is stable before discovery and late plugin metadata (0.805329ms)
+✔ ZIP extraction preserves ordinary resources and mode; rejects traversal, links, bombs, duplicate names and bad CRC (19.034308ms)
+✔ native-sized resources survive ZIP and session capture while oversized files stay rejected (220.916223ms)
+✔ import paths and GitHub references stay inside a selected package and fixed public service (0.695919ms)
+✔ staging budget includes abandoned sources, releases cancelled content and keeps retained sources reachable (100.383757ms)
+✔ SQLite journal restores package, preferences and interrupted import without claiming success (86.021395ms)
+✔ plugin settings preserve ownership, encrypt credentials and recover without config files (30.495094ms)
+✔ same-name connectors in different plugins stay isolated, including disable and uninstall (22.766554ms)
+✔ endpoint/package changes cannot inherit secrets and concurrent writes preserve the first save (22.18039ms)
+✔ upgrades preserve compatible ordinary fields while invalidating code-bound credentials (21.998715ms)
+✔ HTTP headers, numeric and optional fields bind only declared destinations (16.721268ms)
+✔ unsupported descriptors, sensitive command templates and protected env fail closed (16.89712ms)
+✔ configuration-free connectors need no credential, and declared manifest paths stay within the package (10.333578ms)
+✖ plugin API owns child skills and connectors; private saves have durable owner-bound receipts (312.743767ms)
+ℹ tests 14
+ℹ suites 0
+ℹ pass 13
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 853.875524
+
+✖ failing tests:
+
+test at tests/plugin-management.test.ts:1:1562
+✖ plugin API owns child skills and connectors; private saves have durable owner-bound receipts (312.743767ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (/home/a/Documents/ChatGPT/newbot/tests/plugin-management.test.ts:199:14)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

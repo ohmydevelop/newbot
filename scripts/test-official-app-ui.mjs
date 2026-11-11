@@ -129,8 +129,7 @@ try {
   let decisionView = 0,
     decisionTime = "";
   const root = (n = 0, p = page) => p.locator(".mcp-app").nth(n),
-    view = (n = 0, p = page) =>
-      root(n, p).frameLocator('iframe[title="MCP 应用"]'),
+    view = (n = 0, p = page) => root(n, p).frameLocator("iframe"),
     state = async () =>
       (await page.request.get(origin + "/api/test/official-state")).json(),
     control = async (action) => {
@@ -144,15 +143,15 @@ try {
       view(n, p).locator("#server-time").textContent(),
     readyView = async (n = 0, p = page) => {
       await root(n, p)
-        .getByText("已连接 · 隔离运行", { exact: true })
-        .waitFor();
+        .getByText("应用已就绪", { exact: true })
+        .waitFor({ state: "attached" });
       await until(async () => /^\d{4}-/.test(await time(n, p)));
     },
     token = async (n = 0, p = page) =>
       new URL(await root(n, p).locator("iframe").getAttribute("src")).pathname
         .split("/")
         .at(-1),
-    dialog = () => page.getByRole("dialog", { name: "允许应用调用工具？" }),
+    dialog = () => page.getByRole("dialog", { name: "允许这次操作？" }),
     getTime = async (n = 0) => {
       const current = await token(n),
         previous = grants.filter((g) => g.token === current).at(-1);
@@ -188,7 +187,9 @@ try {
         .getByRole("button", { name: "关闭应用", exact: true })
         .click();
       assert.equal((await response).status(), 200);
-      await root(n, p).getByText("应用已关闭", { exact: true }).waitFor();
+      await root(n, p)
+        .getByText("应用已关闭", { exact: true })
+        .waitFor({ state: "attached" });
     },
     open = async (n = 0, p = page) => {
       await root(n, p)
@@ -423,7 +424,7 @@ try {
       await view().locator("#message-text").fill("SYNTHETIC_OFFICIAL_MESSAGE");
       await view().locator("#send-message-btn").click();
       await root()
-        .getByText("当前 Host 未开放发送聊天消息，请直接在聊天输入框中发送。", {
+        .getByText("应用暂不能发送消息，请在聊天输入框中发送。", {
           exact: true,
         })
         .waitFor();
@@ -432,7 +433,7 @@ try {
         .fill("https://forbidden.invalid/SYNTHETIC_OFFICIAL_LINK");
       await view().locator("#open-link-btn").click();
       await root()
-        .getByText("当前 Host 未开放外部链接，未打开任何页面。", {
+        .getByText("应用暂不能打开外部链接。", {
           exact: true,
         })
         .waitFor();
@@ -466,7 +467,7 @@ try {
     async () => {
       await control("input");
       const form = page.getByRole("region", {
-        name: "MCP 普通信息输入",
+        name: "需要补充信息",
         exact: true,
       });
       await form
@@ -504,7 +505,7 @@ try {
       await close();
       await control("resource-fail");
       await root()
-        .getByRole("button", { name: "打开交互应用", exact: true })
+        .getByRole("button", { name: "重新打开应用", exact: true })
         .click();
       await root()
         .getByText(/应用资源读取失败/)

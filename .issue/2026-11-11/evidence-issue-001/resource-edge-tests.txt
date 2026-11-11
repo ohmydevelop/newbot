@@ -1,0 +1,21 @@
+✔ connector creation depends on absence, edits on its own revision, and lost save responses have one receipt (179.320281ms)
+✔ saved views and mutation receipts preserve legacy authentication; omitted fields cannot erase it (108.752936ms)
+✔ GitHub links resolve slash refs and subdirectories against real refs, then pin the commit (19.874582ms)
+✔ reference discovery paginates and searches beyond the first page without dropping matching rows (11.492925ms)
+✔ GitHub source discovery rejects credential URLs, other hosts and oversized or malformed upstream responses (8.178919ms)
+✔ acceptance does not claim adoption; late revisions cannot overwrite newer choices and rejected updates restore prior intent (30.729029ms)
+✔ a configuration change during private hydration or a completed target prevents native dispatch (9.949695ms)
+✔ a lost native response stays unknown until actual-use evidence arrives; another thread cannot acknowledge it (5.829916ms)
+✔ only explicitly selected plugins contribute skills, MCP and native hook activation (1.844671ms)
+✔ publication preserves referenced bytes across upgrades, uninstall and restart; unrelated packages do not share a lock (16.718896ms)
+✔ collection rechecks a republished version and removes only old unregistered preparation directories (13.184971ms)
+✔ standalone skill retirement changes discoverability without editing its immutable package (4.95597ms)
+✔ generated native integers reach JSON-RPC as numbers without silent rounding (1.222637ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 13
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 820.072715

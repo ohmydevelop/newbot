@@ -1,0 +1,14 @@
+{
+  "binary": "/home/a/Documents/ChatGPT/newbot/.data/native/bin/codex-main-live",
+  "upstream": "simulated loopback Responses; real native runtime and product paths",
+  "checks": [
+    "scanning/installing/unselected turns do not start plugin MCP or hooks; plugin skills absent from actual model input",
+    "explicit plugin activation starts native MCP and hooks and includes only enabled skills",
+    "upgrade publishes while a real model request remains in flight, without changing its pinned files",
+    "native marketplace installation and upgrade finish during another active request and preserve skill choices and old bytes",
+    "same native thread selects new resource version on its next turn; disabled sibling stays disabled",
+    "removing the plugin selection on the same thread removes live tools and does not execute plugin MCP or hooks",
+    "restart restores the selected immutable version, native MCP and the original thread",
+    "uninstall during an active task preserves its executable resources, then rejects new activation and preserves history"
+  ]
+}

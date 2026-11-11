@@ -1,0 +1,10 @@
+{
+  "at": "2026-11-10T10:20:03.322Z",
+  "runtime": "real pinned Codex; no model calls",
+  "checks": [
+    "directory upload scans all 129 skills through real native discovery",
+    "complete pagination, all-selection and individual opt-out; desktop/mobile themes without overflow",
+    "confirmed install, disabled skill and saved import result survive reload"
+  ],
+  "errors": []
+}

@@ -5,6 +5,7 @@ import {
   type InputRequest,
   type InputValue,
 } from "../../shared/elicitation";
+import { connectorLabel } from "../../shared/tool-display";
 import type { Approval } from "../../shared/types";
 import { request, useApp } from "../store";
 export default function ElicitationForm({ approval }: { approval: Approval }) {
@@ -116,7 +117,7 @@ export default function ElicitationForm({ approval }: { approval: Approval }) {
           useApp
             .getState()
             .notify(
-              new Error("MCP 输入请求已结束或由其他页面处理，请查看会话状态。"),
+              new Error("输入请求已结束或由其他页面处理，请查看会话状态。"),
             );
           return;
         }
@@ -137,19 +138,23 @@ export default function ElicitationForm({ approval }: { approval: Approval }) {
   return (
     <section
       className="approval-card elicitation-card"
-      aria-label="MCP 普通信息输入"
+      data-wait-id={`approval:${approval.id}`}
+      aria-label="需要补充信息"
     >
       <header>
         <CircleHelp size={19} aria-hidden="true" />
-        <strong>MCP 普通信息输入</strong>
+        <strong>需要补充信息</strong>
         <span className="input-countdown">
           {remaining ? `剩余 ${remaining} 秒` : "请求已到期，等待同步"}
         </span>
       </header>
-      <p className="input-source">来自 {approval.params.serverName}</p>
+      <p className="input-source">
+        来自{" "}
+        {approval.display?.serverTitle ||
+          connectorLabel(approval.params.serverName)}
+      </p>
       <p className="input-boundary">
-        请勿填写密码、API Key 或验证码；内容会提交给此 MCP
-        服务，并可能被模型看到。
+        请勿填写密码、密钥或验证码；信息会发送给此服务，并可能用于助手的回答。
       </p>
       {form ? (
         <p className="input-message">{form.message}</p>

@@ -10,7 +10,7 @@ import type { ReactCatalogComponent } from "@a2ui/react/v0_9";
 import type { A2uiActionInput, A2uiView } from "../../../shared/a2ui-chat.js";
 import { A2UI_ACTIONS } from "../../../shared/a2ui-chat.js";
 import { A2uiRuntime } from "../../../shared/a2ui-runtime.js";
-import { encodeA2ui } from "../../../shared/a2ui-policy.js";
+import { encodeA2ui, a2uiCatalogId } from "../../../shared/a2ui-policy.js";
 import { A2uiPanel } from "./Panel.js";
 import { createA2uiCatalog } from "./catalog.js";
 import { useA2uiDraft } from "./useDraft.js";
@@ -130,7 +130,7 @@ export default function ChatA2ui({ view }: { view: A2uiView }) {
   }
   useEffect(() => {
     let active = true;
-    const r = new A2uiRuntime(createA2uiCatalog(), {
+    const r = new A2uiRuntime(createA2uiCatalog(a2uiCatalogId(view.messages)), {
       surfaceId: view.surfaceId,
       allowedActions: A2UI_ACTIONS,
       onAction: async (action) => {
@@ -162,6 +162,7 @@ export default function ChatA2ui({ view }: { view: A2uiView }) {
   return (
     <div
       className="chat-a2ui"
+      data-wait-id={`a2ui:${view.id}`}
       onChange={draft.change}
       onBlur={() => void draft.save()}
     >
@@ -178,75 +179,80 @@ export default function ChatA2ui({ view }: { view: A2uiView }) {
           />
         </FormBoundary>
       )}
-      <div className="a2ui-footer">
-        <span role="status" aria-atomic="true">
-          {view.state === "waiting"
-            ? expired
-              ? unavailable.expired
-              : connected
-                ? "等待填写"
-                : "连接恢复后可提交"
-            : view.state === "submitted"
-              ? "已提交"
-              : view.state === "cancelled"
-                ? "已取消"
-                : view.state === "unavailable"
-                  ? unavailable[view.reason || "interrupted"]
-                  : "仅供查看"}
-        </span>
-        {waiting && view.expiresAt && (
-          <small>
-            有效至{" "}
-            {new Date(view.expiresAt).toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit",
-            })}
-          </small>
-        )}
-        {waiting && (
+      {(view.state !== "display" ||
+        [...(runtime?.components().values() || [])].some((c) =>
+          ["TextField", "ChoicePicker", "Button"].includes(String(c.component)),
+        )) && (
+        <div className="a2ui-footer">
+          <span role="status" aria-atomic="true">
+            {view.state === "waiting"
+              ? expired
+                ? unavailable.expired
+                : connected
+                  ? "等待填写"
+                  : "连接恢复后可提交"
+              : view.state === "submitted"
+                ? "已提交"
+                : view.state === "cancelled"
+                  ? "已取消"
+                  : view.state === "unavailable"
+                    ? unavailable[view.reason || "interrupted"]
+                    : "仅供查看"}
+          </span>
+          {waiting && view.expiresAt && (
+            <small>
+              有效至{" "}
+              {new Date(view.expiresAt).toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
+            </small>
+          )}
+          {waiting && (
+            <button
+              type="button"
+              disabled={submitting || !connected}
+              onClick={() => {
+                setCancelling(true);
+                void send("$cancel", {})
+                  .catch(() => setError("取消状态未确认，请重新读取会话。"))
+                  .finally(() => setCancelling(false));
+              }}
+            >
+              取消填写
+            </button>
+          )}
+          {waiting && (
+            <>
+              <button
+                type="button"
+                disabled={submitting || !connected || draft.conflict}
+                onClick={() => void draft.save()}
+              >
+                保存草稿
+              </button>
+              <button
+                type="button"
+                disabled={submitting || !connected || draft.conflict}
+                onClick={() => void draft.save(true)}
+              >
+                清除草稿
+              </button>
+            </>
+          )}
           <button
             type="button"
-            disabled={submitting || !connected}
-            onClick={() => {
-              setCancelling(true);
-              void send("$cancel", {})
-                .catch(() => setError("取消状态未确认，请重新读取会话。"))
-                .finally(() => setCancelling(false));
-            }}
+            disabled={submitting}
+            onClick={() =>
+              void loadThread(view.threadId)
+                .then(() => setReload((value) => value + 1))
+                .catch(() => setError("会话未能重新读取。"))
+            }
           >
-            取消填写
+            重载表单
           </button>
-        )}
-        {waiting && (
-          <>
-            <button
-              type="button"
-              disabled={submitting || !connected || draft.conflict}
-              onClick={() => void draft.save()}
-            >
-              保存草稿
-            </button>
-            <button
-              type="button"
-              disabled={submitting || !connected || draft.conflict}
-              onClick={() => void draft.save(true)}
-            >
-              清除草稿
-            </button>
-          </>
-        )}
-        <button
-          type="button"
-          disabled={submitting}
-          onClick={() =>
-            void loadThread(view.threadId)
-              .then(() => setReload((value) => value + 1))
-              .catch(() => setError("会话未能重新读取。"))
-          }
-        >
-          重载表单
-        </button>
-      </div>
+        </div>
+      )}
       {draft.status && (
         <p className="a2ui-draft-status" role="status" aria-atomic="true">
           {draft.status}

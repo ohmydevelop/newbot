@@ -62,7 +62,7 @@ async function setup(
   return {
     ...c,
     directory,
-    cwd,
+    cwd: c.workspaces.root(thread.id),
     codex,
     headers,
     get,
@@ -107,7 +107,7 @@ test("version pages are thread/path scoped, bounded and do not change the saved 
       threadId: other.id,
       text: "another",
     });
-    writeFileSync(join(c.cwd, "file.txt"), "other");
+    writeFileSync(join(c.workspaces.root(other.id), "file.txt"), "other");
     await c.artifacts.register(other.id, t.turn.id, "file.txt");
     assert.equal(
       (await c.get(`/api/artifacts/${first.id}/versions`)).json().latestVersion,

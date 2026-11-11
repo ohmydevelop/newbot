@@ -127,7 +127,7 @@ try {
       await page.getByRole("button", { name: /查看 notes.md/ }).waitFor();
       await page.getByRole("article", { name: "交互表单" }).waitFor();
       await page
-        .frameLocator('iframe[title="MCP 应用"]')
+        .frameLocator("iframe")
         .getByText("原始结果 mixed: CPU 25%", { exact: true })
         .waitFor();
       assert.equal(

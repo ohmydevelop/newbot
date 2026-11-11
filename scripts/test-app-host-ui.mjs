@@ -71,6 +71,12 @@ try {
   context.setDefaultTimeout(15000);
   page = await context.newPage();
   page.on("pageerror", (e) => errors.push(e.message));
+  page.on("requestfailed", (r) => {
+    log += `\nRequest failed: ${r.url()} ${r.failure()?.errorText}`;
+  });
+  page.on("console", (m) => {
+    if (m.type() === "error") log += `\nBrowser error: ${m.text()}`;
+  });
   page.on("popup", (p) => popups.push(p.url()));
   page.on("download", (d) => downloads.push(d.suggestedFilename()));
   page.on("request", (r) => {
@@ -84,7 +90,7 @@ try {
       writes.push({ path: new URL(r.url()).pathname, body: r.postData() });
   });
   const root = () => page.locator(".mcp-app").first(),
-    view = () => root().frameLocator('iframe[title="MCP 应用"]'),
+    view = () => root().frameLocator("iframe"),
     state = async () =>
       (await page.request.get(origin + "/api/test/app-state")).json(),
     control = async (action) =>
@@ -109,7 +115,9 @@ try {
       return result(id);
     },
     connected = async () =>
-      root().getByText("已连接 · 隔离运行", { exact: true }).waitFor(),
+      root()
+        .getByText("应用已就绪", { exact: true })
+        .waitFor({ state: "attached" }),
     close = async () => {
       const response = page.waitForResponse((r) =>
         r.url().endsWith("/api/mcp-apps/close"),
@@ -119,11 +127,13 @@ try {
         .getByRole("button", { name: "关闭应用", exact: true })
         .click();
       assert.equal((await response).status(), 200);
-      await root().getByText("应用已关闭", { exact: true }).waitFor();
+      await root()
+        .getByText("应用已关闭", { exact: true })
+        .waitFor({ state: "attached" });
     },
     open = async () => {
       await root()
-        .getByRole("button", { name: "打开交互应用", exact: true })
+        .getByRole("button", { name: "重新打开应用", exact: true })
         .click();
       await view()
         .getByText("原始结果 first: CPU 25%", { exact: true })
@@ -137,6 +147,31 @@ try {
   await page.getByRole("button", { name: "发送消息", exact: true }).click();
   await view().getByText("原始结果 first: CPU 25%", { exact: true }).waitFor();
   await connected();
+  await check(
+    "process disclosure preserves the connected App iframe and never repeats resources or tools",
+    async () => {
+      const before = await state();
+      const marker = "same-iframe-after-disclosure";
+      await view()
+        .locator("body")
+        .evaluate((node, value) => {
+          node.dataset.instanceMarker = value;
+        }, marker);
+      const toggle = page.locator(".process-toggle").first();
+      assert.equal(await toggle.getAttribute("aria-expanded"), "false");
+      await toggle.click();
+      await view()
+        .getByText("原始结果 first: CPU 25%", { exact: true })
+        .waitFor();
+      await toggle.click();
+      assert.equal(
+        await view().locator("body").getAttribute("data-instance-marker"),
+        marker,
+      );
+      assert.deepEqual(await state(), before);
+      await connected();
+    },
+  );
   await check(
     "standard SDK initialization and runtime diagnostics agree on tool scope, sandbox and unadvertised capabilities",
     async () => {
@@ -163,25 +198,20 @@ try {
     },
   );
   await check(
-    "the compact capability disclosure is keyboard operable and shows per-view tool scope without claiming permission",
+    "the App surface omits protocol diagnostics while retaining its close action",
     async () => {
-      const summary = root().locator("summary");
-      assert.equal(await root().locator("details").getAttribute("open"), null);
-      await summary.focus();
-      await page.keyboard.press("Enter");
+      assert.equal(
+        await root().locator(".app-capabilities, .app-source").count(),
+        0,
+      );
+      assert.doesNotMatch(
+        await root().innerText(),
+        /MCP App|权限与能力|test-server/,
+      );
       await root()
-        .getByText(/仅限当前 MCP 服务中与此应用关联的工具：metrics/)
-        .waitFor();
-      await root()
-        .getByText("每次工具操作都需要你的单次批准，执行前会再次检查权限。", {
-          exact: true,
-        })
-        .waitFor();
-      await root()
-        .locator(".app-capabilities")
-        .screenshot({ path: resolve(output, "desktop-capabilities.png") });
-      await page.keyboard.press("Enter");
-      assert.equal(await root().locator("details").getAttribute("open"), null);
+        .getByRole("button", { name: "关闭应用", exact: true })
+        .focus();
+      await root().screenshot({ path: resolve(output, "desktop-app.png") });
     },
   );
   const before = await state();
@@ -195,7 +225,7 @@ try {
         assert.doesNotMatch(JSON.stringify(value), /SYNTHETIC|forbidden/);
         assert.match(
           await root().locator(".app-notice").textContent(),
-          /当前 Host 未开放/,
+          /应用暂不能/,
         );
         await connected();
       },
@@ -270,7 +300,7 @@ try {
     "an unsupported App request cannot dismiss, replace or approve a pending tool decision",
     async () => {
       await view().locator("#metrics").click();
-      const dialog = page.getByRole("dialog", { name: "允许应用调用工具？" });
+      const dialog = page.getByRole("dialog", { name: "允许这次操作？" });
       await dialog.waitFor();
       const args = await dialog.locator("pre").textContent();
       await view()
@@ -288,7 +318,7 @@ try {
     "a permitted tool still requires a fresh one-use approval and runs once",
     async () => {
       await view().locator("#metrics").click();
-      const dialog = page.getByRole("dialog", { name: "允许应用调用工具？" });
+      const dialog = page.getByRole("dialog", { name: "允许这次操作？" });
       await dialog
         .getByRole("button", { name: "仅允许这一次", exact: true })
         .click();
@@ -306,39 +336,33 @@ try {
         await view().locator("#capabilities").textContent(),
       );
       assert.equal(caps.serverTools, undefined);
-      await root().locator("summary").click();
-      await root()
-        .getByText("本次打开时没有可申请的工具。", { exact: true })
-        .waitFor();
       assert.equal((await operate("metrics")).error, "tool-rejected");
       assert.equal(await page.getByRole("dialog").count(), 0);
       assert.equal((await state()).toolCalls, 1);
     },
   );
   await check(
-    "mobile dark-mode capability disclosure stays readable, within the viewport and has a 44px keyboard target",
+    "mobile dark-mode App stays in the viewport and retains a 44px close target",
     async () => {
       await page.evaluate(() => {
         document.documentElement.dataset.theme = "dark";
       });
       await page.setViewportSize({ width: 390, height: 844 });
       await page.locator(".sidebar").waitFor({ state: "hidden" });
-      await root().locator("summary").focus();
-      const box = await root().locator("summary").boundingBox();
-      assert.ok(box.height >= 44);
-      const bounds = await root().locator(".app-capabilities").boundingBox();
+      const closeButton = root().getByRole("button", {
+        name: "关闭应用",
+        exact: true,
+      });
+      await closeButton.focus();
+      const box = await closeButton.boundingBox();
+      assert.ok(box.height >= 44 && box.width >= 44);
+      const bounds = await root().boundingBox();
       assert.ok(bounds.x >= 0 && bounds.x + bounds.width <= 391);
       assert.equal(
-        await root()
-          .locator(".app-capabilities")
-          .evaluate((el) => el.scrollWidth <= el.clientWidth),
+        await root().evaluate((el) => el.scrollWidth <= el.clientWidth),
         true,
       );
-      await root()
-        .locator(".app-capabilities")
-        .screenshot({ path: resolve(output, "mobile-dark-capabilities.png") });
-      await page.keyboard.press("Enter");
-      assert.equal(await root().locator("details").getAttribute("open"), null);
+      await root().screenshot({ path: resolve(output, "mobile-dark-app.png") });
     },
   );
   await check(

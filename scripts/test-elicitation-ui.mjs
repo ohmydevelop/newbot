@@ -81,7 +81,7 @@ try {
     await p.getByPlaceholder("询问任何问题").waitFor();
   }
   const root = (p = page) =>
-      p.getByRole("region", { name: "MCP 普通信息输入", exact: true }).last(),
+      p.getByRole("region", { name: "需要补充信息", exact: true }).last(),
     state = async () =>
       (await page.request.get(origin + "/api/test/input-state")).json(),
     control = async (action) => {
@@ -111,7 +111,7 @@ try {
     },
     settled = async (p = page) => {
       await p
-        .getByRole("region", { name: "MCP 普通信息输入", exact: true })
+        .getByRole("region", { name: "需要补充信息", exact: true })
         .waitFor({ state: "hidden" });
     };
   page = await create();
@@ -402,7 +402,7 @@ try {
       await page.getByPlaceholder("询问任何问题").waitFor();
       assert.equal(
         await page
-          .getByRole("region", { name: "MCP 普通信息输入", exact: true })
+          .getByRole("region", { name: "需要补充信息", exact: true })
           .count(),
         0,
       );

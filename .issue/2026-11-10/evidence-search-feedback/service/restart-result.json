@@ -1,0 +1,31 @@
+{
+  "at": "2026-11-10T03:56:58.244Z",
+  "servicePid": 633981,
+  "oneRestart": true,
+  "schema": 7,
+  "unchangedTableRows": {
+    "provider_configuration": 1,
+    "threads": 19,
+    "runs": 48,
+    "session_runtime": 18,
+    "managed_credentials": 2,
+    "run_attachments": 5
+  },
+  "passwordAndCredentialKeyUnchanged": true,
+  "expiredUnsentUploadsCleaned": 1,
+  "referencedUploadsPreserved": true,
+  "personalCodexConfigModifiedSinceRestart": false,
+  "integrity": "ok",
+  "modelTurnsCreated": 0,
+  "backup": "/home/a/Documents/ChatGPT/newbot/.data/restart-backups/feedback-1794282605094",
+  "publicOrigin": "https://frequencies-alumni-prior-rna.trycloudflare.com",
+  "publicReady": true,
+  "unauthenticatedConfigStatus": 401,
+  "publicLoginVerified": true,
+  "historySamplesReadable": 2,
+  "publicAsset": "/assets/index-DgSM_G8e.js",
+  "publicAssetMatchesDisk": true,
+  "approvalMenuDescriptionsVerified": true,
+  "searchHintRemoved": true,
+  "browserErrors": []
+}

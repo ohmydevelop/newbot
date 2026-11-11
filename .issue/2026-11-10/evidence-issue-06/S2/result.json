@@ -1,0 +1,14 @@
+{
+  "checks": [
+    "header search",
+    "connector 1440 light",
+    "connector 1440 dark",
+    "connector 390 light",
+    "connector 390 dark",
+    "name saved, internal identifier automatic",
+    "global security scope",
+    "gateway save and close, persistent credentials"
+  ],
+  "errors": [],
+  "synthetic": true
+}

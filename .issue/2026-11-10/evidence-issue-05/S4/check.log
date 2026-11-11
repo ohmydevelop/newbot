@@ -1,0 +1,7 @@
+
+> minimal-agent@0.2.0 check
+> tsc --noEmit
+
+web/components/SkillImport.tsx(219,12): error TS7006: Parameter 'e' implicitly has an 'any' type.
+web/components/SkillImport.tsx(221,30): error TS7006: Parameter 's' implicitly has an 'any' type.
+web/components/SkillImport.tsx(221,61): error TS7006: Parameter 's' implicitly has an 'any' type.

@@ -5,7 +5,7 @@ import {
   type Catalog,
   type ComponentApi,
 } from "@a2ui/web_core/v0_9";
-import { a2uiApis } from "./a2ui-catalog.js";
+import { catalogApis } from "./a2ui-catalog.js";
 import {
   A2UI_CATALOG_ID,
   A2UI_LIMITS,
@@ -105,7 +105,7 @@ export class A2uiRuntime<T extends ComponentApi = ComponentApi> {
         version: "v0.9",
         createSurface: {
           surfaceId: this.options.surfaceId,
-          catalogId: A2UI_CATALOG_ID,
+          catalogId: this.catalog.id as "newbot:ui/v1" | "newbot:ui/v2",
         },
       },
       {
@@ -238,6 +238,8 @@ export class A2uiRuntime<T extends ComponentApi = ComponentApi> {
       if (operation.surfaceId !== this.options.surfaceId)
         failA2ui("SURFACE_MISMATCH");
       if ("createSurface" in message) {
+        if (message.createSurface.catalogId !== this.catalog.id)
+          failA2ui("CATALOG_MISMATCH");
         if (state) failA2ui("SURFACE_EXISTS");
         state = { components: new Map() };
       } else if (!state) failA2ui("SURFACE_MISSING");
@@ -253,6 +255,7 @@ export class A2uiRuntime<T extends ComponentApi = ComponentApi> {
           )
             failA2ui("INVALID_COMPONENT");
           ids.add(id);
+          const a2uiApis = catalogApis(this.catalog.id);
           if (typeof type !== "string" || !Object.hasOwn(a2uiApis, type))
             failA2ui("UNKNOWN_COMPONENT");
           const api = a2uiApis[type as keyof typeof a2uiApis];

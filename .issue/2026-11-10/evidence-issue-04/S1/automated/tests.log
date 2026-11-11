@@ -1,0 +1,11 @@
+✔ manual models survive unavailable discovery, enter execution, and restore from SQLite without native writes (243.436264ms)
+✔ sqlite: model defaults cannot inject an unsupported effort, while explicit choices remain validated (203.709118ms)
+✔ native: model defaults cannot inject an unsupported effort, while explicit choices remain validated (87.467669ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 712.713662

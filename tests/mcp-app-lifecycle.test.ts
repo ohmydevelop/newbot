@@ -27,7 +27,7 @@ async function fixture(fn: (f: any) => Promise<void>) {
   const dir = mkdtempSync(join(tmpdir(), "newbot-app-lifecycle-")),
     codex = new FakeCodex(),
     ctx = await createServer({
-    providerRuntime: null,
+      providerRuntime: null,
       directory: dir,
       cwd: join(dir, "work"),
       codex,
@@ -70,6 +70,229 @@ const nativeOpen = (f: any, extra: any = {}) =>
     requestId: randomUUID(),
     ...extra,
   });
+test("full-access App grants are scoped, one-use, and revoked by downgrade before dispatch", async () => {
+  await fixture(async (f) => {
+    const policy = (approval: string, revision: number) => {
+      f.db.raw.prepare("UPDATE session_runtime SET approval=?,revision=? WHERE thread_id=?").run(approval, revision, f.threadId);
+      f.db.raw.prepare("INSERT OR REPLACE INTO session_runtime_versions VALUES(?,?)").run(f.threadId, revision);
+    };
+    policy("full", 1);
+    const opened = await nativeOpen(f);
+    const prepare = () => f.service.handle("app/call/request", { token: opened.token, tool: "metrics", arguments: {} });
+    let grant = await prepare();
+    assert.equal(grant.authorization, "session-policy");
+    await f.service.handle("app/call/approve", { grant: grant.grant, allow: true, authorization: "session-policy" });
+    const executed = () => f.codex.calls.filter((c: any) => c.method === "mcpServer/tool/call").length;
+    assert.equal(executed(), 1);
+    await assert.rejects(f.service.handle("app/call/approve", { grant: grant.grant, allow: true, authorization: "session-policy" }));
+    grant = await prepare();
+    policy("ask", 2);
+    await assert.rejects(f.service.handle("app/call/approve", { grant: grant.grant, allow: true, authorization: "session-policy" }), /权限或凭证已变化/);
+    assert.equal(executed(), 1);
+    grant = await prepare();
+    assert.equal(grant.authorization, "user");
+    policy("full", 3);
+    await assert.rejects(f.service.handle("app/call/approve", { grant: grant.grant, allow: true, authorization: "session-policy" }), /权限或凭证已变化/, "an existing user approval cannot be upgraded by a client");
+    assert.equal(executed(), 1);
+    assert.ok(JSON.stringify(f.db.raw.prepare("SELECT * FROM audit").all()).includes("session-policy:full"));
+  });
+});
+test("App open, history and tool consent share native display titles without altering dispatch", async () => {
+  await fixture(async (f) => {
+    const original = f.codex.call.bind(f.codex);
+    f.codex.call = async (method: any, params: any) => {
+      const result = await original(method, params);
+      if (method === "mcpServerStatus/list")
+        result.data[0].tools.metrics.title = "查看监控数据";
+      return result;
+    };
+    const opened = await nativeOpen(f);
+    assert.deepEqual(opened.display, {
+      serverTitle: "test-server",
+      toolTitle: "查看监控数据",
+    });
+    f.service.events.threads.delete(f.threadId);
+    const history = await f.service.read(f.threadId);
+    assert.equal(history.turns[0].items[0].display.toolTitle, "查看监控数据");
+    const grant = await f.service.handle("app/call/request", {
+      token: opened.token,
+      tool: "metrics",
+      arguments: { source: "app-item" },
+    });
+    assert.deepEqual(grant.display, opened.display);
+    await f.service.handle("app/call/approve", {
+      grant: grant.grant,
+      allow: true,
+    });
+    const call = f.codex.calls
+      .filter((c: any) => c.method === "mcpServer/tool/call")
+      .at(-1);
+    assert.equal(call.params.server, "test-server");
+    assert.equal(call.params.tool, "metrics");
+    assert.deepEqual(call.params.arguments, { source: "app-item" });
+  });
+});
+test("App data tools use same-connection visibility independently of their UI resource", async () => {
+  await fixture(async (f) => {
+    const original = f.codex.call.bind(f.codex);
+    f.codex.call = async (m: any, p: any) => {
+      const r = await original(m, p);
+      if (m === "mcpServerStatus/list") {
+        Object.assign(r.data[0].tools, {
+          list_groups: { name: "list_groups", inputSchema: { type: "object" } },
+          refresh: { name: "refresh", _meta: { ui: { visibility: ["app"] } } },
+          another_view: {
+            name: "another_view",
+            _meta: { ui: { resourceUri: "ui://another" } },
+          },
+          model_only: {
+            name: "model_only",
+            _meta: { ui: { visibility: ["model"] } },
+          },
+          hidden: { name: "hidden", _meta: { ui: { visibility: [] } } },
+          malformed: {
+            name: "malformed",
+            _meta: { ui: { visibility: "app" } },
+          },
+          null_visibility: {
+            name: "null_visibility",
+            _meta: { ui: { visibility: null } },
+          },
+          unknown_visibility: {
+            name: "unknown_visibility",
+            _meta: { ui: { visibility: ["app", "unknown"] } },
+          },
+        });
+        r.data.push({
+          name: "other-server",
+          runtimeStatus: "ready",
+          tools: {
+            foreign: {
+              name: "foreign",
+              _meta: { ui: { resourceUri: "ui://metrics" } },
+            },
+          },
+        });
+      }
+      return r;
+    };
+    const opened = await nativeOpen(f);
+    for (const name of ["list_groups", "refresh", "another_view"]) {
+      assert.ok(opened.tools.includes(name), `${name} can request approval`);
+      const before = f.codex.calls.filter(
+        (c: any) => c.method === "mcpServer/tool/call",
+      ).length;
+      const grant = await f.service.handle("app/call/request", {
+        token: opened.token,
+        tool: name,
+        arguments: { page: 1 },
+      });
+      assert.equal(
+        f.codex.calls.filter((c: any) => c.method === "mcpServer/tool/call")
+          .length,
+        before,
+      );
+      await f.service.handle("app/call/approve", {
+        grant: grant.grant,
+        allow: true,
+      });
+      const calls = f.codex.calls.filter(
+        (c: any) => c.method === "mcpServer/tool/call",
+      );
+      assert.equal(calls.length, before + 1);
+      assert.deepEqual(calls.at(-1).params, {
+        threadId: f.threadId,
+        server: "test-server",
+        tool: name,
+        arguments: { page: 1 },
+      });
+      await assert.rejects(
+        f.service.handle("app/call/approve", {
+          grant: grant.grant,
+          allow: true,
+        }),
+      );
+    }
+    const before = f.codex.calls.filter(
+      (c: any) => c.method === "mcpServer/tool/call",
+    ).length;
+    for (const tool of [
+      "model_only",
+      "hidden",
+      "malformed",
+      "null_visibility",
+      "unknown_visibility",
+      "foreign",
+      "unknown",
+    ]) {
+      assert.ok(!opened.tools.includes(tool));
+      await assert.rejects(
+        f.service.handle("app/call/request", {
+          token: opened.token,
+          tool,
+          arguments: {},
+        }),
+        (e: any) => e.appIssue.code === "permission",
+      );
+    }
+    assert.equal(
+      f.codex.calls.filter((c: any) => c.method === "mcpServer/tool/call")
+        .length,
+      before,
+    );
+    assert.equal(
+      f.service.apps.register(f.threadId, {
+        ...item(),
+        id: "data-only",
+        tool: "list_groups",
+      }),
+      undefined,
+      "a callable data tool does not imply a renderable App",
+    );
+  });
+});
+test("data-tool grants recheck visibility, removal and server availability at approval", async () => {
+  for (const change of ["model", "removed", "disabled", "toolsError"]) {
+    await fixture(async (f) => {
+      const original = f.codex.call.bind(f.codex);
+      let changed = false;
+      f.codex.call = async (m: any, p: any) => {
+        const r = await original(m, p);
+        if (m === "mcpServerStatus/list") {
+          r.data[0].tools.list_groups = { name: "list_groups" };
+          if (changed) {
+            if (change === "model")
+              r.data[0].tools.list_groups._meta = {
+                ui: { visibility: ["model"] },
+              };
+            if (change === "removed") delete r.data[0].tools.list_groups;
+            if (change === "disabled") r.data[0].runtimeStatus = "disabled";
+            if (change === "toolsError") r.data[0].toolsError = "unavailable";
+          }
+        }
+        return r;
+      };
+      const opened = await nativeOpen(f),
+        grant = await f.service.handle("app/call/request", {
+          token: opened.token,
+          tool: "list_groups",
+          arguments: {},
+        });
+      changed = true;
+      await assert.rejects(
+        f.service.handle("app/call/approve", {
+          grant: grant.grant,
+          allow: true,
+        }),
+        (e: any) => ["permission", "expired"].includes(e.appIssue.code),
+      );
+      assert.equal(
+        f.codex.calls.some((c: any) => c.method === "mcpServer/tool/call"),
+        false,
+      );
+    });
+  }
+});
 test("history descriptors carry no live permissions; each explicit view gets an independent lease", async () => {
   const codex = new FakeCodex(),
     registry = appRegistry(codex);

@@ -1,5 +1,40 @@
 import { z } from "zod";
 import { gatewayFields } from "./gateways.js";
+import { pluginConfigurationSave } from "./plugin-configuration.js";
+export const privateField = z.strictObject({
+  kind: z.enum(["bearer", "header", "env"]),
+  name: z.string().min(1).max(128),
+});
+export type PrivateField = z.infer<typeof privateField>;
+export type PrivateFieldView = {
+  revision: string;
+  fields: (PrivateField & { stored: boolean })[];
+  valid: boolean;
+};
+export type AuthenticationView = {
+  source: "none" | "managed" | "external";
+  state: "none" | "saved" | "missing" | "invalid" | "external";
+};
+export const privateFieldSave = z.strictObject({
+  operation: z.literal("credential.fields.save"),
+  requestId: z.string().uuid(),
+  scope: z.enum(["provider", "mcp"]),
+  targetId: z.string().regex(/^[a-z][a-z0-9_-]{0,63}$/),
+  expectedRevision: z.string(),
+  expectedFieldsRevision: z.string(),
+  fields: z.array(privateField).max(32),
+  clearValues: z.boolean().optional(),
+  removeFields: z.array(privateField).max(32).optional(),
+});
+export const privateFieldAuthorize = z.strictObject({
+  operation: z.literal("credential.authorize"),
+  requestId: z.string().uuid(),
+  runId: z.string().uuid(),
+  scope: z.enum(["provider", "mcp"]),
+  targetId: z.string(),
+  expectedFieldsRevision: z.string(),
+  duration: z.enum(["run", "thread"]),
+});
 const probeCreate = z.strictObject({
   requestId: z.string().uuid(),
   operation: z.literal("provider.models.test"),
@@ -32,6 +67,9 @@ export const gatewayCredentialSave = z.strictObject({
   retention: z.enum(["memory", "encrypted"]),
 });
 export const credentialCreate = z.discriminatedUnion("operation", [
+  pluginConfigurationSave,
+  privateFieldSave,
+  privateFieldAuthorize,
   probeCreate,
   credentialSave,
   gatewayCredentialSave,
@@ -66,6 +104,7 @@ export type CredentialTicket = {
   applied?: boolean;
   passwordUsed?: boolean;
   receiver?: string;
+  message?: string;
   expiresAt: number;
   state:
     | "preparing"
@@ -86,6 +125,22 @@ export type CredentialTicket = {
 export const credentialPending = (state: CredentialTicket["state"]) =>
   ["preparing", "waiting", "checking"].includes(state);
 export function credentialStatus(ticket: CredentialTicket) {
+  if (
+    ticket.operation === "plugin.configuration.save" ||
+    ticket.operation === "credential.fields.save" ||
+    ticket.operation === "credential.authorize"
+  ) {
+    if (ticket.state === "succeeded")
+      if (ticket.operation === "plugin.configuration.save")
+        return "插件配置已保存，下次任务使用。";
+    if (ticket.state === "succeeded")
+      return ticket.operation === "credential.fields.save"
+        ? "凭证设置已保存，下次任务使用。"
+        : "授权已接收，任务将继续。";
+    if (ticket.state === "checking") return "正在核对接收方…";
+    if (ticket.state === "waiting") return "等待私密输入。";
+    if (ticket.state === "failed") return "操作未完成，请读取状态后重试。";
+  }
   if (ticket.operation === "sudo.identity") {
     if (ticket.state === "succeeded")
       return ticket.passwordUsed
@@ -102,7 +157,7 @@ export function credentialStatus(ticket: CredentialTicket) {
   ) {
     if (ticket.state === "succeeded")
       return ticket.applied
-        ? "凭证已保存并重新连接，原值无法回读。"
+        ? "凭证已保存，下次任务使用，原值无法回读。"
         : "凭证已保存，运行时尚未就绪；请重新连接确认。";
     if (ticket.state === "checking")
       return ticket.committed

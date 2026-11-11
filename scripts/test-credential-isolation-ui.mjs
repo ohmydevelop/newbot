@@ -84,12 +84,12 @@ try {
   await page.getByRole("button", { name: "继续", exact: true }).click();
   await page.getByPlaceholder("询问任何问题").waitFor();
   await check(
-    "trusted input consumes a reflected provider key once without echo",
+    "gateway private save consumes a key once; failed model discovery cannot echo it",
     async () => {
       await page.getByRole("button", { name: "个人工作台 私有实例" }).click();
       const settings = page.getByRole("dialog", { name: "设置", exact: true });
       await settings
-        .getByRole("button", { name: "模型网关", exact: true })
+        .getByRole("button", { name: "网关", exact: true })
         .click();
       await settings
         .getByRole("button", { name: "编辑 备用 Provider", exact: true })
@@ -98,43 +98,26 @@ try {
         name: "备用 Provider",
         exact: true,
       });
-      const probe = page.getByRole("button", {
-        name: "临时验证 secondary 的凭证",
-        exact: true,
-      });
-      const replacement = editor.getByLabel("替换连接地址", { exact: true });
-      if (await replacement.count()) {
-        await replacement.fill("https://new-endpoint.invalid/v1");
-        assert.equal(await probe.isDisabled(), true);
-        await replacement.fill("");
-      }
-      await probe.click();
-      const modal = page.getByRole("dialog", {
-        name: "临时验证 API Key",
-        exact: true,
-      });
-      const input = modal.getByLabel("临时 API Key", { exact: true });
-      await input.waitFor();
-      await page.waitForFunction(
-        () =>
-          !document.querySelector('.credential-modal input[type="password"]')
-            ?.disabled,
-      );
+      const input = editor.getByLabel("API Key", { exact: true });
       await input.fill(secret);
-      await modal
-        .getByRole("button", { name: "仅验证一次", exact: true })
+      await editor
+        .getByRole("button", { name: "保存并获取模型", exact: true })
         .click();
-      await modal
+      // The fixture's TLS endpoint intentionally returns reflected data, not a model
+      // catalogue. Configuration is saved, but discovery must fail without echo.
+      await editor
         .getByText(
-          "端点已响应。凭证是否被校验由上游决定，尚未验证模型或工具兼容性。",
-          { exact: true },
+          "网关已保存，模型列表未能获取。可手动填写模型，或重试获取。",
+          {
+            exact: false,
+          },
         )
         .waitFor();
       assert.equal(await input.inputValue(), "");
-      await modal.getByRole("button", { name: "关闭", exact: true }).click();
+      assert.ok(!(await editor.textContent()).includes(secret));
       await editor
         .getByRole("button", { name: "关闭", exact: true })
-        .first()
+        .last()
         .click();
       await editor.waitFor({ state: "hidden" });
       await settings.getByRole("button", { name: "关闭", exact: true }).click();
@@ -155,12 +138,14 @@ try {
         { headers: { origin }, data: {} },
       );
       assert.equal((await result.json()).ready, true);
-      const execution = page.locator(".process-toggle").last();
+      const tool = page.getByText("调用工具 · failed_result", { exact: true });
+      await tool.waitFor({ state: "attached" });
+      const execution = page.locator(".process-group").filter({ has: tool }).locator("button.process-toggle");
       await execution.waitFor();
       if ((await execution.getAttribute("aria-expanded")) === "false")
         await execution.click();
       await page
-        .getByText("fixture / failed_result", { exact: true })
+        .getByText("调用工具 · failed_result", { exact: true })
         .waitFor();
       assert.ok(!(await page.locator("body").textContent()).includes(secret));
     },
@@ -186,12 +171,14 @@ try {
     "refresh restores sanitized history without submitting the credential again",
     async () => {
       await page.reload();
-      const execution = page.locator(".process-toggle").last();
+      const tool = page.getByText("调用工具 · failed_result", { exact: true });
+      await tool.waitFor({ state: "attached" });
+      const execution = page.locator(".process-group").filter({ has: tool }).locator("button.process-toggle");
       await execution.waitFor();
       if ((await execution.getAttribute("aria-expanded")) === "false")
         await execution.click();
       await page
-        .getByText("fixture / failed_result", { exact: true })
+        .getByText("调用工具 · failed_result", { exact: true })
         .waitFor();
       assert.equal(inputs, 1);
       assert.ok(!(await page.locator("body").textContent()).includes(secret));

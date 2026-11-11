@@ -1,0 +1,41 @@
+{
+  "at": "2026-11-10T16:03:06.420Z",
+  "asset": "/assets/index-DW8Vx5FP.js",
+  "publicBuildMatches": true,
+  "activePluginChunk": "assets/ToolsSettings-BxjrIJXo.js",
+  "oldCopyAbsent": true,
+  "oldPluginAbsent": true,
+  "standaloneConnectors": [
+    "newbot_test"
+  ],
+  "details": [
+    {
+      "id": "github@openai-api-curated",
+      "version": "0.1.12",
+      "update": {
+        "kind": "marketplace",
+        "available": false,
+        "currentVersion": "0.1.12",
+        "latestVersion": null,
+        "reason": "此插件由来源目录管理，目录更新后读取新内容"
+      },
+      "skills": [],
+      "connections": []
+    }
+  ],
+  "configuration": {
+    "descriptor": "mcpb-manifest",
+    "manifestVersions": [
+      "0.3"
+    ],
+    "certificateInspection": true,
+    "fields": [
+      "string",
+      "number",
+      "boolean"
+    ],
+    "privateInput": true
+  },
+  "uiVerification": "API + referenced build only; Work browser control disabled",
+  "businessToolsCalled": 0
+}

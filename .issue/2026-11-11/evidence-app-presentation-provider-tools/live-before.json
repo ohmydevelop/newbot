@@ -1,0 +1,79 @@
+{
+  "at": "2026-11-11T03:07:42.075Z",
+  "version": "codex-cli 0.165.0",
+  "pid": 2436624,
+  "asset": "/assets/index-BlO1Q9fF.js",
+  "appChunk": "assets/McpApp-ByLRhk3w.js",
+  "publicAssetsMatch": true,
+  "publicHtmlMatches": true,
+  "localHtmlMatches": true,
+  "plugin": {
+    "id": "cloudwalker@newbot-imports",
+    "version": "0.5.2",
+    "connections": [
+      {
+        "id": "plugin_653b596318a40bf8c2ef1541b10f9c87",
+        "name": "cloudwalker",
+        "configured": true,
+        "enabled": true
+      }
+    ]
+  },
+  "source": {
+    "threadId": "01a1c645-9bae-7662-9169-7689d80d9463",
+    "turnId": "01a1c647-8d75-7430-b1a2-a8a719015cfd",
+    "itemId": "exec-55f69c10-8d48-482d-82c1-833518535c3e",
+    "server": "plugin_653b596318a40bf8c2ef1541b10f9c87",
+    "tool": "open_security_workspace"
+  },
+  "appTools": [
+    "search_security_alerts",
+    "get_host_security_context",
+    "inspect_security_alert",
+    "open_security_workspace",
+    "list_business_groups",
+    "search_hosts",
+    "summarize_security_posture"
+  ],
+  "policy": {
+    "version": 2,
+    "toolAuthorization": "allow-once",
+    "toolScope": "same-server-app-visible",
+    "displayModes": [
+      "inline"
+    ],
+    "theme": true,
+    "resize": true,
+    "network": false,
+    "inlineDependenciesOnly": true,
+    "openLinks": false,
+    "downloads": false,
+    "messages": false,
+    "modelContext": false,
+    "sampling": false,
+    "serverResources": false,
+    "toolDiscovery": false,
+    "prompts": false,
+    "logging": false,
+    "protocolCapabilities": {
+      "serverTools": {},
+      "sandbox": {
+        "permissions": {},
+        "csp": {
+          "connectDomains": [],
+          "resourceDomains": [],
+          "frameDomains": [],
+          "baseUriDomains": []
+        }
+      }
+    }
+  },
+  "grant": {
+    "status": 200,
+    "accepted": true,
+    "cancelled": true
+  },
+  "businessToolsApproved": 0,
+  "businessToolsCalled": 0,
+  "uiVerification": "Browser control disabled in Work settings; API verification only"
+}

@@ -1,0 +1,36 @@
+{
+  "fixture": true,
+  "stage": "navigation",
+  "checks": [
+    "warm conversations render before the response and remain read-only until refreshed",
+    "late history cannot replace a newer selection; failed refresh retains draft and requires retry",
+    "process and tool disclosures retain the clicked anchor and defer hidden heavy output"
+  ],
+  "metrics": [
+    {
+      "cachedPresentationMs": 29,
+      "responseHeld": true
+    },
+    {
+      "process": {
+        "x": 466,
+        "y": 176.5,
+        "width": 75.484375,
+        "height": 35.5
+      },
+      "tool": {
+        "x": 466,
+        "y": 435,
+        "width": 768,
+        "height": 44
+      },
+      "collapsed": {
+        "x": 466,
+        "y": 176.5,
+        "width": 75.484375,
+        "height": 35.5
+      }
+    }
+  ],
+  "errors": []
+}

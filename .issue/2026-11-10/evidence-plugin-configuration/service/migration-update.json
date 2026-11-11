@@ -1,0 +1,18 @@
+{
+  "at": "2026-11-10T14:36:09.799Z",
+  "oldPid": 1494072,
+  "pid": 1609628,
+  "schemaBefore": 13,
+  "schema": 14,
+  "counts": { "threads": 23, "runs": 68, "attachments": 5 },
+  "passwordUnchanged": true,
+  "credentialsUnchanged": true,
+  "personalConfigUnchanged": true,
+  "instanceConfigUnchanged": true,
+  "providersUnchanged": true,
+  "historiesVerified": 3,
+  "modelTurnsCreated": 0,
+  "asset": "/assets/index-Q58qMvQG.js",
+  "backup": "/home/a/Documents/ChatGPT/newbot/.data/restart-backups/plugin-configuration-1794321344183",
+  "source": "Captured output of restart-test-service.mjs --check and first maintenance update; later update only refines the plugin skill reader label."
+}

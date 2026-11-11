@@ -1,0 +1,13 @@
+{
+  "checkedAt": "2026-11-11T07:50:32.784947+00:00",
+  "status": "enabled and verified",
+  "browser": "Chrome extension via CUA",
+  "entry": "http://127.0.0.1:3100/ login page reachable",
+  "testEntry": "http://127.0.0.1:3145/ isolated candidate",
+  "uiEvidence": "ui/browser-checks.json",
+  "appEvidence": "ui/app-lifecycle-check.json",
+  "limits": [
+    "Actual UI tests used isolated fake Codex/MCP services; native integration results are recorded separately.",
+    "No user-service restart or deployment performed."
+  ]
+}

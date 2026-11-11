@@ -1,0 +1,10 @@
+{
+  "upstream": "https://github.com/openai/codex.git",
+  "commit": "fe2f18520864ddbee86cdd4b103a9fefffe9c6a2",
+  "sourceDate": "2026-11-11T05:38:52Z",
+  "repository": "https://github.com/ohmydevelop/newbot-codex",
+  "branch": "codex/newbot-runtime",
+  "rust": "1.95.0",
+  "profile": "dev-small",
+  "patches": ["patches/main-0001-newbot-runtime.patch"]
+}

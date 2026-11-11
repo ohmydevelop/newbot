@@ -1,4 +1,11 @@
+import {
+  pendingFor,
+  restorePending,
+  type PendingSubmission,
+} from "./pending-runs";
+import { responseJson } from "./http";
 import { resourceLoadFailure } from "./resource-errors";
+import { ThreadCache } from "./thread-cache";
 import { appIssue } from "../shared/mcp-apps";
 import {
   configurationIssue,
@@ -19,6 +26,8 @@ import type {
 type State = {
   authenticated: boolean | null;
   pendingRun: string | null;
+  pendingRuns: Record<string, PendingSubmission>;
+  newDraftKey: string;
   abandonUnseen: boolean;
   connected: boolean;
   connectionResourceError: boolean;
@@ -34,6 +43,7 @@ type State = {
   skillDocuments: boolean;
   skillSelection: boolean;
   pluginSelection: boolean;
+  expertSelection: boolean;
   configurationEditing: boolean;
   providerManagement: boolean;
   mcpManagement: boolean;
@@ -53,6 +63,7 @@ type State = {
   thread: Thread | null;
   selectedId: string | null;
   loading: boolean;
+  threadError: string;
   settings: Json | null;
   approvals: Approval[];
   model: string;
@@ -73,7 +84,9 @@ const saved = (() => {
 })();
 export const useApp = create<State>((set) => ({
   authenticated: null,
-  pendingRun: sessionStorage.getItem("ma_pending_run_id"),
+  pendingRun: null,
+  pendingRuns: restorePending(sessionStorage.getItem("ma_pending_runs")),
+  newDraftKey: sessionStorage.getItem("ma_new_draft") || "$new",
   abandonUnseen: false,
   connected: false,
   connectionResourceError: false,
@@ -89,6 +102,7 @@ export const useApp = create<State>((set) => ({
   skillDocuments: false,
   skillSelection: false,
   pluginSelection: false,
+  expertSelection: false,
   configurationEditing: false,
   providerManagement: false,
   mcpManagement: false,
@@ -108,6 +122,7 @@ export const useApp = create<State>((set) => ({
   thread: null,
   selectedId: saved.threadId || null,
   loading: false,
+  threadError: "",
   settings: null,
   approvals: [],
   model: saved.model || "",
@@ -132,6 +147,39 @@ export const useApp = create<State>((set) => ({
   set,
   notify: (e) => set({ error: e instanceof Error ? e.message : String(e) }),
 }));
+// Navigation selects its own pending request; unrelated conversations remain usable.
+useApp.subscribe((state) => {
+  const selected =
+    pendingFor(state.pendingRuns, state.selectedId, state.newDraftKey)?.id ||
+    null;
+  if (state.pendingRun !== selected) useApp.setState({ pendingRun: selected });
+  try {
+    sessionStorage.setItem(
+      "ma_pending_runs",
+      JSON.stringify(state.pendingRuns),
+    );
+    sessionStorage.setItem("ma_new_draft", state.newDraftKey);
+  } catch {
+    /* Live request ownership remains in memory if browser storage is full. */
+  }
+});
+const legacyRun = sessionStorage.getItem("ma_pending_run_id");
+if (legacyRun) {
+  useApp.setState((s) => ({
+    pendingRuns: {
+      ...s.pendingRuns,
+      [legacyRun]: {
+        id: legacyRun,
+        origin: s.selectedId || s.newDraftKey,
+        fingerprint: sessionStorage.getItem("ma_pending_run_fingerprint") || "",
+        state: "unknown",
+      },
+    },
+  }));
+  sessionStorage.removeItem("ma_pending_run_id");
+  sessionStorage.removeItem("ma_pending_run_fingerprint");
+}
+
 let lastPreferences = "";
 useApp.subscribe((s) => {
   const preferences = JSON.stringify({
@@ -155,6 +203,7 @@ let controller: AbortController | undefined;
 let reconnectTimer: ReturnType<typeof setTimeout> | undefined;
 let connectionGeneration = 0;
 let loadVersion = 0;
+const threadCache = new ThreadCache();
 let hydrating: string | null = null;
 let buffer: Event[] = [];
 let bufferBytes = 0;
@@ -163,14 +212,14 @@ const seenFailures = new Set<string>();
 export async function request<T = any>(
   method: string,
   params: Json = {},
-  options: Pick<RequestInit, "signal" | "keepalive"> = {},
+  options: Pick<RequestInit, "signal" | "keepalive"> & { operationId?: string } = {},
 ): Promise<T> {
   const requestGeneration = connectionGeneration;
   let path = "/api/agent/action";
   let verb = "POST";
   let body: Json | undefined = { action: method, ...params };
   if (method === "settings/read") {
-    path = "/api/config";
+    path = "/api/config?view=saved";
     verb = "GET";
     body = undefined;
   }
@@ -213,6 +262,14 @@ export async function request<T = any>(
     body = params;
   }
   const mutating = [
+    "gateway/save",
+    "gateway/defaults",
+    "skills/config/write",
+    "plugin/enabled",
+    "plugin/skill/enabled",
+    "plugin/install",
+    "plugin/update",
+    "plugin/uninstall",
     "settings/defaults",
     "provider/save",
     "provider/delete",
@@ -229,6 +286,7 @@ export async function request<T = any>(
           : "连接中断，请重新读取当前状态",
       ),
       {
+        operationId,
         configurationIssue: {
           code: mutating ? "write_unconfirmed" : "read_failed",
           persistence: "unconfirmed",
@@ -236,15 +294,37 @@ export async function request<T = any>(
         } as ConfigurationIssue,
       },
     );
+  const operationId =
+    mutating && (path === "/api/config" || method === "gateway/defaults")
+      ? options.operationId || crypto.randomUUID()
+      : undefined;
+  const savedReceipt = async (): Promise<T | undefined> => {
+    if (!operationId) return;
+    try {
+      const response = await fetch(`/api/config/operations/${operationId}`);
+      if (!response.ok) return;
+      const receipt = await responseJson(response);
+      if (receipt.state === "saved") return receipt.result as T;
+    } catch {
+      /* Leave the unknown write visible; never repeat the mutation. */
+    }
+  };
   let response: Response;
   try {
     response = await fetch(path, {
       ...options,
       method: verb,
-      headers: body ? { "Content-Type": "application/json" } : undefined,
+      headers: body
+        ? {
+            "Content-Type": "application/json",
+            ...(operationId ? { "x-newbot-operation-id": operationId } : {}),
+          }
+        : undefined,
       body: body ? JSON.stringify(body) : undefined,
     });
   } catch (error) {
+    const receipt = await savedReceipt();
+    if (receipt) return receipt;
     if (
       mutating ||
       method === "settings/read" ||
@@ -260,8 +340,10 @@ export async function request<T = any>(
   }
   let value: Json;
   try {
-    value = await response.json();
+    value = await responseJson(response);
   } catch (error) {
+    const receipt = await savedReceipt();
+    if (receipt) return receipt;
     if (
       mutating ||
       method === "settings/read" ||
@@ -286,6 +368,62 @@ function readOptions(options: unknown): Pick<RequestInit, "signal"> {
     ? { signal: options.signal }
     : {};
 }
+const discovering = new Map<string, Promise<void>>();
+export function loadDiscovery(section: "models" | "skills" | "mcp") {
+  const current = discovering.get(section);
+  if (current) return current;
+  const generation = connectionGeneration;
+  const revision = useApp.getState().settings?.configuration?.revision;
+  let operation!: Promise<void>;
+  operation = (async () => {
+    const response = await fetch(`/api/config/discovery?section=${section}`);
+    if (generation !== connectionGeneration) return;
+    if (response.status === 401) {
+      useApp.setState({ authenticated: false });
+      return;
+    }
+    if (!response.ok) throw new Error("目录读取失败，请刷新重试。");
+    const value = await responseJson(response);
+    if (generation !== connectionGeneration) return;
+    if (revision !== useApp.getState().settings?.configuration?.revision) {
+      if (discovering.get(section) === operation) discovering.delete(section);
+      void loadDiscovery(section);
+      return;
+    }
+    useApp.setState((s) => ({
+      settings: s.settings
+        ? {
+            ...s.settings,
+            ...value,
+            errors: (s.settings.errors || []).filter(
+              (e: Json) => e.section !== section,
+            ),
+          }
+        : s.settings,
+    }));
+  })()
+    .catch(() => {
+      if (generation === connectionGeneration)
+        useApp.setState((s) => ({
+          settings: s.settings
+            ? {
+                ...s.settings,
+                errors: [
+                  ...(s.settings.errors || []).filter(
+                    (e: Json) => e.section !== section,
+                  ),
+                  { section, message: "目录读取失败，请刷新重试。" },
+                ],
+              }
+            : s.settings,
+        }));
+    })
+    .finally(() => {
+      if (discovering.get(section) === operation) discovering.delete(section);
+    });
+  discovering.set(section, operation);
+  return operation;
+}
 let settingsVersion = 0;
 export async function loadSettings(options?: unknown) {
   const version = ++settingsVersion;
@@ -296,7 +434,13 @@ export async function loadSettings(options?: unknown) {
       {},
       readOptions(options),
     );
-    if (version === settingsVersion) acceptSettings(settings);
+    if (version === settingsVersion) {
+      const old = useApp.getState().settings;
+      acceptSettings(settings);
+      if (!old)
+        for (const section of ["models", "skills", "mcp"] as const)
+          void loadDiscovery(section);
+    }
   } catch (error) {
     if (version === settingsVersion)
       useApp.setState({
@@ -331,16 +475,20 @@ export function acceptSettings(settings: Json) {
       settings.providers.find((p: Json) => p.current)?.id ||
       "",
     effort:
-      s.thread?.runtime?.effort ||
-      (model?.supportedReasoningEfforts.some(
-        (e: Json) =>
-          e.reasoningEffort ===
-          (useConfigured ? settings.configuration?.defaults.effort : s.effort),
-      )
-        ? useConfigured
-          ? settings.configuration.defaults.effort
-          : s.effort
-        : model?.defaultReasoningEffort || ""),
+      s.thread?.runtime?.effort ??
+      (s.model && !useConfigured
+        ? s.effort
+        : model?.supportedReasoningEfforts.some(
+              (e: Json) =>
+                e.reasoningEffort ===
+                (useConfigured
+                  ? settings.configuration?.defaults.effort
+                  : s.effort),
+            )
+          ? useConfigured
+            ? settings.configuration.defaults.effort
+            : s.effort
+          : model?.defaultReasoningEffort || ""),
   });
 }
 
@@ -355,7 +503,15 @@ export async function loadThreads(options?: unknown) {
       readOptions(options),
     );
     if (version === listVersion)
-      useApp.setState({ threads, threadsLoading: false });
+      useApp.setState((s) => ({
+        threads: threads.map((t) => {
+          const prior = s.threads.find((p) => p.id === t.id)?.activity;
+          return prior && prior.revision > (t.activity?.revision || 0)
+            ? { ...t, activity: prior }
+            : t;
+        }),
+        threadsLoading: false,
+      }));
   } catch (error) {
     if (version === listVersion)
       useApp.setState({
@@ -402,6 +558,9 @@ export async function loadThread(
   } = {},
 ) {
   const localFailure = options.localError === true;
+  const previous = useApp.getState().thread;
+  threadCache.remember(previous);
+  const preview = previous?.id === id ? previous : threadCache.get(id);
   const version = ++loadVersion;
   hydrating = id;
   buffer = [];
@@ -410,9 +569,16 @@ export async function loadThread(
   let reload = false;
   useApp.setState({
     selectedId: id,
-    thread:
-      useApp.getState().thread?.id === id ? useApp.getState().thread : null,
+    thread: preview,
     loading: true,
+    threadError: "",
+    ...(preview?.runtime
+      ? {
+          provider: preview.runtime.provider,
+          model: preview.runtime.model,
+          effort: preview.runtime.effort,
+        }
+      : {}),
     olderLoading: false,
     olderError: "",
     ...(localFailure ? {} : { error: "" }),
@@ -441,6 +607,7 @@ export async function loadThread(
       useApp.setState({
         thread,
         loading: false,
+        threadError: "",
         provider:
           thread.runtime?.provider ||
           thread.modelProvider ||
@@ -457,6 +624,7 @@ export async function loadThread(
     if (version === loadVersion)
       useApp.setState({
         loading: false,
+        threadError: "对话未能更新，请重试后继续。",
         ...(localFailure ? {} : { error: (e as Error).message }),
       });
     if (localFailure) throw e;
@@ -471,7 +639,8 @@ export async function loadThread(
   if (reload && version === loadVersion)
     await loadThread(id, false, { ...options, recoveryRead: true });
 }
-export function newChat() {
+export function newChat(draftKey = `$new:${crypto.randomUUID()}`) {
+  threadCache.remember(useApp.getState().thread);
   ++loadVersion;
   hydrating = null;
   buffer = [];
@@ -496,10 +665,12 @@ export function newChat() {
     ? defaults.effort
     : selected?.defaultReasoningEffort;
   useApp.setState({
+    newDraftKey: draftKey,
     selectedId: null,
     thread: null,
     error: "",
     loading: false,
+    threadError: "",
     olderLoading: false,
     olderError: "",
     model: selectedId,
@@ -539,6 +710,55 @@ export function consume(event: Event) {
   }
   if (event.type === EventType.CUSTOM) {
     const value = event.value;
+    if (
+      [
+        "newbot.session.runtime",
+        "newbot.session.inputs",
+        "newbot.session.extensions",
+      ].includes(event.name)
+    ) {
+      useApp.setState((s) => {
+        const thread = s.thread
+          ? reduceAgentEvent(s.thread, event, true)
+          : null;
+        return {
+          thread,
+          ...(event.name === "newbot.session.runtime" &&
+          thread &&
+          thread.id === value.threadId &&
+          thread.runtime
+            ? {
+                provider: thread.runtime.provider,
+                model: thread.runtime.model,
+                effort: thread.runtime.effort,
+              }
+            : {}),
+        };
+      });
+      return;
+    }
+    if (
+      event.name === "newbot.activity" ||
+      event.name === "newbot.activity.snapshot"
+    ) {
+      const rows = event.name === "newbot.activity" ? [value] : value;
+      useApp.setState((s) => ({
+        threads: s.threads.map((t) => {
+          const row = rows.find((r: Json) => r.threadId === t.id);
+          return row && row.activity.revision >= (t.activity?.revision || 0)
+            ? { ...t, activity: row.activity }
+            : t;
+        }),
+      }));
+      if (
+        rows.some(
+          (r: Json) =>
+            !useApp.getState().threads.some((t) => t.id === r.threadId),
+        )
+      )
+        void loadThreads().catch(() => {});
+      return;
+    }
     if (event.name === "newbot.runtime") {
       const before = useApp.getState().runtime;
       useApp.setState({
@@ -555,7 +775,16 @@ export function consume(event: Event) {
       return;
     }
     if (event.name === "newbot.configuration.changed") {
-      void loadSettings().catch(useApp.getState().notify);
+      if (value.configuration && useApp.getState().settings) {
+        ++settingsVersion;
+        useApp.setState((s) => ({
+          settings: { ...s.settings, configuration: value.configuration },
+          settingsLoading: false,
+          settingsError: "",
+        }));
+      } else if (value.scope !== "experts")
+        void loadSettings().catch(useApp.getState().notify);
+      return;
     }
     if (event.name === "newbot.approval.request") {
       useApp.setState((s) => ({
@@ -639,7 +868,7 @@ export function connect() {
       return;
     }
     if (!response.ok) throw new Error("无法读取连接能力");
-    const capabilities = await response.json();
+    const capabilities = await responseJson(response);
     if (!valid()) return;
     useApp.setState({
       abandonUnseen:
@@ -667,6 +896,7 @@ export function connect() {
       pdfPreview: capabilities.capabilities?.artifacts?.pdfPreview === true,
       skillDocuments: capabilities.capabilities?.skillDocuments?.read === true,
       pluginSelection: capabilities.capabilities?.plugins?.available === true,
+      expertSelection: capabilities.capabilities?.experts?.available === true,
       skillSelection:
         capabilities.capabilities?.skillSelection?.structuredInput === true,
       artifactVersions: capabilities.capabilities?.artifacts?.versions === true,
@@ -691,7 +921,7 @@ export function connect() {
             return;
           }
           if (!response.ok) throw new Error("事件连接暂不可用");
-          const batch = await response.json();
+          const batch = await responseJson(response);
           if (!valid()) return;
           for (const event of batch.events) consume(EventSchema.parse(event));
           cursor = batch.cursor;
@@ -740,7 +970,7 @@ export function connect() {
       if (!valid()) return;
       useApp.setState({ connected: false });
       void fetch("/api/session", { signal: abort.signal })
-        .then((r) => r.json())
+        .then((r) => responseJson(r))
         .then((r) => {
           if (valid() && !r.authenticated) {
             disconnect();
@@ -762,6 +992,7 @@ export function connect() {
   });
 }
 export function disconnect() {
+  threadCache.clear();
   seenFailures.clear();
   ++connectionGeneration;
   ++settingsVersion;
@@ -773,6 +1004,7 @@ export function disconnect() {
   bufferOverflow = false;
   clearTimeout(reconnectTimer);
   controller?.abort();
+  discovering.clear();
   controller = undefined;
   source?.close();
   source = undefined;
@@ -780,68 +1012,116 @@ export function disconnect() {
     connected: false,
     backgroundFailure: null,
     loading: false,
+    threadError: "",
+    ...(!useApp.getState().authenticated ? { thread: null } : {}),
     olderLoading: false,
     threadsLoading: false,
     settingsLoading: false,
   });
 }
 
-export function clearPendingRun(requestId?: string) {
-  if (requestId && sessionStorage.getItem("ma_pending_run_id") !== requestId)
-    return;
-  sessionStorage.removeItem("ma_pending_run_id");
-  sessionStorage.removeItem("ma_pending_run_fingerprint");
-  useApp.setState({ pendingRun: null });
+export function updatePendingRun(id: string, status: Json) {
+  useApp.setState((s) => {
+    const prior = s.pendingRuns[id];
+    return prior
+      ? {
+          pendingRuns: {
+            ...s.pendingRuns,
+            [id]: {
+              ...prior,
+              status,
+              state:
+                status.state === "awaiting_credentials"
+                  ? "awaiting_credentials"
+                  : "unknown",
+            },
+          },
+        }
+      : {};
+  });
 }
-export async function submitRun(payload: Json) {
-  const digest = await crypto.subtle.digest(
-    "SHA-256",
-    new TextEncoder().encode(JSON.stringify(payload)),
-  );
-  const fingerprint = Array.from(new Uint8Array(digest), (b) =>
-    b.toString(16).padStart(2, "0"),
-  ).join("");
-  let requestId = sessionStorage.getItem("ma_pending_run_id");
+export function clearPendingRun(requestId?: string) {
+  const id = requestId || useApp.getState().pendingRun;
+  if (!id) return;
+  useApp.setState((s) => {
+    const next = { ...s.pendingRuns };
+    delete next[id];
+    return { pendingRuns: next };
+  });
+}
+const submittingOrigins = new Set<string>();
+export async function submitRun(
+  payload: Json,
+  reserved?: (id: string) => void,
+) {
+  const origin = payload.threadId || useApp.getState().newDraftKey;
   if (
-    requestId &&
-    sessionStorage.getItem("ma_pending_run_fingerprint") !== fingerprint
+    submittingOrigins.has(origin) ||
+    Object.values(useApp.getState().pendingRuns).some(
+      (r) => r.origin === origin,
+    )
   )
-    throw new Error("上次发送尚未确认，请先检查发送状态，再发送其他消息");
-  if (!requestId) {
-    requestId = crypto.randomUUID();
-    sessionStorage.setItem("ma_pending_run_id", requestId);
-    sessionStorage.setItem("ma_pending_run_fingerprint", fingerprint);
-    useApp.setState({ pendingRun: requestId });
-  } else {
-    const r = await fetch(`/api/agent/runs/${requestId}`);
-    if (r.ok) {
-      const status = await r.json();
-      if (status.turn?.id) {
-        clearPendingRun(requestId);
-        return status;
-      }
-      if (["rejected", "abandoned"].includes(status.state))
-        clearPendingRun(requestId);
-      throw new Error("上次发送结果尚未确认。请检查发送状态，系统不会重复执行");
-    }
-    if (r.status !== 404) throw new Error("无法确认上次请求状态，请稍后重试");
+    throw new Error("此对话有待确认的发送，请先查询状态。");
+  const requestId = crypto.randomUUID();
+  submittingOrigins.add(origin);
+  try {
+    const digest = await crypto.subtle.digest(
+      "SHA-256",
+      new TextEncoder().encode(JSON.stringify(payload)),
+    );
+    const fingerprint = Array.from(new Uint8Array(digest), (b) =>
+      b.toString(16).padStart(2, "0"),
+    ).join("");
+    useApp.setState((s) => ({
+      pendingRuns: {
+        ...s.pendingRuns,
+        [requestId]: {
+          id: requestId,
+          origin,
+          fingerprint,
+          state: "submitting",
+        },
+      },
+    }));
+  } finally {
+    submittingOrigins.delete(origin);
+  }
+  reserved?.(requestId);
+  const timer = setTimeout(() => {
+    if (useApp.getState().pendingRuns[requestId]?.state === "submitting")
+      updatePendingRun(requestId, { state: "unknown" });
+  }, 8000);
+  function accept(result: Json) {
+    if (result.turn?.id) clearPendingRun(requestId);
+    else updatePendingRun(requestId, result);
+    return result;
   }
   try {
-    const result = await request("turn/start", { ...payload, requestId });
-    clearPendingRun(requestId);
-    return result;
+    return accept(await request("turn/start", { ...payload, requestId }));
   } catch (error) {
     try {
-      const status = await fetch(`/api/agent/runs/${requestId}`);
-      if (
-        (status.ok &&
-          ["rejected", "abandoned"].includes((await status.json()).state)) ||
-        (status.status === 404 && typeof (error as Json).status === "number")
+      const response = await fetch(`/api/agent/runs/${requestId}`, {
+        cache: "no-store",
+      });
+      if (response.status === 401) useApp.setState({ authenticated: false });
+      if (response.ok) {
+        const status = await responseJson<Json>(response);
+        if (status.turn?.id || status.state === "awaiting_credentials")
+          return accept(status);
+        if (["rejected", "abandoned"].includes(status.state))
+          clearPendingRun(requestId);
+        else updatePendingRun(requestId, status);
+      } else if (
+        response.status === 404 &&
+        typeof (error as Json).status === "number"
       )
         clearPendingRun(requestId);
+      else updatePendingRun(requestId, { state: "unknown" });
     } catch {
-      /* Keep the stable request ID when the outcome cannot be confirmed. */
+      updatePendingRun(requestId, { state: "unknown" });
     }
     throw error;
+  } finally {
+    clearTimeout(timer);
   }
 }

@@ -1,0 +1,78 @@
+{
+  "scanned": [
+    {
+      "id": "b32dee0618aa31f1e4c419c4326c16bea18203e46826fec527164404fa2a842b",
+      "path": "skills/alpha/SKILL.md",
+      "name": "upgrade-demo:alpha",
+      "description": "synthetic alpha"
+    },
+    {
+      "id": "3dd0027ba27b79f5db28dc691ed20a8851cc59f12cc43bfdd46e8d68f85e101b",
+      "path": "skills/beta/SKILL.md",
+      "name": "upgrade-demo:beta",
+      "description": "synthetic beta"
+    }
+  ],
+  "detail": [
+    {
+      "id": "a9426eca2f2930abc85d4374da07db0b186194fa37bd7799cd72c6be8f4b2a31",
+      "name": "upgrade-demo:alpha",
+      "description": "synthetic alpha",
+      "enabled": true
+    },
+    {
+      "id": "3c7f171ffaf4caada9b1ba81cfaf86680c5af8b7edc77652921b80bd0e9bdd9c",
+      "name": "upgrade-demo:beta",
+      "description": "synthetic beta",
+      "enabled": false
+    }
+  ],
+  "preferences": {
+    "config": [
+      {
+        "path": "/tmp/newbot-plugin-upgrade-xtSCOe/codex/plugins/cache/newbot-imports/upgrade-demo/1.0.0/skills/alpha/SKILL.md",
+        "enabled": true
+      },
+      {
+        "path": "/tmp/newbot-plugin-upgrade-xtSCOe/codex/plugins/cache/newbot-imports/upgrade-demo/1.0.0/skills/beta/SKILL.md",
+        "enabled": false
+      }
+    ]
+  },
+  "native": [
+    {
+      "name": "upgrade-demo:alpha",
+      "description": "synthetic alpha",
+      "path": "/tmp/newbot-plugin-upgrade-xtSCOe/codex/plugins/cache/newbot-imports/upgrade-demo/1.0.0/skills/alpha/SKILL.md",
+      "scope": "user",
+      "enabled": true,
+      "pluginId": "upgrade-demo@newbot-imports"
+    },
+    {
+      "name": "upgrade-demo:beta",
+      "description": "synthetic beta",
+      "path": "/tmp/newbot-plugin-upgrade-xtSCOe/codex/plugins/cache/newbot-imports/upgrade-demo/1.0.0/skills/beta/SKILL.md",
+      "scope": "user",
+      "enabled": true,
+      "pluginId": "upgrade-demo@newbot-imports"
+    }
+  ],
+  "rawDetail": [
+    {
+      "name": "upgrade-demo:alpha",
+      "description": "synthetic alpha",
+      "shortDescription": null,
+      "interface": null,
+      "path": "/tmp/newbot-plugin-upgrade-xtSCOe/imports/marketplace/packages/fe74f9900776e3db512565f6289d4d7c56caaec00aa16504994f835effa62b94/1b2b5a8147ee16c75442f41d1b2874368026d0a0d1bc551bea85093d3a84ac06/skills/alpha/SKILL.md",
+      "enabled": true
+    },
+    {
+      "name": "upgrade-demo:beta",
+      "description": "synthetic beta",
+      "shortDescription": null,
+      "interface": null,
+      "path": "/tmp/newbot-plugin-upgrade-xtSCOe/imports/marketplace/packages/fe74f9900776e3db512565f6289d4d7c56caaec00aa16504994f835effa62b94/1b2b5a8147ee16c75442f41d1b2874368026d0a0d1bc551bea85093d3a84ac06/skills/beta/SKILL.md",
+      "enabled": true
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+PASS sending waits for model configuration
+PASS file cards from native events
+PASS Markdown preview/source, inert HTML and explicit focus restoration
+PASS keyboard focus remains inside the preview
+PASS code syntax highlighting
+PASS JSON formatting and byte-preserving download
+PASS download failures are visible and retryable
+PASS CSV table with multiline and quoted cells
+PASS HTML source never executes at the main origin
+PASS empty, invalid JSON and large preview feedback
+PASS authenticated image decoding
+PASS content failure, visible retry and recovery
+PASS closing a loading preview cancels stale content
+PASS workspace listing failure, retry, file selection and registration
+PASS refresh restores cards and immutable versions after workspace changes
+PASS dark theme
+PASS 375px mobile layout and touch controls
+PASS landscape modal stays inside the viewport
+PASS session expiry during file reads returns to login
+Artifact UI regression: 19 checks passed. Evidence: /home/a/Documents/ChatGPT/newbot/.data/artifact-ui

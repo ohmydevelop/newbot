@@ -1,0 +1,11 @@
+{
+  "checks": [
+    "gateway private save consumes a key once; failed model discovery cannot echo it",
+    "failed tool diagnostics remain hidden in actual poll events and visible chat",
+    "successful structured tool content stays available beside the fixed failure message",
+    "refresh restores sanitized history without submitting the credential again",
+    "browser storage, API responses and logs contain no submitted or reflected credential"
+  ],
+  "passed": 5,
+  "credentialInputs": 1
+}

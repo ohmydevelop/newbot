@@ -1,0 +1,72 @@
+{
+  "version": "0.165.0",
+  "syntheticUpstream": true,
+  "realProviderCalls": 0,
+  "checks": [
+    "unknown model explicit low reaches the native Responses request",
+    "same native thread uses changed effort and retains history",
+    "accepted Responses are not treated as proof that the upstream adopted effort",
+    "upstream rejection fails once without automatic model fallback or replay",
+    "reset to default clears the prior explicit effort on the same native thread",
+    "unknown model starts with native default when no explicit effort is selected",
+    "in-flight request stays unchanged while successive settings and a skill selection are saved",
+    "service and native process restart restore pending intent and references from SQLite",
+    "next native turn uses final gateway/effort and actual skill content, preserving thread identity and history",
+    "references are consumed once after dispatch and confirmed settings match the next turn"
+  ],
+  "calls": [
+    {
+      "path": "/a/responses",
+      "model": "manual-reasoning-model",
+      "effort": "low",
+      "hasFirst": true,
+      "hasSkill": false
+    },
+    {
+      "path": "/a/responses",
+      "model": "manual-reasoning-model",
+      "effort": "high",
+      "hasFirst": true,
+      "hasSkill": false
+    },
+    {
+      "path": "/b/responses",
+      "model": "ignore-reasoning",
+      "effort": "medium",
+      "hasFirst": true,
+      "hasSkill": false
+    },
+    {
+      "path": "/b/responses",
+      "model": "rejected-reasoning",
+      "effort": "high",
+      "hasFirst": true,
+      "hasSkill": false
+    },
+    {
+      "path": "/b/responses",
+      "model": "manual-reasoning-model",
+      "hasFirst": true,
+      "hasSkill": false
+    },
+    {
+      "path": "/a/responses",
+      "model": "manual-reasoning-model",
+      "hasFirst": false,
+      "hasSkill": false
+    },
+    {
+      "path": "/b/responses",
+      "model": "manual-reasoning-model",
+      "hasFirst": true,
+      "hasSkill": false
+    },
+    {
+      "path": "/a/responses",
+      "model": "manual-reasoning-model",
+      "effort": "high",
+      "hasFirst": true,
+      "hasSkill": true
+    }
+  ]
+}

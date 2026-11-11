@@ -1,0 +1,12 @@
+{
+  "checks": [
+    "model, permission and skill controls stay enabled during a native turn",
+    "next-turn model, approval, skill and plugin are saved without native mutation or draft loss",
+    "refresh restores pending settings and both reference kinds",
+    "cancellation restores prior intent without touching the running turn",
+    "failed native application preserves draft and references, blocks dispatch, and can be explicitly retried",
+    "next native call uses saved values and structured references exactly once"
+  ],
+  "errors": [],
+  "candidate": ".data/issue-04-web"
+}

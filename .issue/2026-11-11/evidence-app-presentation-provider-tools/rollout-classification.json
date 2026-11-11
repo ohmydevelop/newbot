@@ -1,0 +1,47 @@
+{
+  "threadId": "01a1c7c2-9e51-7183-a7b6-33756241aef2",
+  "quotedWarning": "Proxy compatibility warning: OpenAI Responses tool \"namespace\" is not available when proxying to Anthropic and was omitted.",
+  "warningClassification": {
+    "event_msg/item_completed": 15,
+    "response_item/reasoning": 14,
+    "response_item/message": 1,
+    "event_msg/task_complete": 1
+  },
+  "calls": [
+    {
+      "namespace": null,
+      "name": "exec_command",
+      "count": 169
+    },
+    {
+      "namespace": null,
+      "name": "list_mcp_resources",
+      "count": 2
+    },
+    {
+      "namespace": null,
+      "name": "list_mcp_resource_templates",
+      "count": 1
+    }
+  ],
+  "limit": "Only type/name counts, no reasoning, arguments, business results or credentials. Quoted model text is not a raw gateway response.",
+  "firstOccurrenceTypes": [
+    {
+      "timestamp": "2026-11-10T23:20:28.866Z",
+      "kind": "event_msg/item_completed"
+    },
+    {
+      "timestamp": "2026-11-10T23:20:28.908Z",
+      "kind": "response_item/reasoning"
+    },
+    {
+      "timestamp": "2026-11-10T23:20:50.885Z",
+      "kind": "event_msg/item_completed"
+    }
+  ],
+  "session": {
+    "model": "minimax-m3.1-flash",
+    "provider": "gateway_ea6bcfaa1c474c6e8f3acdabc0f05d18",
+    "approval": "full"
+  }
+}

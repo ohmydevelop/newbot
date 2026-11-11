@@ -10,10 +10,16 @@ const origin = "http://127.0.0.1:3100";
 const password = "html-preview-test-only-password";
 async function setup(origins = [origin]) {
   const directory = mkdtempSync(join(tmpdir(), "newbot-html-preview-"));
-  const cwd = join(directory, "workspace");
+  let cwd = join(directory, "workspace");
   const codex = new FakeCodex();
   const c = await createServer({
-    providerRuntime: null, directory, cwd, codex, password, origins });
+    providerRuntime: null,
+    directory,
+    cwd,
+    codex,
+    password,
+    origins,
+  });
   await c.app.ready();
   await c.service.settings();
   const login = await c.app.inject({
@@ -28,6 +34,7 @@ async function setup(origins = [origin]) {
     provider: "fixture",
     model: "fixture-model",
   });
+  cwd = c.workspaces.root(thread.id);
   const turn: any = await c.service.handle("turn/start", {
     threadId: thread.id,
     text: "HTML test",

@@ -1,0 +1,17 @@
+{"at":"2026-11-10T16:21:53.835Z","event":"runtime.status","status":"ready"}
+{"at":"2026-11-10T16:21:54.751Z","event":"http.request","status":401,"requestId":"req-1","route":"/api/plugins/certificate","method":"POST","durationMs":2}
+{"at":"2026-11-10T16:21:54.752Z","event":"http.request","status":403,"requestId":"req-2","route":"/api/plugins/certificate","method":"POST","durationMs":0}
+{"at":"2026-11-10T16:21:54.767Z","event":"http.request","status":400,"requestId":"req-3","route":"/api/plugins/certificate","method":"POST","durationMs":15}
+{"at":"2026-11-10T16:21:54.782Z","event":"http.request","status":400,"requestId":"req-4","route":"/api/plugins/certificate","method":"POST","durationMs":15}
+{"at":"2026-11-10T16:21:54.803Z","event":"http.request","status":400,"requestId":"req-5","route":"/api/plugins/certificate","method":"POST","durationMs":20}
+{"at":"2026-11-10T16:21:54.835Z","event":"http.request","status":200,"requestId":"req-6","route":"/api/plugins/certificate","method":"POST","durationMs":32}
+{"at":"2026-11-10T16:21:56.120Z","event":"http.request","status":200,"requestId":"req-7","route":"/api/credentials/requests","method":"POST","durationMs":437}
+{"at":"2026-11-10T16:21:56.143Z","event":"http.request","status":200,"requestId":"req-8","route":"/api/credentials/:id/input","method":"POST","durationMs":23}
+{"at":"2026-11-10T16:21:57.983Z","event":"http.request","status":200,"requestId":"req-9","route":"/api/credentials/requests","method":"POST","durationMs":436}
+{"at":"2026-11-10T16:21:58.003Z","event":"http.request","status":200,"requestId":"req-a","route":"/api/credentials/:id/input","method":"POST","durationMs":19}
+{"at":"2026-11-10T16:21:59.664Z","event":"http.request","status":200,"requestId":"req-b","route":"/api/credentials/requests","method":"POST","durationMs":454}
+{"at":"2026-11-10T16:21:59.683Z","event":"http.request","status":200,"requestId":"req-c","route":"/api/credentials/:id/input","method":"POST","durationMs":18}
+{"at":"2026-11-10T16:22:01.401Z","event":"http.request","status":200,"requestId":"req-d","route":"/api/credentials/requests","method":"POST","durationMs":468}
+{"at":"2026-11-10T16:22:01.418Z","event":"http.request","status":200,"requestId":"req-e","route":"/api/credentials/:id/input","method":"POST","durationMs":18}
+{"at":"2026-11-10T16:22:01.612Z","event":"runtime.status","status":"ready"}
+{"passed":4,"syntheticBusinessRequests":2}

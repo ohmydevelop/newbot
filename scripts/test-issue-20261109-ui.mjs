@@ -326,7 +326,7 @@ try {
       assert.equal(after[0].provider, "secondary");
       await page.getByRole("button", { name: "会话审批：请求批准" }).click();
       await page
-        .getByRole("menuitem", { name: "完全访问权限", exact: true })
+        .getByRole("menuitemradio", { name: "完全访问权限", exact: true })
         .click();
       await page
         .getByRole("button", { name: "会话审批：完全访问权限" })
@@ -403,7 +403,9 @@ try {
       await page
         .getByRole("button", { name: "查看 test-server", exact: true })
         .click();
-      await page.getByText("工具目录（2）", { exact: true }).click();
+      await page
+        .getByRole("region", { name: "工具目录", exact: true })
+        .waitFor();
       await page.getByText("metrics", { exact: true }).waitFor();
       await page.keyboard.press("Escape");
       await page.keyboard.press("Escape");
@@ -416,9 +418,9 @@ try {
   );
   await check("gateway settings use a single list with defaults", async () => {
     await account().click();
-    await page.getByRole("button", { name: "模型网关", exact: true }).click();
+    await page.getByRole("button", { name: "网关", exact: true }).click();
     await page.getByLabel("第二网关 默认模型").waitFor();
-    assert.equal(await page.locator(".gateway-row").count(), 2);
+    assert.equal(await page.locator(".gateway-card").count(), 2);
     await page.getByLabel("第二网关 默认模型").selectOption("secondary-model");
     await page.getByLabel("第二网关 默认模型").waitFor();
     await page.screenshot({
@@ -431,17 +433,17 @@ try {
     "gateway and connector editors open focused dialogs and cancel without changes",
     async () => {
       await account().click();
-      await page.getByRole("button", { name: "模型网关", exact: true }).click();
+      await page.getByRole("button", { name: "网关", exact: true }).click();
       await page
-        .getByRole("button", { name: "添加模型网关", exact: true })
+        .getByRole("button", { name: "添加网关", exact: true })
         .click();
       await page
-        .getByRole("dialog", { name: "添加模型网关", exact: true })
+        .getByRole("dialog", { name: "添加网关", exact: true })
         .getByLabel("名称", { exact: true })
         .fill("临时网关");
       await page.keyboard.press("Escape");
       await page
-        .getByRole("dialog", { name: "添加模型网关", exact: true })
+        .getByRole("dialog", { name: "添加网关", exact: true })
         .waitFor({ state: "hidden" });
       await page.getByRole("button", { name: "工具连接", exact: true }).click();
       await page
@@ -510,9 +512,9 @@ try {
       const picker = page.getByRole("button", { name: "选择模型与推理强度" });
       await picker.filter({ hasText: "测试模型" }).waitFor();
       await account().click();
-      await page.getByRole("button", { name: "模型网关", exact: true }).click();
+      await page.getByRole("button", { name: "网关", exact: true }).click();
       const gateway = page
-        .locator(".gateway-row")
+        .locator(".gateway-card")
         .filter({ hasText: "第二网关" });
       await page
         .getByLabel("第二网关 默认模型")
@@ -548,19 +550,19 @@ try {
       };
       page.on("request", watcher);
       await account().click();
-      await page.getByRole("button", { name: "模型网关", exact: true }).click();
+      await page.getByRole("button", { name: "网关", exact: true }).click();
       assert.equal(
         await page.locator(".gateway-head, .gateway-details").count(),
         0,
       );
       await page
-        .getByRole("button", { name: "刷新模型网关", exact: true })
+        .getByRole("button", { name: "刷新网关", exact: true })
         .waitFor();
       await page
-        .getByRole("button", { name: "添加模型网关", exact: true })
+        .getByRole("button", { name: "添加网关", exact: true })
         .click();
       const form = page.getByRole("dialog", {
-        name: "添加模型网关",
+        name: "添加网关",
         exact: true,
       });
       assert.equal(
@@ -592,8 +594,19 @@ try {
         animations: "disabled",
         path: resolve(output, "gateway-editor-desktop.png"),
       });
-      await form.getByRole("button", { name: "保存", exact: true }).click();
-      await form.waitFor({ state: "hidden", timeout: 25000 });
+      await form
+        .getByRole("button", { name: "保存并获取模型", exact: true })
+        .click();
+      await form
+        .getByText("网关已保存，模型列表未能获取。检查连接后可重试。", {
+          exact: false,
+        })
+        .waitFor();
+      await form
+        .getByRole("button", { name: "关闭", exact: true })
+        .last()
+        .click();
+      await form.waitFor({ state: "hidden" });
       await page
         .getByRole("button", { name: "编辑 我的密钥网关", exact: true })
         .waitFor();
@@ -633,13 +646,13 @@ try {
     "a lost key-save response is reconciled by reading the ticket without resending a secret or creating duplicates",
     async () => {
       await account().click();
-      await page.getByRole("button", { name: "模型网关", exact: true }).click();
-      const count = await page.locator(".gateway-row").count();
+      await page.getByRole("button", { name: "网关", exact: true }).click();
+      const count = await page.locator(".gateway-card").count();
       await page
-        .getByRole("button", { name: "添加模型网关", exact: true })
+        .getByRole("button", { name: "添加网关", exact: true })
         .click();
       const form = page.getByRole("dialog", {
-        name: "添加模型网关",
+        name: "添加网关",
         exact: true,
       });
       await form.getByLabel("名称", { exact: true }).fill("回执恢复网关");
@@ -655,7 +668,9 @@ try {
         await route.fetch();
         await route.abort("failed");
       });
-      await form.getByRole("button", { name: "保存", exact: true }).click();
+      await form
+        .getByRole("button", { name: "保存并获取模型", exact: true })
+        .click();
       await form.getByRole("alert").waitFor();
       assert.equal(
         await form.getByLabel("API Key", { exact: true }).inputValue(),
@@ -663,9 +678,18 @@ try {
       );
       await page.unroute("**/api/credentials/*/input");
       await form.getByRole("button", { name: "读取状态", exact: true }).click();
-      await form.waitFor({ state: "hidden", timeout: 25000 });
+      await form
+        .getByText("网关已保存，模型列表未能获取。检查连接后可重试。", {
+          exact: false,
+        })
+        .waitFor();
+      await form
+        .getByRole("button", { name: "关闭", exact: true })
+        .last()
+        .click();
+      await form.waitFor({ state: "hidden" });
       assert.equal(posts, 1);
-      assert.equal(await page.locator(".gateway-row").count(), count + 1);
+      assert.equal(await page.locator(".gateway-card").count(), count + 1);
       await page.keyboard.press("Escape");
     },
   );
@@ -714,9 +738,9 @@ try {
       );
       assert.equal(switched.status(), 200);
       await account().click();
-      await page.getByRole("button", { name: "模型网关", exact: true }).click();
+      await page.getByRole("button", { name: "网关", exact: true }).click();
       await page
-        .getByRole("button", { name: "刷新模型网关", exact: true })
+        .getByRole("button", { name: "刷新网关", exact: true })
         .click();
       await page
         .getByRole("button", { name: "编辑 OpenAI", exact: true })
@@ -728,7 +752,9 @@ try {
         true,
       );
       assert.equal(
-        await detail.getByRole("button", { name: "保存", exact: true }).count(),
+        await detail
+          .getByRole("button", { name: "保存并获取模型", exact: true })
+          .count(),
         0,
       );
       assert.equal(
@@ -768,7 +794,7 @@ try {
         await account().click();
         await page.getByLabel("外观", { exact: true }).selectOption(theme);
         for (const [label, image] of [
-          ["模型网关", "gateways"],
+          ["网关", "gateways"],
           ["技能", "skills"],
           ["工具连接", "tools"],
         ]) {
@@ -776,7 +802,7 @@ try {
           if (image === "skills")
             await page.locator(".skill-list-row").first().waitFor();
           if (image === "gateways")
-            await page.locator(".gateway-row").first().waitFor();
+            await page.locator(".gateway-card").first().waitFor();
           if (image === "tools")
             await page
               .getByRole("button", { name: "查看 测试插件", exact: true })
@@ -792,13 +818,13 @@ try {
           );
         }
         await page
-          .getByRole("button", { name: "模型网关", exact: true })
+          .getByRole("button", { name: "网关", exact: true })
           .click();
         await page
-          .getByRole("button", { name: "添加模型网关", exact: true })
+          .getByRole("button", { name: "添加网关", exact: true })
           .click();
         const editor = page.getByRole("dialog", {
-          name: "添加模型网关",
+          name: "添加网关",
           exact: true,
         });
         await editor.getByLabel("名称", { exact: true }).fill("手机网关草稿");
@@ -807,7 +833,10 @@ try {
           animations: "disabled",
         });
         await page.setViewportSize({ width: 812, height: 375 });
-        const save = editor.getByRole("button", { name: "保存", exact: true });
+        const save = editor.getByRole("button", {
+          name: "保存并获取模型",
+          exact: true,
+        });
         await save.scrollIntoViewIfNeeded();
         const rect = await save.boundingBox();
         assert.ok(rect.y >= 0 && rect.y + rect.height <= 375);
