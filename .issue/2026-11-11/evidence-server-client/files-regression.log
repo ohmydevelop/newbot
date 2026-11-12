@@ -1,0 +1,23 @@
+✔ artifact API binds real turns, rejects forged provenance, protects auth and serves HTML as inert text (161.591365ms)
+✔ workspace reads reject traversal, symlinks, hardlinks, credentials, oversized and unsupported files (100.723834ms)
+✔ live fileChange capture is idempotent and immutable; failures stay out of the agent lifecycle (78.255528ms)
+✔ registered artifacts survive archive and restart; interrupted capture is not silently replayed (115.571577ms)
+✔ upload and artifact quotas are shared and snapshots deduplicate across conversations (69.956785ms)
+✔ v1 database migration preserves sessions, threads, attachments and rejects future schemas (2.442993ms)
+✔ renamed file capture uses the final path; capture overload is bounded and reported (292.404864ms)
+✔ cold checkpoint restores a fresh node after the source is removed, excluding auth and databases (24.155729ms)
+✔ running nodes cannot publish a cold checkpoint (1.567929ms)
+✔ corrupt or mismatched-version checkpoint is rejected before publishing a target (4.04551ms)
+✔ workspace links cannot escape to host files (4.105888ms)
+✔ manifest traversal and secret-native-file injection cannot write outside target (3.681004ms)
+✔ a replaced checkpoint directory cannot redirect import to another source (4.142907ms)
+✔ new conversations isolate cwd, sandbox roots, live browsing and captured files; old threads retain their directory through restart (241.6672ms)
+✔ SQLite extension edits defer to the next turn, project skills are copied, disabled skills cannot be cited, and another active thread is untouched (113.009694ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 15
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1220.053703

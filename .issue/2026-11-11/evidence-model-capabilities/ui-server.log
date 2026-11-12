@@ -1,0 +1,20 @@
+capability fixture ready
+{"at":"2026-11-11T09:42:48.329Z","event":"http.request","status":200,"requestId":"req-1","route":"/*","method":"GET","durationMs":10}
+{"at":"2026-11-11T09:42:48.352Z","event":"http.request","status":200,"requestId":"req-2","route":"/*","method":"GET","durationMs":2}
+{"at":"2026-11-11T09:42:48.353Z","event":"http.request","status":200,"requestId":"req-3","route":"/*","method":"GET","durationMs":2}
+{"at":"2026-11-11T09:42:48.400Z","event":"http.request","status":200,"requestId":"req-4","route":"/api/session","method":"GET","durationMs":1}
+{"at":"2026-11-11T09:42:48.408Z","event":"http.request","status":200,"requestId":"req-5","route":"unmatched","method":"GET","durationMs":2}
+{"at":"2026-11-11T09:42:52.889Z","event":"http.request","status":200,"requestId":"req-6","route":"/api/login","method":"POST","durationMs":34}
+{"at":"2026-11-11T09:42:52.916Z","event":"http.request","status":200,"requestId":"req-9","route":"/api/runtime/capabilities","method":"GET","durationMs":1}
+{"at":"2026-11-11T09:42:52.917Z","event":"http.request","status":200,"requestId":"req-7","route":"/*","method":"GET","durationMs":3}
+{"at":"2026-11-11T09:42:52.918Z","event":"http.request","status":200,"requestId":"req-8","route":"/*","method":"GET","durationMs":3}
+{"at":"2026-11-11T09:42:52.945Z","event":"http.request","status":200,"requestId":"req-b","route":"/api/config","method":"GET","durationMs":3}
+{"at":"2026-11-11T09:42:52.947Z","event":"http.request","status":200,"requestId":"req-c","route":"/api/threads","method":"GET","durationMs":1}
+{"at":"2026-11-11T09:42:52.948Z","event":"http.request","status":200,"requestId":"req-d","route":"/api/agent/action","method":"POST","durationMs":1}
+{"at":"2026-11-11T09:42:52.949Z","event":"http.request","status":200,"requestId":"req-e","route":"/api/config","method":"GET","durationMs":1}
+{"at":"2026-11-11T09:42:52.953Z","event":"http.request","status":200,"requestId":"req-f","route":"/api/config/discovery","method":"GET","durationMs":1}
+{"at":"2026-11-11T09:42:52.954Z","event":"http.request","status":200,"requestId":"req-g","route":"/api/config/discovery","method":"GET","durationMs":0}
+{"at":"2026-11-11T09:42:52.955Z","event":"http.request","status":200,"requestId":"req-h","route":"/api/config/discovery","method":"GET","durationMs":1}
+{"at":"2026-11-11T09:42:56.446Z","event":"http.request","status":200,"requestId":"req-i","route":"/api/agent/action","method":"POST","durationMs":15}
+{"at":"2026-11-11T09:44:09.460Z","event":"http.request","status":200,"requestId":"req-j","route":"/*","method":"GET","durationMs":7}
+{"at":"2026-11-11T09:44:27.996Z","event":"http.request","status":200,"requestId":"req-k","route":"/api/agent/action","method":"POST","durationMs":10}

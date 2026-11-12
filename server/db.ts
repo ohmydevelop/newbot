@@ -3,7 +3,7 @@ import { DatabaseSync } from "node:sqlite";
 import { mkdirSync, chmodSync } from "node:fs";
 import { resolve } from "node:path";
 import { randomBytes, createHash } from "node:crypto";
-export const DATABASE_VERSION = 16;
+export const DATABASE_VERSION = 17;
 export function database(directory: string) {
   mkdirSync(directory, { recursive: true, mode: 0o700 });
   const path = resolve(directory, "minimal-agent.sqlite");
@@ -19,6 +19,11 @@ export function database(directory: string) {
   db.exec("PRAGMA journal_mode=WAL; PRAGMA foreign_keys=ON;");
   db.exec(`BEGIN IMMEDIATE;
     CREATE TABLE IF NOT EXISTS metadata(key TEXT PRIMARY KEY,value TEXT NOT NULL);
+    CREATE TABLE IF NOT EXISTS runner_nodes(id TEXT PRIMARY KEY,name TEXT NOT NULL,token_hash TEXT NOT NULL,expected_fingerprint TEXT NOT NULL,epoch INTEGER NOT NULL DEFAULT 0,boot_id TEXT,lease_until INTEGER NOT NULL DEFAULT 0,revoked INTEGER NOT NULL DEFAULT 0,stopped INTEGER NOT NULL DEFAULT 1,ack INTEGER NOT NULL DEFAULT 0);
+    CREATE TABLE IF NOT EXISTS runner_grants(node_id TEXT NOT NULL REFERENCES runner_nodes(id),scope TEXT NOT NULL,revision INTEGER NOT NULL,enabled INTEGER NOT NULL,PRIMARY KEY(node_id,scope));
+    CREATE TABLE IF NOT EXISTS runner_commands(id TEXT PRIMARY KEY,node_id TEXT NOT NULL REFERENCES runner_nodes(id),epoch INTEGER NOT NULL,scope TEXT NOT NULL,revision INTEGER NOT NULL,fingerprint TEXT NOT NULL,state TEXT NOT NULL,payload TEXT,ephemeral INTEGER NOT NULL,reply TEXT,created INTEGER NOT NULL);
+    CREATE TABLE IF NOT EXISTS runner_inbox(node_id TEXT NOT NULL REFERENCES runner_nodes(id),seq INTEGER NOT NULL,epoch INTEGER NOT NULL,kind TEXT NOT NULL,command_id TEXT,scope TEXT NOT NULL,fingerprint TEXT NOT NULL,packet TEXT NOT NULL,PRIMARY KEY(node_id,seq));
+
     CREATE TABLE IF NOT EXISTS configuration_operations(id TEXT PRIMARY KEY,owner TEXT NOT NULL,fingerprint TEXT NOT NULL,state TEXT NOT NULL,result TEXT,updated INTEGER NOT NULL);
     CREATE TABLE IF NOT EXISTS private_field_sets(scope TEXT NOT NULL,target TEXT NOT NULL,revision TEXT NOT NULL,binding TEXT NOT NULL,specs TEXT NOT NULL,packet TEXT,PRIMARY KEY(scope,target));
     CREATE TABLE IF NOT EXISTS private_operations(id TEXT PRIMARY KEY,owner TEXT NOT NULL,fingerprint TEXT NOT NULL,result TEXT,updated INTEGER NOT NULL);

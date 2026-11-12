@@ -1,3 +1,10 @@
+import type { VerifiedModelCapabilities } from "../generated/codex/VerifiedModelCapabilities.js";
+import type { VerifiedCapabilities } from "./model-capabilities.js";
+import { createHash } from "node:crypto";
+import {
+  modelPurpose,
+  type ModelDescriptor,
+} from "../shared/model-purpose.js";
 import { gatewayProfiles } from "./gateway-profiles.js";
 import { configFail } from "./configuration-error.js";
 import { z } from "zod";
@@ -13,7 +20,7 @@ import {
   type SessionRuntime,
   type RuntimeConfiguration,
 } from "../shared/runtime-settings.js";
-import { PublicError } from "./public-error.js";
+import { PublicError, publicErrorMessage } from "./public-error.js";
 import { effortSupport } from "../shared/reasoning.js";
 export function sessionRuntime(
   codex: Codex,
@@ -39,7 +46,13 @@ export function sessionRuntime(
   let pending: { revision: string; promise: Promise<Json[]> } | undefined;
   const directories = new Map<
     string,
-    { key: string; at: number; models: string[]; error: string | null }
+    {
+      key: string;
+      at: number;
+      models: string[];
+      descriptors?: ModelDescriptor[];
+      error: string | null;
+    }
   >();
   const knownModels = new Map<string, Json[]>();
   const profile = (id: string) => `newbot_gateway_${id}`;
@@ -88,12 +101,22 @@ export function sessionRuntime(
             : (snapshot.response.config.profiles as Json | undefined)?.[
                 profile(p.id)
               ] || {};
+          let descriptors: ModelDescriptor[] = [];
           let list: string[] = [],
             error: string | null = null;
           const directoryKey = JSON.stringify([
             (snapshot.response.config.model_providers as Json)?.[p.id] || p.id,
             p.privateFields?.revision,
           ]);
+          const purposeKey =
+            "model-purposes-v1:" +
+            createHash("sha256")
+              .update(p.id + directoryKey)
+              .digest("hex");
+          const savedPurposes = db.get(purposeKey);
+          const priorPurposes: ModelDescriptor[] = savedPurposes
+            ? JSON.parse(savedPurposes)
+            : [];
           const cached = directories.get(p.id);
           if (
             cached &&
@@ -102,26 +125,50 @@ export function sessionRuntime(
             !(refresh && (!refreshId || refreshId === p.id))
           ) {
             list = [...cached.models];
+            descriptors = cached.descriptors || [];
             error = cached.error;
           } else {
             try {
-              list = (
-                await providers.probe(
-                  { id: p.id, expectedRevision: snapshot.publicView.revision },
-                  async () => native,
-                  false,
-                  !!p.endpointOrigin &&
-                    !p.requiresAccountAuth &&
-                    p.wireApi === "responses",
-                )
-              ).models;
-            } catch {
-              error = "目录读取失败，请刷新重试";
+              const result = await providers.probe(
+                { id: p.id, expectedRevision: snapshot.publicView.revision },
+                async () => native,
+                false,
+                !!p.endpointOrigin &&
+                  !p.requiresAccountAuth &&
+                  p.wireApi === "responses",
+              );
+              list = result.models;
+              descriptors = [
+                ...new Map(
+                  [
+                    ...priorPurposes,
+                    ...("descriptors" in result ? result.descriptors : []),
+                  ].map((d) => [
+                    d.id,
+                    d.purpose === "unknown"
+                      ? {
+                          ...d,
+                          purpose:
+                            priorPurposes.find((p) => p.id === d.id)?.purpose ||
+                            d.purpose,
+                        }
+                      : d,
+                  ]),
+                ).values(),
+              ].slice(-1000);
+              db.set(purposeKey, JSON.stringify(descriptors));
+            } catch (cause) {
+              descriptors = priorPurposes;
+              error =
+                cause instanceof PublicError
+                  ? publicErrorMessage(cause)
+                  : "目录读取失败，请刷新重试";
             }
             directories.set(p.id, {
               key: directoryKey,
               at: Date.now(),
               models: [...list],
+              descriptors,
               error,
             });
           }
@@ -152,6 +199,9 @@ export function sessionRuntime(
               : owned.revision,
             profileError,
             models: list.map((id) => ({
+              purpose:
+                descriptors.find((d) => d.id === id)?.purpose ||
+                modelPurpose(id),
               ...native.find((m) => m.model === id),
               id,
               model: id,
@@ -334,7 +384,8 @@ export function sessionRuntime(
     const selected = gateway.models.find(
       (m: Json) => m.model === (model || gateway.defaultModel),
     );
-    if (model && !selected) throw new PublicError("请从该网关的模型目录中选择");
+    if ((model || gateway.defaultModel) && !selected)
+      throw new PublicError("请从该网关的模型目录中选择");
     if (effort && effortSupport(selected, effort) === "unsupported")
       throw new PublicError("模型不支持该推理强度");
     return selected;
@@ -563,8 +614,53 @@ export function sessionRuntime(
           if (!runtime)
             throw new PublicError("任务内网关更新需要服务端配置存储");
           const destination = await check(next);
+          // Missing metadata must be established for both endpoints. A probe is
+          // tied to the exact gateway configuration; never borrow another ID's profile.
           const snapshot = runtime.threadConfig(next.provider);
           const privateRevision = codex.privateVersion?.(threadId);
+          const native = await nativeCatalog();
+          const before =
+            prior?.state === "accepted"
+              ? (JSON.parse(prior.candidate) as RuntimeConfiguration)
+              : applied(threadId);
+          const verify = async (
+            provider: string,
+            model: string,
+            effort: string,
+          ) => {
+            if (native.some((m) => m.model === model)) return undefined;
+            if (!codex.runtimeCapabilities.verifiedModelRoutes)
+              throw new PublicError(
+                "当前内核不支持补全模型能力，请更新服务端后重试",
+              );
+            const snapshot = await config.read();
+            const result = await providers.probe(
+              {
+                id: provider,
+                model,
+                expectedRevision: snapshot.publicView.revision,
+              },
+              nativeCatalog,
+              false,
+              true,
+              true,
+              effort || undefined,
+              threadId,
+            );
+            if (!("capabilities" in result))
+              throw new PublicError("此网关暂不支持模型能力校验");
+            return result.capabilities;
+          };
+          const verifiedCapabilities = await verify(
+            next.provider,
+            next.model,
+            next.effort,
+          );
+          const activeCapabilities = await verify(
+            before.provider,
+            before.model,
+            before.effort,
+          );
           const captured: Json = {
             threadId,
             modelProvider: next.provider,
@@ -591,17 +687,28 @@ export function sessionRuntime(
             .run(threadId, next.revision);
           announce(threadId);
           requestSent = true;
+          const nativeCapabilities = (
+            value?: VerifiedCapabilities,
+          ): VerifiedModelCapabilities | undefined =>
+            value
+              ? { ...value, contextWindow: BigInt(value.contextWindow) }
+              : undefined;
           const result = await codex.call("turn/settings/update", {
             threadId,
             turnId,
             model: next.model,
             effort:
-              next.effort || destination?.defaultReasoningEffort || undefined,
+              next.effort ||
+              (verifiedCapabilities
+                ? "none"
+                : destination?.defaultReasoningEffort || undefined),
             modelRoute: {
               providerId: next.provider,
               provider:
                 hydrated.config.model_providers?.[next.provider] || null,
               revision: BigInt(next.revision),
+              verifiedCapabilities: nativeCapabilities(verifiedCapabilities),
+              activeCapabilities: nativeCapabilities(activeCapabilities),
             },
           });
           if (result.status === "targetUnavailable") {

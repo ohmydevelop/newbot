@@ -1,3 +1,4 @@
+import {localWorkspaceFiles,WorkspaceFileError} from "./runner/workspace-files.js";
 import { imageExtension } from "./public-images.js";
 import { PublicError } from "./public-error.js";
 import { createHash, randomUUID } from "node:crypto";
@@ -31,8 +32,6 @@ import {
 } from "./storage.js";
 
 const MAX_FILE = 8 * 1024 * 1024;
-const blockedName =
-  /^(?:\.env(?:\..*)?|.*\.(?:pem|key|p12|pfx|sqlite(?:-wal|-shm)?|db)|(?:id_(?:rsa|ed25519)|credentials|secrets?|initial-password)(?:\..*)?)$/i;
 const textKinds: Record<string, Artifact["kind"]> = {
   ".txt": "text",
   ".log": "text",
@@ -186,116 +185,13 @@ export function artifactStore(
   const own = (id: string) => {
     if (!db.owns(id)) throw new PublicError("会话不存在");
   };
-  function pathOf(
-    input: string,
-    native = false,
-    root = realpathSync(workspace),
-  ) {
-    if (!input || input.length > 1024 || /[\\\x00-\x1f\x7f]/.test(input))
-      fail("invalid_path");
-    let path = input;
-    if (isAbsolute(path)) {
-      if (!native || !within(root, path)) fail("outside_workspace");
-      path = relative(root, path);
-    }
-    const parts = path.split("/");
-    if (
-      parts.some(
-        (p) =>
-          !p ||
-          p === "." ||
-          p === ".." ||
-          p.startsWith(".") ||
-          blockedName.test(p),
-      )
-    )
-      fail("restricted_path");
-    const full = resolve(root, ...parts);
-    if (
-      !within(root, full) ||
-      (privateRoot !== root &&
-        within(root, privateRoot) &&
-        within(privateRoot, full))
-    )
-      fail("restricted_path");
-    if (
-      privateRoot === root &&
-      ["artifacts", "uploads", "codex", "codex-home"].includes(parts[0])
-    )
-      fail("restricted_path");
-    return { path: parts.join("/"), full };
-  }
-  async function validate(
-    full: string,
-    directoryOnly = false,
-    root = realpathSync(workspace),
-  ) {
-    let current = root;
-    const parts = relative(root, full).split(sep).filter(Boolean);
-    for (let i = 0; i < parts.length; i++) {
-      current = join(current, parts[i]);
-      const info = await lstat(current);
-      if (
-        info.isSymbolicLink() ||
-        (i < parts.length - 1 && !info.isDirectory())
-      )
-        fail("unsafe_link");
-    }
-    const canonical = await realpath(full);
-    if (canonical !== full || !within(root, canonical)) fail("unsafe_link");
-    if (directoryOnly && !(await lstat(full)).isDirectory())
-      fail("not_directory");
-  }
-  async function readBounded(
-    full: string,
-    workspaceFile: boolean,
-    root = realpathSync(workspace),
-  ) {
-    if (workspaceFile) await validate(full, false, root);
-    const handle = await open(
-      full,
-      constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_NONBLOCK,
-    );
-    try {
-      const before = await handle.stat();
-      if (!before.isFile() || before.nlink !== 1) fail("unsafe_file");
-      if (before.size > MAX_FILE) fail("file_too_large");
-      if (
-        workspaceFile &&
-        process.platform === "linux" &&
-        (await realpath(`/proc/self/fd/${handle.fd}`)) !== full
-      )
-        fail("unsafe_link");
-      const data = Buffer.alloc(before.size);
-      let count = 0;
-      while (count < data.length) {
-        const result = await handle.read(
-          data,
-          count,
-          data.length - count,
-          count,
-        );
-        if (!result.bytesRead) break;
-        count += result.bytesRead;
-      }
-      const after = await handle.stat();
-      if (workspaceFile) await validate(full, false, root);
-      const current = await lstat(full);
-      if (
-        count !== before.size ||
-        before.size !== after.size ||
-        before.mtimeMs !== after.mtimeMs ||
-        before.ctimeMs !== after.ctimeMs ||
-        current.ino !== before.ino ||
-        current.dev !== before.dev ||
-        current.nlink !== 1
-      )
-        fail("file_changed");
-      return data;
-    } finally {
-      await handle.close();
-    }
-  }
+  const physical = localWorkspaceFiles(workspace, privateRoot, MAX_FILE, new Set(Object.keys(textKinds)));
+  const pathOf: typeof physical.pathOf = (...args) => {
+    try { return physical.pathOf(...args); } catch (e) { if (e instanceof WorkspaceFileError) fail(e.reason); throw e; }
+  };
+  const readBounded: typeof physical.readBounded = async (...args) => {
+    try { return await physical.readBounded(...args); } catch (e) { if (e instanceof WorkspaceFileError) fail(e.reason); throw e; }
+  };
   function get(id: string) {
     const row = db.raw.prepare("SELECT * FROM artifacts WHERE id=?").get(id) as
       | Row
@@ -752,51 +648,8 @@ export function artifactStore(
       return { artifact, data };
     },
     async workspaceFiles(input = "", offset = 0, threadId?: string) {
-      const root =
-        workspaceRoot && threadId
-          ? workspaceRoot(threadId)
-          : realpathSync(workspace);
-      const full = input ? pathOf(input, false, root).full : root;
-      await validate(full, true, root);
-      const dir = await opendir(full);
-      const entries = [];
-      let scanned = 0;
-      let truncated = false;
-      for await (const entry of dir) {
-        if (++scanned > 5000) {
-          truncated = true;
-          break;
-        }
-        const path = input ? `${input}/${entry.name}` : entry.name;
-        try {
-          pathOf(path, false, root);
-        } catch {
-          continue;
-        }
-        if (entry.isSymbolicLink() || (!entry.isDirectory() && !entry.isFile()))
-          continue;
-        if (
-          entry.isFile() &&
-          !textKinds[extname(path).toLowerCase()] &&
-          ![".png", ".jpg", ".jpeg", ".webp", ".pdf"].includes(
-            extname(path).toLowerCase(),
-          )
-        )
-          continue;
-        if (entry.isFile() && (await lstat(join(full, entry.name))).nlink !== 1)
-          continue;
-        entries.push({
-          path,
-          name: entry.name,
-          type: entry.isDirectory() ? "directory" : "file",
-        });
-      }
-      entries.sort((a, b) => a.path.localeCompare(b.path));
-      return {
-        entries: entries.slice(offset, offset + 100),
-        nextOffset: offset + 100 < entries.length ? offset + 100 : null,
-        truncated,
-      };
+      try { return await physical.list(input, offset, workspaceRoot && threadId ? workspaceRoot(threadId) : root); }
+      catch(e) { if(e instanceof WorkspaceFileError) fail(e.reason); throw e; }
     },
     async flush() {
       await queue;

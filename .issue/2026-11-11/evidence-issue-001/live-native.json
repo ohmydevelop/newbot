@@ -1,5 +1,5 @@
 {
-  "binary": "/home/a/Documents/ChatGPT/newbot/.data/native/bin/codex-main-live",
+  "binary": "/home/a/Documents/ChatGPT/newbot/.data/native/releases/fe2f185-capabilities/codex",
   "upstream": "two synthetic loopback Responses gateways",
   "checks": [
     "three live revisions are accepted without changing the in-flight request; invalid metadata preserves the last valid route",

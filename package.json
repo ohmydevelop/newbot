@@ -8,7 +8,7 @@
   },
   "scripts": {
     "dev": "node --env-file-if-exists=.env node_modules/concurrently/dist/bin/concurrently.js -k \"tsx watch server/index.ts\" \"vite --host 127.0.0.1\"",
-    "build": "npm run build:mcp-test && tsc --noEmit && node scripts/build-web.mjs && esbuild server/index.ts --bundle --platform=node --packages=external --format=esm --outdir=dist/server --splitting",
+    "build": "npm run build:mcp-test && tsc --noEmit && node scripts/build-web.mjs && esbuild server/index.ts server/runner/main.ts --bundle --platform=node --packages=external --format=esm --outdir=dist/server --splitting",
     "start": "node --env-file-if-exists=.env dist/server/index.js",
     "test": "tsx --test tests/*.test.ts",
     "check": "tsc --noEmit",
@@ -76,7 +76,9 @@
     "test:credential-sqlite-native": "CREDENTIAL_SQLITE_CONFIG=true node --import tsx scripts/test-credential-storage-native.mjs",
     "test:credential-memory-native": "CREDENTIAL_MEMORY_CONFIG=true node --import tsx scripts/test-credential-storage-native.mjs",
     "test:provider-memory-ui": "ISSUE_MEMORY_PROVIDERS=1 UI_EVIDENCE_DIR=.issue/2026-11-10/evidence/ui node scripts/test-ui-regression.mjs",
-    "test:ui-regression": "node scripts/test-ui-regression.mjs"
+    "test:ui-regression": "node scripts/test-ui-regression.mjs",
+    "runner": "node dist/server/runner/main.js",
+    "runner:dev": "tsx server/runner/main.ts"
   },
   "dependencies": {
     "@a2ui/web_core": "0.14.0",

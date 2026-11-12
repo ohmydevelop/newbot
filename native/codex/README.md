@@ -28,3 +28,11 @@ CODEX_BIN="$PWD/.data/native/managed/bin/codex" node --import tsx scripts/test-i
 该上游版本将导出协议预编译到 `app-server-protocol/schema/precomputed`。只修改 Rust 类型后直接执行 `generate-ts` 会得到旧类型。先使用上游 `write_schema_fixtures_from_env` 测试入口分别生成 stable 与 experimental 导出，再重新构建二进制、导出 TypeScript 并验证 schema 一致性。生成文件和源代码必须一起提交。
 
 原始 0.167.1 的探针补丁保存在 `patches/`，仅用于追溯；实际构建只使用 manifest 明确列出的 main 补丁。升级上游时更改固定提交，重新验证原生资源、请求路由和恢复，不自动追踪浮动分支。
+
+### 按路由验证的自定义模型（main-0002）
+
+`verifiedModelRoutes` 能力允许可信宿主在 `turn/settings/update.modelRoute` 传入 `verifiedCapabilities`，为目标 Provider / model 指定经实际 Responses 流式 function 调用及结果续接验证的上下文下界和推理参数；旧 Synthetic 模型还需匹配的 `activeCapabilities`。这不是放开任意未知模型：绑定不匹配、容量不足、不支持的历史模态、不可移交的压缩记录以及管理权限冲突仍拒绝更新。
+
+通用模型配置仅声明文本与标准 function 能力，不复制其他模型的视觉、工具模式或最大上下文。已准入任务的 Guardian、node REPL 与审查策略继续保留，普通能力验证不能变更权限。新网关客户端仅作用于后续未开始的模型请求；历史工具不重放。能力结果由 Bridge 按真实有效凭证/端点/模型/推理参数绑定，SQLite 复用最长 24 小时。首次验证会产生额外模型请求，探针不包含用户对话或业务工具。
+
+验证脚本：`scripts/test-model-capabilities-native.mjs`。默认检查两个不在内置目录中的模型；`CAPABILITY_SAME_ID=1` 检查同名跨网关，`CAPABILITY_INITIAL_BUILTIN=1` 检查内置模型转自定义模型并保留原任务约束。均使用隔离目录、模拟网关和真实 App Server，不构成实际商业 Provider 的兼容承诺。

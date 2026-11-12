@@ -96,6 +96,7 @@ export async function importProviderConfigurationOnce(
   db: Store,
   directory: string,
   cwd: string,
+  nativeHome?: string,
 ) {
   const persisted = providerState(db);
   const saved = persisted.read();
@@ -108,7 +109,7 @@ export async function importProviderConfigurationOnce(
   }
   if (db.get("provider-memory-import-v1")) return new ProviderRuntime();
   const home = resolve(
-    process.env.NEWBOT_CODEX_HOME || join(directory, "codex"),
+    nativeHome || process.env.NEWBOT_CODEX_HOME || join(directory, "codex"),
   );
   const probe = new Codex(cwd, () => ({ CODEX_HOME: home }));
   try {
@@ -255,6 +256,7 @@ export async function initialProviderRuntime(
   directory: string,
   cwd: string,
   seed?: ProviderRuntime,
+  nativeHome?: string,
 ) {
   const persisted = providerState(db);
   const saved = persisted.read();
@@ -284,7 +286,12 @@ export async function initialProviderRuntime(
     return runtime;
   }
   if (process.env.NEWBOT_IMPORT_PROVIDER_CONFIG_ONCE === "true") {
-    const runtime = await importProviderConfigurationOnce(db, directory, cwd);
+    const runtime = await importProviderConfigurationOnce(
+      db,
+      directory,
+      cwd,
+      nativeHome,
+    );
     return runtime.storage === "sqlite"
       ? runtime
       : runtime.persist(persisted.writer(null), true);

@@ -1,0 +1,13 @@
+✔ certificate targets allow explicit private services but reject metadata, loopback, unsafe schemes and credentials (25.185363ms)
+✔ TLS observation pins checked DNS, sends no application data, reports trust and invalid certificates, and times out (100.863598ms)
+✔ certificate drafts never infer secret destinations or keep a generated pin for a changed address (0.771272ms)
+✔ certificate inspection enforces concurrency and per-minute limits including failures (0.656674ms)
+✔ real TLS rejects oversized certificates and never assumes a SAN-less certificate matches an IP (18.137498ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 240.123634

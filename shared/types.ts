@@ -16,7 +16,7 @@ export type Turn = {
   id: string;
   status: string;
   items: Item[];
-  error?: { message: string } | null;
+  error?: import("./failure.js").Failure | null;
   startedAt?: number | null;
   completedAt?: number | null;
   durationMs?: number | null;

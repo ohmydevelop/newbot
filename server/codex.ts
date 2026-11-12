@@ -1,3 +1,7 @@
+import { runtimeLocations } from "./runner/locations.js";
+import { LocalRunnerTransport } from "./runner/local-transport.js";
+import type { RunnerTransport } from "./runner/transport.js";
+import { publicFailure } from "./failure.js";
 import type { ExtensionRuntime } from "./extension-runtime.js";
 import { resolve } from "node:path";
 import {
@@ -5,14 +9,8 @@ import {
   type ApprovalPreset,
 } from "../shared/runtime-settings.js";
 import { PublicError } from "./public-error.js";
-import {
-  execFile,
-  spawn,
-  type ChildProcessWithoutNullStreams,
-} from "node:child_process";
-import { createInterface } from "node:readline";
+import type { ChildProcessWithoutNullStreams } from "node:child_process";
 import { EventEmitter } from "node:events";
-import { promisify } from "node:util";
 import { testMcpArgs } from "./test-mcp.js";
 import { CODEX_VERSION } from "../generated/version.js";
 import { prepareRuntimeIsolation } from "./runtime-isolation.js";
@@ -21,13 +19,17 @@ import { volatileRuntimeLogs } from "./runtime-logs.js";
 import type { Rpc, Json } from "../shared/types.js";
 import type { ServerRequest } from "../generated/codex/ServerRequest.js";
 import type { Method, Params, Result } from "./protocol.js";
-import { encodeRpc } from "./protocol.js";
 import type { DynamicToolCallResponse } from "../generated/codex/v2/DynamicToolCallResponse.js";
 export type ToolRequest = Extract<ServerRequest, { method: "item/tool/call" }>;
 export class Codex extends EventEmitter {
   discoveryMarketplaces?: string[];
   discoveryPlugins?: Record<string, { enabled: boolean }>;
-  child?: ChildProcessWithoutNullStreams;
+  get child(): ChildProcessWithoutNullStreams | undefined {
+    return this.transport.child;
+  }
+  set child(child: ChildProcessWithoutNullStreams | undefined) {
+    this.transport.child = child;
+  }
   home?: string;
   userHome?: string;
   credentialSource?: () => Promise<NodeJS.ProcessEnv>;
@@ -80,6 +82,7 @@ export class Codex extends EventEmitter {
   constructor(
     readonly cwd: string,
     readonly extraEnv: () => NodeJS.ProcessEnv = () => ({}),
+    readonly transport: RunnerTransport = new LocalRunnerTransport(),
   ) {
     super();
   }
@@ -94,20 +97,17 @@ export class Codex extends EventEmitter {
       isolated = await prepareRuntimeIsolation(
         extra.CODEX_HOME ||
           process.env.NEWBOT_CODEX_HOME ||
-          resolve(process.env.DATA_DIR || ".data", "codex"),
+          runtimeLocations().codex,
       );
       this.home = isolated.codexHome;
       this.userHome = isolated.userHome;
       testArgs = testMcpArgs();
-      const { stdout } = await promisify(execFile)(
-        process.env.CODEX_BIN || resolve("node_modules/.bin/codex"),
-        ["--version"],
-        {
-          timeout: 5000,
-          env: { ...codexEnvironment(process.env), ...extra, ...isolated.env },
-        },
-      );
-      if (stdout.trim() !== CODEX_VERSION)
+      const version = await this.transport.version({
+        binary: process.env.CODEX_BIN || resolve("node_modules/.bin/codex"),
+        cwd: this.cwd,
+        env: { ...codexEnvironment(process.env), ...extra, ...isolated.env },
+      });
+      if (version !== CODEX_VERSION)
         throw new Error(
           `Codex 版本与生成协议不一致，需使用 ${CODEX_VERSION}，或重新生成并测试协议`,
         );
@@ -137,89 +137,72 @@ export class Codex extends EventEmitter {
       return;
     }
     this.runtimeLogHome = logs?.path;
-    const child = spawn(
-      process.env.CODEX_BIN || resolve("node_modules/.bin/codex"),
-      [
-        "app-server",
-        "--listen",
-        "stdio://",
-        "-c",
-        "thread_unload_delay_secs=1",
-        "-c",
-        "project_root_markers=[]",
-        "-c",
-        "features.step_model_switching=true",
-        "-c",
-        'shell_environment_policy.inherit="core"',
-        "-c",
-        "shell_environment_policy.ignore_default_excludes=false",
-        "-c",
-        'cli_auth_credentials_store="file"',
-        "-c",
-        'mcp_oauth_credentials_store="file"',
-        "-c",
-        `sqlite_home=${JSON.stringify(isolated.codexHome)}`,
-        ...(this.providerRuntime ? ["-c", 'model_provider="openai"'] : []),
-        ...(logs ? ["-c", `log_dir=${JSON.stringify(logs.path)}`] : []),
-        ...(process.env.MCP_OAUTH_CALLBACK_PORT &&
-        process.env.MCP_OAUTH_CALLBACK_URL
-          ? [
-              "-c",
-              `mcp_oauth_callback_port=${Number(process.env.MCP_OAUTH_CALLBACK_PORT)}`,
-              "-c",
-              `mcp_oauth_callback_url=${JSON.stringify(process.env.MCP_OAUTH_CALLBACK_URL)}`,
-            ]
-          : []),
-        ...(this.discoveryMarketplaces || []).flatMap((path) => [
-          "-c",
-          'marketplaces.newbot-imports.source_type="local"',
-          "-c",
-          `marketplaces.newbot-imports.source=${JSON.stringify(path)}`,
-        ]),
-        ...(this.discoveryPlugins
-          ? [
-              "-c",
-              `plugins={${Object.entries(this.discoveryPlugins)
-                .map(
-                  ([id, value]) =>
-                    `${JSON.stringify(id)} = { enabled = ${value.enabled}${(value as { local_root?: string }).local_root ? `, local_root = ${JSON.stringify((value as { local_root?: string }).local_root)}` : ""} }`,
-                )
-                .join(",")}}`,
-            ]
-          : []),
-        ...testArgs,
-      ],
+    this.transport.start(
       {
+        binary: process.env.CODEX_BIN || resolve("node_modules/.bin/codex"),
+        args: [
+          "app-server",
+          "--listen",
+          "stdio://",
+          "-c",
+          "thread_unload_delay_secs=1",
+          "-c",
+          "project_root_markers=[]",
+          "-c",
+          "features.step_model_switching=true",
+          "-c",
+          'shell_environment_policy.inherit="core"',
+          "-c",
+          "shell_environment_policy.ignore_default_excludes=false",
+          "-c",
+          'cli_auth_credentials_store="file"',
+          "-c",
+          'mcp_oauth_credentials_store="file"',
+          "-c",
+          `sqlite_home=${JSON.stringify(isolated.codexHome)}`,
+          ...(this.providerRuntime ? ["-c", 'model_provider="openai"'] : []),
+          ...(logs ? ["-c", `log_dir=${JSON.stringify(logs.path)}`] : []),
+          ...(process.env.MCP_OAUTH_CALLBACK_PORT &&
+          process.env.MCP_OAUTH_CALLBACK_URL
+            ? [
+                "-c",
+                `mcp_oauth_callback_port=${Number(process.env.MCP_OAUTH_CALLBACK_PORT)}`,
+                "-c",
+                `mcp_oauth_callback_url=${JSON.stringify(process.env.MCP_OAUTH_CALLBACK_URL)}`,
+              ]
+            : []),
+          ...(this.discoveryMarketplaces || []).flatMap((path) => [
+            "-c",
+            'marketplaces.newbot-imports.source_type="local"',
+            "-c",
+            `marketplaces.newbot-imports.source=${JSON.stringify(path)}`,
+          ]),
+          ...(this.discoveryPlugins
+            ? [
+                "-c",
+                `plugins={${Object.entries(this.discoveryPlugins)
+                  .map(
+                    ([id, value]) =>
+                      `${JSON.stringify(id)} = { enabled = ${value.enabled}${(value as { local_root?: string }).local_root ? `, local_root = ${JSON.stringify((value as { local_root?: string }).local_root)}` : ""} }`,
+                  )
+                  .join(",")}}`,
+              ]
+            : []),
+          ...testArgs,
+        ],
         cwd: this.cwd,
         env: { ...agentEnv, ...extra, ...credentials, ...isolated.env },
-        stdio: ["pipe", "pipe", "pipe"],
+      },
+      {
+        message: (message) => this.receive(message),
+        offline: (reason) => this.offline(reason),
+        closed: () => {
+          if (logs) this.logCleanup = logs.close().catch(() => {});
+        },
       },
     );
     this.credentialRefs = new Set(Object.keys(credentials));
     credentials = {};
-    this.child = child;
-    child.stdin.on("error", () => {
-      if (this.child === child) this.offline("Codex 输入管道已关闭");
-    });
-    const lines = createInterface({ input: child.stdout });
-    lines.on("line", (line) => {
-      try {
-        if (this.child === child) this.receive(JSON.parse(line));
-      } catch {
-        /* A malformed subprocess line is never forwarded. */
-      }
-    });
-    child.stderr.on("data", () => {}); // Never forward environment, auth diagnostics, or credentials to the browser.
-    child.on("error", () => {
-      if (logs) this.logCleanup = logs.close().catch(() => {});
-      if (this.child === child)
-        this.offline("Codex 子进程启动失败，请检查服务端配置");
-    });
-    child.on("exit", () => {
-      if (logs) this.logCleanup = logs.close().catch(() => {});
-      if (this.child === child)
-        this.offline("Codex 进程已退出；任务状态需要重新读取");
-    });
     try {
       const initialized = await this.call("initialize", {
         clientInfo: {
@@ -242,7 +225,7 @@ export class Codex extends EventEmitter {
       this.emit("status");
     } catch {
       this.offline("Codex 初始化失败，请检查 Provider、配置和权限");
-      child.kill();
+      this.transport.stop();
     }
   }
   offline(reason: string) {
@@ -300,8 +283,10 @@ export class Codex extends EventEmitter {
         ? p.reject(
             p.method === "turn/settings/update"
               ? new PublicError(liveSettingsError(message.error.message))
-              : new Error(
-                  `Codex 操作失败：请求 ${message.id}，请检查 Provider、配置和权限`,
+              : new PublicError(
+                  (() => {
+                    return nativeRequestError(p.method, message.error);
+                  })(),
                 ),
           )
         : p.resolve(message.result);
@@ -335,8 +320,7 @@ export class Codex extends EventEmitter {
       this.emit("event", message);
   }
   private send(message: Rpc) {
-    if (!this.child?.stdin.writable) throw new PublicError("Codex 未连接");
-    this.child.stdin.write(encodeRpc(message) + "\n");
+    this.transport.send(message);
   }
   async inspectExtensions<M extends Method>(
     method: M,
@@ -411,6 +395,7 @@ export class Codex extends EventEmitter {
       params = {
         ...p,
         cwd: context.cwd,
+        runtimeWorkspaceRoots: [context.cwd],
         ...(context.developerInstructions
           ? { developerInstructions: context.developerInstructions }
           : {}),
@@ -609,22 +594,7 @@ export class Codex extends EventEmitter {
     }
   }
   async stopAndWait() {
-    const child = this.child;
-    if (child && child.exitCode === null && child.signalCode === null) {
-      await new Promise<void>((resolve, reject) => {
-        const timer = setTimeout(() => child.kill("SIGKILL"), 5000);
-        const deadline = setTimeout(
-          () => reject(new PublicError("Codex 进程未能停止")),
-          10000,
-        );
-        child.once("exit", () => {
-          clearTimeout(timer);
-          clearTimeout(deadline);
-          resolve();
-        });
-        child.kill("SIGTERM");
-      });
-    }
+    await this.transport.stopAndWait();
     await this.logCleanup;
   }
   restart(): Promise<void> {
@@ -641,17 +611,32 @@ export class Codex extends EventEmitter {
     return this.restarting;
   }
   stop() {
-    this.child?.kill("SIGTERM");
+    this.transport.stop();
   }
 }
 
-function liveSettingsError(message: string) {
+export function nativeRequestError(method: string, error: unknown) {
+  if (!["thread/start", "thread/resume", "turn/start"].includes(method))
+    return "Codex 操作未完成，请检查该操作的配置与权限。";
+  const failure = publicFailure(error);
+  return failure.category === "unknown"
+    ? "模型请求失败，未取得可识别的上游原因。请检查网关与服务端记录。"
+    : `${failure.message}${failure.action}`;
+}
+
+export function liveSettingsError(message: string) {
+  if (/verified route.*reasoning effort/.test(message))
+    return "目标模型尚未通过所选推理强度的验证，原设置继续生效";
+  if (/capabilities do not match/.test(message))
+    return "模型能力记录与当前网关或模型不一致，请重新选择；原设置继续生效";
   if (/context budget|history size/.test(message))
     return "现有上下文超出目标模型的已确认容量，原设置继续生效";
   if (/input modality|history format/.test(message))
     return "目标模型不能完整接收现有对话内容，原设置继续生效";
+  if (/active model.*fallback metadata/.test(message))
+    return "当前任务使用的模型缺少可靠的能力资料，无法在任务中切换。请等待任务结束，或停止后再选择模型；原设置未改变。";
   if (/fallback metadata/.test(message))
-    return "此模型缺少运行中切换所需的能力信息，原设置继续生效";
+    return "目标模型缺少可靠的能力资料，无法在任务中切换。请等待任务结束或停止后再选择；目录中存在该模型不代表它支持聊天与工具调用。原设置未改变。";
   if (/opaque compaction|readable history/.test(message))
     return "当前上下文含网关专用的压缩内容，无法安全地切换网关";
   if (/stale model route/.test(message)) return "此设置已被更新的选择替代";

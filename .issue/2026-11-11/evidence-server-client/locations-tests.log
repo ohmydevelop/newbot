@@ -1,0 +1,14 @@
+✔ fresh installs use independent standard global home and visible workspace directory (4.250523ms)
+✔ an existing repository installation remains in place without automatic migration (3.80122ms)
+✔ explicit data directory keeps existing deployment and test paths, custom roots remain independent (0.950223ms)
+✔ personal Codex and linked aliases cannot become the new global home (2.267856ms)
+✔ new conversations isolate cwd, sandbox roots, live browsing and captured files; old threads retain their directory through restart (184.841408ms)
+✔ SQLite extension edits defer to the next turn, project skills are copied, disabled skills cannot be cited, and another active thread is untouched (99.442303ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 622.589815

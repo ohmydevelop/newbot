@@ -1,0 +1,14 @@
+✔ cold checkpoint restores a fresh node after the source is removed, excluding auth and databases (17.983011ms)
+✔ running nodes cannot publish a cold checkpoint (1.036747ms)
+✔ corrupt or mismatched-version checkpoint is rejected before publishing a target (2.734423ms)
+✔ workspace links cannot escape to host files (2.109533ms)
+✔ manifest traversal and secret-native-file injection cannot write outside target (2.110978ms)
+✔ a replaced checkpoint directory cannot redirect import to another source (2.387224ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 197.954851

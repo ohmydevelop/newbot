@@ -56,8 +56,25 @@ const makeGateway = (id) =>
     }
     let raw = "";
     for await (const b of req) raw += b;
-    const body = JSON.parse(raw),
-      index = calls.length;
+    const body = JSON.parse(raw);
+    // Deliberately incompatible probe: it must fail without invoking a real tool.
+    if (body.tools?.some((t) => t.name === "newbot_capability_probe")) {
+      res.writeHead(200, { "content-type": "text/event-stream" });
+      res.end(
+        "data: " +
+          JSON.stringify({
+            type: "response.completed",
+            response: {
+              status: "completed",
+              output: [],
+              usage: { input_tokens: 32000 },
+            },
+          }) +
+          "\n\n",
+      );
+      return;
+    }
+    const index = calls.length;
     calls.push({ id, body, authorization: req.headers.authorization });
     if (index === 0) await new Promise((r) => (releaseFirst = r));
     else if (pauseNext) {
@@ -216,7 +233,10 @@ try {
     "accepted settings must not resubmit the in-flight request",
   );
   stage = "unsupported destination";
-  await assert.rejects(update({ model: "unsupported-fixture" }), /能力信息/);
+  await assert.rejects(
+    update({ model: "unsupported-fixture" }),
+    /能力信息|工具调用验证/,
+  );
   assert.equal(
     ctx.service.runtimeSettings.get(thread.id).revision,
     revision,
@@ -357,12 +377,17 @@ try {
       }
     }
   };
-  await inspect(directory);
+  stage = "credential persistence inspection";
+  // Check the volatile log directory before shutdown clears it. The persistent
+  // tree is checked only after the runtime stops: marketplace background clones
+  // can replace their temporary directories even when no model turn is running.
   if (ctx.runtime.runtimeLogHome) await inspect(ctx.runtime.runtimeLogHome);
+  await ctx.runtime.stopAndWait();
+  await inspect(directory);
   checks.push(
     "synthetic private credentials are absent from isolated persistent files and native logs",
   );
-  const evidence = resolve(".issue/2026-11-11/evidence-issue-001");
+  const evidence = resolve(process.env.NEWBOT_EVIDENCE_DIR || ".issue/2026-11-11/evidence-issue-001");
   await mkdir(evidence, { recursive: true });
   await writeFile(
     join(evidence, "live-native.json"),

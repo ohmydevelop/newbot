@@ -1,3 +1,12 @@
+import { RunnerControl } from "./runner/control.js";
+import {
+  runnerRoutes,
+  runnerAuthentication,
+  isRunnerRoute,
+} from "./runner/routes.js";
+import { instanceLease } from "./instance-lease.js";
+import { runtimeLocations } from "./runner/locations.js";
+import { captureFailure } from "./failure-store.js";
 import { privateFields } from "./private-fields.js";
 import { certificateInspector } from "./certificates.js";
 import { randomUUID } from "node:crypto";
@@ -64,40 +73,60 @@ import {
 } from "../shared/a2ui-policy.js";
 import { a2uiApis, richA2uiApis } from "../shared/a2ui-catalog.js";
 
-export async function createServer(
-  options: {
-    directory?: string;
-    cwd?: string;
-    password?: string;
-    codex?: Codex;
-    origins?: string[];
-    /** Local embedding/tests may serve an isolated build without publishing live assets. */
-    webDirectory?: string;
-    credentialCa?: string;
-    sudoIdentity?: ReturnType<typeof sudoIdentity>;
-    /** null is retained for native configuration adapter contract tests. */
-    providerRuntime?: ProviderRuntime | null;
-  } = {},
+type ServerOptions = {
+  directory?: string;
+  /** Opt-in while the remote resource/Bridge adapter is being verified. */
+  runnerControl?: boolean;
+  cwd?: string;
+  password?: string;
+  codex?: Codex;
+  origins?: string[];
+  /** Local embedding/tests may serve an isolated build without publishing live assets. */
+  webDirectory?: string;
+  credentialCa?: string;
+  sudoIdentity?: ReturnType<typeof sudoIdentity>;
+  /** null is retained for native configuration adapter contract tests. */
+  providerRuntime?: ProviderRuntime | null;
+};
+
+export async function createServer(options: ServerOptions = {}) {
+  const locations = runtimeLocations({
+    directory: options.directory,
+    cwd: options.cwd,
+  });
+  const lease = await instanceLease(locations.server);
+  try {
+    return await createServerInternal(options, locations, lease);
+  } catch (error) {
+    await lease.release(false);
+    throw error;
+  }
+}
+
+async function createServerInternal(
+  options: ServerOptions,
+  locations: ReturnType<typeof runtimeLocations>,
+  lease: Awaited<ReturnType<typeof instanceLease>>,
 ) {
-  const directory = resolve(
-    options.directory || process.env.DATA_DIR || ".data",
-  );
-  const cwd = resolve(
-    options.cwd || process.env.AGENT_WORKSPACE || ".data/workspace",
-  );
+  const directory = locations.server;
+  const cwd = locations.legacyWorkspace;
   mkdirSync(cwd, { recursive: true, mode: 0o700 });
   const db = database(directory);
   const verify = auth(db, directory, options.password);
   const files = fileStore(directory, db);
   const runs = runStore(db);
   const configOperations = configurationOperations(db);
+  const nodeControl =
+    options.runnerControl || process.env.NEWBOT_RUNNER_CONTROL === "true"
+      ? new RunnerControl(db)
+      : undefined;
   const inspectCertificate = certificateInspector();
   files.cleanup();
   const vault = credentialVault(db, directory, cwd);
   const runtime =
     options.codex ||
     new Codex(cwd, () => ({
-      CODEX_HOME: process.env.NEWBOT_CODEX_HOME || resolve(directory, "codex"),
+      CODEX_HOME: locations.codex,
     }));
   try {
     runtime.providerRuntime =
@@ -108,6 +137,7 @@ export async function createServer(
             directory,
             cwd,
             options.providerRuntime,
+            locations.codex,
           );
   } catch (error) {
     vault.close();
@@ -150,7 +180,12 @@ export async function createServer(
       if (probe !== runtime) await probe.stopAndWait();
     }
   };
-  const workspaceStore = workspaces(directory, cwd, db);
+  const workspaceStore = workspaces(
+    directory,
+    cwd,
+    db,
+    locations.workspaceRoot,
+  );
   const artifacts = artifactStore(directory, cwd, db, workspaceStore.root);
   const media = mediaStore(db, artifacts);
   await artifacts.maintenance(true, () => files.cleanup());
@@ -281,6 +316,7 @@ export async function createServer(
     trustProxy: process.env.TRUST_PROXY === "true" ? "loopback" : false,
   });
   await app.register(cookie);
+  if (nodeControl) runnerRoutes(app, nodeControl);
   app.addContentTypeParser(
     "application/octet-stream",
     { parseAs: "buffer" },
@@ -435,6 +471,7 @@ export async function createServer(
       db.touch(p.threadId);
       traces.turnEnd(p.turn.id, p.turn.status);
     }
+    captureFailure(db, message.method, p);
     service.activity.notification(message);
     service.events.notification(message);
     const uiThread = service.events.threads.get(p.threadId);
@@ -492,6 +529,8 @@ export async function createServer(
       `default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self'${production ? "" : " ws://localhost:5173 ws://127.0.0.1:5173"}; frame-src 'self' blob: ${[...sandboxOrigins].join(" ")}; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'`,
     );
     if (req.url.startsWith("/api/")) reply.header("Cache-Control", "no-store");
+    if (nodeControl && isRunnerRoute(req.url))
+      return runnerAuthentication(req, reply, nodeControl);
     if (req.headers.origin && !origins.has(req.headers.origin))
       return reply.code(403).send({ error: "来源验证失败" });
     if (
@@ -675,9 +714,13 @@ export async function createServer(
       },
       sessionSettings: {
         available: runtime.state === "ready",
-        sameThreadProviderSwitch: runtime.runtimeCapabilities?.sameThreadProviderSwitch === true,
+        sameThreadProviderSwitch:
+          runtime.runtimeCapabilities?.sameThreadProviderSwitch === true,
         liveSettings: runtime.runtimeCapabilities?.liveModelRoutes === true,
-        pinnedPluginResources: runtime.runtimeCapabilities?.pinnedPluginRoots === true,
+        verifiedModelRoutes:
+          runtime.runtimeCapabilities?.verifiedModelRoutes === true,
+        pinnedPluginResources:
+          runtime.runtimeCapabilities?.pinnedPluginRoots === true,
         revisioned: true,
         nextTurnSettings: true,
         persistentInputReferences: true,
@@ -1396,7 +1439,9 @@ export async function createServer(
               providerConfigRevision,
             )),
             ...expertSelection!,
-            extensionSnapshot: await service.extensions?.capture(expertSelection!.plugins),
+            extensionSnapshot: await service.extensions?.capture(
+              expertSelection!.plugins,
+            ),
           };
       if (bound)
         await service.pluginConnections.requireConfigured(
@@ -1978,7 +2023,9 @@ export async function createServer(
     await media.close();
     await artifacts.close();
     await traces.close();
+    nodeControl?.close();
     db.raw.close();
+    await lease.release(true);
   });
   return {
     app,
@@ -1992,6 +2039,7 @@ export async function createServer(
     privateFields: privateFieldStore,
     vault,
     workspaces: workspaceStore,
+    nodeControl,
   };
 }
 if (

@@ -1,0 +1,66 @@
+{
+  "requests": 2,
+  "completed": 1,
+  "diagnosticHeld": false,
+  "offline": false,
+  "tlsApplicationBytes": 0,
+  "tlsConnections": 0,
+  "toolExecutions": 1,
+  "threads": {
+    "n": 1
+  },
+  "connection": {
+    "id": "plugin_00e3f2798b5620ee2e45e407a7f73db7",
+    "pluginId": "acceptance@newbot-imports",
+    "name": "probe",
+    "revision": "absent",
+    "schemaDigest": "9b1b83eacd2f71294e26369b1482eaa0e1651853a24575cd1a7ed03f75b97246",
+    "enabled": true,
+    "configured": false,
+    "transport": "stdio",
+    "source": "package",
+    "reviewRequired": false,
+    "reason": "缺少“服务地址”、“访问密钥”",
+    "fields": [
+      {
+        "type": "string",
+        "title": "服务地址",
+        "required": true,
+        "sensitive": false,
+        "id": "url"
+      },
+      {
+        "type": "string",
+        "title": "访问密钥",
+        "required": true,
+        "sensitive": true,
+        "id": "key",
+        "stored": false
+      },
+      {
+        "type": "string",
+        "title": "证书指纹",
+        "required": false,
+        "sensitive": false,
+        "id": "pin"
+      }
+    ]
+  },
+  "runs": [
+    {
+      "request_id": "9fd74711-9e19-4c8f-a82b-13d43014059d",
+      "state": "accepted",
+      "thread_id": "01a1c9cb-8279-7990-87a9-2dcd84f32493",
+      "turn_id": "01a1c9cb-82b8-7fb0-9f28-f0c892cd7008"
+    }
+  ],
+  "approvalDecisions": [
+    {
+      "id": 1,
+      "at": 1794387022537,
+      "action": "item/commandExecution/requestApproval",
+      "subject": "01a1c9cb-8279-7990-87a9-2dcd84f32493",
+      "decision": "allow-once"
+    }
+  ]
+}

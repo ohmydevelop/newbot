@@ -1,0 +1,34 @@
+✔ authentication, origin checks, safe configuration, method boundaries (153.157921ms)
+✔ AG-UI text and tool event contracts; one run; snapshot survives disconnect (103.961987ms)
+✔ pending native approval persists without clients and cannot be replayed (68.487539ms)
+✔ MCP App tool grants bind server/tool/arguments, deny bypass and replay (68.749886ms)
+✔ attachments reject traversal, unsupported active content and oversized text (60.48659ms)
+✔ MCP HTML uses separate origin and its own CSP, without main-session access (62.676379ms)
+✔ failed and interrupted runs have valid terminal events and recoverable state (63.916173ms)
+✔ polling is authenticated and returns the same AG-UI events with reconnect snapshots (59.741399ms)
+✔ HTTPS logins always set Secure cookies when local HTTP is also allowed (58.716ms)
+✔ selected turn owns its failure without duplicating or replacing an independent operation error (3.493443ms)
+✔ scoped native notice stays in its running turn and final failure never becomes a global duplicate (0.500874ms)
+✔ confirmed completion clears a transient task notice while an unscoped notice remains a global operation error (0.390352ms)
+✔ background failure leaves the visible turn alone, offers its own target and does not reappear on replay (0.531192ms)
+✔ failure buffered during history loading stays attached to the recovered turn (0.755531ms)
+✔ successful read consumes only the matching background notice and never creates a turn (0.911011ms)
+✔ local status read failure preserves the conversation and independent error without emitting a second banner (0.631869ms)
+✔ unscoped run errors remain visible and failed restored turns have the same presentation as live failures (0.364951ms)
+✔ late older-page responses cannot enter a different conversation (0.718533ms)
+✔ older-page failure preserves cursor and retry uses one request per click (0.739072ms)
+✔ an older thread-list request cannot undo a newer rename/archive refresh (0.459798ms)
+✔ concurrent submissions from one draft reserve only one execution (6.809749ms)
+✔ a late submission response cannot clear the next pending request after explicit recovery (2.306562ms)
+✔ billing, quota, rate, permission and authorization preserve different remedies without leaking provider text (1.317902ms)
+✔ retry cause remains visible, terminal missing cause retains it, completion clears it and history projects identically (0.852397ms)
+✔ safe diagnostics survive database restart, remain turn scoped and clear on success (3.244104ms)
+✔ live switch rejects missing current or destination metadata with distinct actions, without removing guard (0.229237ms)
+ℹ tests 26
+ℹ suites 0
+ℹ pass 26
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1192.943961

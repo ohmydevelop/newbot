@@ -126,17 +126,26 @@ export class ExtensionRuntime {
     return { revision: this.revision, values: structuredClone(this.value) };
   }
   reload() {
-    const row = this.db.raw.prepare("SELECT revision,content FROM extension_configuration WHERE id=1").get() as {revision:string;content:string} | undefined;
+    const row = this.db.raw
+      .prepare(
+        "SELECT revision,content FROM extension_configuration WHERE id=1",
+      )
+      .get() as { revision: string; content: string } | undefined;
     if (!row) throw new PublicError("扩展配置恢复失败，请重启服务读取实际状态");
     this.value = content.parse(JSON.parse(row.content));
     this.revision = row.revision;
   }
   nativePlugins() {
     const pins = this.resources.pins();
-    return Object.fromEntries(Object.entries(this.value.plugins).map(([id, p]) => [id, {
-      enabled: p.installed !== false && p.enabled,
-      ...(p.installed !== false ? pins[id] : {}),
-    }]));
+    return Object.fromEntries(
+      Object.entries(this.value.plugins).map(([id, p]) => [
+        id,
+        {
+          enabled: p.installed !== false && p.enabled,
+          ...(p.installed !== false ? pins[id] : {}),
+        },
+      ]),
+    );
   }
   overlay(raw: ConfigReadResponse) {
     if (!this.initialized) {
@@ -196,8 +205,12 @@ export class ExtensionRuntime {
     config.plugins = { ...(config.plugins || {}) };
     for (const [id, p] of Object.entries(this.value.plugins)) {
       if (p.installed === false) delete config.plugins[id];
-      else config.plugins[id] = { ...config.plugins[id], enabled: p.enabled,
-        ...this.resources.pins()[id] };
+      else
+        config.plugins[id] = {
+          ...config.plugins[id],
+          enabled: p.enabled,
+          ...this.resources.pins()[id],
+        };
     }
     config.skills = {
       ...(config.skills || {}),
@@ -346,7 +359,7 @@ export class ExtensionRuntime {
   asset(skill: Pick<Skill, "path" | "name" | "pluginId">) {
     const identity = skill.pluginId
       ? `plugin:${skill.pluginId}:${skill.name}`
-      : `file:${skill.path}`;
+      : this.resources.logicalIdentity(skill.path) || `file:${skill.path}`;
     const old = this.db.raw
       .prepare("SELECT id,path,aliases FROM extension_assets WHERE identity=?")
       .get(identity) as
@@ -354,6 +367,9 @@ export class ExtensionRuntime {
       | undefined;
     const hash = (v: string) => createHash("sha256").update(v).digest("hex");
     if (old) {
+      this.db.raw
+        .prepare("UPDATE extension_assets SET identity=? WHERE id=?")
+        .run(identity, old.id);
       if (old.path !== skill.path) {
         const aliases = [
           ...new Set([...JSON.parse(old.aliases), hash(skill.path)]),

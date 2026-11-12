@@ -6,5 +6,8 @@
   "branch": "codex/newbot-runtime",
   "rust": "1.95.0",
   "profile": "dev-small",
-  "patches": ["patches/main-0001-newbot-runtime.patch"]
+  "patches": [
+    "patches/main-0001-newbot-runtime.patch",
+    "patches/main-0002-verified-model-routes.patch"
+  ]
 }

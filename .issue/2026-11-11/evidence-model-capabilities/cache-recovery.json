@@ -1,0 +1,17 @@
+[
+  {
+    "file": "live-native.json",
+    "eachSuccessfulProfileProbedOnlyOnceAcrossRestart": true,
+    "profiles": 6
+  },
+  {
+    "file": "live-native-same-id.json",
+    "eachSuccessfulProfileProbedOnlyOnceAcrossRestart": true,
+    "profiles": 6
+  },
+  {
+    "file": "live-native-builtin.json",
+    "eachSuccessfulProfileProbedOnlyOnceAcrossRestart": true,
+    "profiles": 4
+  }
+]

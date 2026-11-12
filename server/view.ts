@@ -1,3 +1,4 @@
+import { publicFailure } from "./failure.js";
 import type { ThreadItem } from "../generated/codex/v2/ThreadItem.js";
 import type { Thread as CodexThread } from "../generated/codex/v2/Thread.js";
 import type { Turn as CodexTurn } from "../generated/codex/v2/Turn.js";
@@ -49,7 +50,7 @@ export function publicTurn(turn: CodexTurn): Turn {
     startedAt: turn.startedAt,
     completedAt: turn.completedAt,
     durationMs: turn.durationMs,
-    error: turn.error ? { message: "任务执行失败" } : null,
+    error: turn.error ? publicFailure(turn.error) : null,
   };
 }
 export function publicThread(

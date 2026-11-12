@@ -1,0 +1,25 @@
+✔ outbound network loop persists results, drains on stop and keeps browser/node authentication separate (257.042198ms)
+✔ node connection refuses plaintext remote origins, credentials, alternate paths and redirects by construction (0.292855ms)
+✔ failed heartbeats stop the managed executor when the lease expires, without replaying work (1028.807878ms)
+✔ application integration exposes only opt-in node routes and retains admin Session plus Origin checks (275.555933ms)
+✔ lost command response and lost event ack do not repeat execution; terminal result cannot be overwritten (22.904419ms)
+✔ event gaps, conflicting duplicates and foreign scope cannot advance acknowledgements (6.247872ms)
+✔ revocation and lease expiry require stopped confirmation before another node can own a workspace (5.256904ms)
+✔ restart preserves encrypted ordinary commands but expires undelivered private bodies and never replays sent uncertainty (5.49948ms)
+✔ native fingerprint and grant revision checks reject incompatible or stale work (5.778059ms)
+✔ v16 metadata survives additive control-plane migration (2.782753ms)
+✔ concurrent duplicate commands and lost acknowledgements execute only once and retain identical receipts across restart (8.902785ms)
+✔ conflicting IDs, old epochs, unrelated owners, disabled scopes and stale revisions cannot issue new work (6.028999ms)
+✔ crash in dispatch window stays unknown after reopen; accepted-only commands remain distinguishable (1.936657ms)
+✔ uncertain failures are not replayed, and private parameters/results are not plaintext in node state (3.642298ms)
+✔ missing or tampered encryption material cannot turn a known command into fresh work (1.399708ms)
+✔ runner transport rejects unreviewed methods before sending any bytes (0.73917ms)
+✔ native responses, requests and events traverse local runner; diagnostics never become UI events (41.894188ms)
+ℹ tests 17
+ℹ suites 0
+ℹ pass 17
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1780.301867

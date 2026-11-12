@@ -1,0 +1,16 @@
+✔ migration cannot overlap a writer and requires a clean shutdown, not merely an absent process (18.847516ms)
+✔ a crashed process releases the kernel lock but does not make its files eligible for migration (56.371956ms)
+✔ a clean standard installation persists Server state and session workspaces across restart without creating repository .data (133.475704ms)
+✔ offline workspace migration preserves original files, logical identities, projections and an immediate rollback (36.381551ms)
+✔ running instance, existing destination and symlink inputs cannot be migrated (7.925993ms)
+✔ rollback refuses changed workspaces and any later Server start without deleting either copy (19.743988ms)
+✔ imported skill identity is package-relative while existing IDs and old aliases are retained (5.457417ms)
+✔ failed database publication keeps original bindings and both durable copies (16.674648ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 549.563532

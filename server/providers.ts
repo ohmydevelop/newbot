@@ -1,3 +1,10 @@
+import {
+  capabilityKey,
+  verifyResponsesCapabilities,
+  type VerifiedCapabilities,
+} from "./model-capabilities.js";
+import { modelDescriptor } from "../shared/model-purpose.js";
+import { publicFailure } from "./failure.js";
 import { customModelIds } from "../shared/gateways.js";
 import { PublicError } from "./public-error.js";
 import type { credentialVault } from "./credential-vault.js";
@@ -120,11 +127,46 @@ export function allowedEnv(snapshot: Snapshot, key: string) {
   }
   return allowed.has(key);
 }
-async function boundedJson(response: Response) {
+export async function boundedJson(response: Response) {
   if (!response.ok) {
-    await response.body?.cancel().catch(() => {});
+    // Only bounded JSON error fields participate in classification, never UI text.
+    let message = "";
+    const reader = response.body?.getReader();
+    try {
+      const chunks: Uint8Array[] = [];
+      let size = 0;
+      if (reader)
+        while (true) {
+          const next = await reader.read();
+          if (next.done) break;
+          size += next.value.byteLength;
+          if (size > 32768) break;
+          chunks.push(next.value);
+        }
+      if (
+        size <= 32768 &&
+        /application\/(?:[\w.+-]*\+)?json/i.test(
+          response.headers.get("content-type") || "",
+        )
+      ) {
+        const body = JSON.parse(Buffer.concat(chunks).toString("utf8"));
+        const e = body.error || body;
+        message = [e.message, e.code, e.type]
+          .filter((v) => typeof v === "string")
+          .join(" ");
+      }
+    } catch {
+    } finally {
+      await reader?.cancel().catch(() => {});
+    }
+    const failure = publicFailure({
+      message,
+      codexErrorInfo: {
+        httpConnectionFailed: { httpStatusCode: response.status },
+      },
+    });
     providerError(
-      `连接测试失败（HTTP ${response.status}），请检查端点、凭证和模型`,
+      `${failure.message}（HTTP ${response.status}）${failure.action}`,
       502,
     );
   }
@@ -375,6 +417,9 @@ export function providerManager(
     nativeCatalog: () => Promise<any[]>,
     responseTest = false,
     preferUpstream = false,
+    verifyCapabilities = false,
+    capabilityEffort?: string,
+    threadId?: string,
   ) {
     const data = providerProbe.parse(params);
     const snapshot = await checked(data.expectedRevision, data.id);
@@ -382,13 +427,15 @@ export function providerManager(
     const source = codex.privateConfiguration
       ? (
           await codex.privateConfiguration({
+            threadId,
+            privateRouteOnly: !!threadId,
             modelProvider: data.id,
             config: snapshot.response.config,
           })
         ).config
       : snapshot.response.config;
     const definition = record(record(source.model_providers)[data.id]);
-    if (!responseTest && current && !preferUpstream)
+    if (!responseTest && !verifyCapabilities && current && !preferUpstream)
       return {
         source: "codex" as const,
         models: (await nativeCatalog()).map((m) => m.model),
@@ -455,6 +502,50 @@ export function providerManager(
     }
     headers.set("Accept", "application/json");
     try {
+      if (verifyCapabilities) {
+        if (!data.model) providerError("请选择需要验证的聊天模型", 400);
+        const key = capabilityKey(data.id, data.model, definition, [
+          [...headers],
+          capabilityEffort,
+        ]);
+        const stored = db.get(key);
+        const cached = stored ? JSON.parse(stored) : undefined;
+        if (cached?.verifiedAt > Date.now() - 24 * 60 * 60 * 1000)
+          return {
+            source: "verified" as const,
+            models: [data.model],
+            capabilities: cached.capabilities as VerifiedCapabilities,
+          };
+        const capabilities = await verifyResponsesCapabilities(
+          data.id,
+          data.model,
+          async (body) => {
+            const result = await fetch(
+              `${url.data.replace(/\/+$/, "")}/responses`,
+              {
+                method: "POST",
+                headers: new Headers([
+                  ...headers,
+                  ["Content-Type", "application/json"],
+                ]),
+                body: JSON.stringify(body),
+                redirect: "error",
+                signal: AbortSignal.timeout(45000),
+              },
+            );
+            if (!result.ok) await boundedJson(result);
+            return result;
+          },
+          capabilityEffort,
+        );
+        await checked(data.expectedRevision, data.id);
+        db.set(key, JSON.stringify({ verifiedAt: Date.now(), capabilities }));
+        return {
+          source: "verified" as const,
+          models: [data.model],
+          capabilities,
+        };
+      }
       if (!responseTest) {
         const response = await fetch(`${url.data.replace(/\/+$/, "")}/models`, {
           headers,
@@ -462,11 +553,33 @@ export function providerManager(
           signal: AbortSignal.timeout(15000),
         });
         const json = await boundedJson(response);
-        if (!Array.isArray(json.data))
+        if (!Array.isArray(json.data) && !Array.isArray(json.models))
           providerError("上游未提供兼容的模型目录", 502);
+        const rows = (json.data || json.models)
+          .filter((m: any) => m && typeof m === "object")
+          .map((m: any) => ({
+            ...m,
+            id: m.id || m.slug,
+          }));
+        const descriptors = rows
+          .filter(
+            (m: any) =>
+              typeof m?.id === "string" &&
+              /^[A-Za-z0-9][A-Za-z0-9._:/+\-]{0,199}$/.test(m.id) &&
+              !secrets.some(
+                (s) => s.length > 0 && JSON.stringify(m).includes(s),
+              ),
+          )
+          .slice(0, 100)
+          .map((m: any) => modelDescriptor(m.id, m));
         const models = [
           ...new Set<string>(
-            json.data
+            rows
+              .filter((m: any) =>
+                descriptors.some(
+                  (d: any) => d.id === m.id,
+                ),
+              )
               .slice(0, 100)
               .flatMap((m: any) =>
                 typeof m?.id === "string" &&
@@ -480,6 +593,7 @@ export function providerManager(
         return {
           source: "upstream" as const,
           models,
+          descriptors,
           note: "上游模型目录已响应；兼容性未验证。切换后由 Codex 决定聊天可选模型。",
         };
       }
@@ -518,7 +632,11 @@ export function providerManager(
         note: "基础 Responses 请求已响应；流式输出、上下文和 Agent 工具能力仍需单独验证。",
       };
     } catch (error) {
-      if (error instanceof Error && "statusCode" in error) throw error;
+      if (
+        error instanceof PublicError ||
+        (error instanceof Error && "statusCode" in error)
+      )
+        throw error;
       providerError("连接诊断失败或超时，请检查端点、凭证与网络", 502);
     }
   }

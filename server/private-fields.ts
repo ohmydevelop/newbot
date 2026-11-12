@@ -34,27 +34,74 @@ type Context = {
 const digest = (value: unknown) =>
   createHash("sha256").update(JSON.stringify(value)).digest("hex");
 export const fieldKey = (field: PrivateField) => `${field.kind}:${field.name}`;
+/** Legacy digest is only used to verify an already saved receiver before resealing.
+ * Never use it as a fallback when the URL, package, or configuration changed. */
+export function legacyPrivateFieldBinding(
+  scope: Scope,
+  target: string,
+  config: Json,
+) {
+  return receiverBinding(scope, target, config, false);
+}
 export function privateFieldBinding(
   scope: Scope,
   target: string,
   config: Json,
 ) {
+  return receiverBinding(scope, target, config, true);
+}
+function receiverBinding(
+  scope: Scope,
+  target: string,
+  config: Json,
+  portable: boolean,
+) {
   const def =
     config[scope === "provider" ? "model_providers" : "mcp_servers"]?.[target];
   if (!def) throw new PublicError("凭证接收方不存在");
+  const owner = config.newbot_plugin_connections?.[target];
+  // packageRoot is host-generated only after verifying the immutable package digest.
+  // It is an address, not part of the recipient's identity. All non-path values remain bound.
+  const { packageRoot, ...plugin } = owner || {};
+  const logical = (value: any): any => {
+    if (
+      !portable ||
+      !owner ||
+      typeof packageRoot !== "string" ||
+      !packageRoot.startsWith("/")
+    )
+      return value;
+    if (typeof value === "string") {
+      if (value === packageRoot) return "newbot-package:/";
+      if (value.startsWith(packageRoot + "/"))
+        return "newbot-package:/" + value.slice(packageRoot.length + 1);
+      return value;
+    }
+    if (Array.isArray(value)) return value.map(logical);
+    if (value && typeof value === "object")
+      return Object.fromEntries(
+        Object.entries(value).map(([k, v]) => [k, logical(v)]),
+      );
+    return value;
+  };
   const values: unknown[] = [
     scope,
     target,
     def.base_url || def.url || null,
-    def.command || null,
-    def.args || [],
+    logical(def.command || null),
+    logical(def.args || []),
     def.wire_api || null,
   ];
-  const plugin = config.newbot_plugin_connections?.[target];
-  if (plugin)
-    values.push(plugin, def.env || {}, def.cwd || null, def.http_headers || {});
+  if (owner)
+    values.push(
+      plugin,
+      logical(def.env || {}),
+      logical(def.cwd || null),
+      def.http_headers || {},
+    );
   return digest(values);
 }
+
 export function privateFields(
   db: Store,
   vault: ReturnType<typeof credentialVault>,

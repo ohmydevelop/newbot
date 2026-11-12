@@ -9,9 +9,11 @@ const directory = mkdtempSync(join(tmpdir(), "newbot-app-lifecycle-ui-")),
   codex = new FakeCodex(),
   bundle = await build({
     entryPoints: [
-      process.env.APP_HOST_TEST === "1"
-        ? "tests/app-host-view.ts"
-        : "tests/app-lifecycle-view.ts",
+      process.env.APP_SCOPE_TEST === "1"
+        ? "tests/remaining-app-view.ts"
+        : process.env.APP_HOST_TEST === "1"
+          ? "tests/app-host-view.ts"
+          : "tests/app-lifecycle-view.ts",
     ],
     bundle: true,
     write: false,
@@ -52,10 +54,26 @@ codex.call = (async (method: any, params: any) => {
     toolCalls++;
     return {
       content: [],
-      structuredContent: { cpu: 42, source: params.arguments.source },
+      structuredContent: {
+        cpu: 42,
+        source: params.arguments.source,
+        ...(process.env.APP_SCOPE_TEST === "1"
+          ? { groups: ["测试业务组"], tool: params.tool }
+          : {}),
+      },
     };
   }
   const result = (await original(method, params)) as any;
+  if (method === "mcpServerStatus/list" && process.env.APP_SCOPE_TEST === "1") {
+    result.data[0].tools.metrics.title = "资源概览";
+    result.data[0].tools.list_groups = {
+      name: "list_groups",
+      title: "读取业务组",
+      inputSchema: { type: "object" },
+      annotations: { readOnlyHint: true },
+      _meta: { ui: { visibility: ["app"] } },
+    };
+  }
   if (method === "mcpServerStatus/list" && !appTools)
     result.data[0].tools.metrics._meta.ui.visibility = ["model"];
   if (method === "turn/start") {

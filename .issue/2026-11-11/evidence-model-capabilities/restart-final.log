@@ -1,0 +1,20 @@
+{
+  "at": "2026-11-11T10:09:43.831Z",
+  "oldPid": 3901369,
+  "pid": 3909308,
+  "schema": 16,
+  "counts": {
+    "threads": 34,
+    "runs": 107,
+    "attachments": 6
+  },
+  "passwordUnchanged": true,
+  "credentialsUnchanged": true,
+  "personalConfigUnchanged": true,
+  "instanceConfigUnchanged": true,
+  "providersUnchanged": true,
+  "historiesVerified": 3,
+  "modelTurnsCreated": 0,
+  "asset": "/assets/index-D8VHiJiS.js",
+  "backup": "/home/a/Documents/ChatGPT/newbot/.data/restart-backups/model-capabilities-1794391761467"
+}

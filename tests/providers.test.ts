@@ -554,3 +554,82 @@ test("lost Provider write replies reconcile the process without a duplicate muta
     );
   });
 });
+
+test("model catalog retains all purposes including default and manual entries", async () => {
+  let directoryFails = false;
+  const upstream = httpServer((_req, res) => {
+    if (directoryFails) {
+      res.writeHead(503);
+      res.end();
+      return;
+    }
+    res.setHeader("content-type", "application/json");
+    res.end(
+      JSON.stringify({
+        data: [
+          { id: "bge-m3" },
+          { id: "bge-reranker-v2-m3" },
+          { id: "opaque-vector", task: "embedding" },
+          { id: "chat-alias", task: "text-generation" },
+          null,
+        ],
+      }),
+    );
+  });
+  await new Promise<void>((resolve) =>
+    upstream.listen(0, "127.0.0.1", resolve),
+  );
+  try {
+    await fixture(
+      async ({ service, codex, db }: any) => {
+        codex.config.profiles = {
+          newbot_gateway_secondary: {
+            model: "bge-m3",
+            model_provider: "secondary",
+          },
+        };
+        codex.config.newbot_models = {
+          secondary: ["bge-reranker-v2-m3", "opaque-vector"],
+        };
+        const catalog = await service.handle("gateway/catalog", {
+          refresh: true,
+        });
+        const gateway = catalog.find((g: any) => g.id === "secondary");
+        assert.deepEqual(
+          gateway.models.map((m: any) => m.model),
+          ["bge-m3", "bge-reranker-v2-m3", "opaque-vector", "chat-alias"],
+        );
+        for (const model of ["bge-m3", "bge-reranker-v2-m3", "opaque-vector"]) {
+          assert.equal((await service.runtimeSettings.validate("secondary", model)).model, model);
+        }
+        assert.equal((await service.runtimeSettings.validate("secondary")).model, "bge-m3");
+        assert.equal(
+          (await service.runtimeSettings.validate("secondary", "chat-alias"))
+            .model,
+          "chat-alias",
+        );
+        directoryFails = true;
+        const failed = (
+          await service.handle("gateway/catalog", { refresh: true })
+        ).find((g: any) => g.id === "secondary");
+        assert.ok(failed.error);
+        assert.deepEqual(
+          failed.models.map((m: any) => m.model).sort(),
+          ["bge-m3", "bge-reranker-v2-m3", "opaque-vector"].sort(),
+          "directory errors retain manual and saved defaults regardless of purpose",
+        );
+        assert.ok(
+          db.raw
+            .prepare(
+              "SELECT value FROM metadata WHERE key LIKE 'model-purposes-v1:%'",
+            )
+            .all().length,
+        );
+      },
+      `http://127.0.0.1:${(upstream.address() as any).port}`,
+    );
+  } finally {
+    upstream.closeAllConnections();
+    await new Promise<void>((r) => upstream.close(() => r()));
+  }
+});

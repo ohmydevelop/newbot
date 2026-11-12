@@ -1,0 +1,22 @@
+✔ cold checkpoint restores a fresh node after the source is removed, excluding auth and databases (19.849451ms)
+✔ running nodes cannot publish a cold checkpoint (0.999251ms)
+✔ corrupt or mismatched-version checkpoint is rejected before publishing a target (3.313096ms)
+✔ workspace links cannot escape to host files (2.236445ms)
+✔ manifest traversal and secret-native-file injection cannot write outside target (2.827534ms)
+✔ a replaced checkpoint directory cannot redirect import to another source (3.312ms)
+✔ lineage dependencies and mismatched native identity cannot be silently omitted (3.799731ms)
+✔ empty workspace directories survive recovery and concurrent restores cannot overwrite a target (8.424794ms)
+✔ fresh installs use independent standard global home and visible workspace directory (5.345919ms)
+✔ an existing repository installation remains in place without automatic migration (3.752386ms)
+✔ explicit data directory keeps existing deployment and test paths, custom roots remain independent (1.593814ms)
+✔ personal Codex and linked aliases cannot become the new global home (2.786841ms)
+✔ runner transport rejects unreviewed methods before sending any bytes (0.70948ms)
+✔ native responses, requests and events traverse local runner; diagnostics never become UI events (25.110376ms)
+ℹ tests 14
+ℹ suites 0
+ℹ pass 14
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 195.843009

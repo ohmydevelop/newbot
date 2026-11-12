@@ -1,0 +1,13 @@
+ .../schema/json/ClientRequest.json                 |  55 ++++++++++++++++
+ .../json/codex_app_server_protocol.schemas.json    |  55 ++++++++++++++++
+ .../json/codex_app_server_protocol.v2.schemas.json |  55 ++++++++++++++++
+ .../app-server-exports-experimental.json.zst       | Bin 178164 -> 178452 bytes
+ .../precomputed/app-server-exports-stable.json.zst | Bin 169349 -> 169627 bytes
+ .../schema/typescript/LiveModelRouteSelection.ts   |   3 +-
+ .../schema/typescript/VerifiedModelCapabilities.ts |  10 +++
+ .../app-server-protocol/schema/typescript/index.ts |   1 +
+ .../src/request_processors/initialize_processor.rs |   1 +
+ codex-rs/core/src/session/step_activation.rs       |  64 +++++++++++++++++-
+ codex-rs/core/src/session/step_settings.rs         |  73 +++++++++++++++++++++
+ codex-rs/protocol/src/protocol.rs                  |  18 +++++
+ 12 files changed, 332 insertions(+), 3 deletions(-)

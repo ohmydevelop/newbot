@@ -1,0 +1,20 @@
+{
+  "at": "2026-11-11T09:14:06.063Z",
+  "oldPid": 3751622,
+  "pid": 3753849,
+  "schema": 16,
+  "counts": {
+    "threads": 32,
+    "runs": 96,
+    "attachments": 5
+  },
+  "passwordUnchanged": true,
+  "credentialsUnchanged": true,
+  "personalConfigUnchanged": true,
+  "instanceConfigUnchanged": true,
+  "providersUnchanged": true,
+  "historiesVerified": 3,
+  "modelTurnsCreated": 0,
+  "asset": "/assets/index-h2rlWgkQ.js",
+  "backup": "/home/a/Documents/ChatGPT/newbot/.data/restart-backups/gateway-errors-1794388420573"
+}

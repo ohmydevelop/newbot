@@ -1,0 +1,13 @@
+{
+  "binary": "/home/a/Documents/ChatGPT/newbot/.data/native/releases/fe2f185-capabilities/codex",
+  "upstream": "two synthetic loopback Responses gateways",
+  "checks": [
+    "three live revisions are accepted without changing the in-flight request; invalid metadata preserves the last valid route",
+    "same native thread and turn continue at gateway B with captured credentials and effort; original tool executes exactly once",
+    "actual-use notification is distinct from acceptance and matches the request revision",
+    "future turn resumes with the selected gateway without replaying the historical tool",
+    "server restart restores the selected route from SQLite and retains the original native thread",
+    "cancelled tasks do not adopt pending routes or accept stale updates; the next turn uses the saved choice without replay",
+    "synthetic private credentials are absent from isolated persistent files and native logs"
+  ]
+}

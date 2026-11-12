@@ -44,20 +44,24 @@ export function presentationBlocks(
   // Infer presentation only; never rewrite native phase or reorder the items.
   // A later tool is evidence that an unlabelled assistant item was intermediate.
   // A trailing streaming/failed response stays visible until there is such evidence.
-  let laterActivity = false, trailingAssistant = true;
+  let laterActivity = false,
+    trailingAssistant = true;
   const phases = new Map<string, string>();
   for (const item of [...items].reverse()) {
     const kind = messageKind(item);
     if (kind === "tool") laterActivity = true;
     if (kind === "assistant") {
       if (!item.phase && laterActivity) phases.set(item.id, "commentary");
-      else if (!item.phase && trailingAssistant && status === "completed") phases.set(item.id, "final_answer");
+      else if (!item.phase && trailingAssistant && status === "completed")
+        phases.set(item.id, "final_answer");
       trailingAssistant = false;
     }
     if (kind === "user") laterActivity = false;
   }
   for (const original of items) {
-    const item = phases.has(original.id) ? { ...original, phase: phases.get(original.id) } : original;
+    const item = phases.has(original.id)
+      ? { ...original, phase: phases.get(original.id) }
+      : original;
     if (messageKind(item) === "hidden") continue;
     if (isProcessItem(item)) {
       if (!group) {
@@ -116,7 +120,19 @@ export function toolStatus(item: Item) {
 }
 export function turnFeedback(turn: Turn) {
   if (turn.status === "failed")
-    return { tone: "error", text: "本次任务未完成。", canRead: true };
+    return {
+      tone: "error",
+      text: turn.error?.category ? turn.error.message : "本次任务未完成。",
+      canRead: true,
+      action: turn.error?.action,
+    };
+  if (turn.error?.retrying && turn.status === "inProgress")
+    return {
+      tone: "error",
+      text: turn.error.message,
+      action: "正在自动重试。你可以停止任务，再检查网关或切换模型。",
+      canRead: false,
+    };
   if (turn.status === "interrupted")
     return turn.error
       ? {
@@ -128,7 +144,10 @@ export function turnFeedback(turn: Turn) {
   if (turn.error)
     return {
       tone: "error",
-      text: "本次任务的状态需要重新确认。",
+      text: turn.error.category
+        ? turn.error.message
+        : "本次任务的状态需要重新确认。",
+      action: turn.error.action,
       canRead: true,
     };
   return null;

@@ -1,0 +1,30 @@
+{
+  "scope": "two processes, loopback TLS, real native binary, synthetic model; not two physical hosts",
+  "fingerprint": "69bdfbdfb76984ded3d41d75f93c9a1591179f840b1f0b03a0be2debcfe58cbf",
+  "checks": [
+    {
+      "name": "separate Runner process enrolled over authenticated TLS",
+      "pass": true
+    },
+    {
+      "name": "native shell side effect and dynamic host tool execute once",
+      "pass": true
+    },
+    {
+      "name": "original native thread and completed history readable over network",
+      "pass": true
+    },
+    {
+      "name": "graceful stop drains events and confirms runtime stopped",
+      "pass": true
+    },
+    {
+      "name": "Runner restart retains original native history and command receipts without replay",
+      "pass": true
+    },
+    {
+      "name": "personal Codex configuration unchanged",
+      "pass": true
+    }
+  ]
+}

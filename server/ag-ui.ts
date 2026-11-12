@@ -1,3 +1,5 @@
+import { retainedFailure } from "./failure-store.js";
+import { publicFailure } from "./failure.js";
 import { EventEmitter } from "node:events";
 import { EventType, type Event } from "@ag-ui/core";
 import type { ServerNotification } from "../generated/codex/ServerNotification.js";
@@ -131,11 +133,16 @@ export class AgentEvents extends EventEmitter {
       return;
     }
     if (message.method === "turn/completed") {
+      const failure = retainedFailure(
+        publicFailure(p.turn.error),
+        this.threads.get(threadId)?.turns.find((t) => t.id === runId)?.error,
+      );
       if (p.turn.status === "failed")
         emit({
           type: EventType.RUN_ERROR,
-          message: "任务失败，请检查对话状态和 Provider 配置",
+          message: failure.message,
           code: "CODEX_TURN_FAILED",
+          rawEvent: { failure },
         });
       else
         emit({
@@ -283,11 +290,11 @@ export class AgentEvents extends EventEmitter {
         });
       return;
     }
-    if (message.method === "error" && !p.willRetry)
+    if (message.method === "error")
       emit({
         type: EventType.CUSTOM,
         name: "newbot.notice",
-        value: { message: "Codex 操作失败，请检查 Provider 和执行权限" },
+        value: { ...publicFailure(p.error, p.willRetry === true) },
       });
   }
 }

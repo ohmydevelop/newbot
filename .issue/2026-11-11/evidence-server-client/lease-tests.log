@@ -1,0 +1,9 @@
+✔ migration cannot overlap a writer and requires a clean shutdown, not merely an absent process (11.937389ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 111.19585

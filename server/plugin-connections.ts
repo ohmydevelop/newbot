@@ -11,7 +11,11 @@ import type { Store } from "./db.js";
 import type { ExtensionRuntime } from "./extension-runtime.js";
 import type { credentialVault } from "./credential-vault.js";
 import type { CredentialConsumer } from "./credentials.js";
-import { fieldKey, privateFieldBinding } from "./private-fields.js";
+import {
+  fieldKey,
+  privateFieldBinding,
+  legacyPrivateFieldBinding,
+} from "./private-fields.js";
 import {
   pluginConnectionId,
   pluginDescriptors,
@@ -60,7 +64,11 @@ export function pluginConnections(
       )
       .get(id) as SecretRow | undefined;
   async function descriptors(pluginId: string): Promise<PluginDescriptor[]> {
-    const p = packages().find((p) => (JSON.parse(p.content).pluginId || `${p.name}@newbot-imports`) === pluginId);
+    const p = packages().find(
+      (p) =>
+        (JSON.parse(p.content).pluginId || `${p.name}@newbot-imports`) ===
+        pluginId,
+    );
     if (!p) return [];
     try {
       return await pluginDescriptors(pluginId, p.path, p.digest);
@@ -96,23 +104,55 @@ export function pluginConnections(
             server: d.name,
             packageDigest: d.digest,
             schemaDigest: d.schemaDigest,
+            packageRoot: d.root,
           },
         },
       } as Json,
     };
   }
   function secrets(d: PluginDescriptor, config: Json) {
-    const row = secretRow(d.id);
-    if (
-      !row?.packet ||
-      !vault ||
-      row.binding !== privateFieldBinding("mcp", d.id, config)
-    )
-      return {} as Record<string, string>;
+    let row = secretRow(d.id);
+    if (!row?.packet || !vault) return {} as Record<string, string>;
+    const nextBinding = privateFieldBinding("mcp", d.id, config);
+    if (row.binding !== nextBinding) {
+      // descriptors() has verified the complete package tree. Only the identical
+      // old recipient can be upgraded; changed credentials/URL/package stay invalid.
+      if (row.binding !== legacyPrivateFieldBinding("mcp", d.id, config))
+        return {};
+      let plain: Buffer | undefined;
+      try {
+        plain = vault.openPrivate(
+          row.packet,
+          `fields:mcp:${d.id}:${row.binding}`,
+        );
+        const packet = vault.sealPrivate(
+          plain,
+          `fields:mcp:${d.id}:${nextBinding}`,
+        );
+        const changed = db.raw
+          .prepare(
+            "UPDATE private_field_sets SET binding=?,packet=?,revision=? WHERE scope='mcp' AND target=? AND binding=? AND packet=?",
+          )
+          .run(
+            nextBinding,
+            packet,
+            randomUUID(),
+            d.id,
+            row.binding,
+            row.packet,
+          );
+        if (Number(changed.changes) !== 1) return {};
+        row = { ...row, binding: nextBinding, packet };
+      } catch {
+        return {};
+      } finally {
+        plain?.fill(0);
+      }
+    }
     let bytes: Buffer | undefined;
     try {
       bytes = vault.openPrivate(
-        row.packet,
+        row.packet!,
         `fields:mcp:${d.id}:${row.binding}`,
       );
       return JSON.parse(bytes.toString("utf8")) as Record<string, string>;
@@ -272,7 +312,8 @@ export function pluginConnections(
     config.plugins ||= {};
     config.newbot_plugin_connections = {};
     for (const p of packages()) {
-      const pluginId = (JSON.parse(p.content).pluginId || `${p.name}@newbot-imports`);
+      const pluginId =
+        JSON.parse(p.content).pluginId || `${p.name}@newbot-imports`;
       for (const d of await descriptors(pluginId)) {
         owners.set(d.id, { pluginId, server: d.name, source: "newbot-plugin" });
         const s = state(d);
@@ -310,6 +351,7 @@ export function pluginConnections(
           server: d.name,
           packageDigest: d.digest,
           schemaDigest: d.schemaDigest,
+          packageRoot: d.root,
         };
       }
     }
@@ -491,11 +533,16 @@ export function pluginConnections(
     const known = owners.get(id);
     if (
       known &&
-      packages().some((p) => (JSON.parse(p.content).pluginId || `${p.name}@newbot-imports`) === known.pluginId)
+      packages().some(
+        (p) =>
+          (JSON.parse(p.content).pluginId || `${p.name}@newbot-imports`) ===
+          known.pluginId,
+      )
     )
       return known;
     for (const p of packages()) {
-      const pluginId = (JSON.parse(p.content).pluginId || `${p.name}@newbot-imports`),
+      const pluginId =
+          JSON.parse(p.content).pluginId || `${p.name}@newbot-imports`,
         content = JSON.parse(p.content);
       const names = new Set<string>([...(content.mcp || []), p.name]);
       for (const row of db.raw

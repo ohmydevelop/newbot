@@ -252,7 +252,7 @@ export default function ProviderSettings() {
                 disabled={disabled}
                 onClick={() => {
                   if (p.current) return;
-                  if (!entry?.defaultModel) {
+                  if (!entry?.models.some(m => m.model === entry.defaultModel)) {
                     document.getElementById(`gateway-model-${p.id}`)?.focus();
                     return;
                   }
@@ -316,7 +316,7 @@ export default function ProviderSettings() {
                   id={`gateway-model-${p.id}`}
                   aria-label={`${name} 默认模型`}
                   disabled={disabled || !entry?.models.length}
-                  value={entry?.defaultModel || ""}
+                  value={entry?.models.some(m => m.model === entry.defaultModel) ? entry.defaultModel : ""}
                   onChange={(e) => {
                     const model = e.target.value;
                     void action(`default:${p.id}`, () =>

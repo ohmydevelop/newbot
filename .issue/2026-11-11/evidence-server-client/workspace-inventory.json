@@ -1,0 +1,97 @@
+{
+  "source": "/home/a/Documents/ChatGPT/newbot/.data",
+  "target": "/home/a/Newbot/workspaces",
+  "bytes": 756553,
+  "workspaces": [
+    {
+      "source": "/home/a/Documents/ChatGPT/newbot/.data/workspace",
+      "target": "/home/a/Newbot/workspaces/legacy-c9c65cf322b70a6a14d950f7",
+      "threads": 20,
+      "files": 32
+    },
+    {
+      "source": "/home/a/Documents/ChatGPT/newbot/.data/workspaces/4d84cf82-7317-4c91-b55d-4a95ace2811c",
+      "target": "/home/a/Newbot/workspaces/4d84cf82-7317-4c91-b55d-4a95ace2811c",
+      "threads": 1,
+      "files": 35
+    },
+    {
+      "source": "/home/a/Documents/ChatGPT/newbot/.data/workspaces/76a288c3-ea1f-4ed4-beed-582dc574e33f",
+      "target": "/home/a/Newbot/workspaces/76a288c3-ea1f-4ed4-beed-582dc574e33f",
+      "threads": 1,
+      "files": 0
+    },
+    {
+      "source": "/home/a/Documents/ChatGPT/newbot/.data/workspaces/da61438d-6463-4185-8539-5bb7d53451c3",
+      "target": "/home/a/Newbot/workspaces/da61438d-6463-4185-8539-5bb7d53451c3",
+      "threads": 1,
+      "files": 0
+    },
+    {
+      "source": "/home/a/Documents/ChatGPT/newbot/.data/workspaces/a995fd08-cc41-45be-923d-fe946aaaefd4",
+      "target": "/home/a/Newbot/workspaces/a995fd08-cc41-45be-923d-fe946aaaefd4",
+      "threads": 1,
+      "files": 0
+    },
+    {
+      "source": "/home/a/Documents/ChatGPT/newbot/.data/workspaces/433c1d59-ea1d-482a-8769-49cbf42ad134",
+      "target": "/home/a/Newbot/workspaces/433c1d59-ea1d-482a-8769-49cbf42ad134",
+      "threads": 1,
+      "files": 0
+    },
+    {
+      "source": "/home/a/Documents/ChatGPT/newbot/.data/workspaces/cd7c1289-8972-4b87-bd3e-fff51521eb8d",
+      "target": "/home/a/Newbot/workspaces/cd7c1289-8972-4b87-bd3e-fff51521eb8d",
+      "threads": 1,
+      "files": 0
+    },
+    {
+      "source": "/home/a/Documents/ChatGPT/newbot/.data/workspaces/f10d150b-7148-4467-9948-9fbe97d93aa5",
+      "target": "/home/a/Newbot/workspaces/f10d150b-7148-4467-9948-9fbe97d93aa5",
+      "threads": 1,
+      "files": 0
+    },
+    {
+      "source": "/home/a/Documents/ChatGPT/newbot/.data/workspaces/f208f49a-2abf-4ccf-b452-73a69b40e15c",
+      "target": "/home/a/Newbot/workspaces/f208f49a-2abf-4ccf-b452-73a69b40e15c",
+      "threads": 1,
+      "files": 0
+    },
+    {
+      "source": "/home/a/Documents/ChatGPT/newbot/.data/workspaces/c51e01b3-65e4-4204-bdbc-bd069dc67f30",
+      "target": "/home/a/Newbot/workspaces/c51e01b3-65e4-4204-bdbc-bd069dc67f30",
+      "threads": 1,
+      "files": 0
+    },
+    {
+      "source": "/home/a/Documents/ChatGPT/newbot/.data/workspaces/e9de2145-895c-44f4-9653-13d90d88c18c",
+      "target": "/home/a/Newbot/workspaces/e9de2145-895c-44f4-9653-13d90d88c18c",
+      "threads": 1,
+      "files": 6
+    },
+    {
+      "source": "/home/a/Documents/ChatGPT/newbot/.data/workspaces/2cfac06b-36f5-4192-bb7d-73669889d3fc",
+      "target": "/home/a/Newbot/workspaces/2cfac06b-36f5-4192-bb7d-73669889d3fc",
+      "threads": 1,
+      "files": 0
+    },
+    {
+      "source": "/home/a/Documents/ChatGPT/newbot/.data/workspaces/5a46979c-48f8-4978-9983-20d1e7e424f3",
+      "target": "/home/a/Newbot/workspaces/5a46979c-48f8-4978-9983-20d1e7e424f3",
+      "threads": 1,
+      "files": 0
+    },
+    {
+      "source": "/home/a/Documents/ChatGPT/newbot/.data/workspaces/c0dc9d90-be38-40ea-826f-5f01d85cb509",
+      "target": "/home/a/Newbot/workspaces/c0dc9d90-be38-40ea-826f-5f01d85cb509",
+      "threads": 1,
+      "files": 0
+    },
+    {
+      "source": "/home/a/Documents/ChatGPT/newbot/.data/workspaces/02ac8b0a-d6d1-4841-88ca-de6a204fcd4e",
+      "target": "/home/a/Newbot/workspaces/02ac8b0a-d6d1-4841-88ca-de6a204fcd4e",
+      "threads": 1,
+      "files": 0
+    }
+  ]
+}

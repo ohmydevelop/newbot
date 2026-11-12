@@ -13,7 +13,7 @@ const directory = await mkdtemp(join(tmpdir(), "issue001-native-resources-")),
   home = join(directory, "codex");
 await mkdir(cwd);
 await mkdir(home);
-const evidence = resolve(".issue/2026-11-11/evidence-issue-001");
+const evidence = resolve(process.env.NEWBOT_EVIDENCE_DIR || ".issue/2026-11-11/evidence-issue-001");
 await mkdir(evidence, { recursive: true });
 process.env.ENABLE_TEST_MCP = "false";
 process.env.ENABLE_OFFICIAL_MCP = "false";

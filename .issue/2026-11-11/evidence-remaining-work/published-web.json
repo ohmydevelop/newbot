@@ -1,0 +1,17 @@
+{
+  "local": {
+    "entry": "/assets/index-CmM5RzeT.js",
+    "sha256": "3a374eebf4b1e78bae2086f4151fb2b6d1cc78a8c4eebdec15e2cb469431aec4",
+    "health": {
+      "ok": true
+    }
+  },
+  "public": {
+    "entry": "/assets/index-CmM5RzeT.js",
+    "sha256": "3a374eebf4b1e78bae2086f4151fb2b6d1cc78a8c4eebdec15e2cb469431aec4",
+    "health": {
+      "ok": true
+    }
+  },
+  "previous_entry_retained": true
+}

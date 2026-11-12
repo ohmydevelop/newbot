@@ -1,0 +1,23 @@
+✔ artifact API binds real turns, rejects forged provenance, protects auth and serves HTML as inert text (151.590975ms)
+✔ workspace reads reject traversal, symlinks, hardlinks, credentials, oversized and unsupported files (93.817129ms)
+✔ live fileChange capture is idempotent and immutable; failures stay out of the agent lifecycle (80.736401ms)
+✔ registered artifacts survive archive and restart; interrupted capture is not silently replayed (131.351831ms)
+✔ upload and artifact quotas are shared and snapshots deduplicate across conversations (68.787045ms)
+✔ v1 database migration preserves sessions, threads, attachments and rejects future schemas (2.330615ms)
+✔ renamed file capture uses the final path; capture overload is bounded and reported (293.693821ms)
+✔ personal Codex login tokens are not inherited from the launching coding client (0.561703ms)
+✔ host personal skill references are read-only even if native discovery advertises them as user skills (4.217237ms)
+✔ private runtime keeps state, HOME and XDG inside the instance without touching host defaults (2.986922ms)
+✔ host homes and symlink aliases are refused before creating state (2.22156ms)
+✔ a personal home symlink cannot bypass isolation by naming its physical target (2.526949ms)
+✔ redirected config, SQLite, and XDG state cannot escape the instance (2.071103ms)
+✔ new conversations isolate cwd, sandbox roots, live browsing and captured files; old threads retain their directory through restart (208.151763ms)
+✔ SQLite extension edits defer to the next turn, project skills are copied, disabled skills cannot be cited, and another active thread is untouched (102.975541ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 15
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1224.338356

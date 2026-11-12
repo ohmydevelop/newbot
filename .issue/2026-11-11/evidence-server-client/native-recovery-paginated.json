@@ -1,0 +1,27 @@
+{
+  "passed": 9,
+  "checks": [
+    "source node deleted only after cold checkpoint saved; no native database/auth copied",
+    "fresh node B restores original native thread id with native path resume and new cwd",
+    "original answer and command history preserved without executing history",
+    "all saved turns and item identities survive across pagination boundaries",
+    "restored dynamic host tool works without re-registration; next shell executes only in B workspace",
+    "B native index rebuild persists: subsequent restart resumes by id only",
+    "offline workspace migration keeps the original thread; shared Codex resume replaces cwd and sandbox roots, and new tool writes only to the migrated workspace",
+    "disabled global memories not injected or copied to fresh node",
+    "personal Codex config unchanged; user service and data untouched"
+  ],
+  "threadId": "01a1ca53-5b80-7f53-affe-15d5a793f4ca",
+  "rollout": "sessions/2026/11/11/rollout-2026-11-11T19-17-02-01a1ca53-5b80-7f53-affe-15d5a793f4ca.jsonl",
+  "requests": 32,
+  "historyMode": "paginated",
+  "restoredTurns": 25,
+  "dynamicCalls": 2,
+  "binary": "/home/a/Documents/ChatGPT/newbot/.data/native/releases/fe2f185-capabilities/codex",
+  "upstream": "synthetic Responses gateway; real App Server and shell",
+  "limitations": [
+    "cold checkpoint only",
+    "not a complete MCP App restore test",
+    "no credential, plugin state or memory recovery yet"
+  ]
+}

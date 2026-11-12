@@ -67,6 +67,28 @@ export class ExtensionResources {
       .prepare("SELECT * FROM extension_packages WHERE id=?")
       .get(id) as ResourcePackage | undefined;
   }
+  /** A package-relative identity survives node paths and package upgrades.
+   * Historical version roots remain resolvable while a thread still pins them.
+   */
+  logicalIdentity(path: string) {
+    const roots = [
+      ...this.packages().map((p) => ({ id: p.id, path: p.path })),
+      ...(this.db.raw
+        .prepare("SELECT resource_id id,path FROM extension_resource_versions")
+        .all() as { id: string; path: string }[]),
+    ].sort((a, b) => b.path.length - a.path.length);
+    for (const root of roots) {
+      const part = relative(root.path, path);
+      if (
+        part &&
+        !part.startsWith("../") &&
+        part !== ".." &&
+        !part.startsWith("/")
+      )
+        return `package:${root.id}:${part}`;
+    }
+    return undefined;
+  }
   plugin(id: string) {
     return this.packages().find(
       (p) =>

@@ -1,3 +1,4 @@
+import { restoreFailures } from "./failure-store.js";
 import { presentationInstructions } from "./presentation.js";
 import type { MediaStore } from "./media.js";
 import { experts as expertLibrary, expertContextText } from "./experts.js";
@@ -510,6 +511,7 @@ export function bridge(
       [...history.data].reverse(),
       history.nextCursor,
     );
+    restoreFailures(db, thread);
     decorate(thread);
     if (cursor) return thread;
     return events.seed(thread);
@@ -1645,10 +1647,10 @@ export function bridge(
             )
               throw new PublicError("当前运行策略不允许此权限");
             if (
-              data.model &&
-              !discovered.some((m: Json) => m.model === data.model)
+              requestedModel &&
+              !discovered.some((m: Json) => m.model === requestedModel)
             )
-              throw new PublicError("模型不在 Codex 可用列表中");
+              throw new PublicError("模型不在聊天可用列表中，请选择对话模型");
             const selected = discovered.find(
               (m: Json) => m.model === requestedModel,
             );
@@ -1689,6 +1691,7 @@ export function bridge(
                     preparedExtensions?.snapshot.config,
                   ),
                 cwd: runCwd,
+                runtimeWorkspaceRoots: [runCwd],
                 model: selected?.model,
                 config: {
                   ...preparedExtensions?.snapshot.config,

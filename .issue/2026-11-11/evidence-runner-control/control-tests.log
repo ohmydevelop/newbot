@@ -1,0 +1,19 @@
+✔ lost command response and lost event ack do not repeat execution; terminal result cannot be overwritten (20.808407ms)
+✔ event gaps, conflicting duplicates and foreign scope cannot advance acknowledgements (5.875669ms)
+✔ revocation and lease expiry require stopped confirmation before another node can own a workspace (5.41772ms)
+✔ restart preserves encrypted ordinary commands but expires undelivered private bodies and never replays sent uncertainty (5.424247ms)
+✔ native fingerprint and grant revision checks reject incompatible or stale work (5.849736ms)
+✔ v16 metadata survives additive control-plane migration (2.490693ms)
+✔ concurrent duplicate commands and lost acknowledgements execute only once and retain identical receipts across restart (11.543628ms)
+✔ conflicting IDs, old epochs, unrelated owners, disabled scopes and stale revisions cannot issue new work (6.0116ms)
+✔ crash in dispatch window stays unknown after reopen; accepted-only commands remain distinguishable (3.091627ms)
+✔ uncertain failures are not replayed, and private parameters/results are not plaintext in node state (3.641598ms)
+✔ missing or tampered encryption material cannot turn a known command into fresh work (2.327759ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 11
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 211.126203

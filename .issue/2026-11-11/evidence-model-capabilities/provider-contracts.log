@@ -1,0 +1,21 @@
+✔ provider edit preserves credentials and advanced fields, create fixes Responses semantics, strict revisions reject stale writes (139.262078ms)
+✔ provider schemas reject raw keys, arbitrary config, unsafe URLs and unapproved credential references (53.436164ms)
+✔ provider definitions from non-user layers and builtins are read-only (40.10343ms)
+✔ provider deletion protects active provider, archived Web history, config profiles and native history before removing only the definition (37.739811ms)
+✔ provider deletion fails closed when native references cannot be read (34.473221ms)
+✔ provider API requires authentication and safe origin, blocks active work and returns only redacted state after reload (85.755742ms)
+✔ provider switch uses native CAS, refreshes models and normalizes unsupported defaults (35.838408ms)
+✔ provider restart failures report saved state, release maintenance and do not erase edits (28.366161ms)
+✔ a failed Provider switch rolls back its own version without clobbering concurrent edits (59.620233ms)
+✔ provider diagnostics bound responses, isolate credentials, refuse redirects and distinguish catalog from compatibility (54.392822ms)
+✔ provider maintenance blocks new work while a write is pending and always releases after failed reads (43.393837ms)
+✔ lost Provider write replies reconcile the process without a duplicate mutation (38.551196ms)
+✔ chat catalog filters embeddings and rerankers before history/default/manual entries; server rejects choosing them (42.037048ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 13
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1339.218613

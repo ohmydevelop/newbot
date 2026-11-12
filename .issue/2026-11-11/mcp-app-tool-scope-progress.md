@@ -41,3 +41,9 @@
 |AT-01 普通数据工具可申请|[live-before.json](evidence-mcp-app-tool-scope/live-before.json)、[regression-before.log](evidence-mcp-app-tool-scope/regression-before.log)|[live-after.json](evidence-mcp-app-tool-scope/live-after.json)、[native-scope.json](evidence-mcp-app-tool-scope/native-scope.json)|
 |AT-02 通用 visibility 和资源关联分离|相同筛选影响所有普通数据工具|[targeted-tests.log](evidence-mcp-app-tool-scope/targeted-tests.log)、[tests.log](evidence-mcp-app-tool-scope/tests.log)|
 |AT-03 权限、审批、关闭与恢复|已有边界必须保留|原生四组与上述测试，含重复批准、拒绝、撤销、重启；[local-update.json](evidence-mcp-app-tool-scope/service/local-update.json)|
+
+## 2026-11-11 收尾补验
+
+普通 App 业务工具无 UI resource 仍可授权调用，拒绝不执行，完全访问下自动批准，model-only 仍拒绝，降级后重新审批，真实 SDK 浏览器验证通过；原生端为隔离替身。
+
+详细步骤、证据和限制见[收尾进度](remaining-work-progress.md)。本段补充当前验证状态，保留前述历史调查，不将模拟结果当作实际业务兼容证明。

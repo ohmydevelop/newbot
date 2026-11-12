@@ -27,9 +27,11 @@ import {
 function ConnectionEditor({
   connection: c,
   onSaved,
+  onDirty,
 }: {
   connection: PluginConnection;
   onSaved: () => Promise<void>;
+  onDirty: () => void;
 }) {
   const form = useRef<HTMLFormElement>(null),
     uid = useId();
@@ -64,6 +66,7 @@ function ConnectionEditor({
   async function submit(event: React.FormEvent) {
     event.preventDefault();
     if (busy || unknown) return;
+    onDirty();
     setBusy(true);
     setError("");
     const secrets: Record<string, string> = {};
@@ -114,7 +117,12 @@ function ConnectionEditor({
     }
   }
   return (
-    <form ref={form} className="plugin-connection-form" onSubmit={submit}>
+    <form
+      ref={form}
+      className="plugin-connection-form"
+      onSubmit={submit}
+      onChange={onDirty}
+    >
       <fieldset disabled={busy || !!unknown}>
         {c.fields.map((f) => (
           <div className="plugin-config-field" key={f.id}>
@@ -158,13 +166,14 @@ function ConnectionEditor({
                     type="button"
                     className="secondary"
                     aria-pressed={clear.includes(f.id)}
-                    onClick={() =>
+                    onClick={() => {
+                      onDirty();
                       setClear((v) =>
                         v.includes(f.id)
                           ? v.filter((id) => id !== f.id)
                           : [...v, f.id],
-                      )
-                    }
+                      );
+                    }}
                   >
                     {clear.includes(f.id) ? "撤销清除" : "清除"}
                   </button>
@@ -212,6 +221,7 @@ function ConnectionEditor({
           values={values}
           onUse={(selection) => {
             if (!certificateSelectionValid(c, values, selection)) return;
+            onDirty();
             acquiredCertificate.current = selection;
             setValues((v) =>
               certificateSelectionValid(c, v, selection)
@@ -270,6 +280,18 @@ export default function PluginComponents({
     [notice, setNotice] = useState<Record<string, string>>({}),
     [statuses, setStatuses] = useState<Record<string, Json>>({});
   const [oauth, setOauth] = useState<Record<string, string>>({});
+  const diagnosticGeneration = useRef<Record<string, number>>({});
+  function invalidateConnection(id: string) {
+    diagnosticGeneration.current[id] =
+      (diagnosticGeneration.current[id] || 0) + 1;
+    setNotice((v) => ({ ...v, [id]: "" }));
+    setStatuses((v) => {
+      const next = { ...v };
+      delete next[id];
+      return next;
+    });
+    setOauth((v) => ({ ...v, [id]: "" }));
+  }
   const refresh = async () => {
     const next = await request<Json>("plugin/read", { id: detail.id });
     onUpdate(next);
@@ -288,10 +310,19 @@ export default function PluginComponents({
   }
   const check = (c: PluginConnection) =>
     action(c.id, async () => {
-      const result = await request<Json>("plugin/connection/test", {
-        pluginId: detail.id,
-        connectionId: c.id,
-      });
+      invalidateConnection(c.id);
+      const generation = diagnosticGeneration.current[c.id];
+      let result: Json;
+      try {
+        result = await request<Json>("plugin/connection/test", {
+          pluginId: detail.id,
+          connectionId: c.id,
+        });
+      } catch (error) {
+        if (diagnosticGeneration.current[c.id] !== generation) return;
+        throw error;
+      }
+      if (diagnosticGeneration.current[c.id] !== generation) return;
       setStatuses((v) => ({ ...v, [c.id]: result }));
       setNotice((v) => ({
         ...v,
@@ -405,6 +436,7 @@ export default function PluginComponents({
                   <ConnectionEditor
                     key={`${c.id}:${c.revision}:${c.schemaDigest}`}
                     connection={c}
+                    onDirty={() => invalidateConnection(c.id)}
                     onSaved={async () => {
                       const next = await refresh();
                       const connection = next.connections?.find(
@@ -462,9 +494,25 @@ export default function PluginComponents({
                   disabled={!!busy}
                   onClick={() =>
                     void action(c.id, async () => {
-                      const result = await request<Json>("mcp/oauth", {
-                        name: c.id,
-                      });
+                      const generation =
+                        diagnosticGeneration.current[c.id] || 0;
+                      let result: Json;
+                      try {
+                        result = await request<Json>("mcp/oauth", {
+                          name: c.id,
+                        });
+                      } catch (error) {
+                        if (
+                          (diagnosticGeneration.current[c.id] || 0) !==
+                          generation
+                        )
+                          return;
+                        throw error;
+                      }
+                      if (
+                        (diagnosticGeneration.current[c.id] || 0) !== generation
+                      )
+                        return;
                       const url = new URL(result.authorizationUrl);
                       if (
                         url.protocol !== "https:" &&

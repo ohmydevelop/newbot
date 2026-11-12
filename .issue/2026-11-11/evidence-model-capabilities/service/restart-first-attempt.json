@@ -1,0 +1,5 @@
+{
+  "stage": "verify",
+  "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\nfalse !== true\n",
+  "backup": "/home/a/Documents/ChatGPT/newbot/.data/restart-backups/model-capabilities-1794391267098"
+}

@@ -1,0 +1,13 @@
+✔ concurrent duplicate commands and lost acknowledgements execute only once and retain identical receipts across restart (10.935967ms)
+✔ conflicting IDs, old epochs, unrelated owners, disabled scopes and stale revisions cannot issue new work (5.006793ms)
+✔ crash in dispatch window stays unknown after reopen; accepted-only commands remain distinguishable (2.239997ms)
+✔ uncertain failures are not replayed, and private parameters/results are not plaintext in node state (3.392235ms)
+✔ missing or tampered encryption material cannot turn a known command into fresh work (2.072533ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 187.923032

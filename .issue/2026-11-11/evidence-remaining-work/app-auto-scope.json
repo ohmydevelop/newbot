@@ -1,0 +1,15 @@
+{
+  "records": 1,
+  "leases": [
+    {
+      "token": "DrsX-Ew7WMSVzIAnsjS91IYpgMp75BRG",
+      "itemId": "first",
+      "expires": 1794387472704
+    }
+  ],
+  "resourceCalls": 3,
+  "toolCalls": 2,
+  "threadId": "4fd09353-821c-4900-a4d2-31054904bc15",
+  "turnId": "ee6e2587-57aa-4163-867c-c1d99ed2481b",
+  "modelCalls": 1
+}

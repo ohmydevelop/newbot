@@ -1,0 +1,6 @@
+{"at":"2026-11-11T09:59:22.933Z","event":"runtime.status","status":"ready"}
+fixture native error {"code":-32600,"message":"the active model has only fallback metadata"}
+fixture native error {"code":-32600,"message":"verified model capabilities do not match the selected route"}
+fixture native error {"code":-32600,"message":"history exceeds the destination context budget"}
+{"at":"2026-11-11T09:59:25.884Z","event":"runtime.status","status":"ready"}
+{"passed":8}

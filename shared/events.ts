@@ -81,15 +81,19 @@ export function reduceAgentEvent(
           ? "failed"
           : event.result?.status || "completed";
       if (event.type === EventType.RUN_ERROR)
-        turn.error = { message: event.message };
-      else if (turn.status === "completed") turn.error = null;
+        turn.error = event.rawEvent?.failure || { message: event.message };
+      else if (
+        turn.status === "completed" ||
+        (turn.status === "interrupted" && event.outcome?.type === "cancelled")
+      )
+        turn.error = null;
     }
   } else if (
     event.type === EventType.CUSTOM &&
     event.name === "newbot.notice" &&
     typeof event.value?.message === "string"
   ) {
-    if (turn) turn.error = { message: event.value.message };
+    if (turn) turn.error = { ...event.value };
   } else {
     if (!turn && runId) {
       turn = { id: runId, status: "inProgress", items: [] };

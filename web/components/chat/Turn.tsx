@@ -61,8 +61,18 @@ function TurnFeedback({ turn, threadId }: { turn: Turn; threadId: string }) {
           )}
           {feedback.text}
         </p>
-        {feedback.canRead && (
-          <small>可以继续发送消息；读取状态不会重新执行任务。</small>
+        {feedback.action && <small>{feedback.action}</small>}
+        {feedback.tone === "error" && (
+          <details className="turn-diagnostic">
+            <summary>诊断信息</summary>
+            {turn.error?.httpStatus && (
+              <small>网关响应：HTTP {turn.error.httpStatus}</small>
+            )}
+            {turn.error?.code && <small>错误类型：{turn.error.code}</small>}
+            <small>任务编号：{turn.id}</small>
+            <small>会话编号：{threadId}</small>
+            <small>读取状态只同步结果，不会重新执行任务。</small>
+          </details>
         )}
         {readStatus && <small>{readStatus}</small>}
       </div>

@@ -1,36 +1,31 @@
-import { randomUUID } from "node:crypto";
-import { mkdirSync, realpathSync, lstatSync } from "node:fs";
+import { realpathSync } from "node:fs";
+import {
+  LocalWorkspaceRoots,
+  checkedWorkspaceRoot,
+} from "./runner/workspace-roots.js";
 import { join, resolve } from "node:path";
 import type { Store } from "./db.js";
 import { PublicError } from "./public-error.js";
 import { ExtensionResources } from "./extension-resources.js";
-export function workspaces(directory: string, legacyRoot: string, db: Store) {
-  const parent = resolve(directory, "workspaces");
-  mkdirSync(parent, { recursive: true, mode: 0o700 });
-  const legacy = realpathSync(legacyRoot);
-  function safe(path: string) {
-    if (
-      realpathSync(path) !== path ||
-      !lstatSync(path).isDirectory() ||
-      lstatSync(path).isSymbolicLink()
-    )
-      throw new PublicError("会话工作目录已变化，请检查服务端存储");
-    return path;
-  }
-  safe(parent);
+export function workspaces(
+  directory: string,
+  legacyRoot: string,
+  db: Store,
+  workspaceParent = resolve(directory, "workspaces"),
+) {
+  const physical = new LocalWorkspaceRoots(
+    db.get("runner:workspace-root") || workspaceParent,
+  );
+  const parent = physical.parent;
+  const legacy = realpathSync(db.get("runner:legacy-workspace") || legacyRoot);
+  const safe = checkedWorkspaceRoot;
   // Existing conversations keep their original shared directory; files are never silently moved.
   db.raw
     .prepare(
       `INSERT INTO thread_workspaces(thread_id,workspace_id,root,legacy,revision,snapshot) SELECT id,NULL,?,1,'','{}' FROM threads WHERE id NOT IN (SELECT thread_id FROM thread_workspaces)`,
     )
     .run(legacy);
-  function allocate() {
-    safe(parent);
-    const id = randomUUID(),
-      root = join(parent, id);
-    mkdirSync(root, { mode: 0o700 });
-    return { id, root };
-  }
+  const allocate = () => physical.allocate();
   function bind(threadId: string, workspace: { id: string; root: string }) {
     db.raw
       .prepare("INSERT INTO thread_workspaces VALUES(?,?,?,0,?,?)")

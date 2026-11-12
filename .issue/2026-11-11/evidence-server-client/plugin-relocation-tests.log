@@ -1,0 +1,21 @@
+✔ plugin settings preserve ownership, encrypt credentials and recover without config files (36.533656ms)
+✔ same-name connectors in different plugins stay isolated, including disable and uninstall (23.11939ms)
+✔ plugin saves reject missing or invalidated credentials atomically instead of reporting success (43.272668ms)
+✔ selected plugin readiness uses the captured configuration and leaves unrelated or intentionally disabled connectors alone (22.846935ms)
+✔ endpoint/package changes cannot inherit secrets and concurrent writes preserve the first save (24.293012ms)
+✔ upgrades preserve compatible ordinary fields while invalidating code-bound credentials (19.492014ms)
+✔ MCPB numeric/optional fields and HTTP runtime headers bind only declared destinations (19.488406ms)
+✔ unsupported descriptors, sensitive command templates and protected env fail closed (13.522016ms)
+✔ configuration-free connectors need no credential, and declared manifest paths stay within the package (9.737845ms)
+✔ MCPB discovery uses declared names and manifest-relative roots, rejects obsolete pointers and malformed bundles (9.603671ms)
+✔ certificate observation validates ownership, field privacy and revision before and after network work (19.809163ms)
+✔ verified plugin relocation keeps credentials bound to the same package and receiver across restart (18.374674ms)
+✔ a stale physical credential binding is not silently rebound after its original receiver changes (10.54207ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 13
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 476.908599

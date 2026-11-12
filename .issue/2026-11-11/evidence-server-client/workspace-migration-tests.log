@@ -1,0 +1,14 @@
+✔ offline workspace migration preserves original files, logical identities, projections and an immediate rollback (33.73981ms)
+✔ running instance, existing destination and symlink inputs cannot be migrated (7.256593ms)
+✔ rollback refuses changed workspaces and any later Server start without deleting either copy (14.54064ms)
+✔ imported skill identity is package-relative while existing IDs and old aliases are retained (4.224018ms)
+✔ new conversations isolate cwd, sandbox roots, live browsing and captured files; old threads retain their directory through restart (207.319816ms)
+✔ SQLite extension edits defer to the next turn, project skills are copied, disabled skills cannot be cited, and another active thread is untouched (101.670155ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 675.778362

@@ -49,6 +49,7 @@ export default function RuntimeSelector({
     [reading, setReading] = useState(false),
     [mutating, setMutating] = useState(false),
     [error, setError] = useState(""),
+    [selectionError, setSelectionError] = useState(""),
     [presetError, setPresetError] = useState(""),
     [presetReading, setPresetReading] = useState(false),
     [preview, setPreview] = useState<number | null>(null);
@@ -110,6 +111,7 @@ export default function RuntimeSelector({
   }, [disabled]);
   useEffect(() => {
     setPreview(null);
+    setSelectionError("");
   }, [s.model, s.provider, s.effort, s.selectedId]);
   useEffect(
     () => () => {
@@ -124,7 +126,7 @@ export default function RuntimeSelector({
     posting.current = true;
     onBusy(true);
     setMutating(true);
-    setError("");
+    setSelectionError("");
     setPresetError("");
     try {
       if (threadId) {
@@ -169,7 +171,7 @@ export default function RuntimeSelector({
         if (patch.approval) {
           setPresetError(message);
           s.notify(e);
-        } else setError(message);
+        } else setSelectionError(message);
       }
     } finally {
       posting.current = false;
@@ -183,6 +185,11 @@ export default function RuntimeSelector({
       .find((g) => g.id === s.provider)
       ?.models.find((m: Json) => m.model === s.model) ||
     s.settings?.models.find((m: Json) => m.model === s.model);
+  const selectedGateway = entries.find((g) => g.id === s.provider);
+  const invalidSelection =
+    !!s.model &&
+    !!selectedGateway &&
+    !selectedGateway.models.some((m: Json) => m.model === s.model);
   const supported: Json[] = reasoningOptions(selected);
   const known = supported
     .filter((e) => orderedEfforts.includes(e.reasoningEffort))
@@ -254,7 +261,11 @@ export default function RuntimeSelector({
           aria-label="选择模型"
           title="选择模型"
         >
-          <span>{selected?.displayName || s.model || "选择模型"}</span>
+          <span>
+            {invalidSelection
+              ? "选择模型"
+              : selected?.displayName || s.model || "选择模型"}
+          </span>
           <ChevronDown size={14} aria-hidden="true" />
         </Popover.Trigger>
         <PickerContent
@@ -306,12 +317,27 @@ export default function RuntimeSelector({
             <span role="status" className="sr-only">
               {reading ? "正在读取模型目录" : ""}
             </span>
+            {selectionError && (
+              <p role="alert" className="inline-error">
+                {selectionError}
+              </p>
+            )}
             {error && (
               <p role="alert" className="inline-error">
                 {error}
                 <button type="button" onClick={() => void read(true)}>
-                  重试
+                  刷新目录
                 </button>
+              </p>
+            )}
+            {invalidSelection && !selectionError && (
+              <p className="inline-error" role="alert">
+                当前目录中未找到已选模型，请刷新目录或重新选择。
+              </p>
+            )}
+            {mutating && (
+              <p role="status" className="muted">
+                正在检查并更新模型设置…首次使用可能需要验证网关能力。
               </p>
             )}
           </div>
@@ -427,6 +453,11 @@ export default function RuntimeSelector({
           side="top"
           aria-label="推理强度"
         >
+          {selectionError && (
+            <p className="inline-error" role="alert">
+              {selectionError}
+            </p>
+          )}
           {error && (
             <p className="inline-error" role="alert">
               {error}

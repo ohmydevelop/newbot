@@ -43,3 +43,9 @@
 - [live-readback.json](evidence-plugin-session-tools/live-readback.json)：公网/本地/磁盘主入口 `/assets/index-DUhiMicX.js` 和插件块 `assets/ToolsSettings-B1XSogFH.js` 一致；CloudWalker 0.5.2 保留，2 个技能启用，连接器已配置且密钥已保存；GitHub 0.1.12 保留，独立目录仍只有 newbot_test，没有混入插件连接器。
 - `git diff --check` 通过，没有提交或推送。未运行额外真实业务查询、未读取/代填用户密钥、未改变真实证书信任。验证覆盖真实固定 Codex 与模拟上游，不作为真实 Provider 或业务服务兼容性证明。
 - 手机/桌面浏览器交互仍未验收：本轮再次查询，工具明确返回浏览器控制在 Work 设置中关闭。静态检查无命中仅证明未检出静态问题。所有其他原问题与选定的关联机制已有上述证据。
+
+## 2026-11-11 收尾补验
+
+本轮补验插件内连接器配置、独立目录过滤及真实原生连接诊断；诊断不增加模型任务。
+
+详细步骤、证据和限制见[收尾进度](remaining-work-progress.md)。本段补充当前验证状态，保留前述历史调查，不将模拟结果当作实际业务兼容证明。

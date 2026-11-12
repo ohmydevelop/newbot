@@ -6014,3 +6014,6 @@ button[data-variant="destructive"]:hover:not(:disabled) {
 .runtime-selectors > .reasoning-trigger {
   flex-shrink: 0;
 }
+
+.turn-diagnostic { margin-top: 8px; font-size: 13px; overflow-wrap: anywhere; }
+.turn-diagnostic summary { cursor: pointer; color: var(--muted); }

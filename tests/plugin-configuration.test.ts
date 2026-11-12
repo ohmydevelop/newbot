@@ -1,6 +1,13 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { mkdtemp, mkdir, writeFile, rm, readFile } from "node:fs/promises";
+import {
+  mkdtemp,
+  mkdir,
+  writeFile,
+  rm,
+  readFile,
+  rename,
+} from "node:fs/promises";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { randomUUID } from "node:crypto";
@@ -14,7 +21,11 @@ import {
   resolvePluginConfiguration,
 } from "../server/plugin-descriptor.js";
 import { importTree } from "../server/import-files.js";
-import { privateFields } from "../server/private-fields.js";
+import {
+  privateFields,
+  legacyPrivateFieldBinding,
+  privateFieldBinding,
+} from "../server/private-fields.js";
 import { mcpEditable } from "../server/mcp-policy.js";
 import type { Json } from "../shared/types.js";
 
@@ -149,6 +160,9 @@ async function fixture() {
     save,
     config,
     inject,
+    get vault() {
+      return vault;
+    },
     get db() {
       return db;
     },
@@ -735,6 +749,106 @@ test("certificate observation validates ownership, field privacy and revision be
         },
       ),
       /移除/,
+    );
+  } finally {
+    await f.close();
+  }
+});
+
+test("verified plugin relocation keeps credentials bound to the same package and receiver across restart", async () => {
+  const f = await fixture();
+  try {
+    const id = await f.install("portable"),
+      c = await f.view(id);
+    await f.save(id);
+    const before = (await f.config()).config;
+    const row = f.db.raw
+      .prepare("SELECT * FROM private_field_sets WHERE target=?")
+      .get(c.id) as any;
+    // Simulate the pre-migration encrypted row, without writing the synthetic plaintext to disk.
+    const oldBinding = legacyPrivateFieldBinding("mcp", c.id, before);
+    assert.notEqual(oldBinding, privateFieldBinding("mcp", c.id, before));
+    const plain = Buffer.from(JSON.stringify({ "env:SERVICE_KEY": marker }));
+    try {
+      const packet = f.vault.sealPrivate(
+        plain,
+        `fields:mcp:${c.id}:${oldBinding}`,
+      );
+      f.db.raw
+        .prepare(
+          "UPDATE private_field_sets SET binding=?,packet=? WHERE target=?",
+        )
+        .run(oldBinding, packet, c.id);
+    } finally {
+      plain.fill(0);
+    }
+    assert.equal((await f.view(id)).configured, true);
+    const migrated = f.db.raw
+      .prepare("SELECT * FROM private_field_sets WHERE target=?")
+      .get(c.id) as any;
+    assert.equal(migrated.binding, row.binding);
+    assert.notEqual(migrated.packet, row.packet);
+    const moved = join(f.root, "another-node-package");
+    await rename(join(f.root, "portable"), moved);
+    f.db.raw
+      .prepare("UPDATE extension_packages SET path=? WHERE name=?")
+      .run(moved, "portable");
+    f.restart();
+    assert.equal((await f.view(id)).configured, true);
+    const actual = (await f.inject((await f.config()).config)).config
+      .mcp_servers[c.id];
+    assert.equal(actual.env.SERVICE_KEY, marker);
+    assert.equal(actual.args[0], join(moved, "main.mjs"));
+    assert.ok(!JSON.stringify(await f.view(id)).includes(moved));
+    await assert.rejects(
+      f.save(id, { url: "https://another.example" }, {}),
+      /重新填写/,
+    );
+    assert.equal(
+      (await f.inject((await f.config()).config)).config.mcp_servers[c.id].env
+        .SERVICE_KEY,
+      marker,
+    );
+  } finally {
+    await f.close();
+  }
+});
+
+test("a stale physical credential binding is not silently rebound after its original receiver changes", async () => {
+  const f = await fixture();
+  try {
+    const id = await f.install("old-root");
+    await f.save(id);
+    const c = await f.view(id),
+      config = (await f.config()).config;
+    const bound = legacyPrivateFieldBinding("mcp", c.id, config),
+      plain = Buffer.from(JSON.stringify({ "env:SERVICE_KEY": marker }));
+    try {
+      f.db.raw
+        .prepare(
+          "UPDATE private_field_sets SET binding=?,packet=? WHERE target=?",
+        )
+        .run(
+          bound,
+          f.vault.sealPrivate(plain, `fields:mcp:${c.id}:${bound}`),
+          c.id,
+        );
+    } finally {
+      plain.fill(0);
+    }
+    const moved = join(f.root, "unexpected-move");
+    await rename(join(f.root, "old-root"), moved);
+    f.db.raw
+      .prepare("UPDATE extension_packages SET path=? WHERE name=?")
+      .run(moved, "old-root");
+    assert.equal((await f.view(id)).configured, false);
+    assert.equal(
+      (
+        f.db.raw
+          .prepare("SELECT binding FROM private_field_sets WHERE target=?")
+          .get(c.id) as any
+      ).binding,
+      bound,
     );
   } finally {
     await f.close();

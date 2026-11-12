@@ -1,0 +1,16 @@
+{
+  "local": {
+    "entry": "/assets/index-h2rlWgkQ.js",
+    "sha256": "02a640818ec1a5da0b8fc0eb5d353e2d3d904e254552106f2404433d59ac42a7",
+    "health": {
+      "ok": true
+    }
+  },
+  "public": {
+    "entry": "/assets/index-h2rlWgkQ.js",
+    "sha256": "02a640818ec1a5da0b8fc0eb5d353e2d3d904e254552106f2404433d59ac42a7",
+    "health": {
+      "ok": true
+    }
+  }
+}

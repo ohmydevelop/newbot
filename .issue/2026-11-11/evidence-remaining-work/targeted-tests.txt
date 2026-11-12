@@ -1,0 +1,26 @@
+✔ certificate targets allow explicit private services but reject metadata, loopback, unsafe schemes and credentials (26.724637ms)
+✔ TLS observation pins checked DNS, sends no application data, reports trust and invalid certificates, and times out (102.836717ms)
+✔ certificate drafts never infer secret destinations or keep a generated pin for a changed address (0.761475ms)
+✔ certificate inspection enforces concurrency and per-minute limits including failures (0.527467ms)
+✔ real TLS rejects oversized certificates and never assumes a SAN-less certificate matches an IP (17.377322ms)
+✔ connector creation depends on absence, edits on its own revision, and lost save responses have one receipt (162.053012ms)
+✔ saved views and mutation receipts preserve legacy authentication; omitted fields cannot erase it (98.420161ms)
+✔ plugin settings preserve ownership, encrypt credentials and recover without config files (30.08177ms)
+✔ same-name connectors in different plugins stay isolated, including disable and uninstall (22.64447ms)
+✔ plugin saves reject missing or invalidated credentials atomically instead of reporting success (48.115104ms)
+✔ selected plugin readiness uses the captured configuration and leaves unrelated or intentionally disabled connectors alone (27.060169ms)
+✔ endpoint/package changes cannot inherit secrets and concurrent writes preserve the first save (27.158495ms)
+✔ upgrades preserve compatible ordinary fields while invalidating code-bound credentials (20.368299ms)
+✔ MCPB numeric/optional fields and HTTP runtime headers bind only declared destinations (18.268678ms)
+✔ unsupported descriptors, sensitive command templates and protected env fail closed (16.234529ms)
+✔ configuration-free connectors need no credential, and declared manifest paths stay within the package (11.654841ms)
+✔ MCPB discovery uses declared names and manifest-relative roots, rejects obsolete pointers and malformed bundles (8.510506ms)
+✔ certificate observation validates ownership, field privacy and revision before and after network work (17.455757ms)
+ℹ tests 18
+ℹ suites 0
+ℹ pass 18
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 637.669997

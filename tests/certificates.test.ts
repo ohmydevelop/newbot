@@ -357,3 +357,76 @@ test("certificate inspection enforces concurrency and per-minute limits includin
     await assert.rejects(limited("https://one.example"), /synthetic/);
   await assert.rejects(limited("https://one.example"), /频繁/);
 });
+
+test("real TLS rejects oversized certificates and never assumes a SAN-less certificate matches an IP", async () => {
+  const root = mkdtempSync(join(tmpdir(), "newbot-cert-boundaries-"));
+  const keyPath = join(root, "key.pem"),
+    certPath = join(root, "cert.pem");
+  const sockets = new Set<Socket>();
+  let bytes = 0;
+  const generate = (extra: string[] = []) =>
+    execFileSync(
+      "openssl",
+      [
+        "req",
+        "-x509",
+        "-newkey",
+        "ec",
+        "-pkeyopt",
+        "ec_paramgen_curve:P-256",
+        "-nodes",
+        "-days",
+        "1",
+        "-subj",
+        "/CN=192.168.2.2",
+        ...extra,
+        "-keyout",
+        keyPath,
+        "-out",
+        certPath,
+      ],
+      { stdio: "ignore" },
+    );
+  generate();
+  const server = createServer(
+    { key: readFileSync(keyPath), cert: readFileSync(certPath) },
+    (socket) => {
+      socket.on("data", (b) => (bytes += b.length));
+    },
+  );
+  server.on("connection", (socket) => {
+    sockets.add(socket);
+    socket.once("close", () => sockets.delete(socket));
+  });
+  server.on("tlsClientError", () => {});
+  try {
+    await new Promise<void>((r) => server.listen(0, "127.0.0.1", r));
+    const url = `https://192.168.2.2:${(server.address() as any).port}`;
+    const network = {
+      lookup: (async () => [{ address: "192.168.2.2", family: 4 }]) as any,
+      connect: ((options: ConnectionOptions) =>
+        connect({ ...options, host: "127.0.0.1" })) as typeof connect,
+    };
+    assert.equal(
+      new X509Certificate(readFileSync(certPath)).subjectAltName,
+      undefined,
+    );
+    const observed = await inspectCertificate(url, network);
+    assert.equal(observed.hostnameMatches, false);
+    assert.equal(observed.systemTrusted, false);
+    // A valid fingerprint is an explicit identity choice, never automatic trust.
+    assert.equal(observed.canUse, true);
+    generate(["-addext", "1.2.3.4=ASN1:UTF8String:" + "x".repeat(67000)]);
+    assert.ok(new X509Certificate(readFileSync(certPath)).raw.length > 65536);
+    server.setSecureContext({
+      key: readFileSync(keyPath),
+      cert: readFileSync(certPath),
+    });
+    await assert.rejects(inspectCertificate(url, network), /超过读取限制/);
+    assert.equal(bytes, 0);
+  } finally {
+    for (const socket of sockets) socket.destroy();
+    await new Promise<void>((r) => server.close(() => r()));
+    rmSync(root, { recursive: true, force: true });
+  }
+});

@@ -1,0 +1,35 @@
+✔ non-chat purposes excluded; explicit chat metadata takes priority over ambiguous identifiers (1.013414ms)
+✔ synthetic probe verifies tool continuation, preserves selected effort and records observed bounded capacity (15.894799ms)
+✔ no capability success for invalid tool, ignored result, missing usage or non-streaming response (1.483203ms)
+✔ capability records cannot be reused across provider, endpoint, credentials or reasoning effort (0.239907ms)
+✔ provider edit preserves credentials and advanced fields, create fixes Responses semantics, strict revisions reject stale writes (131.043365ms)
+✔ provider schemas reject raw keys, arbitrary config, unsafe URLs and unapproved credential references (46.609061ms)
+✔ provider definitions from non-user layers and builtins are read-only (38.948443ms)
+✔ provider deletion protects active provider, archived Web history, config profiles and native history before removing only the definition (39.989725ms)
+✔ provider deletion fails closed when native references cannot be read (49.831243ms)
+✔ provider API requires authentication and safe origin, blocks active work and returns only redacted state after reload (85.437989ms)
+✔ provider switch uses native CAS, refreshes models and normalizes unsupported defaults (38.250133ms)
+✔ provider restart failures report saved state, release maintenance and do not erase edits (37.31575ms)
+✔ a failed Provider switch rolls back its own version without clobbering concurrent edits (73.273983ms)
+✔ provider diagnostics bound responses, isolate credentials, refuse redirects and distinguish catalog from compatibility (61.784335ms)
+✔ provider maintenance blocks new work while a write is pending and always releases after failed reads (42.248989ms)
+✔ lost Provider write replies reconcile the process without a duplicate mutation (36.633944ms)
+✔ chat catalog filters embeddings and rerankers before history/default/manual entries; server rejects choosing them (38.045379ms)
+✔ cross-provider session changes preserve native identity and another running task; revisions reject stale updates (193.419134ms)
+✔ active choices are saved without altering pending approval; failed application preserves intent and confirmed binding (96.94258ms)
+✔ session settings survive restart and model catalog discovery is not reported as verified compatibility (81.315907ms)
+✔ independent Codex does not inherit the launching agent's tool pipe, identity or Bridge secrets (0.282084ms)
+✔ a managed policy change blocks a previously saved full-access session before dispatch (77.535925ms)
+✔ legacy sessions recover the native saved model instead of adopting a changed global default (73.931539ms)
+✔ reading legacy history uses saved native metadata without restoring the execution environment (71.95149ms)
+✔ latest candidate survives restart and changes only the next native turn (105.650574ms)
+✔ competing saves use CAS after asynchronous validation (65.654021ms)
+✔ an edit arriving during native application is retained for the following turn (75.073208ms)
+ℹ tests 27
+ℹ suites 0
+ℹ pass 27
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1376.994845

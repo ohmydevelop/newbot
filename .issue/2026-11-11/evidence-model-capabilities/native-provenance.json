@@ -1,0 +1,9 @@
+{
+  "upstream": "fe2f18520864ddbee86cdd4b103a9fefffe9c6a2",
+  "patches": {
+    "patches/main-0001-newbot-runtime.patch": "1856acdc9acbd8f0952e6353b87d9c435cecf1c999f460c89f6f7cbd1fa43c22",
+    "patches/main-0002-verified-model-routes.patch": "9683227ab1482b851792b13e75c256b77c61d79fe3806d286d3f8792602f10ca"
+  },
+  "binarySha256": "69bdfbdfb76984ded3d41d75f93c9a1591179f840b1f0b03a0be2debcfe58cbf",
+  "patchReproductionMatchesSource": true
+}
