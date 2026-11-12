@@ -4,7 +4,7 @@
 
 ## 原生调用路径
 
-新建线程时注册一个 `newbot_ui` 动态工具，参数是标准 A2UI v0.9 `messages` 和是否等待用户操作的 `waitForAction`。组件 Schema 从同一份受限 Catalog 生成，不维护另一份工具组件定义。普通回答继续使用 Markdown。
+新建线程时注册一个 `newbot_ui` 动态工具，参数是标准 A2UI v0.9 `messages` 和是否等待用户操作的 `waitForAction`。组件 Schema 从同一份受限 Catalog 生成，不维护另一份工具组件定义。短对话仍用 Markdown；结构化答案按下一节的优先级选择表面。
 
 Codex 0.166.0 的动态工具字段需要实验性协议。生成脚本已改为 `generate-ts --experimental`，仍使用固定版本二进制，相关字段全部自动生成。初始化原本已经声明 `experimentalApi: true`。注册、`item/tool/call` 请求及工具响应流见 [OpenAI 官方 App Server 文档](https://learn.chatgpt.com/docs/app-server)。没有改写 Agent Loop 或添加第二个 MCP 客户端。
 
@@ -24,6 +24,14 @@ sequenceDiagram
 ```
 
 `waitForAction: false` 用于展示或增量更新，工具立即返回；`true` 保留原生请求，等待实际用户操作后返回。UI 生命周期独立于浏览器连接，刷新或关闭浏览器不会自动取消原生任务。当前等待上限为 10 分钟，到期返回输入不可用并禁用旧表单。
+
+## 呈现优先级与失败修复
+
+每轮 `developerInstructions` 给出固定顺序：带 `ui://` 的 MCP 工具 → `newbot_ui` 富表面 → Markdown。`newbot_ui` 的触发条件可直接判定：两组及以上可比数值序列用 Chart，三条及以上标签/数值用 Column + Metric，用户已有图片用 Image，两个及以上待填字段用交互表单；同一份数据不得同时用表面和 Markdown 表格展示，短对话保持文本，也不得虚构数据或来源。
+
+调用失败时工具结果返回 `{error, hint}`，`hint` 按错误码给出下一步动作（补齐一次完整树、降到限额内、移除禁用键等）并要求修正后重试一次，不再是所有错误共用一条泛化提示。失败不改变权限，也不会被包装成成功。
+
+存量线程（`thread-ui` 非 v2）没有注册该工具：`ThreadResumeParams` 不含 `dynamicTools`，无法在 resume 时补发，指令分支因此明确要求这些线程不要使用 v2 组件。覆盖它们需要内核补丁或新建对话。
 
 ## 会话、消息与事件关联
 

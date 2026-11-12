@@ -78,6 +78,7 @@ export function bridge(
     cwd: threadCwd(id),
     developerInstructions: presentationInstructions(
       db.get(`thread-ui:${id}`) === "v2",
+      appToolNames(id),
     ),
     revision: workspaces?.saved(id).revision || "",
     config: workspaces?.saved(id).snapshot.config || {},
@@ -103,6 +104,15 @@ export function bridge(
     onCatalog: toolNames.remember,
     decorateItem: toolNames.item,
   });
+  // The cached catalog is the only source for "this tool renders an app". Keep
+  // it warm in the background so later turns can name those tools; never block
+  // a send on discovery.
+  const appToolNames = (threadId: string) =>
+    apps.appTools(threadId).map((t) => `${t.server}/${t.tool}`);
+  const appCatalog = (threadId: string) => {
+    if (apps.catalogFresh(threadId, 10 * 60000)) return;
+    void apps.refresh(threadId).catch(() => {});
+  };
   if (configStore.extensions) codex.pluginConfiguration = connections.overlay;
   const plugins = pluginLibrary(
     codex,
@@ -119,8 +129,10 @@ export function bridge(
   codex.executionContext = (threadId) => ({
     ...extensionContext(threadId),
     developerInstructions:
-      presentationInstructions(db.get(`thread-ui:${threadId}`) === "v2") +
-      pluginConnectorInstructions(extensionContext(threadId).config),
+      presentationInstructions(
+        db.get(`thread-ui:${threadId}`) === "v2",
+        appToolNames(threadId),
+      ) + pluginConnectorInstructions(extensionContext(threadId).config),
   });
   const runtimeSettings = sessionRuntime(
     codex,
@@ -1712,6 +1724,7 @@ export function bridge(
             }
             db.addThread(r.thread.id, r.thread.modelProvider);
             db.set(`thread-ui:${r.thread.id}`, "v2");
+            appCatalog(r.thread.id);
             if (workspace) workspaces!.bind(r.thread.id, workspace);
             experts.attach(r.thread.id, p.expertId);
             if (preparedExtensions && workspaces) {
@@ -1794,6 +1807,7 @@ export function bridge(
               throw new PublicError("当前任务正在执行");
             if (new Set([...codex.active, ...starting]).size >= maxTurns)
               throw new PublicError("并行任务已满，请等待任务结束");
+            appCatalog(data.threadId);
             starting.add(data.threadId);
             try {
               if (

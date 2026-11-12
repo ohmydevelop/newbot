@@ -15,6 +15,7 @@ import {
 import {
   a2uiCatalogId,
   A2uiInputError,
+  a2uiRepairHint,
   assertA2uiBudget,
   encodeA2ui,
 } from "../shared/a2ui-policy.js";
@@ -398,28 +399,22 @@ export function a2uiManager(
         record.runtime.dispose();
         restore(record.view.id);
       }
-      if (codex.toolRequests.has(request.id))
+      if (codex.toolRequests.has(request.id)) {
+        const code =
+          error instanceof A2uiInputError
+            ? error.code
+            : error instanceof z.ZodError
+              ? "invalid_ui_arguments"
+              : error instanceof Error &&
+                  "statusCode" in error &&
+                  error.statusCode === 507
+                ? "ui_storage_unavailable"
+                : "ui_request_rejected";
         codex.respondTool(
           request.id,
-          result(false, {
-            error:
-              error instanceof A2uiInputError
-                ? error.code
-                : error instanceof z.ZodError
-                  ? "invalid_ui_arguments"
-                  : error instanceof Error &&
-                      "statusCode" in error &&
-                      error.statusCode === 507
-                    ? "ui_storage_unavailable"
-                    : "ui_request_rejected",
-            hint:
-              error instanceof Error &&
-              "statusCode" in error &&
-              error.statusCode === 507
-                ? "Saved UI storage is full or unavailable. Ask the user to check storage before retrying."
-                : "Use the registered catalog version, one complete tree, submit/cancel actions, and the documented limits.",
-          }),
+          result(false, { error: code, hint: a2uiRepairHint(code) }),
         );
+      }
     } finally {
       if (lock) applying.delete(lock);
     }

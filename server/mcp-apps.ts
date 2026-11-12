@@ -47,6 +47,7 @@ export function appRegistry(
   const records = new Map<string, AppRecord>(),
     descriptors = new Map<string, Descriptor>(),
     catalogs = new Map<string, Catalog>(),
+    catalogAt = new Map<string, number>(),
     pending = new Map<string, { cancelled: boolean; owner?: string }>(),
     cancelled = new Map<string, number>(),
     listeners = new Set<(token: string) => void>();
@@ -174,6 +175,21 @@ export function appRegistry(
       prune();
       return records.get(token);
     },
+    // Read-only projection of the cached discovery catalog for host prompts.
+    // Only tools that declare a ui:// resource can render an app.
+    appTools(threadId?: string, limit = 20) {
+      const catalog = catalogs.get(threadId || "");
+      if (!catalog) return [];
+      const found: { server: string; tool: string }[] = [];
+      for (const [server, tools] of catalog)
+        for (const [tool, entry] of tools)
+          if (entry.uri) found.push({ server, tool });
+      return found.slice(0, limit);
+    },
+    catalogFresh(threadId: string | undefined, ttlMs: number) {
+      const at = catalogAt.get(threadId || "");
+      return at !== undefined && now() - at <= ttlMs;
+    },
     async refresh(threadId?: string, catalogKey = threadId || "") {
       const found: Json[] = [];
       let cursor: string | undefined;
@@ -230,8 +246,13 @@ export function appRegistry(
         catalog.set(server.name, tools);
       }
       catalogs.set(catalogKey, catalog);
+      catalogAt.set(catalogKey, now());
       options.onCatalog?.(catalogKey, found);
-      while (catalogs.size > 32) catalogs.delete(catalogs.keys().next().value!);
+      while (catalogs.size > 32) {
+        const oldest = catalogs.keys().next().value!;
+        catalogs.delete(oldest);
+        catalogAt.delete(oldest);
+      }
       return found;
     },
     register(threadId: string, item: ThreadItem, turnId?: string) {

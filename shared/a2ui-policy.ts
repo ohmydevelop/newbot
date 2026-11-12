@@ -147,3 +147,27 @@ export function decodeA2ui(raw: string): A2uiMessage[] {
   if (!result.success) failA2ui("INVALID_MESSAGE");
   return result.data;
 }
+
+// Model-facing repair guidance. Each code names an action the model can take
+// before retrying; it never repeats untrusted input or promises extra power.
+const repairHints: Record<string, string> = {
+  INVALID_JSON:
+    "messages must be a JSON array of v0.9 messages with no non-JSON values. Fix the payload and retry once.",
+  RESOURCE_LIMIT: `Reduce the surface below the documented limits (${A2UI_LIMITS.messages} messages, ${A2UI_LIMITS.components} components, ${A2UI_LIMITS.bytes} bytes total) and retry once.`,
+  FORBIDDEN_KEY:
+    "Remove keys named __proto__, constructor or prototype, then retry once.",
+  INVALID_MESSAGE:
+    "Use only createSurface, updateComponents, updateDataModel and deleteSurface with version 'v0.9'. Send createSurface first, then one updateComponents whose components reference only ids defined in that same update, then set the data. Retry once.",
+  invalid_ui_arguments:
+    "Match the registered component schemas: every component needs id and component; Text/Column/Row/TextField/ChoicePicker/Button/Image/Metric/Chart/SourceLink props are strict and unknown props are rejected. Retry once.",
+  ui_storage_unavailable:
+    "Saved UI storage is full or unavailable. Ask the user to check storage before retrying.",
+  ui_request_rejected:
+    "The surface was rejected before display. Keep createSurface, the data model and the whole component tree in one call, then retry once.",
+};
+export function a2uiRepairHint(code: string): string {
+  return (
+    repairHints[code] ||
+    "Send one complete tree: createSurface, its data model and every referenced component in the same update, then retry once."
+  );
+}

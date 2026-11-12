@@ -1,0 +1,36 @@
+{
+  "at": "2026-11-12T08:26:07.971Z",
+  "service": {
+    "pid": 3373227,
+    "ready": true,
+    "restarted": true,
+    "previousPid": 3296511,
+    "reason": "restarted again after reverting unrelated prettier reformatting in server/bridge.ts"
+  },
+  "build": {
+    "verified": true,
+    "containsNewInstructions": true
+  },
+  "public": {
+    "home": 200,
+    "health": 200,
+    "anonymousConfig": 401,
+    "appOriginConfig": 403,
+    "asset": 200,
+    "assetPath": "/assets/index-DdwW4pZD.js"
+  },
+  "tests": {
+    "newFile": 5,
+    "touchedSuites": 78,
+    "full": {
+      "total": 495,
+      "pass": 494,
+      "skip": 1,
+      "fail": 0
+    }
+  },
+  "notVerified": [
+    "end-to-end A2UI trigger rate needs a real model turn",
+    "existing threads still lack newbot_ui (ThreadResumeParams has no dynamicTools)"
+  ]
+}
