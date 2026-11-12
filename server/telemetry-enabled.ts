@@ -12,7 +12,7 @@ export function enabledTelemetry() {
   const enabled = true;
   const sdk = enabled
     ? new NodeSDK({
-        serviceName: "minimal-agent",
+        serviceName: "newbot",
         // Default process resource detection includes command-line arguments.
         // Keep exports independent of argv, environment and host identity.
         autoDetectResources: false,
@@ -22,7 +22,7 @@ export function enabledTelemetry() {
       })
     : undefined;
   sdk?.start();
-  const tracer = trace.getTracer("minimal-agent", "0.2.0");
+  const tracer = trace.getTracer("newbot", "0.2.0");
   const turns = new Map<string, Span>();
   return {
     enabled,

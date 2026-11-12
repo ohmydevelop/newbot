@@ -21,7 +21,7 @@ const root = process.cwd(),
   origin = "http://127.0.0.1:3100";
 const output = resolve(".issue/2026-11-10/evidence-issue-06/S4/service"),
   pidFile = join(directory, "newbot-test.pid"),
-  databasePath = join(directory, "minimal-agent.sqlite");
+  databasePath = join(directory, "newbot.sqlite");
 const digest = (value) => createHash("sha256").update(value).digest("hex");
 const optionalDigest = async (path) =>
   existsSync(path) ? digest(await readFile(path)) : null;
@@ -210,8 +210,8 @@ try {
     }),
     { mode: 0o600 },
   );
-  await backup(original, join(backupDir, "minimal-agent.sqlite"));
-  await chmod(join(backupDir, "minimal-agent.sqlite"), 0o600);
+  await backup(original, join(backupDir, "newbot.sqlite"));
+  await chmod(join(backupDir, "newbot.sqlite"), 0o600);
   original.close();
   for (const [source, name] of [
     [key, "private-credentials.key"],

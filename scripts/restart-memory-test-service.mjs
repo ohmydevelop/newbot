@@ -59,7 +59,7 @@ const digest = async (file) =>
     .update(await readFile(file))
     .digest("hex");
 const hostBefore = await digest(hostConfig);
-const db = new DatabaseSync(join(directory, "minimal-agent.sqlite"), {
+const db = new DatabaseSync(join(directory, "newbot.sqlite"), {
   readOnly: true,
 });
 const passwordBefore = db
@@ -104,8 +104,8 @@ try {
     "memory-service-" + Date.now(),
   );
   await mkdir(backupDir, { recursive: true, mode: 0o700 });
-  await backup(db, join(backupDir, "minimal-agent.sqlite"));
-  await chmod(join(backupDir, "minimal-agent.sqlite"), 0o600);
+  await backup(db, join(backupDir, "newbot.sqlite"));
+  await chmod(join(backupDir, "newbot.sqlite"), 0o600);
   if (existsSync(join(directory, "private-credentials.key"))) {
     await copyFile(
       join(directory, "private-credentials.key"),
@@ -205,7 +205,7 @@ try {
     assert.equal((await response.json()).id, id);
     readable++;
   }
-  const actual = new DatabaseSync(join(directory, "minimal-agent.sqlite"), {
+  const actual = new DatabaseSync(join(directory, "newbot.sqlite"), {
     readOnly: true,
   });
   assert.equal(

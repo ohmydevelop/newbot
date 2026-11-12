@@ -143,7 +143,7 @@ export default function Settings({
                   <strong>私有工作台</strong>
                   <p>对话由你的 Codex 实例持久化保存</p>
                 </div>
-                <span className="small-mark">Minimal Agent</span>
+                <span className="small-mark">newbot</span>
               </div>
             </>
           )}

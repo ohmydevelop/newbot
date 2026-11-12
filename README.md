@@ -1,4 +1,4 @@
-# Minimal Agent / newbot
+# newbot
 
 以 Codex App Server 为唯一 Agent 内核的私有 Web 客户端。React + Vite + Fastify；AG-UI 标准事件经 SSE 传送，用户操作使用 HTTP。没有自建 Agent Loop、模型网关或第二套 MCP 客户端。
 
@@ -31,7 +31,7 @@ npm run build
 npm start
 ```
 
-访问 <http://localhost:3100>。首次启动会生成随机登录密码，保存在 `.data/initial-password`，权限为 `0600`。也可以复制 `.env.example` 到 `.env`，设置至少 12 字符的 `ADMIN_PASSWORD`。不要提交 `.env`、`.data` 或 Codex 凭证。
+访问 <http://localhost:3100>。首次启动会生成随机登录密码，保存在 `.data/initial-password`（`0600`）；该文件已存在时启动会沿用其中密码，清空数据库不会更换登录密码。也可以复制 `.env.example` 到 `.env`，设置至少 12 字符的 `ADMIN_PASSWORD`。不要提交 `.env`、`.data` 或 Codex 凭证。
 
 开发模式：`npm run dev`，访问 <http://localhost:5173>。修改 `.env` 中的 `PUBLIC_ORIGIN` 为 `http://localhost:5173`；也可以不设此项，开发默认允许 3100/5173 的 localhost 和 127.0.0.1。
 
@@ -47,8 +47,8 @@ CODEX_HOME=/absolute/path/to/newbot/.data/codex npx codex -c 'cli_auth_credentia
 
 ```bash
 docker compose up -d --build
-docker compose exec minimal-agent cat /data/initial-password
-docker compose exec minimal-agent codex login --device-auth
+docker compose exec newbot cat /data/initial-password
+docker compose exec newbot codex login --device-auth
 ```
 
 访问 <http://localhost:3100>。`agent-data` 卷保存独立 Codex Home、工作目录、Provider SQLite 配置、Web 会话和附件。自定义 Provider 在 Web 网关设置中添加，密钥通过私密入口加密保存；保留卷重启后配置自动恢复。正式容器验收仍在 R1。

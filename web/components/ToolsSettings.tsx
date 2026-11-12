@@ -219,7 +219,7 @@ export default function ToolsSettings({
                       icon={Settings2}
                       onSelect={() => void open(p.id)}
                     >
-                      查看详情
+                      详情
                     </ActionMenuItem>
                     <ActionMenuItem
                       icon={p.enabled ? PowerOff : Power}

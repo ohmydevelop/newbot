@@ -49,7 +49,11 @@ export default function ThreadStatus({
           className={state === "running" || state === "preparing" ? "spin" : ""}
         />
       )}
-      {state === "waiting" && <span>{label}</span>}
+      {state === "waiting" && (activity?.waiting?.count || 0) > 0 && (
+        <span className="thread-status-count" aria-hidden="true">
+          {activity!.waiting!.count}
+        </span>
+      )}
     </span>
   );
 }

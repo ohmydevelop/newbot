@@ -3,6 +3,7 @@ import { privateApi } from "./private-input";
 import { responseJson } from "./http";
 import ChatPrivateInputs from "./components/ChatPrivateInputs";
 import ThreadStatus from "./components/ThreadStatus";
+import { absoluteTime, relativeTime } from "./time";
 import { lazy, useEffect, useRef, useState, type FormEvent } from "react";
 import * as Dropdown from "@radix-ui/react-dropdown-menu";
 import { ActionMenuContent, ActionMenuItem } from "./components/ActionMenu";
@@ -112,7 +113,7 @@ function Login() {
     <main className="login">
       <div className="login-brand">
         <Mark size={38} />
-        <span>Minimal Agent</span>
+        <span>newbot</span>
       </div>
       <form onSubmit={(e) => void submit(e)}>
         <h1>回到你的工作台</h1>
@@ -366,7 +367,7 @@ export default function App() {
       publishAppearance(theme);
       document
         .querySelector('meta[name="theme-color"]')
-        ?.setAttribute("content", theme === "dark" ? "#212121" : "#ffffff");
+        ?.setAttribute("content", theme === "dark" ? "#1a1a1a" : "#ffffff");
     };
     apply();
     media.addEventListener("change", apply);
@@ -920,7 +921,7 @@ export default function App() {
     return (
       <div className="boot">
         <Mark size={40} />
-        <span>Minimal Agent</span>
+        <span>newbot</span>
       </div>
     );
   if (!s.authenticated) return <Login />;
@@ -994,10 +995,10 @@ export default function App() {
           <button
             className="brand-button"
             onClick={fresh}
-            aria-label="Minimal Agent，新对话"
+            aria-label="newbot，新对话"
           >
             <Mark size={29} />
-            <span>Minimal Agent</span>
+            <span>newbot</span>
           </button>
           <button
             className="icon-button sidebar-search"
@@ -1058,15 +1059,23 @@ export default function App() {
                   aria-current={s.selectedId === t.id ? "page" : undefined}
                 >
                   <span className="history-title">{t.title}</span>
-                  <ThreadStatus activity={t.activity} />
-                </button>
-                <Dropdown.Root>
-                  <Dropdown.Trigger
-                    className="icon-button history-more"
-                    aria-label={`更多操作：${t.title}`}
+                  <time
+                    className="history-time"
+                    dateTime={new Date(t.updated).toISOString()}
+                    title={absoluteTime(t.updated)}
                   >
-                    <MoreHorizontal size={16} />
-                  </Dropdown.Trigger>
+                    {relativeTime(t.updated)}
+                  </time>
+                </button>
+                <div className="history-actions">
+                  <ThreadStatus activity={t.activity} />
+                  <Dropdown.Root>
+                    <Dropdown.Trigger
+                      className="icon-button history-more"
+                      aria-label={`更多操作：${t.title}`}
+                    >
+                      <MoreHorizontal size={16} />
+                    </Dropdown.Trigger>
                   <Dropdown.Portal>
                     <ActionMenuContent
                       className="dropdown"
@@ -1088,7 +1097,8 @@ export default function App() {
                       </ActionMenuItem>
                     </ActionMenuContent>
                   </Dropdown.Portal>
-                </Dropdown.Root>
+                  </Dropdown.Root>
+                </div>
               </div>
             ))
           )}
@@ -1098,7 +1108,7 @@ export default function App() {
             className="account-button"
             onClick={() => setSettings("general")}
           >
-            <span className="avatar">M</span>
+            <span className="avatar">n</span>
             <span>
               <strong>个人工作台</strong>
               <small>私有实例</small>
@@ -1133,7 +1143,7 @@ export default function App() {
                 <PanelLeft size={20} />
               </button>
             )}
-            <strong className="workspace-title">Minimal Agent</strong>
+            <strong className="workspace-title">newbot</strong>
           </div>
           <div className="topbar-right">
             {s.selectedId && (
@@ -1812,7 +1822,7 @@ export default function App() {
             </div>
           </form>
           <p className="composer-note">
-            Minimal Agent 可能会犯错。重要信息请核实。
+            newbot 可能会犯错。重要信息请核实。
           </p>
         </div>
       </main>

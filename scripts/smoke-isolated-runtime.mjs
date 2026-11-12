@@ -8,7 +8,7 @@ import { homedir } from "node:os";
 import { resolve, join } from "node:path";
 import { createServer } from "../dist/server/index.js";
 const directory = resolve(process.env.DATA_DIR || ".data"),
-  dbFile = join(directory, "minimal-agent.sqlite");
+  dbFile = join(directory, "newbot.sqlite");
 const before = new DatabaseSync(dbFile, { readOnly: true });
 const passwordHash = before
   .prepare("SELECT value FROM metadata WHERE key='password'")

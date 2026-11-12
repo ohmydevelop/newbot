@@ -46,7 +46,7 @@ export async function createA2uiLab(
     reply
       .type("text/html")
       .send(
-        `<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>A2UI 官方样例 · Minimal Agent</title><link rel="icon" href="data:,"><link rel="stylesheet" href="/lab.css"></head><body><div id="root"></div><script type="module" src="/lab.js"></script></body></html>`,
+        `<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>A2UI 官方样例 · newbot</title><link rel="icon" href="data:,"><link rel="stylesheet" href="/lab.css"></head><body><div id="root"></div><script type="module" src="/lab.js"></script></body></html>`,
       ),
   );
   await app.listen({ host: "127.0.0.1", port });

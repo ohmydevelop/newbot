@@ -184,7 +184,7 @@ test("imported skill identity is package-relative while existing IDs and old ali
 test("failed database publication keeps original bindings and both durable copies", () =>
   fixture(async ({ directory, target, space }) => {
     const { DatabaseSync } = await import("node:sqlite");
-    let db = new DatabaseSync(join(directory, "minimal-agent.sqlite"));
+    let db = new DatabaseSync(join(directory, "newbot.sqlite"));
     db.exec(
       "CREATE TRIGGER fail_migration BEFORE UPDATE ON thread_workspaces BEGIN SELECT RAISE(ABORT,'synthetic publication failure'); END",
     );
@@ -201,7 +201,7 @@ test("failed database publication keeps original bindings and both durable copie
       await readFile(join(target, space.id, "result.txt"), "utf8"),
       "immutable original",
     );
-    db = new DatabaseSync(join(directory, "minimal-agent.sqlite"), {
+    db = new DatabaseSync(join(directory, "newbot.sqlite"), {
       readOnly: true,
     });
     try {

@@ -35,7 +35,7 @@ const workspace = resolve(
     process.env.AGENT_WORKSPACE || join(directory, "workspace"),
   ),
   apply = args.includes("--apply");
-const app = new DatabaseSync(join(directory, "minimal-agent.sqlite"), {
+const app = new DatabaseSync(join(directory, "newbot.sqlite"), {
   readOnly: true,
 });
 const native = new DatabaseSync(join(source, "state_5.sqlite"), {

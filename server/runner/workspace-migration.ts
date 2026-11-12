@@ -101,7 +101,7 @@ export async function inspectWorkspaceMigration(
   target = protectedPath(target);
   if (inside(directory, target) || inside(target, directory))
     throw new PublicError("迁移工作区必须与私密实例目录分离");
-  const sql = new DatabaseSync(join(directory, "minimal-agent.sqlite"), {
+  const sql = new DatabaseSync(join(directory, "newbot.sqlite"), {
     readOnly: true,
   });
   try {
@@ -182,7 +182,7 @@ export async function migrateWorkspaces(directory: string, target: string) {
       recordRoot = join(directory, "migrations", id);
     await mkdir(recordRoot, { recursive: true, mode: 0o700 });
     await plainDirectory(recordRoot);
-    sql = new DatabaseSync(join(directory, "minimal-agent.sqlite"));
+    sql = new DatabaseSync(join(directory, "newbot.sqlite"));
     await backup(sql, join(recordRoot, "original.sqlite"));
     await chmod(join(recordRoot, "original.sqlite"), 0o600);
     const backupHandle = await open(join(recordRoot, "original.sqlite"), "r");
@@ -397,7 +397,7 @@ export async function rollbackWorkspaceMigration(
         }
       }
     }
-    sql = new DatabaseSync(join(directory, "minimal-agent.sqlite"));
+    sql = new DatabaseSync(join(directory, "newbot.sqlite"));
     if (
       (
         sql

@@ -6,7 +6,7 @@ import { randomBytes, createHash } from "node:crypto";
 export const DATABASE_VERSION = 17;
 export function database(directory: string) {
   mkdirSync(directory, { recursive: true, mode: 0o700 });
-  const path = resolve(directory, "minimal-agent.sqlite");
+  const path = resolve(directory, "newbot.sqlite");
   const db = new DatabaseSync(path);
   chmodSync(path, 0o600);
   const version = (

@@ -13,7 +13,7 @@ const api = await client();
 await api("/api/agent/action", { action: "bridge/maintenance", enabled: true });
 let stopped = false;
 try {
-  await command("docker", [...composeArgs, "stop", "minimal-agent"]);
+  await command("docker", [...composeArgs, "stop", "newbot"]);
   stopped = true;
   await command("restic", ["backup", "--tag", "newbot", data, envFile]);
   await command("restic", [
@@ -30,7 +30,7 @@ try {
   ]);
 } finally {
   if (stopped)
-    await command("docker", [...composeArgs, "start", "minimal-agent"]);
+    await command("docker", [...composeArgs, "start", "newbot"]);
   else
     await api("/api/agent/action", {
       action: "bridge/maintenance",

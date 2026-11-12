@@ -5,7 +5,7 @@ import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { build } from "esbuild";
-const directory = mkdtempSync(join(tmpdir(), "minimal-agent-browser-"));
+const directory = mkdtempSync(join(tmpdir(), "newbot-browser-"));
 const codex = new FakeCodex();
 const bundled = await build({
   entryPoints: ["tests/app-view.ts"],

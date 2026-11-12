@@ -20,7 +20,14 @@ import {
 } from "lucide-react";
 import CatalogIcon from "./CatalogIcon";
 import { ActionMenuContent, ActionMenuItem } from "./ActionMenu";
-import { Plus, RefreshCw, LoaderCircle, Pencil, Trash2 } from "lucide-react";
+import {
+  Plus,
+  RefreshCw,
+  LoaderCircle,
+  Pencil,
+  Trash2,
+  KeyRound,
+} from "lucide-react";
 import { useApp, loadSettings, loadDiscovery, request } from "../store";
 import type {
   ConfigurationView,
@@ -267,7 +274,7 @@ export default function McpSettings({
                         icon={Info}
                         onSelect={() => setDetailId(id)}
                       >
-                        查看详情
+                        查看
                       </ActionMenuItem>
                       <ActionMenuItem
                         icon={RefreshCw}
@@ -283,7 +290,7 @@ export default function McpSettings({
                           })
                         }
                       >
-                        重新连接
+                        重连
                       </ActionMenuItem>
                       {s?.editable && (
                         <ActionMenuItem
@@ -417,7 +424,7 @@ export default function McpSettings({
                             <Pencil size={16} aria-hidden="true" />
                           </button>
                           <button
-                            className="secondary"
+                            className="icon-button"
                             disabled={
                               !!busy ||
                               recovery.blocked ||
@@ -425,6 +432,8 @@ export default function McpSettings({
                               !!deleting ||
                               !(config?.nativeWritable ?? config?.writable)
                             }
+                            aria-label={`${s.enabled ? "停用" : "启用"} ${id}`}
+                            title={s.enabled ? "停用" : "启用"}
                             onClick={() =>
                               void action(`toggle:${id}`, () =>
                                 changed("mcp/enabled", {
@@ -437,11 +446,11 @@ export default function McpSettings({
                               )
                             }
                           >
-                            <span
-                              aria-label={`${s.enabled ? "停用" : "启用"} ${id}`}
-                            >
-                              {s.enabled ? "停用" : "启用"}
-                            </span>
+                            {s.enabled ? (
+                              <PowerOff size={16} aria-hidden="true" />
+                            ) : (
+                              <Power size={16} aria-hidden="true" />
+                            )}
                           </button>
                           <button
                             className="icon-button"
@@ -497,10 +506,12 @@ export default function McpSettings({
                       )}
                       {native?.authStatus === "notLoggedIn" && (
                         <button
-                          className="secondary"
+                          className="icon-button"
                           disabled={
                             !!busy || recovery.blocked || !!draft || !!deleting
                           }
+                          aria-label={`授权 ${id}`}
+                          title="授权"
                           onClick={() =>
                             void action(`oauth:${id}`, async () => {
                               const result = await request<{
@@ -515,7 +526,7 @@ export default function McpSettings({
                             })
                           }
                         >
-                          <span aria-label={`授权 ${id}`}>授权</span>
+                          <KeyRound size={16} aria-hidden="true" />
                         </button>
                       )}
                     </div>

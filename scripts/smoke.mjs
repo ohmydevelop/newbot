@@ -58,7 +58,7 @@ try {
     method: "POST",
     headers: { cookie, origin: base, "Content-Type": "application/json" },
     body: JSON.stringify({
-      text: "只回复：Minimal Agent 已连接。不要调用任何工具。",
+      text: "只回复：newbot 已连接。不要调用任何工具。",
       model: model.model,
       effort: model.defaultReasoningEffort,
       requestId: randomUUID(),

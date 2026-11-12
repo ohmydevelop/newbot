@@ -217,7 +217,7 @@ try {
   for (const { name } of tables)
     clean(JSON.stringify(c.db.raw.prepare(`SELECT * FROM "${name}"`).all()));
   for (const name of readdirSync(c.directory).filter((v) =>
-    v.startsWith("minimal-agent.sqlite"),
+    v.startsWith("newbot.sqlite"),
   ))
     clean(readFileSync(join(c.directory, name)).toString("utf8"));
   console.log(

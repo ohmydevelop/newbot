@@ -418,7 +418,7 @@ test("upload and artifact quotas are shared and snapshots deduplicate across con
 
 test("v1 database migration preserves sessions, threads, attachments and rejects future schemas", () => {
   const dir = mkdtempSync(join(tmpdir(), "newbot-artifact-migrate-"));
-  const path = join(dir, "minimal-agent.sqlite");
+  const path = join(dir, "newbot.sqlite");
   try {
     // The v1 schema is represented by a real old DB, not by the upgraded factory.
     const old = new DatabaseSync(path);

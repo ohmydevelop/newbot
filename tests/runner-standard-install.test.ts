@@ -49,7 +49,7 @@ test("a clean standard installation persists Server state and session workspaces
       workspace.root,
     );
     assert.equal(workspace.root, join(root, "Newbot/workspaces", workspace.id));
-    await assert.rejects(readFile(join(root, ".data/minimal-agent.sqlite")));
+    await assert.rejects(readFile(join(root, ".data/newbot.sqlite")));
   } finally {
     await server?.app.close();
     process.chdir(previous);

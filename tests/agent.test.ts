@@ -11,7 +11,7 @@ import { FakeCodex } from "./fixture.js";
 import { reduceAgentEvent } from "../shared/events.js";
 const origin = "http://127.0.0.1:3100";
 async function setup() {
-  const directory = mkdtempSync(join(tmpdir(), "minimal-agent-test-"));
+  const directory = mkdtempSync(join(tmpdir(), "newbot-test-"));
   const codex = new FakeCodex();
   const ctx = await createServer({
     providerRuntime: null,
@@ -535,7 +535,7 @@ test("polling is authenticated and returns the same AG-UI events with reconnect 
 });
 
 test("HTTPS logins always set Secure cookies when local HTTP is also allowed", async () => {
-  const directory = mkdtempSync(join(tmpdir(), "minimal-agent-https-"));
+  const directory = mkdtempSync(join(tmpdir(), "newbot-https-"));
   const ctx = await createServer({
     providerRuntime: null,
     directory,

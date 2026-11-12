@@ -132,7 +132,13 @@ export function Mark({ size = 28 }: { size?: number }) {
       aria-hidden="true"
     >
       <path
-        d="M6 24V8h5l5 9 5-9h5v16h-5V16l-5 8-5-8v8H6Z"
+        d="M9.5 8.5H22.5A3.5 3.5 0 0 1 26 12V19A3.5 3.5 0 0 1 22.5 22.5H14L10 26V22.5H9.5A3.5 3.5 0 0 1 6 19V12A3.5 3.5 0 0 1 9.5 8.5Z"
+        stroke="currentColor"
+        strokeWidth="2.2"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M16 11.1c.55 2.75 1.65 3.85 4.4 4.4-2.75.55-3.85 1.65-4.4 4.4-.55-2.75-1.65-3.85-4.4-4.4 2.75-.55 3.85-1.65 4.4-4.4Z"
         fill="currentColor"
       />
     </svg>

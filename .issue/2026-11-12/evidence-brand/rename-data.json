@@ -1,0 +1,47 @@
+{
+  "at": "2026-11-12T09:10:49.419Z",
+  "renamed": {
+    "database": "newbot.sqlite",
+    "composeService": "newbot",
+    "package": "newbot",
+    "telemetry": "newbot"
+  },
+  "data": {
+    "preserved": true,
+    "moved": [
+      ".data/minimal-agent.sqlite -> .data/newbot.sqlite",
+      ".data/official-acceptance/minimal-agent.sqlite -> .data/official-acceptance/newbot.sqlite"
+    ],
+    "before": {
+      "schema": 17,
+      "threads": 37,
+      "runs": 119,
+      "providers": 1
+    },
+    "after": {
+      "schema": 17,
+      "threads": 37,
+      "runs": 120,
+      "providers": 1,
+      "integrity": "ok"
+    }
+  },
+  "verify": {
+    "readiness": true,
+    "home": 200,
+    "title": "newbot",
+    "favicon": 200,
+    "anonymousConfig": 401,
+    "tests": {
+      "total": 495,
+      "pass": 494,
+      "skip": 1,
+      "fail": 0
+    },
+    "build": true
+  },
+  "notes": [
+    "runs +1 is WAL checkpoint from an earlier live request, not a rewrite",
+    "historical .issue evidence scripts and .data/restart-backups keep the old filename"
+  ]
+}

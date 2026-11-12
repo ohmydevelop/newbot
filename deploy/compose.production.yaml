@@ -1,6 +1,6 @@
 name: newbot-production
 services:
-  minimal-agent:
+  newbot:
     image: ${NEWBOT_IMAGE:-newbot:stable}
     build:
       context: ..

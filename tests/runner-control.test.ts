@@ -193,7 +193,7 @@ test("restart preserves encrypted ordinary commands but expires undelivered priv
       assert.equal(restarted.receipt(ordinary.id).state, "sent");
       assert.equal(restarted.receipt(ordinaryUnsent.id).state, "queued");
       for (const name of await readdir(join(dir, "server"))) {
-        if (!name.startsWith("minimal-agent.sqlite")) continue;
+        if (!name.startsWith("newbot.sqlite")) continue;
         assert.ok(
           !(await readFile(join(dir, "server", name))).includes(
             Buffer.from(secret),

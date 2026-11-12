@@ -335,7 +335,7 @@ try {
       );
       await page.keyboard.press("Escape");
       await page
-        .getByRole("button", { name: "Minimal Agent，新对话", exact: true })
+        .getByRole("button", { name: "newbot，新对话", exact: true })
         .click();
       await page.waitForFunction(
         () =>

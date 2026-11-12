@@ -121,7 +121,7 @@ const historyShape = (t) =>
       })),
     }),
   );
-const original = new DatabaseSync(join(directory, "minimal-agent.sqlite"), {
+const original = new DatabaseSync(join(directory, "newbot.sqlite"), {
   readOnly: true,
 });
 try {
@@ -242,8 +242,8 @@ print(json.dumps(s))`,
     "sqlite-service-" + Date.now(),
   );
   await mkdir(backupDir, { recursive: true, mode: 0o700 });
-  await backup(original, join(backupDir, "minimal-agent.sqlite"));
-  await chmod(join(backupDir, "minimal-agent.sqlite"), 0o600);
+  await backup(original, join(backupDir, "newbot.sqlite"));
+  await chmod(join(backupDir, "newbot.sqlite"), 0o600);
   await copyFile(
     keyFile,
     join(backupDir, "private-credentials.key"),
@@ -290,7 +290,7 @@ print(json.dumps(s))`,
     assert.deepEqual(actual.configuration.defaults, live.defaults);
     for (const [id, digest] of histories)
       assert.equal(historyShape(await request("/api/threads/" + id)), digest);
-    const check = new DatabaseSync(join(directory, "minimal-agent.sqlite"), {
+    const check = new DatabaseSync(join(directory, "newbot.sqlite"), {
       readOnly: true,
     });
     try {

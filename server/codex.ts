@@ -206,8 +206,8 @@ export class Codex extends EventEmitter {
     try {
       const initialized = await this.call("initialize", {
         clientInfo: {
-          name: "minimal_agent",
-          title: "Minimal Agent",
+          name: "newbot",
+          title: "newbot",
           version: "0.2.0",
         },
         capabilities: { experimentalApi: true, requestAttestation: false },

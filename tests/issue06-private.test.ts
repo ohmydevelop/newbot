@@ -174,7 +174,7 @@ test(
           table,
         );
       assert.ok(
-        !readFileSync(join(c.directory, "minimal-agent.sqlite")).includes(
+        !readFileSync(join(c.directory, "newbot.sqlite")).includes(
           Buffer.from(marker),
         ),
       );

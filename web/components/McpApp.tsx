@@ -269,7 +269,7 @@ export default function McpApp({
     const iframe = frame.current,
       bridge = new AppBridge(
         null,
-        { name: "Minimal Agent", version: "0.2.0" },
+        { name: "newbot", version: "0.2.0" },
         appHostCapabilities(Array.isArray(data.tools) && data.tools.length > 0),
         { hostContext: appHostContext() },
       );

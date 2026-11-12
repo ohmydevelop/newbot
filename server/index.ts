@@ -2052,7 +2052,7 @@ if (
     port: Number(process.env.PORT || 3100),
   });
   console.log(
-    `Minimal Agent: http://${process.env.HOST || "127.0.0.1"}:${process.env.PORT || 3100}`,
+    `newbot: http://${process.env.HOST || "127.0.0.1"}:${process.env.PORT || 3100}`,
   );
   void runtime.start();
   for (const signal of ["SIGTERM", "SIGINT"] as const)

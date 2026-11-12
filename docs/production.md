@@ -24,7 +24,7 @@ docker compose --env-file deploy/production.env -f deploy/compose.production.yam
 Codex 使用 `/data/codex`。需要登录时，在专用容器中执行 `codex login --device-auth`，或配置服务端 Provider 凭证。Web 不接收、保存或下发 Provider API Key。镜像中的 Codex 固定为 0.166.0，生成类型与它一致。
 
 ```bash
-docker compose --env-file deploy/production.env -f deploy/compose.production.yaml exec minimal-agent codex login --device-auth
+docker compose --env-file deploy/production.env -f deploy/compose.production.yaml exec newbot codex login --device-auth
 curl --fail http://127.0.0.1:3100/api/ready
 ```
 

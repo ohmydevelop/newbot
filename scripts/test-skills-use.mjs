@@ -359,7 +359,7 @@ try {
     async () => {
       await select("code-review");
       await page
-        .getByRole("button", { name: "Minimal Agent，新对话", exact: true })
+        .getByRole("button", { name: "newbot，新对话", exact: true })
         .click();
       assert.equal(await page.locator(".skill-draft-list").count(), 0);
       await select("metadata-only");

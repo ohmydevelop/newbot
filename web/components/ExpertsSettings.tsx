@@ -186,7 +186,7 @@ export default function ExpertsSettings() {
                 sideOffset={5}
               >
                 <ActionMenuItem icon={Eye} onSelect={() => setDetail(e)}>
-                  查看详情
+                  详情
                 </ActionMenuItem>
                 <ActionMenuItem icon={Pencil} onSelect={() => edit(e)}>
                   编辑
