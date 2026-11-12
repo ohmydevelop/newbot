@@ -1,6 +1,6 @@
 import { PublicError } from "./public-error.js";
 import { scrypt, scryptSync, timingSafeEqual, randomBytes } from "node:crypto";
-import { writeFileSync, rmSync } from "node:fs";
+import { writeFileSync, readFileSync, rmSync } from "node:fs";
 import { resolve } from "node:path";
 import { promisify } from "node:util";
 import type { Store } from "./db.js";
@@ -21,17 +21,36 @@ export function auth(
   if (password && password.length < 12)
     throw new PublicError("ADMIN_PASSWORD 必须至少 12 个字符");
   if (!old || (password && !matches(password, old))) {
-    const value = password || randomBytes(24).toString("base64url");
+    const path = resolve(directory, "initial-password");
+    let value = password || "",
+      generated = false,
+      inherited = false;
+    if (!value && !old) {
+      // An empty database must not silently rotate the operator's password:
+      // an existing local password file is the source of truth.
+      try {
+        const existing = readFileSync(path, "utf8").trim();
+        if (existing.length >= 12) {
+          value = existing;
+          inherited = true;
+        }
+      } catch {}
+    }
+    if (!value) {
+      value = randomBytes(24).toString("base64url");
+      generated = true;
+    }
     const salt = randomBytes(16).toString("hex");
     store.set(
       "password",
       `${salt}:${scryptSync(value, salt, 64).toString("hex")}`,
     );
     store.revokeSessions();
-    const path = resolve(directory, "initial-password");
-    if (!password) {
+    if (generated) {
       writeFileSync(path, value + "\n", { mode: 0o600 });
       process.stdout.write(`首次登录密码保存在 ${path}（仅本机可读）。\n`);
+    } else if (inherited) {
+      process.stdout.write(`沿用 ${path} 中的登录密码。\n`);
     } else rmSync(path, { force: true });
   }
   const attempts = new Map<string, { count: number; until: number }>();

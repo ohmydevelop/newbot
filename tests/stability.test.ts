@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { mkdtempSync, rmSync } from "node:fs";
+import { mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { randomUUID } from "node:crypto";
@@ -329,10 +329,18 @@ test("provider changes are idle-only, rediscover models and resume using the sav
       requestId: randomUUID(),
     });
     assert.equal(resumed.statusCode, 400, resumed.body);
-    const correct = await ctx.post("/api/agent/run",{threadId:first.threadId,text:"resume with saved gateway",requestId:randomUUID()});
-    assert.equal(correct.statusCode,200,correct.body);
+    const correct = await ctx.post("/api/agent/run", {
+      threadId: first.threadId,
+      text: "resume with saved gateway",
+      requestId: randomUUID(),
+    });
+    assert.equal(correct.statusCode, 200, correct.body);
     assert.equal(codex.provider, "secondary");
-    assert.equal(codex.restarts,1,"resuming another gateway must not restart the shared runtime");
+    assert.equal(
+      codex.restarts,
+      1,
+      "resuming another gateway must not restart the shared runtime",
+    );
     const resume = codex.calls
       .filter((c) => c.method === "thread/resume")
       .at(-1)!;
@@ -568,6 +576,34 @@ test("blank optional provider uses the native default and never forwards an inva
     assert.ok(response.json().turn.id);
   } finally {
     await ctx.app.close();
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test("clearing the database keeps the existing local password instead of rotating it", async () => {
+  const dir = mkdtempSync(join(tmpdir(), "newbot-auth-reuse-"));
+  const previous = process.env.ADMIN_PASSWORD;
+  delete process.env.ADMIN_PASSWORD;
+  try {
+    const first = database(dir);
+    auth(first, dir);
+    const file = join(dir, "initial-password");
+    const original = readFileSync(file, "utf8").trim();
+    assert.ok(original.length >= 12);
+    assert.equal(await auth(first, dir)("ip", original), true);
+    first.raw.close();
+
+    // Operator clears the data directory's database only.
+    rmSync(join(dir, "newbot.sqlite"), { force: true });
+    const empty = database(dir);
+    assert.equal(empty.get("password"), undefined);
+    const verify = auth(empty, dir);
+    assert.equal(readFileSync(file, "utf8").trim(), original);
+    assert.equal(await verify("ip", original), true);
+    empty.raw.close();
+  } finally {
+    if (previous === undefined) delete process.env.ADMIN_PASSWORD;
+    else process.env.ADMIN_PASSWORD = previous;
     rmSync(dir, { recursive: true, force: true });
   }
 });

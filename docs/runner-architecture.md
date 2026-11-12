@@ -34,7 +34,7 @@ Server 持有权威配置、用户授权、会话操作回执和恢复对象。R
 
 新安装：Server `~/.newbot/server`、原生Home `~/.newbot/codex`、Runner本地目录 `~/.newbot/client`、会话工作区 `~/Newbot/workspaces`。原生子进程的HOME仍位于隔离的`codex/runtime-home`，不继承个人HOME。Server的包副本仍由现有资源库保存，Runner资源同步尚未接入。
 
-显式DATA_DIR或现有仓库.data保留原布局。NEWBOT_HOME / NEWBOT_CODEX_HOME / NEWBOT_WORKSPACES_HOME可选择位置，但不能绕过个人目录与链接检查；不能通过设置一个空白NEWBOT_HOME让旧实例数据从页面消失。
+显式DATA_DIR，或仓库`.data`中仍存在任一运行状态（数据库、`initial-password`、`private-credentials.key`、`codex/`、`workspaces/`、`runner/`）时保留原布局；清空数据库不会把实例切到全局目录，空`.data`目录也不会锁定布局。NEWBOT_HOME / NEWBOT_CODEX_HOME / NEWBOT_WORKSPACES_HOME可选择位置，但不能绕过个人目录与链接检查；不能通过设置一个空白NEWBOT_HOME让旧实例数据从页面消失。
 
 ## 离线工作区迁移
 

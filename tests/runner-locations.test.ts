@@ -27,7 +27,7 @@ test("fresh installs use independent standard global home and visible workspace 
 test("an existing repository installation remains in place without automatic migration", () =>
   fixture(async (root) => {
     await mkdir(join(root, "repo/.data"), { recursive: true });
-    await writeFile(join(root, "repo/.data/minimal-agent.sqlite"), "fixture");
+    await writeFile(join(root, "repo/.data/newbot.sqlite"), "fixture");
     const r = runtimeLocations({
       hostHome: join(root, "user"),
       project: join(root, "repo"),
@@ -69,7 +69,7 @@ test("personal Codex and linked aliases cannot become the new global home", () =
 test("explicitly choosing a blank home cannot hide an existing repository database", () =>
   fixture(async (root) => {
     await mkdir(join(root, "repo/.data"), { recursive: true });
-    await writeFile(join(root, "repo/.data/minimal-agent.sqlite"), "fixture");
+    await writeFile(join(root, "repo/.data/newbot.sqlite"), "fixture");
     assert.throws(
       () =>
         runtimeLocations({
@@ -99,4 +99,30 @@ test("standard workspaces cannot contain the private runtime or be inside it", (
           }),
         /分离|独立/,
       );
+  }));
+
+test("clearing the database keeps an existing repository installation in place", () =>
+  fixture(async (root) => {
+    await mkdir(join(root, "repo/.data/codex"), { recursive: true });
+    await writeFile(join(root, "repo/.data/initial-password"), "fixture\n");
+    const r = runtimeLocations({
+      hostHome: join(root, "user"),
+      project: join(root, "repo"),
+      env: {},
+    });
+    assert.equal(r.layout, "legacy");
+    assert.equal(r.server, join(root, "repo/.data"));
+    assert.equal(r.codex, join(root, "repo/.data/codex"));
+  }));
+
+test("an empty .data directory does not pin the repository layout", () =>
+  fixture(async (root) => {
+    await mkdir(join(root, "repo/.data"), { recursive: true });
+    const r = runtimeLocations({
+      hostHome: join(root, "user"),
+      project: join(root, "repo"),
+      env: {},
+    });
+    assert.equal(r.layout, "standard");
+    assert.equal(r.server, join(root, "user/.newbot/server"));
   }));
