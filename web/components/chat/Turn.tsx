@@ -12,6 +12,7 @@ import {
   presentationBlocks,
 } from "../../chat-presentation";
 import { Message, ItemOutput } from "./Message";
+import { extractSuggestions } from "../../../shared/suggestions";
 import { ContentBoundary } from "./ContentBoundary";
 import { ProcessGroup } from "./ProcessGroup";
 const Artifacts = lazy(() =>
@@ -107,6 +108,13 @@ function TurnFeedback({ turn, threadId }: { turn: Turn; threadId: string }) {
     </div>
   );
 }
+function modelSuggestions(turn: Turn): string[] {
+  for (const item of [...turn.items].reverse())
+    if (item.type === "agentMessage" && typeof item.text === "string")
+      return extractSuggestions(item.text).suggestions;
+  return [];
+}
+
 function followUps(turn: Turn): string[] {
   const text = turn.items
     .filter((item) => item.type === "agentMessage" && typeof item.text === "string")
@@ -241,7 +249,10 @@ export function ChatTurn({
         turn.status === "completed" &&
         !turn.items.some((item) => item.type === "agentMessage" && !item.text) && (
           <div className="follow-ups" aria-label="推荐追问">
-            {followUps(turn).map((text) => (
+            {(modelSuggestions(turn).length
+              ? modelSuggestions(turn)
+              : followUps(turn)
+            ).map((text) => (
               <button
                 type="button"
                 className="follow-up"

@@ -12,6 +12,11 @@ export function presentationInstructions(
 Choose the presentation before writing the answer, in this order:
 1. MCP app tools. ${interactive}
 2. ${a2ui}
-3. Markdown. Short conversational answers stay text. Do not show the same data twice (surface plus Markdown table). Never invent data, sources or images, and never claim that a tool ran.
+3. Markdown. Short conversational answers stay text.
+End most answers with 2-3 concrete next steps the user could click, as a fenced code block whose language tag is "suggestions":
+\`\`\`suggestions
+["继续展开", "给一个具体例子"]
+\`\`\`
+Keep each item under 40 characters, specific to what you just answered, in the user's language. Omit the block for trivial or closed answers, and never put anything else in that block. Do not show the same data twice (surface plus Markdown table). Never invent data, sources or images, and never claim that a tool ran.
 Markdown images must reference a workspace PNG/JPEG/WebP path or an actual public HTTPS image; the host validates and snapshots them (8 MiB max), then serves authenticated resources. Do not inline base64, use private URLs, or place credentials in URLs. Generated images require an available tool/provider; do not claim that rendering support grants image-generation capability. Sources should link to actual supporting pages.`;
 }

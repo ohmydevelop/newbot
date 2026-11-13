@@ -16,6 +16,7 @@ import {
   Terminal,
 } from "lucide-react";
 import type { Item, Json } from "../../../shared/types";
+import { extractSuggestions } from "../../../shared/suggestions";
 import AttachmentPreview, { type AttachmentSource } from "../AttachmentPreview";
 import { useApp } from "../../store";
 import {
@@ -320,15 +321,16 @@ export const Message = memo(function Message({
   if (kind === "assistant")
     if (item.text != null && typeof item.text !== "string")
       throw new Error("Unsupported message text");
-  if (kind === "assistant")
+  if (kind === "assistant") {
+    const body = extractSuggestions(item.text || "").text;
     return (
       <article
         className={`assistant-message ${item.phase === "commentary" ? "process-content" : ""}`}
         data-content-kind="assistant"
         aria-label="助手回复"
       >
-        <Renderer text={item.text || ""} item={item} streaming={streaming} />
-        {item.text && (
+        <Renderer text={body} item={item} streaming={streaming} />
+        {body && (
           <div className="message-actions">
             <button
               className="icon-button"
@@ -337,7 +339,7 @@ export const Message = memo(function Message({
               onClick={() => {
                 setCopyError("");
                 void Promise.resolve()
-                  .then(() => navigator.clipboard.writeText(item.text!))
+                  .then(() => navigator.clipboard.writeText(body))
                   .then(() => {
                     setCopied(true);
                     if (copyTimer.current) clearTimeout(copyTimer.current);
@@ -369,6 +371,7 @@ export const Message = memo(function Message({
         )}
       </article>
     );
+  }
   return (
     <ToolItem
       item={item}
