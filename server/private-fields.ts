@@ -34,35 +34,69 @@ type Context = {
 const digest = (value: unknown) =>
   createHash("sha256").update(JSON.stringify(value)).digest("hex");
 export const fieldKey = (field: PrivateField) => `${field.kind}:${field.name}`;
-/** Legacy digest is only used to verify an already saved receiver before resealing.
- * Never use it as a fallback when the URL, package, or configuration changed. */
+/**
+ * Receivers are identified by destination, not by provenance. The package and
+ * schema digests used to live in this digest, which meant every plugin upgrade
+ * silently invalidated a saved credential even when URL/command/env were
+ * unchanged. Upgrades run new code anyway; what must not change is where the
+ * secret is sent. Both legacy shapes stay available so old rows can be verified
+ * and resealed once.
+ */
 export function legacyPrivateFieldBinding(
   scope: Scope,
   target: string,
   config: Json,
 ) {
-  return receiverBinding(scope, target, config, false);
+  return receiverBinding(scope, target, config, {
+    portable: false,
+    provenance: true,
+  });
+}
+export function previousPrivateFieldBinding(
+  scope: Scope,
+  target: string,
+  config: Json,
+) {
+  return receiverBinding(scope, target, config, {
+    portable: true,
+    provenance: true,
+  });
 }
 export function privateFieldBinding(
   scope: Scope,
   target: string,
   config: Json,
 ) {
-  return receiverBinding(scope, target, config, true);
+  return receiverBinding(scope, target, config, {
+    portable: true,
+    provenance: false,
+  });
 }
 function receiverBinding(
   scope: Scope,
   target: string,
   config: Json,
-  portable: boolean,
+  { portable, provenance }: { portable: boolean; provenance: boolean },
 ) {
   const def =
     config[scope === "provider" ? "model_providers" : "mcp_servers"]?.[target];
   if (!def) throw new PublicError("凭证接收方不存在");
   const owner = config.newbot_plugin_connections?.[target];
   // packageRoot is host-generated only after verifying the immutable package digest.
-  // It is an address, not part of the recipient's identity. All non-path values remain bound.
-  const { packageRoot, ...plugin } = owner || {};
+  // It is an address, not part of the recipient's identity.
+  const {
+    packageRoot,
+    packageDigest: _packageDigest,
+    schemaDigest: _schemaDigest,
+    ...plugin
+  } = (owner || {}) as Json & {
+    packageRoot?: unknown;
+    packageDigest?: unknown;
+    schemaDigest?: unknown;
+  };
+  const identity = provenance
+    ? { ...plugin, packageDigest: owner?.packageDigest, schemaDigest: owner?.schemaDigest }
+    : plugin;
   const logical = (value: any): any => {
     if (
       !portable ||
@@ -94,7 +128,7 @@ function receiverBinding(
   ];
   if (owner)
     values.push(
-      plugin,
+      identity,
       logical(def.env || {}),
       logical(def.cwd || null),
       def.http_headers || {},
@@ -102,6 +136,50 @@ function receiverBinding(
   return digest(values);
 }
 
+/**
+ * Re-bind a saved packet once when only the provenance digest moved. Returns the
+ * current binding and packet, or undefined when the destination changed.
+ */
+export function reconcilePrivateRow(
+  db: Store,
+  vault: ReturnType<typeof credentialVault>,
+  row: { scope: Scope; target: string; binding: string; packet: string | null },
+  config: Json,
+) {
+  if (!row.packet) return undefined;
+  const current = privateFieldBinding(row.scope, row.target, config);
+  if (row.binding === current) return { binding: current, packet: row.packet };
+  const previous = [
+    previousPrivateFieldBinding(row.scope, row.target, config),
+    legacyPrivateFieldBinding(row.scope, row.target, config),
+  ];
+  if (!previous.includes(row.binding)) return undefined;
+  let plain: Buffer | undefined;
+  try {
+    plain = vault.openPrivate(
+      row.packet,
+      `fields:${row.scope}:${row.target}:${row.binding}`,
+    );
+  } catch {
+    return undefined;
+  }
+  try {
+    const packet = vault.sealPrivate(
+      plain,
+      `fields:${row.scope}:${row.target}:${current}`,
+    );
+    const changed = db.raw
+      .prepare(
+        "UPDATE private_field_sets SET binding=?,packet=?,revision=? WHERE scope=? AND target=? AND binding=? AND packet=?",
+      )
+      .run(current, packet, randomUUID(), row.scope, row.target, row.binding, row.packet);
+    return Number(changed.changes) === 1
+      ? { binding: current, packet }
+      : undefined;
+  } finally {
+    plain.fill(0);
+  }
+}
 export function privateFields(
   db: Store,
   vault: ReturnType<typeof credentialVault>,
@@ -142,9 +220,12 @@ export function privateFields(
     }
   }
   function saved(r: Row, config: Json) {
-    if (r.binding !== binding(r.scope, r.target, config) || !r.packet)
-      return {};
-    return readPacket(r.packet, `fields:${r.scope}:${r.target}:${r.binding}`);
+    const row = reconcilePrivateRow(db, vault, r, config);
+    if (!row?.packet) return {};
+    return readPacket(
+      row.packet,
+      `fields:${r.scope}:${r.target}:${row.binding}`,
+    );
   }
   function info(scope: Scope, target: string, config: Json): PrivateFieldView {
     const r = row(scope, target);
@@ -152,8 +233,9 @@ export function privateFields(
     let values: Record<string, string> = {},
       valid = false;
     try {
-      valid = r.binding === binding(scope, target, config);
-      values = saved(r, config);
+      const row = reconcilePrivateRow(db, vault, r, config);
+      valid = !!row?.packet;
+      if (valid) values = saved(r, config);
     } catch {}
     return {
       revision: r.revision,

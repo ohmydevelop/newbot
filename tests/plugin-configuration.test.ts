@@ -24,6 +24,7 @@ import { importTree } from "../server/import-files.js";
 import {
   privateFields,
   legacyPrivateFieldBinding,
+  previousPrivateFieldBinding,
   privateFieldBinding,
 } from "../server/private-fields.js";
 import { mcpEditable } from "../server/mcp-policy.js";
@@ -410,7 +411,7 @@ test("endpoint/package changes cannot inherit secrets and concurrent writes pres
   }
 });
 
-test("upgrades preserve compatible ordinary fields while invalidating code-bound credentials", async () => {
+test("upgrades require review and keep credentials when the destination is unchanged", async () => {
   const f = await fixture();
   try {
     const id = await f.install("upgrade");
@@ -429,7 +430,9 @@ test("upgrades preserve compatible ordinary fields while invalidating code-bound
       view.fields.find((x) => x.id === "url")?.value,
       "https://one.example",
     );
-    assert.equal(view.fields.find((x) => x.id === "key")?.stored, false);
+    // Review is still required before the new code runs, but the saved secret is
+    // retained because the destination (url/env) did not change.
+    assert.equal(view.fields.find((x) => x.id === "key")?.stored, true);
     assert.equal((await f.config()).config.mcp_servers[view.id].enabled, false);
     f.restart();
     assert.equal((await f.view(id)).reviewRequired, true);
@@ -809,6 +812,73 @@ test("verified plugin relocation keeps credentials bound to the same package and
         .SERVICE_KEY,
       marker,
     );
+  } finally {
+    await f.close();
+  }
+});
+
+test("a plugin upgrade keeps credentials when only the package digest moved", async () => {
+  const f = await fixture();
+  try {
+    const id = await f.install("portable"),
+      c = await f.view(id);
+    await f.save(id);
+    const config = (await f.config()).config;
+    assert.equal(
+      (await f.inject(structuredClone(config))).config.mcp_servers[c.id].env
+        .SERVICE_KEY,
+      marker,
+    );
+    // Upgrade: provenance digests move, destination (url/env) is unchanged.
+    const upgraded = structuredClone(config);
+    upgraded.newbot_plugin_connections[c.id].packageDigest = "upgraded-package";
+    upgraded.newbot_plugin_connections[c.id].schemaDigest = "upgraded-schema";
+    assert.equal(
+      (await f.inject(upgraded)).config.mcp_servers[c.id].env.SERVICE_KEY,
+      marker,
+    );
+    // A real destination change must still drop the secret.
+    const moved = structuredClone(upgraded);
+    moved.mcp_servers[c.id].url = "https://another.example";
+    const injected = (await f.inject(moved)).config.mcp_servers[c.id];
+    assert.equal(injected.env?.SERVICE_KEY, undefined);
+  } finally {
+    await f.close();
+  }
+});
+
+test("rows bound with the previous provenance digest re-seal once on read", async () => {
+  const f = await fixture();
+  try {
+    const id = await f.install("portable"),
+      c = await f.view(id);
+    await f.save(id);
+    const config = (await f.config()).config;
+    const oldBinding = previousPrivateFieldBinding("mcp", c.id, config);
+    assert.notEqual(oldBinding, privateFieldBinding("mcp", c.id, config));
+    const plain = Buffer.from(JSON.stringify({ "env:SERVICE_KEY": marker }));
+    try {
+      f.db.raw
+        .prepare(
+          "UPDATE private_field_sets SET binding=?,packet=? WHERE target=?",
+        )
+        .run(
+          oldBinding,
+          f.vault.sealPrivate(plain, `fields:mcp:${c.id}:${oldBinding}`),
+          c.id,
+        );
+    } finally {
+      plain.fill(0);
+    }
+    assert.equal(
+      (await f.inject(structuredClone(config))).config.mcp_servers[c.id].env
+        .SERVICE_KEY,
+      marker,
+    );
+    const row = f.db.raw
+      .prepare("SELECT binding FROM private_field_sets WHERE target=?")
+      .get(c.id) as { binding: string };
+    assert.equal(row.binding, privateFieldBinding("mcp", c.id, config));
   } finally {
     await f.close();
   }

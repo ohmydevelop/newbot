@@ -14,7 +14,7 @@ import type { CredentialConsumer } from "./credentials.js";
 import {
   fieldKey,
   privateFieldBinding,
-  legacyPrivateFieldBinding,
+  reconcilePrivateRow,
 } from "./private-fields.js";
 import {
   pluginConnectionId,
@@ -111,49 +111,22 @@ export function pluginConnections(
     };
   }
   function secrets(d: PluginDescriptor, config: Json) {
-    let row = secretRow(d.id);
+    const row = secretRow(d.id);
     if (!row?.packet || !vault) return {} as Record<string, string>;
-    const nextBinding = privateFieldBinding("mcp", d.id, config);
-    if (row.binding !== nextBinding) {
-      // descriptors() has verified the complete package tree. Only the identical
-      // old recipient can be upgraded; changed credentials/URL/package stay invalid.
-      if (row.binding !== legacyPrivateFieldBinding("mcp", d.id, config))
-        return {};
-      let plain: Buffer | undefined;
-      try {
-        plain = vault.openPrivate(
-          row.packet,
-          `fields:mcp:${d.id}:${row.binding}`,
-        );
-        const packet = vault.sealPrivate(
-          plain,
-          `fields:mcp:${d.id}:${nextBinding}`,
-        );
-        const changed = db.raw
-          .prepare(
-            "UPDATE private_field_sets SET binding=?,packet=?,revision=? WHERE scope='mcp' AND target=? AND binding=? AND packet=?",
-          )
-          .run(
-            nextBinding,
-            packet,
-            randomUUID(),
-            d.id,
-            row.binding,
-            row.packet,
-          );
-        if (Number(changed.changes) !== 1) return {};
-        row = { ...row, binding: nextBinding, packet };
-      } catch {
-        return {};
-      } finally {
-        plain?.fill(0);
-      }
-    }
+    // A package upgrade keeps the same destination, so the reconciled row keeps
+    // the credential; a changed URL/command/env still yields no secret.
+    const reconciled = reconcilePrivateRow(
+      db,
+      vault,
+      { scope: "mcp", target: d.id, binding: row.binding, packet: row.packet },
+      config,
+    );
+    if (!reconciled) return {};
     let bytes: Buffer | undefined;
     try {
       bytes = vault.openPrivate(
-        row.packet!,
-        `fields:mcp:${d.id}:${row.binding}`,
+        reconciled.packet,
+        `fields:mcp:${d.id}:${reconciled.binding}`,
       );
       return JSON.parse(bytes.toString("utf8")) as Record<string, string>;
     } catch {
@@ -265,7 +238,7 @@ export function pluginConnections(
         reviewRequired: s.changed && !d.reason,
         reason:
           d.reason ||
-          (s.changed ? "插件内容已更新，请重新确认配置和凭证" : undefined) ||
+          (s.changed ? "插件内容已更新，请复核后重新启用（接收方未变化的凭证会保留）" : undefined) ||
           (s.enabled && !s.configured
             ? missing.length
               ? `缺少${missing.map((f) => `“${f.title}”`).join("、")}`
