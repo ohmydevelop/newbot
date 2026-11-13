@@ -1,6 +1,7 @@
 import {
   useEffect,
   useId,
+  useLayoutEffect,
   useRef,
   useState,
   type KeyboardEvent,
@@ -96,6 +97,14 @@ export function useComposerMentions({
     const el = textarea.current;
     if (el) setCaret([el.selectionStart, el.selectionEnd]);
   }
+  // A controlled textarea updates its value before the caret state catches up.
+  // Sync after every value change so a freshly typed "@" is evaluated at once
+  // instead of waiting for the next keystroke.
+  useLayoutEffect(() => {
+    const el = textarea.current;
+    if (el && document.activeElement === el)
+      setCaret([el.selectionStart, el.selectionEnd]);
+  }, [value]);
   useEffect(() => {
     pending.current?.abort();
     setSelecting(false);

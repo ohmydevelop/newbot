@@ -15,6 +15,14 @@ test("mention completion follows the caret and preserves surrounding Unicode tex
     assert.equal(removeMention(value, token), expected);
   }
 });
+test("mentions open at an empty composer but never inside running text", () => {
+  const token = mentionAt("@", 1);
+  assert.ok(token);
+  assert.equal(token.kind, "@");
+  assert.equal(token.query, "");
+  for (const value of ["帮我@", "你好，@牧云", "看看$", "（@", "name@example", "a$b"])
+    assert.equal(mentionAt(value, value.length), null, value);
+});
 test("literal emails, adjacent markers and text selections do not open completion", () => {
   for (const value of ["name@example", "@@test", "hello$code", "plain words"])
     assert.equal(mentionAt(value, value.length), null);

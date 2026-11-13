@@ -10,6 +10,8 @@ export function mentionAt(
   end = start,
 ): MentionToken | null {
   if (start !== end || start < 0 || start > value.length) return null;
+  // Mentions stay at the start of a line or after whitespace: typing "@" in the
+  // middle of prose must remain literal text and never steal keystrokes.
   const match = value.slice(0, start).match(/(?:^|\s)([$@])([^\s$@]*)$/u);
   if (!match) return null;
   const tokenStart = start - match[2].length - 1;
