@@ -53,7 +53,14 @@ import {
 import { skillSelections } from "./skills.js";
 import { pdfRoutes } from "./pdf.js";
 import { artifactStore } from "./artifacts.js";
-import { fileStore } from "./files.js";
+import {
+  fileStore,
+  attachmentByteLimit,
+  setAttachmentByteLimit,
+  ATTACHMENT_BYTE_MIN,
+  ATTACHMENT_BYTE_MAX,
+} from "./files.js";
+import { storageLimit, setStorageLimit } from "./storage.js";
 import { EventFeed } from "./event-feed.js";
 import { telemetry } from "./telemetry.js";
 import { CODEX_VERSION } from "../generated/version.js";
@@ -1433,7 +1440,7 @@ async function createServerInternal(
           .send({ error: "此会话有等待授权的任务，请先授权或取消。" });
       if (p.threadId && !db.owns(p.threadId))
         throw new PublicError("会话不存在");
-      files.inputs(p.attachments); // Validate before creating a durable reservation.
+      await files.inputs(p.attachments); // Validate before creating a durable reservation.
       await service.skills.prepare(p.skills || []);
       if (p.plugins?.length) await service.plugins.inputs(p.plugins);
     }
@@ -1864,7 +1871,34 @@ async function createServerInternal(
         .send(previewFailure(token));
     }
   });
-  app.get("/api/storage", async () => (await artifacts.maintenance()).usage);
+  app.get("/api/storage", async () => ({
+    ...(await artifacts.maintenance()).usage,
+    maxUploadBytes: attachmentByteLimit(db),
+  }));
+  app.post("/api/storage/max-upload", async (req) => {
+    const { bytes } = z
+      .object({
+        bytes: z
+          .number()
+          .int()
+          .min(ATTACHMENT_BYTE_MIN)
+          .max(ATTACHMENT_BYTE_MAX),
+      })
+      .parse(req.body);
+    const value = setAttachmentByteLimit(db, bytes);
+    db.audit("upload/max-bytes", "storage", String(value));
+    return { maxUploadBytes: value };
+  });
+  app.post("/api/storage/quota", async (req) => {
+    const { bytes } = z
+      .object({
+        bytes: z.number().int().min(0).max(1024 ** 4).nullable(),
+      })
+      .parse(req.body);
+    const value = setStorageLimit(db, bytes && bytes > 0 ? bytes : null);
+    db.audit("storage/quota", "storage", String(value ?? 0));
+    return { limitBytes: value ?? 0 };
+  });
   app.post("/api/storage/cleanup", async () =>
     artifacts.maintenance(true, () => files.cleanup()),
   );

@@ -1956,7 +1956,7 @@ export function bridge(
                       },
                     ]
                   : []),
-                ...files.inputs(data.attachments),
+                ...(await files.inputs(data.attachments, threadCwd(data.threadId))),
                 ...(extensions?.inputPaths(data.threadId, prepared.inputs) ||
                   prepared.inputs),
                 ...selectedPlugins.inputs,

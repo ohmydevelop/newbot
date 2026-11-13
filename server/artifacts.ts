@@ -25,6 +25,7 @@ import type { Store } from "./db.js";
 import {
   storedBytes,
   STORAGE_LIMIT,
+  storageLimit,
   RETENTION_MS,
   reserveUntracked,
   registeredUsage,
@@ -65,7 +66,7 @@ class CaptureError extends PublicError {
     super(
       (
         {
-          storage_limit: "文件存储已达到 512 MiB 上限，请先清理未使用文件",
+          storage_limit: "文件存储已达到配置的上限，请先清理未使用文件或在设置中调整",
           snapshot_missing: "文件快照缺失，历史记录仍保留，请从备份恢复",
           snapshot_corrupt: "文件快照校验失败，历史记录仍保留，请从备份恢复",
           file_too_large: "文件超过 8 MiB 保存上限，请先拆分或压缩",
@@ -315,7 +316,7 @@ export function artifactStore(
     const registered = registeredUsage(db);
     const usage: StorageUsage = {
       usedBytes: storedBytes(db),
-      limitBytes: STORAGE_LIMIT,
+      limitBytes: storageLimit(db) ?? 0,
       uploadsBytes: registered.uploads.bytes,
       snapshotBytes: registered.snapshots.bytes,
       untrackedBytes,
@@ -408,7 +409,12 @@ export function artifactStore(
         adoptedBytes = 0;
       }
     }
-    if (!exists && storedBytes(db) + data.length - adoptedBytes > STORAGE_LIMIT)
+    const limit = storageLimit(db);
+    if (
+      !exists &&
+      limit !== null &&
+      storedBytes(db) + data.length - adoptedBytes > limit
+    )
       fail("storage_limit");
     const target = join(folder, sha);
     let created = false;
@@ -450,7 +456,7 @@ export function artifactStore(
           .get(sha);
         if (
           !shared &&
-          storedBytes(db) + data.length - adoptedBytes > STORAGE_LIMIT
+          limit !== null && storedBytes(db) + data.length - adoptedBytes > limit
         )
           fail("storage_limit");
         const version = (

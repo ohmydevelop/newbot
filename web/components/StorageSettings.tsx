@@ -1,4 +1,4 @@
-import {responseJson} from "../http";
+import { responseJson } from "../http";
 import { useEffect, useState } from "react";
 import { LoaderCircle, RefreshCw, Trash2 } from "lucide-react";
 import type { StorageCleanup, StorageUsage } from "../../shared/types";
@@ -10,6 +10,9 @@ export default function StorageSettings() {
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const [revision, setRevision] = useState(0);
+  const [maxUpload, setMaxUpload] = useState("");
+  const [quota, setQuota] = useState("");
+  const [savingLimit, setSavingLimit] = useState(false);
   useEffect(() => {
     const controller = new AbortController();
     setBusy("read");
@@ -17,7 +20,21 @@ export default function StorageSettings() {
     void artifactFetch("/api/storage", { signal: controller.signal })
       .then((r) => responseJson(r))
       .then((value) => {
-        if (!controller.signal.aborted) setUsage(value);
+        if (!controller.signal.aborted) {
+          setUsage(value);
+          setQuota(
+            value.limitBytes
+              ? String(Math.round(value.limitBytes / 1024 / 1024 / 1024))
+              : "",
+          );
+          setMaxUpload(
+            String(
+              Math.round(
+                (value.maxUploadBytes || 8 * 1024 * 1024) / 1024 / 1024,
+              ),
+            ),
+          );
+        }
       })
       .catch((e) => {
         if (!controller.signal.aborted) setError((e as Error).message);
@@ -65,6 +82,60 @@ export default function StorageSettings() {
         </button>
       </div>
       <p className="muted">上传附件与已保存的文件版本共用存储配额。</p>
+      <div className="storage-limit">
+        <div>
+          <strong>单文件上传上限</strong>
+          <p>任意类型附件的大小上限，默认 8 MB（1–64 MB）。</p>
+        </div>
+        <label className="storage-limit-field">
+          <input
+            type="number"
+            min={1}
+            max={64}
+            step={1}
+            aria-label="单文件上传上限（MB）"
+            value={maxUpload}
+            onChange={(event) => setMaxUpload(event.target.value)}
+          />
+          <span className="muted">MB</span>
+        </label>
+        <button
+          type="button"
+          className="secondary"
+          disabled={savingLimit || busy === "read"}
+          onClick={() => {
+            const mb = Number(maxUpload);
+            if (!Number.isFinite(mb) || mb < 1 || mb > 64) {
+              setError("上限需在 1–64 MB 之间");
+              return;
+            }
+            setSavingLimit(true);
+            setError("");
+            setNotice("");
+            void artifactFetch("/api/storage/max-upload", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ bytes: Math.round(mb * 1024 * 1024) }),
+            })
+              .then((r) => responseJson(r))
+              .then((value: { maxUploadBytes: number }) => {
+                setUsage((current) =>
+                  current
+                    ? { ...current, maxUploadBytes: value.maxUploadBytes }
+                    : current,
+                );
+                setMaxUpload(
+                  String(Math.round(value.maxUploadBytes / 1024 / 1024)),
+                );
+                setNotice("单文件上传上限已保存。");
+              })
+              .catch((e) => setError((e as Error).message))
+              .finally(() => setSavingLimit(false));
+          }}
+        >
+          保存
+        </button>
+      </div>
       {busy === "read" && !usage && (
         <p className="storage-feedback" role="status">
           <LoaderCircle size={17} className="spin" aria-hidden="true" />
@@ -75,17 +146,82 @@ export default function StorageSettings() {
         <>
           <div className="storage-total">
             <strong>{formatFileSize(usage.usedBytes)}</strong>
-            <span> / {formatFileSize(usage.limitBytes)}</span>
+            <span>
+              {usage.limitBytes
+                ? ` / ${formatFileSize(usage.limitBytes)}`
+                : " · 未设置上限"}
+            </span>
           </div>
-          <progress
-            className="storage-progress"
-            aria-label="文件存储使用量"
-            value={Math.min(usage.usedBytes, usage.limitBytes)}
-            max={usage.limitBytes}
-          />
-          {usage.usedBytes >= usage.limitBytes && (
+          {!!usage.limitBytes && (
+            <progress
+              className="storage-progress"
+              aria-label="文件存储使用量"
+              value={Math.min(usage.usedBytes, usage.limitBytes)}
+              max={usage.limitBytes}
+            />
+          )}
+          {!!usage.limitBytes && usage.usedBytes >= usage.limitBytes && (
             <p className="inline-error">存储配额已满，新的文件暂时无法保存。</p>
           )}
+          <div className="storage-limit">
+            <div>
+              <strong>存储配额</strong>
+              <p>留空表示不限制；达到配额后新的附件与快照才会被拒绝。</p>
+            </div>
+            <label className="storage-limit-field">
+              <input
+                type="number"
+                min={1}
+                max={1024}
+                step={1}
+                aria-label="存储配额（GB）"
+                value={quota}
+                placeholder="不限"
+                onChange={(event) => setQuota(event.target.value)}
+              />
+              <span className="muted">GB</span>
+            </label>
+            <button
+              type="button"
+              className="secondary"
+              disabled={savingLimit}
+              onClick={() => {
+                const gb = quota.trim() === "" ? 0 : Number(quota);
+                if (!Number.isFinite(gb) || gb < 0 || gb > 1024) {
+                  setError("配额需在 1–1024 GB 之间，或留空表示不限");
+                  return;
+                }
+                setSavingLimit(true);
+                setError("");
+                setNotice("");
+                void artifactFetch("/api/storage/quota", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    bytes: gb ? Math.round(gb * 1024 * 1024 * 1024) : null,
+                  }),
+                })
+                  .then((r) => responseJson(r))
+                  .then((value: { limitBytes: number }) => {
+                    setUsage((current) =>
+                      current
+                        ? { ...current, limitBytes: value.limitBytes }
+                        : current,
+                    );
+                    setQuota(
+                      value.limitBytes
+                        ? String(Math.round(value.limitBytes / 1024 ** 3))
+                        : "",
+                    );
+                    setNotice("存储配额已保存。");
+                  })
+                  .catch((e) => setError((e as Error).message))
+                  .finally(() => setSavingLimit(false));
+              }}
+            >
+              保存
+            </button>
+          </div>
           <dl className="storage-breakdown">
             <div>
               <dt>已保存的快照</dt>

@@ -2,6 +2,20 @@ import { PublicError } from "./public-error.js";
 import { lstatSync, realpathSync } from "node:fs";
 import type { Store } from "./db.js";
 export const STORAGE_LIMIT = 512 * 1024 * 1024;
+/**
+ * Storage quota is user configuration, not a product constant. `null` means no
+ * limit; the setting lives with the rest of the instance data.
+ */
+export function storageLimit(db: Store): number | null {
+  const raw = db.get("storage:limit-bytes");
+  if (raw === undefined) return null;
+  const value = Number(raw);
+  return Number.isFinite(value) && value > 0 ? Math.floor(value) : null;
+}
+export function setStorageLimit(db: Store, bytes: number | null) {
+  db.set("storage:limit-bytes", String(bytes && bytes > 0 ? Math.floor(bytes) : 0));
+  return storageLimit(db);
+}
 export const RETENTION_MS = 24 * 60 * 60 * 1000;
 const untracked = new WeakMap<Store, number>();
 export function reserveUntracked(db: Store, bytes: number) {

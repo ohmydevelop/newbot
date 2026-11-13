@@ -14,7 +14,7 @@ import { DatabaseSync } from "node:sqlite";
 import { createServer } from "../server/index.js";
 import { database, DATABASE_VERSION } from "../server/db.js";
 import { fileStore } from "../server/files.js";
-import { storedBytes, STORAGE_LIMIT } from "../server/storage.js";
+import { storedBytes } from "../server/storage.js";
 import { FakeCodex } from "./fixture.js";
 const origin = "http://127.0.0.1:3100";
 const password = "artifact-test-password-long";
@@ -389,15 +389,17 @@ test("upload and artifact quotas are shared and snapshots deduplicate across con
     ).json();
     assert.equal(a.sha256, b.sha256);
     assert.equal(storedBytes(c.db), 6);
-    // Simulate a full store without allocating 512 MiB in a test.
+    // Simulate a full store with a small user-configured quota.
+    const quota = 1024;
+    c.db.set("storage:limit-bytes", String(quota));
     c.db.raw
       .prepare(
         "INSERT INTO attachments VALUES('quota','quota','text/plain',?,0,1)",
       )
-      .run(STORAGE_LIMIT - 6);
+      .run(quota - 6);
     assert.throws(
       () => fileStore(c.directory, c.db).save("upload.txt", Buffer.from("a")),
-      /512 MiB/,
+      /上限/,
     );
     writeFileSync(join(c.cwd, "new.txt"), "different");
     assert.equal(

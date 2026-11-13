@@ -336,13 +336,23 @@ test("attachments reject traversal, unsupported active content and oversized tex
     });
     assert.equal(file.body, "# Notes");
     assert.match(file.headers["content-disposition"]!, /^attachment/);
+    // Any file is accepted, but active content is stored as an opaque binary and
+    // served as a download, never as an inline image or script.
     const svg = await ctx.app.inject({
       method: "POST",
       url: "/api/attachments?name=bad.svg",
       headers: { ...ctx.headers, "content-type": "application/octet-stream" },
       payload: Buffer.from('<svg onload="alert(1)"/>'),
     });
-    assert.equal(svg.statusCode, 400);
+    assert.equal(svg.statusCode, 200);
+    assert.equal(svg.json().mime, "application/octet-stream");
+    const served = await ctx.app.inject({
+      url: `/api/files/${svg.json().id}`,
+      headers: ctx.headers,
+    });
+    assert.equal(served.statusCode, 200);
+    assert.equal(served.headers["content-type"], "application/octet-stream");
+    assert.match(served.headers["content-disposition"]!, /^attachment/);
     assert.equal(
       (
         await ctx.app.inject({

@@ -120,6 +120,7 @@ export type StorageUsage = {
   reclaimableFiles: number;
   scannedAt: number;
   limits: { artifactBytes: number; textBytes: number; retentionHours: number };
+  maxUploadBytes?: number;
 };
 export type StorageCleanup = {
   usage: StorageUsage;

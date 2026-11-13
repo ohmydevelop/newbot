@@ -18,7 +18,7 @@ import { join } from "node:path";
 import { createServer } from "../server/index.js";
 import { FakeCodex } from "./fixture.js";
 import { fileStore } from "../server/files.js";
-import { STORAGE_LIMIT, RETENTION_MS, storedBytes } from "../server/storage.js";
+import { RETENTION_MS, storedBytes } from "../server/storage.js";
 const origin = "http://127.0.0.1:3100";
 const password = "lifecycle-test-only-password";
 const digest = (data: string) =>
@@ -214,15 +214,17 @@ test("orphan reservation shares quota with uploads and adoption does not charge 
     writeFileSync(join(c.cwd, "adopt.txt"), "adopt");
     const usage = (await c.get("/api/storage")).json();
     assert.equal(usage.untrackedBytes, 5);
+    const quota = 1024;
+    c.db.set("storage:limit-bytes", String(quota));
     c.db.raw
       .prepare(
         "INSERT INTO attachments VALUES('quota','quota.txt','text/plain',?,0,1)",
       )
-      .run(STORAGE_LIMIT - 5);
-    assert.equal(storedBytes(c.db), STORAGE_LIMIT);
+      .run(quota - 5);
+    assert.equal(storedBytes(c.db), quota);
     assert.throws(
       () => fileStore(c.directory, c.db).save("new.txt", Buffer.from("x")),
-      /512 MiB/,
+      /上限/,
     );
     const adopted = await c.artifacts.register(
       c.threadId,
@@ -230,12 +232,12 @@ test("orphan reservation shares quota with uploads and adoption does not charge 
       "adopt.txt",
     );
     assert.equal(adopted.sha256, sha);
-    assert.equal(storedBytes(c.db), STORAGE_LIMIT);
+    assert.equal(storedBytes(c.db), quota);
     assert.equal((await c.get("/api/storage")).json().untrackedBytes, 0);
     writeFileSync(join(c.cwd, "new.txt"), "different");
     await assert.rejects(
       c.artifacts.register(c.threadId, c.turnId, "new.txt"),
-      /512 MiB/,
+      /上限/,
     );
   } finally {
     await c.app.close();
