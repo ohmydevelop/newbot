@@ -112,6 +112,7 @@ export default function ToolsSettings({
   return (
     <section
       className="tools-catalog"
+      data-mode={mode}
       aria-label={mode === "plugins" ? "插件管理" : "连接器管理"}
     >
       {importing && (
@@ -138,18 +139,16 @@ export default function ToolsSettings({
         query={query}
         onQuery={setQuery}
       >
-        <button
-          type="button"
-          className="icon-button"
-          aria-label={mode === "plugins" ? "添加插件" : "添加连接器"}
-          title={mode === "plugins" ? "添加插件" : "添加连接器"}
-          disabled={mode === "connectors" && !s.settings?.configuration}
-          onClick={() =>
-            mode === "plugins" ? setAvailable(true) : setCreate((v) => v + 1)
-          }
-        >
-          <Plus size={20} />
-        </button>
+        {mode === "connectors" && (
+          <button
+            type="button"
+            className="primary catalog-add"
+            disabled={!s.settings?.configuration}
+            onClick={() => setCreate((v) => v + 1)}
+          >
+            新连接器
+          </button>
+        )}
         <button
           className="icon-button"
           title={mode === "plugins" ? "刷新插件" : "刷新连接器"}

@@ -28,7 +28,6 @@ const SudoSettings = lazy(() => import("./SudoSettings"));
 const tabs = [
   { id: "general", label: "通用", icon: SlidersHorizontal },
   { id: "models", label: "网关", icon: Cpu },
-  { id: "extensions", label: "插件", icon: AtSign },
   { id: "storage", label: "存储", icon: HardDrive },
   { id: "security", label: "安全", icon: Shield },
 ];
@@ -43,6 +42,13 @@ export default function Settings({
 }) {
   const s = useApp();
   const contentId = useId();
+  const pluginsOnly = [
+    "plugins",
+    "mcp",
+    "skills",
+    "experts",
+    "connectors",
+  ].includes(initialTab);
   const [tab, setTab] = useState(
     ["plugins", "mcp", "skills", "experts", "connectors"].includes(initialTab)
       ? "extensions"
@@ -66,12 +72,12 @@ export default function Settings({
     <Modal
       open={open}
       onOpenChange={onOpenChange}
-      title="设置"
+      title={pluginsOnly ? "插件" : "设置"}
       wide
-      className="settings-modal"
+      className={`settings-modal ${pluginsOnly ? "plugins-modal" : ""}`}
     >
       <div className="settings-layout">
-        <nav aria-label="设置分类">
+        <nav aria-label="设置分类" hidden={pluginsOnly}>
           {tabs
             .filter((t) => t.id !== "storage" || s.storageManagement)
             .map((t) => (

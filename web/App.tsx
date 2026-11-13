@@ -43,8 +43,6 @@ import {
   FolderOpen,
   AlertCircle,
   WifiOff,
-  DoorOpen,
-  DoorClosed,
 } from "lucide-react";
 import type {
   Json,
@@ -1019,6 +1017,56 @@ export default function App() {
       >
         跳到消息输入
       </a>
+      {!s.sidebar && (
+        <aside className="sidebar-rail" aria-label="对话导航">
+          <button
+            type="button"
+            className="rail-icon"
+            aria-label="展开侧栏"
+            title="展开侧栏"
+            onClick={() => s.set({ sidebar: true })}
+          >
+            <PanelLeft size={18} aria-hidden="true" />
+          </button>
+          <button
+            type="button"
+            className="rail-icon"
+            aria-label="搜索聊天"
+            title="搜索聊天"
+            onClick={() => setSearch(true)}
+          >
+            <Search size={18} aria-hidden="true" />
+          </button>
+          <button
+            type="button"
+            className="rail-icon"
+            aria-label="新建聊天"
+            title="新建聊天"
+            onClick={fresh}
+          >
+            <SquarePen size={18} aria-hidden="true" />
+          </button>
+          <span className="rail-spacer" />
+          <button
+            type="button"
+            className="rail-icon"
+            aria-label="插件"
+            title="插件"
+            onClick={() => setSettings("plugins")}
+          >
+            <Blocks size={18} aria-hidden="true" />
+          </button>
+          <button
+            type="button"
+            className="rail-icon rail-avatar"
+            aria-label="设置"
+            title="设置"
+            onClick={() => setSettings("general")}
+          >
+            n
+          </button>
+        </aside>
+      )}
       <Sidebar
         open={s.sidebar}
         onOpenChange={(sidebar) => s.set({ sidebar })}
@@ -1030,11 +1078,13 @@ export default function App() {
       >
         <div className="sidebar-top">
           <button
-            className="brand-button"
-            onClick={fresh}
-            aria-label="newbot，新对话"
+            className="icon-button"
+            title="收起侧栏"
+            aria-label="收起侧栏"
+            aria-expanded={true}
+            onClick={() => s.set({ sidebar: false })}
           >
-            <Mark size={26} />
+            <PanelLeft size={18} />
           </button>
           <button
             className="icon-button sidebar-search"
@@ -1043,15 +1093,6 @@ export default function App() {
             onClick={() => setSearch(true)}
           >
             <Search size={18} />
-          </button>
-          <button
-            className="icon-button"
-            title="收起侧栏"
-            aria-label="收起侧栏"
-            aria-expanded={true}
-            onClick={() => s.set({ sidebar: false })}
-          >
-            <PanelLeft size={18} />
           </button>
         </div>
         <nav className="main-nav" aria-label="主导航">
@@ -1138,6 +1179,14 @@ export default function App() {
         </div>
         <div className="sidebar-bottom">
           <button
+            type="button"
+            className="sidebar-plugins"
+            onClick={() => setSettings("plugins")}
+          >
+            <Blocks size={18} aria-hidden="true" />
+            <span>插件</span>
+          </button>
+          <button
             className="account-button"
             onClick={() => setSettings("general")}
           >
@@ -1166,7 +1215,7 @@ export default function App() {
           <div className="topbar-left">
             {!s.sidebar && (
               <button
-                className="icon-button"
+                className="icon-button expand-sidebar"
                 ref={sidebarToggle}
                 aria-expanded={false}
                 aria-label="展开侧栏"
@@ -1871,11 +1920,7 @@ export default function App() {
           }
           onClick={() => setRailOpen((v) => !v)}
         >
-          {railOpen ? (
-            <DoorClosed size={18} aria-hidden="true" />
-          ) : (
-            <DoorOpen size={18} aria-hidden="true" />
-          )}
+          <PanelLeft size={18} aria-hidden="true" />
           {(s.thread?.nextInput?.skills.length || 0) +
             (s.thread?.nextInput?.plugins.length || 0) >
             0 && (

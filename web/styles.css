@@ -6374,3 +6374,130 @@ button[data-variant="destructive"]:hover:not(:disabled) {
   flex-shrink: 0;
   opacity: 0.7;
 }
+
+/* Collapsed navigation: an icon rail instead of hiding the sidebar entirely. */
+.sidebar-rail {
+  width: 56px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 9px 10px;
+  background: var(--sidebar);
+}
+.rail-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 600;
+}
+.rail-icon:hover {
+  background: var(--hover);
+  color: var(--text);
+}
+.rail-avatar {
+  background: var(--hover);
+  color: var(--text);
+}
+.sidebar-plugins {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 36px;
+  padding: 6px 10px;
+  border-radius: 10px;
+  color: var(--text);
+  font-size: 14px;
+}
+.sidebar-plugins:hover {
+  background: var(--hover);
+}
+@media (max-width: 760px) {
+  .sidebar-rail {
+    display: none;
+  }
+}
+@media (min-width: 761px) {
+  .expand-sidebar {
+    display: none;
+  }
+}
+
+/* Extensions page: segmented tabs and a two-column catalogue, matching the
+   reference plugin screen without an app store. */
+.extension-tabs {
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
+  margin-bottom: 18px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--surface);
+}
+.extension-tabs > button {
+  min-height: 32px;
+  padding: 4px 14px;
+  border-radius: 999px;
+  color: var(--muted);
+  font-size: 13px;
+}
+.extension-tabs > button[aria-selected="true"] {
+  color: var(--text);
+  background: var(--bg);
+}
+.tools-catalog[data-mode="plugins"] {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 20px;
+  align-content: start;
+}
+.tools-catalog[data-mode="plugins"] > :not(.catalog-entry) {
+  grid-column: 1 / -1;
+}
+.tools-catalog[data-mode="plugins"] .catalog-entry {
+  min-height: 64px;
+  border-radius: 12px;
+  padding-right: 6px;
+}
+.tools-catalog[data-mode="plugins"] .catalog-entry-main {
+  padding: 10px 8px;
+  gap: 12px;
+}
+.tools-catalog[data-mode="plugins"] .catalog-entry-main strong {
+  font-size: 15px;
+  font-weight: 600;
+}
+.tools-catalog[data-mode="plugins"] .catalog-entry-main small {
+  font-size: 13px;
+  color: var(--muted);
+}
+.catalog-add {
+  min-height: 34px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+}
+@media (max-width: 1000px) {
+  .tools-catalog[data-mode="plugins"] {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.settings-layout > nav[hidden] {
+  display: none;
+}
+.plugins-modal .settings-content {
+  padding: 20px 24px;
+}
+.extensions-settings .extension-tabs {
+  border-bottom: 0;
+}
+.extensions-settings .extension-tabs > button[aria-selected="true"] {
+  color: var(--text);
+  background: var(--bg);
+}
