@@ -13,6 +13,13 @@ import { request, useApp } from "../store";
 const ElicitationForm = lazy(() => import("./ElicitationForm"));
 export function ApprovalCard({ approval }: { approval: Approval }) {
   const [busy, setBusy] = useState(false);
+  // Approval policy is frozen for a running turn: switching to full access
+  // applies to the next message, so say that where the prompt appears.
+  const pendingFull = useApp(
+    (s) =>
+      s.thread?.runtime?.approval === "full" &&
+      s.thread?.runtime?.applied?.approval !== "full",
+  );
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const p = approval.params;
   const question = approval.method === "item/tool/requestUserInput";
@@ -68,6 +75,11 @@ export function ApprovalCard({ approval }: { approval: Approval }) {
                 : "需要你的授权"}
         </strong>
       </header>
+      {pendingFull && !question && (
+        <p className="approval-pending" role="status">
+          你已切换到「完全访问」：本任务内除需要你补充信息的请求外，其余授权会自动通过；下一条消息起使用原生完全访问。
+        </p>
+      )}
       {question ? (
         (p.questions || []).map((q: Json) => (
           <label className="question" key={q.id}>

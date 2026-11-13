@@ -4,7 +4,15 @@ import { responseJson } from "./http";
 import ChatPrivateInputs from "./components/ChatPrivateInputs";
 import ThreadStatus from "./components/ThreadStatus";
 import { absoluteTime, relativeTime } from "./time";
-import { lazy, useEffect, useRef, useState, type FormEvent } from "react";
+import WorkbenchRail from "./components/WorkbenchRail";
+import {
+  lazy,
+  Suspense,
+  useEffect,
+  useRef,
+  useState,
+  type FormEvent,
+} from "react";
 import * as Dropdown from "@radix-ui/react-dropdown-menu";
 import { ActionMenuContent, ActionMenuItem } from "./components/ActionMenu";
 import {
@@ -35,6 +43,7 @@ import {
   FolderOpen,
   AlertCircle,
   WifiOff,
+  Layers,
 } from "lucide-react";
 import type {
   Json,
@@ -43,6 +52,7 @@ import type {
   SkillReference,
   PluginReference,
   SessionInputs,
+  Artifact,
 } from "../shared/types";
 import {
   useApp,
@@ -152,6 +162,7 @@ function Login() {
   );
 }
 const WorkspaceFiles = lazy(() => import("./components/WorkspaceFiles"));
+const ArtifactPreview = lazy(() => import("./components/ArtifactPreview"));
 export default function App() {
   const s = useApp();
   const composer = useComposerDrafts(s.selectedId, s.newDraftKey);
@@ -276,6 +287,10 @@ export default function App() {
     ? s.pendingRuns[s.pendingRun]
     : undefined;
   const [privateAccess, setPrivateAccess] = useState<string | null>(null);
+  const [railArtifact, setRailArtifact] = useState<Artifact | null>(null);
+  const [railOpen, setRailOpen] = useState(
+    () => localStorage.getItem("newbot:rail") === "1",
+  );
   const [settings, setSettings] = useState<string | null>(null);
   const [search, setSearch] = useState(false);
   useEffect(() => {
@@ -373,6 +388,24 @@ export default function App() {
     media.addEventListener("change", apply);
     return () => media.removeEventListener("change", apply);
   }, [s.theme]);
+  useEffect(() => {
+    localStorage.setItem("newbot:rail", railOpen ? "1" : "0");
+  }, [railOpen]);
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (
+        (e.ctrlKey || e.metaKey) &&
+        e.shiftKey &&
+        !e.altKey &&
+        e.key.toLowerCase() === "a"
+      ) {
+        e.preventDefault();
+        setRailOpen((v) => !v);
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, []);
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       const action = chatShortcut(
@@ -1149,6 +1182,25 @@ export default function App() {
             {s.selectedId && (
               <button
                 className="icon-button"
+                aria-label="会话关联"
+                title="会话关联"
+                aria-expanded={railOpen}
+                onClick={() => setRailOpen((v) => !v)}
+              >
+                <Layers size={17} />
+                {(s.thread?.nextInput?.skills.length || 0) +
+                  (s.thread?.nextInput?.plugins.length || 0) >
+                  0 && (
+                  <span className="association-count" aria-hidden="true">
+                    {(s.thread?.nextInput?.skills.length || 0) +
+                      (s.thread?.nextInput?.plugins.length || 0)}
+                  </span>
+                )}
+              </button>
+            )}
+            {s.selectedId && (
+              <button
+                className="icon-button"
                 aria-label="会话私密授权"
                 title="会话私密授权"
                 onClick={() => setPrivateAccess(s.selectedId)}
@@ -1826,6 +1878,43 @@ export default function App() {
           </p>
         </div>
       </main>
+      {railOpen && s.selectedId && (
+        <>
+          <div className="rail-scrim" onClick={() => setRailOpen(false)} />
+          <WorkbenchRail
+            thread={s.thread || undefined}
+            busy={inputsBusy}
+            onClose={() => setRailOpen(false)}
+            onPickFiles={() => setWorkspacePicker(true)}
+            onOpenArtifact={setRailArtifact}
+            onRemove={(kind, id) => {
+              const current = s.thread?.nextInput;
+              if (!current || !s.selectedId) return;
+              const skills =
+                kind === "skills"
+                  ? current.skills.filter((x) => x.id !== id)
+                  : current.skills;
+              const plugins =
+                kind === "plugins"
+                  ? current.plugins.filter((x) => x.id !== id)
+                  : current.plugins;
+              void saveInputs(s.selectedId, skills, plugins);
+            }}
+          />
+        </>
+      )}
+      {railArtifact && (
+        <Suspense fallback={null}>
+          <ArtifactPreview
+            artifact={railArtifact}
+            onClose={() => setRailArtifact(null)}
+            onCloseAutoFocus={(event) => {
+              event.preventDefault();
+              textarea.current?.focus();
+            }}
+          />
+        </Suspense>
+      )}
       <Modal
         open={search}
         onOpenChange={setSearch}

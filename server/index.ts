@@ -8,6 +8,7 @@ import { instanceLease } from "./instance-lease.js";
 import { runtimeLocations } from "./runner/locations.js";
 import { captureFailure } from "./failure-store.js";
 import { privateFields } from "./private-fields.js";
+import { isMcpToolConsent } from "../shared/approvals.js";
 import { certificateInspector } from "./certificates.js";
 import { randomUUID } from "node:crypto";
 import { configurationOperations } from "./configuration-operations.js";
@@ -417,14 +418,29 @@ async function createServerInternal(
     service.events.runtime(runtime.state, runtime.reason);
   });
   runtime.on("approval", (request: ServerRequest) => {
-    if (db.owns((request.params as Json).threadId)) {
-      service.activity.approval(
-        request.id,
-        request.params as Json,
-        request.method,
-      );
-      service.events.approval(service.elicitation.publicApproval(request));
+    const params = request.params as Json;
+    if (!db.owns(params.threadId)) return;
+    // Approval policy is frozen per turn by the runtime, so a mid-turn switch to
+    // full access cannot reach the kernel. Answer this turn's approvals instead:
+    // the user already asked for no prompts, and every answer is audited.
+    const settings = service.runtimeSettings.get(params.threadId);
+    const needsInput =
+      request.method === "item/tool/requestUserInput" ||
+      (request.method === "mcpServer/elicitation/request" &&
+        !isMcpToolConsent(request as never));
+    if (
+      settings.approval === "full" &&
+      settings.applied?.approval !== "full" &&
+      !needsInput
+    ) {
+      db.audit("approval/auto-full", params.threadId, request.method);
+      void service
+        .handle("approval/respond", { id: request.id, allow: true })
+        .catch(() => {});
+      return;
     }
+    service.activity.approval(request.id, params, request.method);
+    service.events.approval(service.elicitation.publicApproval(request));
   });
   runtime.on("resolved", (id: string | number) => {
     service.activity.resolved(id);
@@ -1533,7 +1549,7 @@ async function createServerInternal(
               ) => {
                 service.skillUses.bind(p.requestId, refs);
                 service.pluginUses.bind(p.requestId, plugins);
-                service.inputs.consume(threadId!, bound?.inputRevision);
+                service.inputs.remember(threadId!, refs, plugins);
                 runs.update(p.requestId, "dispatching", threadId!);
                 dispatched = true;
               },

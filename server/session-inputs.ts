@@ -96,6 +96,37 @@ export function sessionInputs(
       throw new PublicError("下一条消息的扩展已变化，请重新读取后发送");
     return { inputRevision: value.revision };
   }
+  /**
+   * Session associations outlive a single message: keep what was dispatched so
+   * the next turn inherits the same plugins/skills until the user removes them.
+   */
+  function remember(
+    threadId: string,
+    skills: { id: string; sha256: string }[],
+    plugins: { id: string; name: string; displayName?: string }[],
+  ) {
+    // A turn without associations must not churn the revision.
+    if (!skills.length && !plugins.length) return;
+    const content = JSON.stringify({
+      skills: skills.map(({ id, sha256 }) => ({ id, sha256 })),
+      plugins: plugins.map(({ id, name, displayName }) => ({
+        id,
+        name,
+        displayName: displayName || name,
+      })),
+    });
+    db.raw
+      .prepare(
+        `INSERT OR IGNORE INTO session_inputs(thread_id,revision,content) VALUES(?,0,'{"skills":[],"plugins":[]}')`,
+      )
+      .run(threadId);
+    const r = db.raw
+      .prepare(
+        "UPDATE session_inputs SET revision=revision+1,content=? WHERE thread_id=?",
+      )
+      .run(content, threadId);
+    if (r.changes) changed(threadId, get(threadId));
+  }
   function consume(threadId: string, revision?: number) {
     if (revision === undefined) return;
     const r = db.raw
@@ -123,5 +154,5 @@ export function sessionInputs(
       )
       .get(`$.${kind}`, id);
   }
-  return { get, update, capture, consume, references };
+  return { get, update, capture, remember, consume, references };
 }

@@ -358,7 +358,7 @@ test("v2 database upgrade adds only the skill reference table and keeps existing
   }
 });
 
-test("next-message references survive restart, reject stale sends, and are consumed exactly once by dispatch", async () => {
+test("session associations survive restart, reject stale sends, and persist after dispatch", async () => {
   const c = await setup();
   try {
     const first = await c.post({
@@ -420,9 +420,10 @@ test("next-message references survive restart, reject stale sends, and are consu
         .params.input.filter((v: Json) => v.type === "skill").length,
       1,
     );
+    // Dispatch keeps the association: the next turn inherits the same skill.
     assert.deepEqual(c.ctx.service.inputs.get(threadId), {
       revision: 2,
-      skills: [],
+      skills: [c.selected],
       plugins: [],
     });
     const count = c.codex.calls.filter((v) => v.method === "turn/start").length;
