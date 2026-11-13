@@ -55,7 +55,7 @@ SQLite 当前增量版本为 11。`sessionSettings.nextTurnSettings/persistentIn
 
 ## Issue 05：图文输出与扩展导入
 
-SQLite 增量版本为 12，仅增加媒体关联及导入记录/恢复日志。`presentation` 声明新线程使用 `newbot:ui/v2`（Image、Metric、Chart、SourceLink），旧线程返回其真实 `uiCatalog`，不重建线程升级契约。
+SQLite 增量版本为 12，仅增加媒体关联及导入记录/恢复日志。`presentation` 声明新线程使用 `newbot:ui/v2`（Image、Metric、Chart、SourceLink、List、Grid），旧线程返回其真实 `uiCatalog`，不重建线程升级契约。
 
 `media` 表示正文、原生和 MCP 图片统一受鉴权快照，PNG/JPEG/WebP 单张最多 8 MiB。公开 HTTPS 资源经过地址、重定向、类型及大小检查，不接受任意代理或身份凭证；真实图片生成仍取决于上游。当前开发环境 DNS 将公网域名解析为保留地址时，下载会拒绝并显示失败，而不绕过保护。
 

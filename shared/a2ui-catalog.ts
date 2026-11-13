@@ -23,7 +23,7 @@ const dynamicString = z
   .describe("REF:#/$defs/DynamicString");
 const componentId = CommonSchemas.ComponentId;
 const children = z.array(componentId).max(24).describe("REF:#/$defs/ChildList");
-const parent = ["Surface", "Column", "Row"];
+const parent = ["Surface", "Column", "Row", "List", "Grid"];
 export const a2uiApis = {
   Text: {
     name: "Text",
@@ -170,6 +170,28 @@ export const richA2uiApis = {
             return false;
           }
         }),
+      })
+      .strict(),
+  },
+  List: {
+    name: "List",
+    allowedParents: parent,
+    schema: z
+      .object({
+        variant: z.enum(["plain", "bordered"]).optional(),
+        children,
+      })
+      .strict(),
+  },
+  Grid: {
+    name: "Grid",
+    allowedParents: parent,
+    schema: z
+      .object({
+        columns: z.union([z.literal(2), z.literal(3), z.literal(4)]),
+        // Optional per-child column spans; extra entries are ignored.
+        spans: z.array(z.number().int().min(1).max(4)).max(24).optional(),
+        children,
       })
       .strict(),
   },

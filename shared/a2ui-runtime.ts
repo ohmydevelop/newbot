@@ -386,7 +386,10 @@ function assertComponentTree(components: Map<string, Component>) {
     const children =
       node.component === "Button"
         ? [node.child]
-        : node.component === "Row" || node.component === "Column"
+        : node.component === "Row" ||
+            node.component === "Column" ||
+            node.component === "List" ||
+            node.component === "Grid"
           ? (node.children as unknown[])
           : [];
     for (const child of children) {

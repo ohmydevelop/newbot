@@ -3,7 +3,7 @@ import { test } from "node:test";
 import { execFileSync } from "node:child_process";
 import { Catalog } from "@a2ui/web_core/v0_9";
 import { A2uiRuntime } from "../web/a2ui.js";
-import { a2uiApis } from "../shared/a2ui-catalog.js";
+import { a2uiApis, richA2uiApis } from "../shared/a2ui-catalog.js";
 import {
   A2UI_CATALOG_ID,
   A2UI_LIMITS,
@@ -58,6 +58,48 @@ test("A2UI product catalog contains six components and no executable functions",
   assert.deepEqual(
     Object.keys(json.components as object).sort(),
     [...c.components.keys()].sort(),
+  );
+});
+test("rich catalog adds List and Grid with strict, bounded schemas", () => {
+  const rich = Object.keys(richA2uiApis).sort();
+  assert.deepEqual(rich, [
+    "Button",
+    "Chart",
+    "ChoicePicker",
+    "Column",
+    "Grid",
+    "Image",
+    "List",
+    "Metric",
+    "Row",
+    "SourceLink",
+    "Text",
+    "TextField",
+  ]);
+  const list = richA2uiApis.List.schema.safeParse({
+    children: ["a1", "a2"],
+    variant: "bordered",
+  });
+  assert.equal(list.success, true);
+  assert.equal(
+    richA2uiApis.List.schema.safeParse({ children: ["a1"], variant: "grid" })
+      .success,
+    false,
+  );
+  const grid = richA2uiApis.Grid.schema.safeParse({
+    columns: 3,
+    spans: [2, 1],
+    children: ["a1", "a2"],
+  });
+  assert.equal(grid.success, true);
+  assert.equal(
+    richA2uiApis.Grid.schema.safeParse({ columns: 5, children: ["a1"] }).success,
+    false,
+  );
+  assert.equal(
+    richA2uiApis.Grid.schema.safeParse({ columns: 2, spans: [9], children: ["a1"] })
+      .success,
+    false,
   );
 });
 test("A2UI ordinary form renders a complete native state and preserves user edits on incremental updates", () => {

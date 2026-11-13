@@ -1,8 +1,12 @@
 .a2ui-panel {
   color: var(--text);
+  background: var(--menu-bg);
   border: 1px solid var(--line);
-  border-radius: 16px;
-  padding: 20px;
+  border-radius: var(--a2ui-radius-panel);
+  padding: var(--a2ui-pad);
+  font-size: var(--a2ui-font);
+  line-height: var(--a2ui-line);
+  letter-spacing: var(--a2ui-track);
   overflow-wrap: anywhere;
   min-width: 0;
 }
@@ -38,7 +42,7 @@
 .a2ui-column {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--a2ui-gap);
   min-width: 0;
 }
 .a2ui-row {
@@ -61,10 +65,13 @@
 .a2ui-panel .a2ui-heading {
   font-size: 18px;
   font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: 0.01em;
 }
 .a2ui-panel .a2ui-caption {
   color: var(--muted);
-  font-size: 13px;
+  font-size: var(--a2ui-caption, 13px);
+  line-height: 1.6;
 }
 .a2ui-panel .a2ui-text {
   white-space: pre-wrap;
@@ -77,8 +84,9 @@
 }
 .a2ui-field label,
 .a2ui-choice legend {
-  font-size: 14px;
+  font-size: 13.5px;
   font-weight: 500;
+  letter-spacing: 0.01em;
 }
 .a2ui-field input,
 .a2ui-field select,
@@ -90,8 +98,14 @@
   color: var(--text);
   background: var(--bg);
   border: 1px solid var(--line);
-  border-radius: 9px;
+  border-radius: var(--a2ui-radius-field);
   padding: 10px 12px;
+  transition: border-color 0.15s;
+}
+.a2ui-field input:focus-visible,
+.a2ui-field select:focus-visible,
+.a2ui-field textarea:focus-visible {
+  border-color: var(--line);
 }
 .a2ui-field textarea {
   resize: vertical;
@@ -110,7 +124,7 @@
   min-height: 44px;
 }
 .a2ui-choice input {
-  accent-color: var(--strong);
+  accent-color: var(--accent);
   width: 18px;
   height: 18px;
   margin: 0;
@@ -120,20 +134,34 @@
   font: inherit;
   min-height: 44px;
   max-width: 100%;
-  padding: 10px 16px;
-  border-radius: 24px;
-  background: var(--bg);
+  padding: 10px 18px;
+  border-radius: var(--a2ui-radius-field);
+  background: transparent;
   border: 1px solid var(--line);
   color: var(--text);
   cursor: pointer;
+  transition:
+    background 0.15s,
+    border-color 0.15s;
+}
+.a2ui-panel .a2ui-button:hover {
+  background: var(--hover);
 }
 .a2ui-panel .a2ui-button-primary {
-  background: var(--strong);
-  color: var(--on-strong);
-  border-color: var(--strong);
+  background: var(--accent);
+  color: var(--on-accent);
+  border-color: var(--accent);
+  font-weight: 550;
+}
+.a2ui-panel .a2ui-button-primary:hover {
+  background: var(--accent);
+  filter: brightness(1.06);
 }
 .a2ui-panel .a2ui-button-borderless {
   border-color: transparent;
+}
+.a2ui-panel .a2ui-button-borderless:hover {
+  background: var(--hover);
 }
 .a2ui-panel .a2ui-button:disabled {
   opacity: 0.5;
@@ -165,4 +193,54 @@
 .a2ui-footer button:disabled {
   opacity: 0.5;
   cursor: default;
+}
+
+.a2ui-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+}
+.a2ui-list > li {
+  padding: 10px 0;
+  min-width: 0;
+}
+.a2ui-list > li:first-child {
+  padding-top: 0;
+}
+.a2ui-list > li:last-child {
+  padding-bottom: 0;
+}
+.a2ui-list-bordered > li + li {
+  border-top: 1px solid var(--line);
+}
+.a2ui-list-bordered > li {
+  padding: 12px 0;
+}
+.a2ui-grid {
+  display: grid;
+  grid-template-columns: repeat(var(--a2ui-columns, 2), minmax(0, 1fr));
+  gap: 12px;
+  min-width: 0;
+}
+.a2ui-grid-cell {
+  min-width: 0;
+}
+@media (max-width: 600px) {
+  .a2ui-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .a2ui-grid-cell {
+    grid-column: span 1 !important;
+  }
+  .a2ui-panel {
+    padding: 16px;
+    border-radius: 16px;
+  }
+}
+
+.a2ui-panel a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }

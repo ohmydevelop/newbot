@@ -112,10 +112,10 @@ test("native thread registers generated dynamic tool contract and waits without 
     assert.deepEqual(
       capabilities.a2ui.catalogs
         .find((c: any) => c.id.endsWith("/v2"))
-        .components.slice(-4),
-      ["Image", "Metric", "Chart", "SourceLink"],
+        .components.slice(-6),
+      ["Image", "Metric", "Chart", "SourceLink", "List", "Grid"],
     );
-    assert.equal(capabilities.a2ui.components, 10);
+    assert.equal(capabilities.a2ui.components, 12);
     const events: unknown[] = [];
     ctx.service.events.on("event", (event) => {
       EventSchema.parse(event);

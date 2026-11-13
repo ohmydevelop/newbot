@@ -1,6 +1,7 @@
 import ChartView from "../Chart";
+import { useResolvedTheme } from "../../appearance";
 import { MediaImage } from "../MediaImage";
-import { createContext, useContext, useId } from "react";
+import { createContext, useContext, useId, type CSSProperties } from "react";
 import { Catalog } from "@a2ui/web_core/v0_9";
 import {
   createComponentImplementation,
@@ -191,30 +192,83 @@ const SourceLink = createComponentImplementation(
     </a>
   ),
 );
-const Chart = createComponentImplementation(richA2uiApis.Chart, ({ props }) => (
-  <ChartView
-    code={JSON.stringify({
-      title: { text: props.title, textStyle: { fontSize: 14 } },
-      tooltip: {},
-      legend: { bottom: 0 },
-      grid: { left: 48, right: 20, top: 48, bottom: 64 },
-      ...(props.kind !== "pie"
-        ? {
-            xAxis: { type: "category", data: props.labels },
-            yAxis: { type: "value" },
-          }
-        : {}),
-      series: props.series.map((s) => ({
-        name: s.name,
-        type: props.kind,
-        data:
-          props.kind === "pie"
-            ? s.values.map((value, i) => ({ name: props.labels[i], value }))
-            : s.values,
-      })),
-    })}
-  />
-));
+const Chart = createComponentImplementation(richA2uiApis.Chart, ({ props }) => {
+  const theme = useResolvedTheme();
+  const palette =
+    theme === "dark"
+      ? ["#f5a742", "#8ab4f8", "#a78bfa", "#34d399", "#9ca3af"]
+      : ["#a86412", "#2563eb", "#7c3aed", "#047857", "#6b7280"];
+  return (
+    <ChartView
+      code={JSON.stringify({
+        color: palette,
+        title: {
+          text: props.title,
+          textStyle: { fontSize: 13, fontWeight: 500 },
+        },
+        tooltip: {},
+        legend: props.series.length > 1 ? { bottom: 0 } : { show: false },
+        grid: { left: 44, right: 18, top: 40, bottom: 48 },
+        ...(props.kind !== "pie"
+          ? {
+              xAxis: { type: "category", data: props.labels },
+              yAxis: { type: "value" },
+            }
+          : {}),
+        series: props.series.map((s) => ({
+          name: s.name,
+          type: props.kind,
+          data:
+            props.kind === "pie"
+              ? s.values.map((value, i) => ({ name: props.labels[i], value }))
+              : s.values,
+        })),
+      })}
+    />
+  );
+});
+const List = createComponentImplementation(
+  richA2uiApis.List,
+  ({ props, buildChild }) => (
+    <ul className={`a2ui-list a2ui-list-${props.variant ?? "plain"}`}>
+      {props.children.map((child) => (
+        <li key={typeof child === "string" ? child : child.id}>
+          {typeof child === "string"
+            ? buildChild(child)
+            : buildChild(child.id, child.basePath)}
+        </li>
+      ))}
+    </ul>
+  ),
+);
+const Grid = createComponentImplementation(
+  richA2uiApis.Grid,
+  ({ props, buildChild }) => (
+    <div
+      className="a2ui-grid"
+      style={{ "--a2ui-columns": props.columns } as CSSProperties}
+    >
+      {props.children.map((child, index) => {
+        const id = typeof child === "string" ? child : child.id;
+        const span = Math.min(
+          props.columns,
+          Math.max(1, props.spans?.[index] ?? 1),
+        );
+        return (
+          <div
+            className="a2ui-grid-cell"
+            style={{ gridColumn: `span ${span}` }}
+            key={id}
+          >
+            {typeof child === "string"
+              ? buildChild(child)
+              : buildChild(child.id, child.basePath)}
+          </div>
+        );
+      })}
+    </div>
+  ),
+);
 // 0.14's React factory drops parent/child policy fields; copy them explicitly.
 const implementations = [
   Text,
@@ -234,7 +288,7 @@ export function createA2uiCatalog(id: string = A2UI_CATALOG_ID) {
     id === A2UI_RICH_CATALOG_ID
       ? [
           ...implementations,
-          ...[Image, Metric, Chart, SourceLink].map((i) => ({
+          ...[Image, Metric, Chart, SourceLink, List, Grid].map((i) => ({
             ...richA2uiApis[i.name as keyof typeof richA2uiApis],
             ...i,
           })),

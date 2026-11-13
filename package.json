@@ -49,6 +49,7 @@
     "test:official-ui": "node scripts/test-official-app-ui.mjs",
     "dev:a2ui": "node scripts/a2ui-lab.mjs",
     "test:a2ui-ui": "node scripts/test-a2ui-ui.mjs",
+    "test:a2ui-scenarios": "node --import tsx scripts/test-a2ui-scenarios.mjs",
     "dev:a2ui-catalog": "A2UI_CATALOG=1 node scripts/a2ui-lab.mjs",
     "test:a2ui-catalog-ui": "node scripts/test-a2ui-catalog-ui.mjs",
     "test:a2ui-chat-ui": "node scripts/test-a2ui-chat-ui.mjs",

@@ -96,3 +96,15 @@ npm run test:a2ui-live
 当前生产依赖审计报告 **2 项 high**，全量依赖报告 **4 项 high**，源于固定 SDK 仍使用旧版 Zod。沿用 D5.2 的处理前预算、无可执行函数/正则和 64 MiB 数组路径测试缓解，不将其描述为上游漏洞已修复。目标环境、完整资源指标和上线安全验收仍在 R1。
 
 D5.4 已完成最少 UI 快照、Bridge 重启后的只读历史、服务端草稿与 CAS 冲突、到期提示及不完整/非法描述降级，见 [恢复记录](a2ui-recovery.md)。D5.3 的上述测试数量为当时记录，当前全量为 209 项自动测试及 81 项相关浏览器检查。私密输入仍留在 D6。
+
+## 2026-11-12：布局配方与设计 token
+
+工具描述现在要求模型先选布局再选组件：
+
+- Dashboard：`Column[Text h3, Text caption, Grid(3)[Metric ×3], Chart, List]`
+- Form：`Column[Text h3, Text caption, Row(fields), 多选, 长文本, Row(Button primary, Button)]`
+- Reference：`Column[Text h3, Text caption, Grid(2)[Column(Text, List), Chart], SourceLink]`
+
+密度预算：一个标题、最多一条说明、3–8 个内容组件；Grid 最多 4 列，窄屏降为单列。失败仍按 `error`/`hint` 修正一次。
+
+视觉 token 见 [白名单与限额](a2ui-catalog.md#2026-11-12v2-视觉与组件扩展)。
