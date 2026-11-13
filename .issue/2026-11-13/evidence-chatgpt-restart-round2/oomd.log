@@ -1,0 +1,20 @@
+Nov 13 17:15:41 dev systemd-oomd[1778]: Considered 26 cgroups for killing, top candidates were:
+Nov 13 17:15:41 dev systemd-oomd[1778]:         Path: /user.slice/user-1000.slice/user@1000.service/app.slice/code-server.service
+Nov 13 17:15:41 dev systemd-oomd[1778]:                 Swap Usage: 1.1G
+Nov 13 17:15:41 dev systemd-oomd[1778]: Marked /user.slice/user-1000.slice/user@1000.service/app.slice/code-server.service for killing due to memory used (7351652352) / total (8158904320) and swap used (11577540608) / total (12173082624) being more than 90.00%
+Nov 13 17:20:34 dev systemd-oomd[1778]: Considered 26 cgroups for killing, top candidates were:
+Nov 13 17:20:34 dev systemd-oomd[1778]:         Path: /user.slice/user-1000.slice/user@1000.service/app.slice/app-org.chromium.Chromium-2275553.scope
+Nov 13 17:20:34 dev systemd-oomd[1778]:                 Swap Usage: 1G
+Nov 13 17:20:34 dev systemd-oomd[1778]: Marked /user.slice/user-1000.slice/user@1000.service/app.slice/app-org.chromium.Chromium-2275553.scope for killing due to memory used (7472541696) / total (8158904320) and swap used (11147968512) / total (12173082624) being more than 90.00%
+Nov 13 17:23:25 dev systemd-oomd[1778]: Considered 26 cgroups for killing, top candidates were:
+Nov 13 17:23:25 dev systemd-oomd[1778]:         Path: /user.slice/user-1000.slice/user@1000.service/app.slice/app-graphical.slice/chatgpt.service
+Nov 13 17:23:25 dev systemd-oomd[1778]:                 Swap Usage: 913.6M
+Nov 13 17:23:25 dev systemd-oomd[1778]: Marked /user.slice/user-1000.slice/user@1000.service/app.slice/app-graphical.slice/chatgpt.service for killing due to memory used (7572033536) / total (8158904320) and swap used (10958061568) / total (12173082624) being more than 90.00%
+Nov 13 17:25:07 dev systemd-oomd[1778]: Considered 26 cgroups for killing, top candidates were:
+Nov 13 17:25:07 dev systemd-oomd[1778]:         Path: /user.slice/user-1000.slice/user@1000.service/app.slice/app-graphical.slice/chatgpt.service
+Nov 13 17:25:07 dev systemd-oomd[1778]:                 Swap Usage: 953.2M
+Nov 13 17:25:07 dev systemd-oomd[1778]: Marked /user.slice/user-1000.slice/user@1000.service/app.slice/app-graphical.slice/chatgpt.service for killing due to memory used (7396560896) / total (8158904320) and swap used (10962419712) / total (12173082624) being more than 90.00%
+Nov 13 17:29:16 dev systemd-oomd[1778]: Considered 26 cgroups for killing, top candidates were:
+Nov 13 17:29:16 dev systemd-oomd[1778]:         Path: /user.slice/user-1000.slice/user@1000.service/app.slice/app-graphical.slice/chatgpt.service
+Nov 13 17:29:16 dev systemd-oomd[1778]:                 Swap Usage: 917.2M
+Nov 13 17:29:16 dev systemd-oomd[1778]: Marked /user.slice/user-1000.slice/user@1000.service/app.slice/app-graphical.slice/chatgpt.service for killing due to memory used (7402291200) / total (8158904320) and swap used (11047325696) / total (12173082624) being more than 90.00%

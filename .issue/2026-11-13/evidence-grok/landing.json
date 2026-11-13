@@ -1,0 +1,19 @@
+{
+  "status": 403,
+  "info": {
+    "title": "Just a moment...",
+    "url": "https://grok.com/",
+    "bodyBg": "rgb(0, 0, 0)",
+    "bodyColor": "rgb(242, 242, 242)",
+    "fontFamily": "system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, \"Noto Sans\", sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+    "rootBg": "rgba(0, 0, 0, 0)",
+    "buttons": [],
+    "links": [
+      "https://www.cloudflare.com?utm_source=challenge&utm_campaign=m",
+      "https://www.cloudflare.com/privacypolicy/"
+    ],
+    "cssFiles": [],
+    "text": "grok.com\nPerforming security verification\n\nThis website uses a security service to protect against malicious bots. This page is displayed while the website verifies you are not a bot.\n\nRay ID: a59caa08eceadd4a\nPerformance and Security by Cloudflare\nPrivacy"
+  },
+  "errors": []
+}

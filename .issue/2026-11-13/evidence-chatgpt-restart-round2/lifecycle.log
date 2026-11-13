@@ -1,0 +1,28 @@
+Nov 13 17:20:34 dev chatgpt-supervisor[2275552]: ChatGPT exited with status -9; systemd will restart it.
+Nov 13 17:20:34 dev systemd[1890]: chatgpt.service: Main process exited, code=exited, status=1/FAILURE
+Nov 13 17:20:34 dev systemd[1890]: chatgpt.service: Failed with result 'exit-code'.
+Nov 13 17:20:34 dev systemd[1890]: chatgpt.service: Consumed 45.227s CPU time over 39min 56.761s wall clock time, 1.1G memory peak, 937.8M memory swap peak.
+Nov 13 17:20:44 dev systemd[1890]: chatgpt.service: Scheduled restart job, restart counter is at 3.
+Nov 13 17:20:44 dev chatgpt-supervisor[2355603]: Starting /usr/bin/chatgpt
+Nov 13 17:20:45 dev chatgpt-supervisor[2355610]: [AppServerConnection] app_server_connection.state_changed cause=start_process connectionError=null currentConnectionId=null currentState=disconnected hasConnection=false hostId=local initialized=false initializeInFlight=true next=connecting pendingClientRequests=0 pendingInternalRequests=0 previous=disconnected reconnectAttempt=0 reconnectTimerScheduled=false restartInFlight=false targetConnectionId=null targetReadyState=null transport=stdio
+Nov 13 17:23:25 dev systemd[1890]: chatgpt.service: systemd-oomd killed 202 process(es) in this unit.
+Nov 13 17:23:25 dev systemd[1890]: chatgpt.service: Main process exited, code=killed, status=9/KILL
+Nov 13 17:23:25 dev systemd[1890]: chatgpt.service: Failed with result 'oom-kill'.
+Nov 13 17:23:25 dev systemd[1890]: chatgpt.service: Consumed 34.423s CPU time over 2min 50.817s wall clock time, 1.3G memory peak, 971.3M memory swap peak.
+Nov 13 17:23:35 dev systemd[1890]: chatgpt.service: Scheduled restart job, restart counter is at 4.
+Nov 13 17:23:35 dev chatgpt-supervisor[2362344]: Starting /usr/bin/chatgpt
+Nov 13 17:23:36 dev chatgpt-supervisor[2362345]: [AppServerConnection] app_server_connection.state_changed cause=start_process connectionError=null currentConnectionId=null currentState=disconnected hasConnection=false hostId=local initialized=false initializeInFlight=true next=connecting pendingClientRequests=0 pendingInternalRequests=0 previous=disconnected reconnectAttempt=0 reconnectTimerScheduled=false restartInFlight=false targetConnectionId=null targetReadyState=null transport=stdio
+Nov 13 17:25:07 dev systemd[1890]: chatgpt.service: systemd-oomd killed 183 process(es) in this unit.
+Nov 13 17:25:07 dev systemd[1890]: chatgpt.service: Main process exited, code=killed, status=9/KILL
+Nov 13 17:25:07 dev systemd[1890]: chatgpt.service: Failed with result 'oom-kill'.
+Nov 13 17:25:07 dev systemd[1890]: chatgpt.service: Consumed 18.451s CPU time over 1min 42.041s wall clock time, 1.2G memory peak, 953.2M memory swap peak.
+Nov 13 17:25:17 dev systemd[1890]: chatgpt.service: Scheduled restart job, restart counter is at 5.
+Nov 13 17:25:17 dev chatgpt-supervisor[2368605]: Starting /usr/bin/chatgpt
+Nov 13 17:25:18 dev chatgpt-supervisor[2368630]: [AppServerConnection] app_server_connection.state_changed cause=start_process connectionError=null currentConnectionId=null currentState=disconnected hasConnection=false hostId=local initialized=false initializeInFlight=true next=connecting pendingClientRequests=0 pendingInternalRequests=0 previous=disconnected reconnectAttempt=0 reconnectTimerScheduled=false restartInFlight=false targetConnectionId=null targetReadyState=null transport=stdio
+Nov 13 17:29:16 dev systemd[1890]: chatgpt.service: systemd-oomd killed 187 process(es) in this unit.
+Nov 13 17:29:16 dev systemd[1890]: chatgpt.service: Main process exited, code=killed, status=9/KILL
+Nov 13 17:29:16 dev systemd[1890]: chatgpt.service: Failed with result 'oom-kill'.
+Nov 13 17:29:16 dev systemd[1890]: chatgpt.service: Consumed 19.650s CPU time over 4min 9.192s wall clock time, 1.2G memory peak, 924M memory swap peak.
+Nov 13 17:29:26 dev systemd[1890]: chatgpt.service: Scheduled restart job, restart counter is at 6.
+Nov 13 17:29:26 dev chatgpt-supervisor[2378506]: Starting /usr/bin/chatgpt
+Nov 13 17:29:27 dev chatgpt-supervisor[2378507]: [AppServerConnection] app_server_connection.state_changed cause=start_process connectionError=null currentConnectionId=null currentState=disconnected hasConnection=false hostId=local initialized=false initializeInFlight=true next=connecting pendingClientRequests=0 pendingInternalRequests=0 previous=disconnected reconnectAttempt=0 reconnectTimerScheduled=false restartInFlight=false targetConnectionId=null targetReadyState=null transport=stdio
