@@ -1,0 +1,7 @@
+2026-11-12T10:49:19+08:00 dev systemd[1890]: app-org.chromium.Chromium-19719.scope: systemd-oomd killed 877 process(es) in this unit.
+2026-11-12T10:49:19+08:00 dev systemd[1890]: app-org.chromium.Chromium-19719.scope: Failed with result 'oom-kill'.
+2026-11-12T10:49:19+08:00 dev systemd[1890]: app-org.chromium.Chromium-19719.scope: Consumed 19h 40min 34.594s CPU time over 2d 14h 38min 33.052s wall clock time, 4.4G memory peak, 5.8G memory swap peak.
+2026-11-13T10:43:57+08:00 dev systemd[1890]: Started app-org.chromium.Chromium-307597.scope.
+2026-11-13T11:49:15+08:00 dev systemd[1890]: app-org.chromium.Chromium-307597.scope: systemd-oomd killed 445 process(es) in this unit.
+2026-11-13T11:49:15+08:00 dev systemd[1890]: app-org.chromium.Chromium-307597.scope: Failed with result 'oom-kill'.
+2026-11-13T11:49:15+08:00 dev systemd[1890]: app-org.chromium.Chromium-307597.scope: Consumed 2min 1.548s CPU time over 1h 5min 18.606s wall clock time, 1.9G memory peak, 1G memory swap peak.

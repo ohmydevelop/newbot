@@ -1,0 +1,10 @@
+2026-11-13T14:23:42+08:00 dev systemd[1890]: Starting ChatGPT automatic startup and recovery...
+2026-11-13T14:23:42+08:00 dev systemd[1890]: Started ChatGPT automatic startup and recovery.
+2026-11-13T14:23:42+08:00 dev chatgpt-supervisor[1669744]: Watching existing ChatGPT main PID(s): [1583708]
+2026-11-13T14:24:05+08:00 dev systemd[1890]: chatgpt.service: Sent signal SIGKILL to main process 1669744 (chatgpt-supervi) on client request.
+2026-11-13T14:24:05+08:00 dev systemd[1890]: chatgpt.service: Main process exited, code=killed, status=9/KILL
+2026-11-13T14:24:05+08:00 dev systemd[1890]: chatgpt.service: Failed with result 'signal'.
+2026-11-13T14:24:16+08:00 dev systemd[1890]: chatgpt.service: Scheduled restart job, restart counter is at 1.
+2026-11-13T14:24:16+08:00 dev systemd[1890]: Starting ChatGPT automatic startup and recovery...
+2026-11-13T14:24:16+08:00 dev systemd[1890]: Started ChatGPT automatic startup and recovery.
+2026-11-13T14:24:16+08:00 dev chatgpt-supervisor[1670779]: Watching existing ChatGPT main PID(s): [1583708]

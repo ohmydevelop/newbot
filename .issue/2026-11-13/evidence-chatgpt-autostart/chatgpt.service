@@ -1,0 +1,19 @@
+[Unit]
+Description=ChatGPT automatic startup and recovery
+After=graphical-session.target
+PartOf=graphical-session.target
+ConditionEnvironment=WAYLAND_DISPLAY
+StartLimitIntervalSec=0
+
+[Service]
+Type=exec
+ExecStart=%h/.local/bin/chatgpt-supervisor
+WorkingDirectory=%h
+Restart=always
+RestartSec=10
+OOMPolicy=stop
+TimeoutStopSec=20
+Slice=app-graphical.slice
+
+[Install]
+WantedBy=graphical-session.target

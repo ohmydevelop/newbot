@@ -1,0 +1,6 @@
+ChatGPT main PID: 1583708
+Package: openai-codex-desktop 26.1027.51404-1
+Graphical session: active
+WAYLAND_DISPLAY: wayland-1
+SDDM: automatic login as a, omarchy.desktop
+Existing ChatGPT startup/recovery unit: absent

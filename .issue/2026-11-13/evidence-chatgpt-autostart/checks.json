@@ -1,0 +1,35 @@
+[
+  {
+    "check": "main-process boundaries: NUL/flattened argv, renderer, zombie, unrelated binary, updated binary",
+    "passed": true
+  },
+  {
+    "check": "adopts an existing process without duplicate launch or interruption",
+    "passed": true,
+    "pid": 1668363
+  },
+  {
+    "check": "repeated start remains a singleton",
+    "passed": true
+  },
+  {
+    "check": "recovers after an externally launched process dies",
+    "passed": true,
+    "new_pid": 1668759
+  },
+  {
+    "check": "systemd restarts after child SIGKILL",
+    "passed": true,
+    "new_pid": 1668999,
+    "restarts": 1
+  },
+  {
+    "check": "keep-running policy also recovers after termination",
+    "passed": true,
+    "new_pid": 1669224
+  },
+  {
+    "check": "explicit service stop stays stopped beyond the restart delay",
+    "passed": true
+  }
+]

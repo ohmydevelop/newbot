@@ -1,0 +1,20 @@
+FILE dist/server/index.js mtime=2026-11-13T11:21:59.433702+08:00
+15: prepareRuntimeIsolation,
+2074: await prepareRuntimeIsolation(codex.home);
+2860: await prepareRuntimeIsolation(configuredHome);
+2909: await prepareRuntimeIsolation(dirname5(row.path));
+3299: await prepareRuntimeIsolation(codex.home);
+16030: if (child.pid) process.kill(-child.pid, "SIGKILL");
+FILE dist/server/chunk-DUG4CTAJ.js mtime=2026-11-13T11:21:59.433702+08:00
+242: var LocalRunnerTransport = class {
+243: constructor(processGroup = false) {
+263: detached: this.processGroup
+304: process.kill(-child.pid, signal);
+560: async function prepareRuntimeIsolation(home, hostHome = homedir2()) {
+584: CODEX_SQLITE_HOME: codexHome,
+585: HOME: userHome,
+671: isolated = await prepareRuntimeIsolation(
+967: await prepareRuntimeIsolation(this.home);
+1125: "CODEX_ACCESS_TOKEN",
+1129: "CODEX_APP_TOOLS_PIPE_PATH",
+1379: prepareRuntimeIsolation,

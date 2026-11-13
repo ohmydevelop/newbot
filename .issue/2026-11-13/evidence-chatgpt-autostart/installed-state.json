@@ -1,0 +1,30 @@
+{
+  "before": {
+    "PartOf": "graphical-session.target",
+    "ActiveState": "active",
+    "SubState": "running",
+    "UnitFileState": "enabled",
+    "Restart": "always",
+    "RestartUSec": "10s",
+    "MainPID": "1669744",
+    "NRestarts": "0",
+    "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/app-graphical.slice/chatgpt.service"
+  },
+  "after": {
+    "PartOf": "graphical-session.target",
+    "ActiveState": "active",
+    "SubState": "running",
+    "UnitFileState": "enabled",
+    "Restart": "always",
+    "RestartUSec": "10s",
+    "MainPID": "1670779",
+    "NRestarts": "1",
+    "ControlGroup": "/user.slice/user-1000.slice/user@1000.service/app.slice/app-graphical.slice/chatgpt.service"
+  },
+  "chatgpt_main_pids": [
+    1583708
+  ],
+  "graphical_target_wants_chatgpt": true,
+  "supervisor_sigkill_recovery_verified": true,
+  "real_app_crash_or_reboot_tested": false
+}

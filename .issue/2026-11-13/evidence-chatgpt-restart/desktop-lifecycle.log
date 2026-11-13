@@ -1,0 +1,16 @@
+SOURCE /home/a/.local/state/codex/logs/2026/11/12/codex-desktop-1def243c-dd99-4d06-b969-a09a0aa0d958-19719-t0-i1-000054-0.log
+704: 2026-11-12T02:47:54.298Z info [tpp-local-executor] Local Work executor connection observation connectedMs=60000.779983997345 eligibleMs=60000.779983997345 event=sample observationSequence=3872
+709: 2026-11-12T02:48:54.301Z info [tpp-local-executor] Local Work executor connection observation connectedMs=60000.503933012486 eligibleMs=60000.503933012486 event=sample observationSequence=3873
+Last event timestamp: 2026-11-12T02:48:54.301Z
+SOURCE /home/a/.local/state/codex/logs/2026/11/13/codex-desktop-6ca3ab7f-d369-4c4d-aa93-102c56a6fdcb-307597-t0-i1-024356-0.log
+2: 2026-11-13T02:43:57.708Z info Launching app agentRunId=null allowDebugMenu=false allowDevtools=false allowInspectElement=false buildFlavor=prod enableSparkle=false enableUpdater=true nodeEnv=production packaged=true platform=linux
+556: 2026-11-13T03:48:06.094Z info [tpp-local-executor] Local Work executor connection observation connectedMs=60000.884411999956 eligibleMs=60000.884411999956 event=sample observationSequence=72
+557: 2026-11-13T03:49:06.096Z info [tpp-local-executor] Local Work executor connection observation connectedMs=60000.74496500008 eligibleMs=60000.74496500008 event=sample observationSequence=73
+Last event timestamp: 2026-11-13T03:49:06.096Z
+SOURCE /home/a/.local/state/codex/logs/2026/11/13/codex-desktop-5d529796-0c05-4f8d-b27e-203da0a91a02-737327-t0-i1-035434-0.log
+2: 2026-11-13T03:54:35.154Z info Launching app agentRunId=null allowDebugMenu=false allowDevtools=false allowInspectElement=false buildFlavor=prod enableSparkle=false enableUpdater=true nodeEnv=production packaged=true platform=linux
+290: 2026-11-13T03:56:44.161Z info [tpp-local-executor] Local Work executor connection observation connectedMs=60000.24428500001 eligibleMs=60000.24428500001 event=sample observationSequence=9
+291: 2026-11-13T03:57:44.162Z info [tpp-local-executor] Local Work executor connection observation connectedMs=60000.31601600001 eligibleMs=60000.31601600001 event=sample observationSequence=10
+292: 2026-11-13T03:58:44.162Z info [tpp-local-executor] Local Work executor connection observation connectedMs=60000.58936699998 eligibleMs=60000.58936699998 event=sample observationSequence=11
+294: 2026-11-13T03:59:44.163Z info [tpp-local-executor] Local Work executor connection observation connectedMs=60000.17543199999 eligibleMs=60000.17543199999 event=sample observationSequence=12
+Last event timestamp: 2026-11-13T03:59:48.826Z

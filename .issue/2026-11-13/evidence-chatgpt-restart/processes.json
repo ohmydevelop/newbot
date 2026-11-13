@@ -1,0 +1,182 @@
+[
+  {
+    "pid": 737327,
+    "name": "ChatGPT",
+    "ppid": "1890",
+    "pgid": 737304,
+    "exe": "/usr/lib/chatgpt/ChatGPT",
+    "cwd": "/home/a",
+    "environment": {},
+    "hosted_env_present": {
+      "CODEX_APP_TOOLS_PIPE_PATH": false,
+      "CODEX_ACCESS_TOKEN": false,
+      "CODEX_AUTH_JSON": false
+    },
+    "memory": {
+      "VmRSS": "86000 kB",
+      "VmSwap": "211780 kB"
+    },
+    "cgroup": "0::/user.slice/user-1000.slice/user@1000.service/app.slice/app-org.chromium.Chromium-737327.scope"
+  },
+  {
+    "pid": 737933,
+    "name": "codex",
+    "ppid": "737327",
+    "pgid": 737304,
+    "exe": "/usr/lib/chatgpt/resources/codex",
+    "cwd": "/home/a",
+    "environment": {
+      "HOME": "/home/a",
+      "XDG_CONFIG_HOME": "/home/a/.config",
+      "XDG_STATE_HOME": "/home/a/.local/state"
+    },
+    "hosted_env_present": {
+      "CODEX_APP_TOOLS_PIPE_PATH": true,
+      "CODEX_ACCESS_TOKEN": false,
+      "CODEX_AUTH_JSON": false
+    },
+    "memory": {
+      "VmRSS": "155328 kB",
+      "VmSwap": "171256 kB"
+    },
+    "cgroup": "0::/user.slice/user-1000.slice/user@1000.service/app.slice/app-org.chromium.Chromium-737327.scope"
+  },
+  {
+    "pid": 738825,
+    "name": "codex",
+    "ppid": "737327",
+    "pgid": 737304,
+    "exe": "/usr/lib/chatgpt/resources/codex",
+    "cwd": "/home/a",
+    "environment": {
+      "HOME": "/home/a",
+      "XDG_CONFIG_HOME": "/home/a/.config",
+      "XDG_STATE_HOME": "/home/a/.local/state"
+    },
+    "hosted_env_present": {
+      "CODEX_APP_TOOLS_PIPE_PATH": true,
+      "CODEX_ACCESS_TOKEN": false,
+      "CODEX_AUTH_JSON": false
+    },
+    "memory": {
+      "VmRSS": "6324 kB",
+      "VmSwap": "12788 kB"
+    },
+    "cgroup": "0::/user.slice/user-1000.slice/user@1000.service/app.slice/app-org.chromium.Chromium-737327.scope"
+  },
+  {
+    "pid": 804705,
+    "name": "node-MainThread",
+    "ppid": "1",
+    "pgid": 804705,
+    "exe": "/home/a/.local/share/mise/installs/node/26.12.0/bin/node",
+    "cwd": "/home/a/Documents/ChatGPT/newbot",
+    "environment": {
+      "HOME": "/home/a",
+      "PORT": "3100",
+      "HOST": "127.0.0.1"
+    },
+    "hosted_env_present": {
+      "CODEX_APP_TOOLS_PIPE_PATH": false,
+      "CODEX_ACCESS_TOKEN": false,
+      "CODEX_AUTH_JSON": false
+    },
+    "memory": {
+      "VmRSS": "70112 kB",
+      "VmSwap": "77912 kB"
+    },
+    "cgroup": "0::/user.slice/user-1000.slice/session-3.scope"
+  },
+  {
+    "pid": 804750,
+    "name": "codex",
+    "ppid": "804705",
+    "pgid": 804705,
+    "exe": "/home/a/Documents/ChatGPT/newbot/.data/native/releases/fe2f185-capabilities/codex",
+    "cwd": "/home/a/Documents/ChatGPT/newbot/.data/workspace",
+    "environment": {
+      "HOME": "/home/a/Documents/ChatGPT/newbot/.data/codex/runtime-home",
+      "CODEX_HOME": "/home/a/Documents/ChatGPT/newbot/.data/codex",
+      "CODEX_SQLITE_HOME": "/home/a/Documents/ChatGPT/newbot/.data/codex",
+      "XDG_CONFIG_HOME": "/home/a/Documents/ChatGPT/newbot/.data/codex/runtime-home/.config",
+      "XDG_STATE_HOME": "/home/a/Documents/ChatGPT/newbot/.data/codex/runtime-home/.local/state",
+      "DATA_DIR": ".data",
+      "CODEX_BIN": "/home/a/Documents/ChatGPT/newbot/.data/native/releases/fe2f185-capabilities/codex",
+      "PORT": "3100",
+      "HOST": "127.0.0.1"
+    },
+    "hosted_env_present": {
+      "CODEX_APP_TOOLS_PIPE_PATH": false,
+      "CODEX_ACCESS_TOKEN": false,
+      "CODEX_AUTH_JSON": false
+    },
+    "memory": {
+      "VmRSS": "201904 kB",
+      "VmSwap": "49524 kB"
+    },
+    "cgroup": "0::/user.slice/user-1000.slice/session-3.scope"
+  },
+  {
+    "pid": 926482,
+    "name": "codex",
+    "ppid": "926364",
+    "pgid": 926482,
+    "exe": "/home/a/.local/share/mise/installs/codex/0.166.0/bin/codex",
+    "cwd": "/home/a",
+    "environment": {
+      "HOME": "/home/a"
+    },
+    "hosted_env_present": {
+      "CODEX_APP_TOOLS_PIPE_PATH": false,
+      "CODEX_ACCESS_TOKEN": false,
+      "CODEX_AUTH_JSON": false
+    },
+    "memory": {
+      "VmRSS": "4336 kB",
+      "VmSwap": "22228 kB"
+    },
+    "cgroup": "0::/user.slice/user-1000.slice/session-4.scope"
+  },
+  {
+    "pid": 926784,
+    "name": "codex",
+    "ppid": "926482",
+    "pgid": 926784,
+    "exe": "/home/a/.codex/packages/app-server-daemon/releases/0.167.2-x86_64-unknown-linux-musl/bin/codex",
+    "cwd": "/home/a",
+    "environment": {
+      "HOME": "/home/a"
+    },
+    "hosted_env_present": {
+      "CODEX_APP_TOOLS_PIPE_PATH": false,
+      "CODEX_ACCESS_TOKEN": false,
+      "CODEX_AUTH_JSON": false
+    },
+    "memory": {
+      "VmRSS": "476 kB",
+      "VmSwap": "9820 kB"
+    },
+    "cgroup": "0::/user.slice/user-1000.slice/session-4.scope"
+  },
+  {
+    "pid": 1898312,
+    "name": "codex",
+    "ppid": "926784",
+    "pgid": 1898312,
+    "exe": "/home/a/.codex/packages/app-server-daemon/releases/0.167.2-x86_64-unknown-linux-musl/bin/codex",
+    "cwd": "/home/a",
+    "environment": {
+      "HOME": "/home/a"
+    },
+    "hosted_env_present": {
+      "CODEX_APP_TOOLS_PIPE_PATH": false,
+      "CODEX_ACCESS_TOKEN": false,
+      "CODEX_AUTH_JSON": false
+    },
+    "memory": {
+      "VmRSS": "12320 kB",
+      "VmSwap": "72996 kB"
+    },
+    "cgroup": "0::/user.slice/user-1000.slice/session-4.scope"
+  }
+]

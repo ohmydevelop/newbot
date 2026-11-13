@@ -1,0 +1,82 @@
+#!/usr/bin/python3
+"""Keep the packaged ChatGPT app running without replacing an existing session."""
+
+import os
+from pathlib import Path
+import re
+import signal
+import subprocess
+import time
+
+PROC = Path('/proc')
+EXECUTABLE = '/usr/lib/chatgpt/ChatGPT'
+LAUNCHER = '/usr/bin/chatgpt'
+POLL_SECONDS = 5
+RECOVERY_SECONDS = 10
+
+
+def running_instances():
+    instances = []
+    for proc in PROC.iterdir():
+        if not proc.name.isdigit():
+            continue
+        try:
+            if proc.stat().st_uid != os.getuid():
+                continue
+            if (proc / 'comm').read_text().strip() != 'ChatGPT':
+                continue
+            executable = os.readlink(proc / 'exe').removesuffix(' (deleted)')
+            if executable != EXECUTABLE:
+                continue
+            # Chromium can rewrite argv into one space-separated string.
+            args = (proc / 'cmdline').read_bytes().replace(b'\0', b' ')
+            if re.search(rb'(?:^|\s)--type(?:=|\s)', args):
+                continue
+            state = (proc / 'stat').read_text().rsplit(')', 1)[1].split()[0]
+            if state not in ('Z', 'X'):
+                instances.append(int(proc.name))
+        except (FileNotFoundError, ProcessLookupError, PermissionError):
+            continue
+    return sorted(instances)
+
+
+def main():
+    child = None
+
+    def stop(_signum, _frame):
+        # Only signal the application this supervisor actually launched.
+        if child is not None and child.poll() is None:
+            try:
+                child.terminate()
+            except ProcessLookupError:
+                pass
+        raise SystemExit(0)
+
+    signal.signal(signal.SIGTERM, stop)
+    signal.signal(signal.SIGINT, stop)
+    previous = None
+    observed_existing = False
+    while True:
+        instances = running_instances()
+        if instances:
+            if instances != previous:
+                print(f'Watching existing ChatGPT main PID(s): {instances}', flush=True)
+            previous = instances
+            observed_existing = True
+            time.sleep(POLL_SECONDS)
+            continue
+        if observed_existing:
+            print('Existing ChatGPT exited; waiting 10 seconds before recovery.', flush=True)
+            time.sleep(RECOVERY_SECONDS)
+            observed_existing = False
+            # A manual launch during the delay takes precedence.
+            continue
+        print(f'Starting {LAUNCHER}', flush=True)
+        child = subprocess.Popen([LAUNCHER])
+        result = child.wait()
+        print(f'ChatGPT exited with status {result}; systemd will restart it.', flush=True)
+        return result if 0 <= result <= 255 else 1
+
+
+if __name__ == '__main__':
+    raise SystemExit(main())
