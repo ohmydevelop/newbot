@@ -43,7 +43,8 @@ import {
   FolderOpen,
   AlertCircle,
   WifiOff,
-  Layers,
+  DoorOpen,
+  DoorClosed,
 } from "lucide-react";
 import type {
   Json,
@@ -287,6 +288,11 @@ export default function App() {
     ? s.pendingRuns[s.pendingRun]
     : undefined;
   const [privateAccess, setPrivateAccess] = useState<string | null>(null);
+  const threadTitle = (() => {
+    const summary = s.threads.find((t) => t.id === s.selectedId);
+    const title = summary?.title || s.thread?.name || "";
+    return title && title !== "新对话" ? title : "";
+  })();
   const [railArtifact, setRailArtifact] = useState<Artifact | null>(null);
   const [railOpen, setRailOpen] = useState(
     () => localStorage.getItem("newbot:rail") === "1",
@@ -564,10 +570,11 @@ export default function App() {
   const stopTask = useTaskStop(s.selectedId, activeTurn?.id);
   const model = s.settings?.models.find((m: Model) => m.model === s.model);
   const pending = s.approvals.filter((a) => a.params.threadId === s.selectedId);
-  async function send(e?: FormEvent) {
+  async function send(e?: FormEvent, override?: string) {
     e?.preventDefault();
+    const text = (override ?? composer.store.get(composer.key).text).trim();
     if (
-      !draft.trim() ||
+      !text ||
       expertRequest.current ||
       inputsRequest.current ||
       runtimeBusy ||
@@ -595,7 +602,6 @@ export default function App() {
     submissionError.current = null;
     lastSubmission.current = origin;
     sendingOrigin.current = origin;
-    const text = draft;
     const files = [...attachments];
     const skills = selectedSkills.map(({ id, sha256 }) => ({ id, sha256 }));
     setSending(true);
@@ -693,8 +699,6 @@ export default function App() {
         const file = entry.file;
         if (controller.signal.aborted) break;
         try {
-          if (file.size > 8 * 1024 * 1024)
-            throw new Error("单个附件不能超过 8 MiB");
           const response = await fetch(
             `/api/attachments?name=${encodeURIComponent(file.name)}`,
             {
@@ -1030,8 +1034,7 @@ export default function App() {
             onClick={fresh}
             aria-label="newbot，新对话"
           >
-            <Mark size={29} />
-            <span>newbot</span>
+            <Mark size={26} />
           </button>
           <button
             className="icon-button sidebar-search"
@@ -1039,28 +1042,23 @@ export default function App() {
             aria-label="搜索聊天"
             onClick={() => setSearch(true)}
           >
-            <Search size={19} />
+            <Search size={18} />
           </button>
           <button
             className="icon-button"
             title="收起侧栏"
             aria-label="收起侧栏"
-            aria-expanded="true"
+            aria-expanded={true}
             onClick={() => s.set({ sidebar: false })}
           >
-            <PanelLeft size={19} />
+            <PanelLeft size={18} />
           </button>
         </div>
         <nav className="main-nav" aria-label="主导航">
           <button onClick={fresh}>
-            <SquarePen size={19} />
-            <span>新聊天</span>
+            <SquarePen size={18} />
+            <span>新建聊天</span>
             <kbd>{appleKeys ? "⇧ ⌘ O" : "Ctrl ⇧ O"}</kbd>
-          </button>
-
-          <button onClick={() => setSettings("extensions")}>
-            <Blocks size={19} />
-            <span>扩展</span>
           </button>
         </nav>
         <div className="history">
@@ -1109,27 +1107,29 @@ export default function App() {
                     >
                       <MoreHorizontal size={16} />
                     </Dropdown.Trigger>
-                  <Dropdown.Portal>
-                    <ActionMenuContent
-                      className="dropdown"
-                      sideOffset={4}
-                      align="start"
-                    >
-                      <ActionMenuItem
-                        icon={Pencil}
-                        onSelect={() => setRename({ id: t.id, name: t.title })}
+                    <Dropdown.Portal>
+                      <ActionMenuContent
+                        className="dropdown"
+                        sideOffset={4}
+                        align="start"
                       >
-                        重命名
-                      </ActionMenuItem>
-                      <ActionMenuItem
-                        icon={Archive}
-                        disabled={!!archiving}
-                        onSelect={() => void archive(t.id)}
-                      >
-                        {archiving === t.id ? "正在归档…" : "归档"}
-                      </ActionMenuItem>
-                    </ActionMenuContent>
-                  </Dropdown.Portal>
+                        <ActionMenuItem
+                          icon={Pencil}
+                          onSelect={() =>
+                            setRename({ id: t.id, name: t.title })
+                          }
+                        >
+                          重命名
+                        </ActionMenuItem>
+                        <ActionMenuItem
+                          icon={Archive}
+                          disabled={!!archiving}
+                          onSelect={() => void archive(t.id)}
+                        >
+                          {archiving === t.id ? "正在归档…" : "归档"}
+                        </ActionMenuItem>
+                      </ActionMenuContent>
+                    </Dropdown.Portal>
                   </Dropdown.Root>
                 </div>
               </div>
@@ -1168,46 +1168,19 @@ export default function App() {
               <button
                 className="icon-button"
                 ref={sidebarToggle}
-                aria-expanded={s.sidebar}
+                aria-expanded={false}
                 aria-label="展开侧栏"
                 title="展开侧栏"
                 onClick={() => s.set({ sidebar: true })}
               >
-                <PanelLeft size={20} />
+                <PanelLeft size={18} />
               </button>
             )}
-            <strong className="workspace-title">newbot</strong>
+            <strong className="workspace-title" title={threadTitle || "新对话"}>
+              {threadTitle || "新对话"}
+            </strong>
           </div>
           <div className="topbar-right">
-            {s.selectedId && (
-              <button
-                className="icon-button"
-                aria-label="会话关联"
-                title="会话关联"
-                aria-expanded={railOpen}
-                onClick={() => setRailOpen((v) => !v)}
-              >
-                <Layers size={17} />
-                {(s.thread?.nextInput?.skills.length || 0) +
-                  (s.thread?.nextInput?.plugins.length || 0) >
-                  0 && (
-                  <span className="association-count" aria-hidden="true">
-                    {(s.thread?.nextInput?.skills.length || 0) +
-                      (s.thread?.nextInput?.plugins.length || 0)}
-                  </span>
-                )}
-              </button>
-            )}
-            {s.selectedId && (
-              <button
-                className="icon-button"
-                aria-label="会话私密授权"
-                title="会话私密授权"
-                onClick={() => setPrivateAccess(s.selectedId)}
-              >
-                <ShieldCheck size={17} />
-              </button>
-            )}
             <ReadIndicator
               busy={s.loading}
               error={s.threadError}
@@ -1228,6 +1201,16 @@ export default function App() {
                     ? "Codex 连接中"
                     : "Codex 离线"}
             </span>
+            {s.selectedId && (
+              <button
+                className="icon-button"
+                aria-label="会话私密授权"
+                title="会话私密授权"
+                onClick={() => setPrivateAccess(s.selectedId)}
+              >
+                <ShieldCheck size={17} />
+              </button>
+            )}
           </div>
         </header>
         <div className="chat-notifications">
@@ -1329,10 +1312,7 @@ export default function App() {
                 ].map((x) => (
                   <button
                     key={x.title}
-                    onClick={() => {
-                      setDraft(x.text);
-                      textarea.current?.focus();
-                    }}
+                    onClick={() => void send(undefined, x.text)}
                   >
                     <span className="suggestion-icon">
                       <x.icon size={17} aria-hidden="true" />
@@ -1377,6 +1357,8 @@ export default function App() {
                     turnIndex === s.thread!.turns.length - 1 &&
                     turn.status !== "inProgress"
                   }
+                  isLast={turnIndex === s.thread!.turns.length - 1}
+                  onSuggest={(value) => void send(undefined, value)}
                 />
               ))}
               {pending.map((a) => (
@@ -1706,7 +1688,6 @@ export default function App() {
                 <input
                   ref={fileInput}
                   type="file"
-                  accept=".txt,.md,.json,.csv,.log,.ts,.tsx,.js,.py,.html,.css,.yaml,.yml,.toml,.png,.jpg,.jpeg,.webp"
                   hidden
                   multiple
                   onChange={(e) => void upload(e.target.files)}
@@ -1873,18 +1854,44 @@ export default function App() {
               )}
             </div>
           </form>
-          <p className="composer-note">
-            newbot 可能会犯错。重要信息请核实。
-          </p>
+          <p className="composer-note">newbot 可能会犯错。重要信息请核实。</p>
         </div>
       </main>
+      {s.selectedId && (
+        <button
+          type="button"
+          className={`rail-toggle ${railOpen ? "open" : ""}`}
+          aria-label={railOpen ? "关闭右侧栏" : "打开右侧栏"}
+          aria-expanded={railOpen}
+          aria-pressed={railOpen}
+          title={
+            railOpen
+              ? "关闭右侧栏（Ctrl Shift A）"
+              : "打开右侧栏（Ctrl Shift A）"
+          }
+          onClick={() => setRailOpen((v) => !v)}
+        >
+          {railOpen ? (
+            <DoorClosed size={18} aria-hidden="true" />
+          ) : (
+            <DoorOpen size={18} aria-hidden="true" />
+          )}
+          {(s.thread?.nextInput?.skills.length || 0) +
+            (s.thread?.nextInput?.plugins.length || 0) >
+            0 && (
+            <span className="association-count" aria-hidden="true">
+              {(s.thread?.nextInput?.skills.length || 0) +
+                (s.thread?.nextInput?.plugins.length || 0)}
+            </span>
+          )}
+        </button>
+      )}
       {railOpen && s.selectedId && (
         <>
           <div className="rail-scrim" onClick={() => setRailOpen(false)} />
           <WorkbenchRail
             thread={s.thread || undefined}
             busy={inputsBusy}
-            onClose={() => setRailOpen(false)}
             onPickFiles={() => setWorkspacePicker(true)}
             onOpenArtifact={setRailArtifact}
             onRemove={(kind, id) => {

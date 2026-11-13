@@ -350,9 +350,9 @@ export const Message = memo(function Message({
               }}
             >
               {copied ? (
-                <Check size={15} aria-hidden="true" />
+                <Check size={18} aria-hidden="true" />
               ) : (
-                <Copy size={15} aria-hidden="true" />
+                <Copy size={18} aria-hidden="true" />
               )}
             </button>
             {copied && (

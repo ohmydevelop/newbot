@@ -8,6 +8,7 @@ import {
   Moon,
   Sun,
   RefreshCw,
+  AtSign,
   Blocks,
   BookOpen,
   SlidersHorizontal,
@@ -27,8 +28,8 @@ const SudoSettings = lazy(() => import("./SudoSettings"));
 const tabs = [
   { id: "general", label: "通用", icon: SlidersHorizontal },
   { id: "models", label: "网关", icon: Cpu },
-  { id: "extensions", label: "扩展", icon: Blocks },
-  { id: "storage", label: "文件存储", icon: HardDrive },
+  { id: "extensions", label: "插件", icon: AtSign },
+  { id: "storage", label: "存储", icon: HardDrive },
   { id: "security", label: "安全", icon: Shield },
 ];
 export default function Settings({
@@ -131,7 +132,7 @@ export default function Settings({
                   <p>
                     {/Mac|iPhone|iPad/.test(navigator.platform)
                       ? "⌘ K 搜索 · ⌘ Shift O 新聊天"
-                      : "Ctrl K 搜索 · Ctrl Shift O 新聊天"}
+                      : "Ctrl K 搜索 · Ctrl Shift O 新建聊天"}
                   </p>
                   <p>
                     弹窗内使用 Tab 切换、Escape 返回；输入法选字时不会发送。
@@ -162,7 +163,10 @@ export default function Settings({
             <>
               <h3>安全</h3>
               <div className="setting-row">
-                <div><strong>凭证保护</strong><p>密钥由服务端加密保存，原值不会回显。</p></div>
+                <div>
+                  <strong>凭证保护</strong>
+                  <p>密钥由服务端加密保存，原值不会回显。</p>
+                </div>
               </div>
               <button
                 className="settings-logout danger-text"

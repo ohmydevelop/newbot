@@ -1,5 +1,5 @@
 import { lazy, Suspense, useState, useEffect, useRef } from "react";
-import { AlertCircle, LoaderCircle, RefreshCw } from "lucide-react";
+import { AlertCircle, CornerDownRight, LoaderCircle, RefreshCw } from "lucide-react";
 import type { Turn } from "../../../shared/types";
 import { loadThread, useApp } from "../../store";
 import {
@@ -107,14 +107,30 @@ function TurnFeedback({ turn, threadId }: { turn: Turn; threadId: string }) {
     </div>
   );
 }
+function followUps(turn: Turn): string[] {
+  const text = turn.items
+    .filter((item) => item.type === "agentMessage" && typeof item.text === "string")
+    .map((item) => item.text)
+    .join("\n");
+  if (/```/.test(text))
+    return ["解释这段代码", "给一个可直接运行的示例", "这段代码有什么潜在问题？"];
+  if (/^\s*[-*]\s/m.test(text) || /\|/.test(text))
+    return ["把上面几点总结成三条", "展开第一点", "给一个具体例子"];
+  return ["继续展开", "给一个具体例子", "还有别的方案吗？"];
+}
+
 export function ChatTurn({
   turn,
   threadId,
   canAdd,
+  isLast = false,
+  onSuggest,
 }: {
   turn: Turn;
   threadId: string;
   canAdd: boolean;
+  isLast?: boolean;
+  onSuggest?: (text: string) => void;
 }) {
   const [clock, setClock] = useState(Date.now());
   const outputIds = useRef(new Set<string>());
@@ -220,6 +236,24 @@ export function ChatTurn({
           </div>
         )}
       <TurnFeedback turn={turn} threadId={threadId} />
+      {isLast &&
+        onSuggest &&
+        turn.status === "completed" &&
+        !turn.items.some((item) => item.type === "agentMessage" && !item.text) && (
+          <div className="follow-ups" aria-label="推荐追问">
+            {followUps(turn).map((text) => (
+              <button
+                type="button"
+                className="follow-up"
+                key={text}
+                onClick={() => onSuggest(text)}
+              >
+                <CornerDownRight size={16} aria-hidden="true" />
+                <span>{text}</span>
+              </button>
+            ))}
+          </div>
+        )}
     </div>
   );
 }

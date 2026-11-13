@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
+import * as Dropdown from "@radix-ui/react-dropdown-menu";
+import { ActionMenuContent, ActionMenuItem } from "./ActionMenu";
 import {
-  ChevronsRight,
   FileCode2,
   FolderOpen,
   Layers,
@@ -26,21 +27,21 @@ const tabs: { id: RailTab; label: string; icon: typeof Layers }[] = [
 export default function WorkbenchRail({
   thread,
   busy,
-  onClose,
   onRemove,
   onPickFiles,
   onOpenArtifact,
 }: {
   thread?: Thread;
   busy: boolean;
-  onClose: () => void;
   onRemove: (kind: "plugins" | "skills", id: string) => void;
   onPickFiles: () => void;
   onOpenArtifact: (artifact: Artifact) => void;
 }) {
   const stored = (): RailTab => {
     const value = localStorage.getItem("newbot:rail-tab");
-    return tabs.some((t) => t.id === value) ? (value as RailTab) : "associations";
+    return tabs.some((t) => t.id === value)
+      ? (value as RailTab)
+      : "associations";
   };
   const [tab, setTab] = useState<RailTab>(stored);
   useEffect(() => {
@@ -61,7 +62,10 @@ export default function WorkbenchRail({
     if (!drag.current) return;
     const next = Math.min(
       520,
-      Math.max(260, drag.current.startWidth - (event.clientX - drag.current.startX)),
+      Math.max(
+        260,
+        drag.current.startWidth - (event.clientX - drag.current.startX),
+      ),
     );
     setWidth(next);
   }
@@ -120,27 +124,39 @@ export default function WorkbenchRail({
             <span className="sr-only">{t.label}</span>
           </button>
         ))}
-        <button
-          type="button"
-          className="rail-tab rail-tab-add"
-          disabled
-          title="更多面板即将支持"
-          aria-label="更多面板即将支持"
-        >
-          <Plus size={16} aria-hidden="true" />
-        </button>
+        <Dropdown.Root>
+          <Dropdown.Trigger
+            className="rail-tab rail-tab-add"
+            title="添加面板"
+            aria-label="添加面板"
+          >
+            <Plus size={16} aria-hidden="true" />
+          </Dropdown.Trigger>
+          <Dropdown.Portal>
+            <ActionMenuContent
+              className="dropdown"
+              sideOffset={4}
+              align="start"
+            >
+              {tabs.map((t) => (
+                <ActionMenuItem
+                  key={t.id}
+                  icon={t.icon}
+                  onSelect={() => setTab(t.id)}
+                >
+                  {t.label}
+                </ActionMenuItem>
+              ))}
+            </ActionMenuContent>
+          </Dropdown.Portal>
+        </Dropdown.Root>
         <span className="rail-spacer" />
-        <button
-          type="button"
-          className="icon-button"
-          aria-label="收起右侧栏"
-          title="收起右侧栏"
-          onClick={onClose}
-        >
-          <ChevronsRight size={17} aria-hidden="true" />
-        </button>
       </div>
-      <div className="rail-body" role="tabpanel" aria-label={tabs.find((t) => t.id === tab)?.label}>
+      <div
+        className="rail-body"
+        role="tabpanel"
+        aria-label={tabs.find((t) => t.id === tab)?.label}
+      >
         {tab === "associations" && (
           <>
             <p className="muted association-hint">
