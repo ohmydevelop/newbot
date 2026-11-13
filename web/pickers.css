@@ -134,14 +134,14 @@
   pointer-events: none;
 }
 .runtime-panel {
-  width: min(420px, calc(100vw - 24px));
-  height: min(520px, var(--radix-popover-content-available-height));
+  width: min(380px, calc(100vw - 24px));
+  height: auto;
   max-height: min(560px, var(--radix-popover-content-available-height));
 }
 .runtime-panel .model-catalog {
-  flex: 1;
+  flex: 0 1 auto;
   min-height: 0;
-  max-height: none;
+  max-height: 320px;
   overflow: auto;
   padding: 8px;
   overscroll-behavior: contain;
@@ -377,4 +377,80 @@
   min-height: 36px;
   border-radius: 8px;
   padding: 6px 10px;
+}
+
+/* Model panel: reasoning slider first, model switching as a secondary step. */
+.runtime-effort {
+  color: var(--muted);
+  font-size: 12px;
+  white-space: nowrap;
+}
+.effort-block {
+  display: grid;
+  gap: 6px;
+  padding: 10px 12px 4px;
+}
+.effort-header {
+  display: grid;
+  grid-template-columns: 24px 1fr 32px;
+  align-items: center;
+}
+.effort-header > strong {
+  text-align: center;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--accent);
+}
+.effort-back {
+  justify-self: start;
+  width: 32px;
+  height: 32px;
+}
+.effort-header .icon-button {
+  justify-self: end;
+  width: 32px;
+  height: 32px;
+}
+.effort-model {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  min-height: 32px;
+  padding: 0 8px;
+  border-radius: 8px;
+  font-size: 13px;
+  color: var(--text);
+}
+.effort-model:hover {
+  background: var(--hover);
+}
+.effort-model > span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.reasoning-scale {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 8px;
+  margin-top: -8px;
+  font-size: 11px;
+  color: var(--muted);
+}
+.model-step {
+  position: relative;
+  border-top: 1px solid var(--line);
+}
+.model-step-back {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  z-index: 3;
+  width: 30px;
+  height: 30px;
+}
+.model-step .picker-search {
+  padding-left: 44px;
 }

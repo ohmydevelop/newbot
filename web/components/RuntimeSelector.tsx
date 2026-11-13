@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import * as Popover from "@radix-ui/react-popover";
 import * as Slider from "@radix-ui/react-slider";
 import {
-  Brain,
   Check,
   ChevronDown,
   ChevronRight,
@@ -11,6 +10,7 @@ import {
   LoaderCircle,
   Search,
   X,
+  ChevronLeft,
 } from "lucide-react";
 import type { Json } from "../../shared/types";
 import {
@@ -24,7 +24,6 @@ import { PickerContent, type ComposerPanel, type PanelSetter } from "./Picker";
 import {
   reasoningLabels as efforts,
   reasoningOptions,
-  effortSupport,
 } from "../../shared/reasoning";
 const orderedEfforts = Object.keys(efforts);
 export default function RuntimeSelector({
@@ -52,7 +51,8 @@ export default function RuntimeSelector({
     [selectionError, setSelectionError] = useState(""),
     [presetError, setPresetError] = useState(""),
     [presetReading, setPresetReading] = useState(false),
-    [preview, setPreview] = useState<number | null>(null);
+    [preview, setPreview] = useState<number | null>(null),
+    [modelsOpen, setModelsOpen] = useState(false);
   const search = useRef<HTMLInputElement>(null),
     catalogGeneration = useRef(0),
     presetGeneration = useRef(0),
@@ -91,6 +91,7 @@ export default function RuntimeSelector({
   useEffect(() => {
     if (panel === "runtime" || panel === "reasoning") {
       setQuery("");
+      setModelsOpen(false);
       void read();
     } else {
       catalogGeneration.current++;
@@ -266,6 +267,11 @@ export default function RuntimeSelector({
               ? "选择模型"
               : selected?.displayName || s.model || "选择模型"}
           </span>
+          {shownEffort && (
+            <small className="runtime-effort">
+              {efforts[shownEffort] || shownEffort}
+            </small>
+          )}
           <ChevronDown size={14} aria-hidden="true" />
         </Popover.Trigger>
         <PickerContent
@@ -279,6 +285,122 @@ export default function RuntimeSelector({
           }}
           onEscapeKeyDown={() => setPreview(null)}
         >
+          {!modelsOpen && (
+          <div className="effort-block">
+            <header className="effort-header">
+              <button
+                type="button"
+                className="icon-button effort-back"
+                aria-label="关闭推理强度"
+                title="返回"
+                onClick={() => setPanel(null)}
+              >
+                <ChevronLeft size={17} aria-hidden="true" />
+              </button>
+              <strong>{shownEffort ? efforts[shownEffort] || shownEffort : "默认"}</strong>
+              <button
+                type="button"
+                className="icon-button"
+                aria-label="恢复模型默认推理强度"
+                title="使用模型默认推理强度"
+                disabled={mutating || reading || !supported.length}
+                onClick={() => void update({ effort: "" })}
+              >
+                {mutating ? (
+                  <LoaderCircle size={15} className="spin" aria-hidden="true" />
+                ) : (
+                  <RotateCcw size={15} aria-hidden="true" />
+                )}
+              </button>
+            </header>
+            <button
+              type="button"
+              className="effort-model"
+              aria-expanded={modelsOpen}
+              onClick={() => {
+                setModelsOpen((v) => !v);
+                if (!modelsOpen) setTimeout(() => search.current?.focus(), 0);
+              }}
+            >
+              <span>{invalidSelection ? "选择模型" : selected?.displayName || s.model || "选择模型"}</span>
+              <ChevronRight size={15} aria-hidden="true" />
+            </button>
+            {selectionError && (
+              <p className="inline-error" role="alert">
+                {selectionError}
+              </p>
+            )}
+            {known.length > 1 ? (
+              <>
+                <Slider.Root
+                  className="reasoning-slider"
+                  value={[step]}
+                  min={0}
+                  max={known.length - 1}
+                  step={1}
+                  disabled={mutating || reading}
+                  onValueChange={([v]) => setPreview(v)}
+                  onValueCommit={([v]) => {
+                    if (known[v]?.reasoningEffort !== s.effort)
+                      void update({ effort: known[v].reasoningEffort });
+                    else setPreview(null);
+                  }}
+                >
+                  <Slider.Track className="reasoning-track">
+                    <Slider.Range className="reasoning-range" />
+                    {known.map((e, i) => (
+                      <span
+                        key={e.reasoningEffort}
+                        className="reasoning-tick"
+                        style={{ left: `${(i / (known.length - 1)) * 100}%` }}
+                      />
+                    ))}
+                  </Slider.Track>
+                  <Slider.Thumb
+                    className="reasoning-thumb"
+                    aria-label="推理强度"
+                    aria-valuetext={efforts[known[step]?.reasoningEffort] || "默认"}
+                  />
+                </Slider.Root>
+                <div className="reasoning-scale" aria-hidden="true">
+                  <span>{efforts[known[0].reasoningEffort]}</span>
+                  <span>{efforts[known[known.length - 1].reasoningEffort]}</span>
+                </div>
+              </>
+            ) : known.length === 1 ? (
+              <p className="picker-note">此模型支持：{efforts[known[0].reasoningEffort]}</p>
+            ) : !other.length ? (
+              <p className="picker-note">此模型未提供可配置的推理档位</p>
+            ) : null}
+            {other.length > 0 && (
+              <div className="reasoning-other">
+                {other.map((e) => (
+                  <button
+                    type="button"
+                    className="secondary"
+                    key={e.reasoningEffort}
+                    disabled={mutating || reading}
+                    aria-pressed={s.effort === e.reasoningEffort}
+                    onClick={() => void update({ effort: e.reasoningEffort })}
+                  >
+                    {e.reasoningEffort}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+          )}
+          {modelsOpen && (
+          <div className="model-step">
+            <button
+              type="button"
+              className="icon-button model-step-back"
+              aria-label="返回推理强度"
+              title="返回推理强度"
+              onClick={() => setModelsOpen(false)}
+            >
+              <ChevronLeft size={17} aria-hidden="true" />
+            </button>
           <div className="picker-search">
             <Search size={17} aria-hidden="true" />
             <input
@@ -420,6 +542,8 @@ export default function RuntimeSelector({
               </p>
             )}
           </div>
+          </div>
+          )}
           {candidate?.pending && (
             <p className="picker-note" role="status">
               {candidate.pending.error ||
@@ -430,151 +554,6 @@ export default function RuntimeSelector({
                     : "设置已保存")}
             </p>
           )}
-        </PickerContent>
-      </Popover.Root>
-      <Popover.Root
-        open={panel === "reasoning" && !disabled}
-        onOpenChange={(open) =>
-          setPanel((p) => (open ? "reasoning" : p === "reasoning" ? null : p))
-        }
-      >
-        <Popover.Trigger
-          type="button"
-          className="icon-button reasoning-trigger"
-          disabled={disabled}
-          aria-label={`推理强度：${efforts[s.effort] || "默认"}`}
-          title={`推理强度：${efforts[s.effort] || "默认"}`}
-        >
-          <Brain size={18} aria-hidden="true" />
-        </Popover.Trigger>
-        <PickerContent
-          className="reasoning-panel"
-          align="end"
-          side="top"
-          aria-label="推理强度"
-        >
-          {selectionError && (
-            <p className="inline-error" role="alert">
-              {selectionError}
-            </p>
-          )}
-          {error && (
-            <p className="inline-error" role="alert">
-              {error}
-            </p>
-          )}
-          <section className="reasoning-picker" aria-label="推理强度">
-            <header>
-              <span>推理强度</span>
-              <strong>
-                {shownEffort ? efforts[shownEffort] || shownEffort : "默认"}
-              </strong>
-              <button
-                type="button"
-                className="icon-button"
-                aria-label="恢复模型默认推理强度"
-                title="使用模型默认推理强度"
-                disabled={mutating || reading || !supported.length}
-                onClick={() =>
-                  void update({
-                    effort: "",
-                  })
-                }
-              >
-                {mutating ? (
-                  <LoaderCircle size={15} className="spin" aria-hidden="true" />
-                ) : (
-                  <RotateCcw size={15} aria-hidden="true" />
-                )}
-              </button>
-            </header>
-            {known.length > 1 ? (
-              <>
-                <Slider.Root
-                  className="reasoning-slider"
-                  value={[step]}
-                  min={0}
-                  max={known.length - 1}
-                  step={1}
-                  disabled={mutating || reading}
-                  onValueChange={([v]) => setPreview(v)}
-                  onValueCommit={([v]) => {
-                    if (known[v]?.reasoningEffort !== s.effort)
-                      void update({ effort: known[v].reasoningEffort });
-                    else setPreview(null);
-                  }}
-                >
-                  <Slider.Track className="reasoning-track">
-                    <Slider.Range className="reasoning-range" />
-                    {known.map((e, i) => (
-                      <span
-                        key={e.reasoningEffort}
-                        className="reasoning-tick"
-                        style={{ left: `${(i / (known.length - 1)) * 100}%` }}
-                      />
-                    ))}
-                  </Slider.Track>
-                  <Slider.Thumb
-                    className="reasoning-thumb"
-                    aria-label="推理强度"
-                    aria-valuetext={
-                      efforts[known[step]?.reasoningEffort] || "默认"
-                    }
-                  />
-                </Slider.Root>
-                <div className="reasoning-labels">
-                  {known.map((e, i) => (
-                    <button
-                      key={e.reasoningEffort}
-                      type="button"
-                      title={e.description || efforts[e.reasoningEffort]}
-                      aria-label={`推理强度：${efforts[e.reasoningEffort]}`}
-                      aria-pressed={i === actualIndex}
-                      disabled={mutating || reading}
-                      onClick={() => void update({ effort: e.reasoningEffort })}
-                    >
-                      {efforts[e.reasoningEffort]}
-                    </button>
-                  ))}
-                </div>
-              </>
-            ) : known.length === 1 ? (
-              <p className="picker-note">
-                此模型支持：{efforts[known[0].reasoningEffort]}
-              </p>
-            ) : !other.length ? (
-              <p className="picker-note">此模型未提供可配置的推理档位</p>
-            ) : null}
-            {other.length > 0 && (
-              <div className="reasoning-other">
-                {other.map((e) => (
-                  <button
-                    type="button"
-                    className="secondary"
-                    key={e.reasoningEffort}
-                    disabled={mutating || reading}
-                    aria-pressed={s.effort === e.reasoningEffort}
-                    onClick={() => void update({ effort: e.reasoningEffort })}
-                  >
-                    {e.reasoningEffort}
-                  </button>
-                ))}
-              </div>
-            )}
-            {mutating && (
-              <span role="status" className="sr-only">
-                正在保存设置…
-              </span>
-            )}
-            {!!s.effort && effortSupport(selected, s.effort) === "unknown" && (
-              <small
-                className="picker-note"
-                title="已保存请求参数；网关是否采用该参数尚未验证"
-              >
-                此网关的推理参数待验证
-              </small>
-            )}
-          </section>
         </PickerContent>
       </Popover.Root>
       <ApprovalChoice
