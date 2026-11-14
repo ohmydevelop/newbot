@@ -149,6 +149,7 @@ test("expert bundles become native inputs, persist per chat, deduplicate referen
     const fields = {
       name: "Review expert",
       description: "Review and measure",
+      instructions: "PROMPT_V1: 请用简洁中文作答。",
       skillIds: [skillId],
       pluginIds: ["expert-plugin@local"],
       connectorIds: ["test-server"],
@@ -174,6 +175,8 @@ test("expert bundles become native inputs, persist per chat, deduplicate referen
       /workspaces\/.*\.agents\/skills\/newbot-/,
     );
     assert.ok(input.some((i: any) => i.text?.includes("test-server")));
+    assert.ok(input.some((i: any) => i.text?.includes("PROMPT_V1")));
+    const captured = await ctx.service.experts.capture({expertId: e.id});
     assert.equal(
       (await ok(action("thread/read", { threadId: a.threadId }))).extensions
         .expertId,
@@ -256,8 +259,10 @@ test("expert bundles become native inputs, persist per chat, deduplicate referen
         id: e.id,
         expectedRevision: e.revision,
         name: "Updated expert",
+        instructions: "PROMPT_V2: 用三句话作答。",
       }),
     );
+    assert.equal(captured.expertSnapshot?.instructions, fields.instructions, "captured requests retain their original prompt");
     assert.notEqual(
       (
         await action("expert/save", {
@@ -284,6 +289,19 @@ test("expert bundles become native inputs, persist per chat, deduplicate referen
         .expert.name,
       "Updated expert",
     );
+    assert.equal((await ok(action("expert/read", {id:e.id}))).instructions, "PROMPT_V2: 用三句话作答。", "prompt survives server restart");
+    const promptOnly = await ok(action("expert/save", {name:"Prompt only",instructions:"PROMPT_ONLY",skillIds:[],pluginIds:[],connectorIds:[]}));
+    const promptRun=await ok(run({expertId:promptOnly.id}));
+    assert.ok(codex.calls.filter(c=>c.method === "turn/start").at(-1)!.params.input.some((i:any)=>i.text?.includes("PROMPT_ONLY")));
+    codex.finish(promptRun.threadId);
+    const promptHistory=await ok(action("thread/read",{threadId:promptRun.threadId}));
+    assert.doesNotMatch(JSON.stringify(promptHistory.turns.flatMap((t:any)=>t.items.filter((i:any)=>i.type === "userMessage"))),/PROMPT_ONLY/);
+    const compatible = await ok(action("expert/save",{...fields,name:"Older client",instructions:"PRESERVE_PROMPT"}));
+    const {instructions: _omit, ...oldFields}=fields;
+    const oldEdit=await ok(action("expert/save",{...oldFields,id:compatible.id,expectedRevision:compatible.revision,name:"Old client edit"}));
+    assert.equal(oldEdit.instructions,"PRESERVE_PROMPT","an old client omitting the new field must not erase it");
+    const cleared=await ok(action("expert/save",{...oldFields,id:compatible.id,expectedRevision:oldEdit.revision,instructions:""}));
+    assert.equal(cleared.instructions,"");
     codex.skillExists = false;
     assert.notEqual((await run({ threadId: a.threadId })).statusCode, 200);
     assert.equal(

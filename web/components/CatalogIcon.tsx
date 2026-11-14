@@ -1,42 +1,20 @@
-import {
-  Blocks,
-  Box,
-  Code2,
-  FileText,
-  Globe,
-  Palette,
-  Search,
-  Server,
-  Cpu,
-} from "lucide-react";
+import { SkillIcon, PluginIcon, ConnectionIcon, GatewayIcon } from "./AppIcons";
+const icons = {
+  skill: SkillIcon,
+  plugin: PluginIcon,
+  connection: ConnectionIcon,
+  gateway: GatewayIcon,
+};
 export default function CatalogIcon({
-  name,
   kind = "skill",
 }: {
   name: string;
-  kind?: "skill" | "plugin" | "connection" | "gateway";
+  kind?: keyof typeof icons;
 }) {
-  const text = name.toLowerCase();
-  const [Icon] = /design|brand|设计|图像/.test(text)
-    ? ([Palette, "rose"] as const)
-    : /code|review|dev|代码|审查/.test(text)
-      ? ([Code2, "violet"] as const)
-      : /search|research|web|搜索/.test(text)
-        ? ([Search, "teal"] as const)
-        : /file|document|docs|文档/.test(text)
-          ? ([FileText, "amber"] as const)
-          : /browser|http|浏览/.test(text)
-            ? ([Globe, "blue"] as const)
-            : kind === "gateway"
-              ? ([Cpu, "teal"] as const)
-              : kind === "connection"
-                ? ([Server, "blue"] as const)
-                : kind === "plugin"
-                  ? ([Blocks, "violet"] as const)
-                  : ([Box, "amber"] as const);
+  const Icon = icons[kind];
   return (
     <span className="catalog-icon" aria-hidden="true">
-      <Icon size={23} strokeWidth={1.8} />
+      <Icon size={22} />
     </span>
   );
 }

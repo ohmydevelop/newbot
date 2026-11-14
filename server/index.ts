@@ -462,6 +462,10 @@ async function createServerInternal(
       service.events.resolved(p.requestId);
       return;
     }
+    if (["mcpServer/oauthLogin/completed", "mcpServer/oauth/login/completed"].includes(message.method)) {
+      service.events.notification(message);
+      return;
+    }
     if (!db.owns(p.threadId || p.thread?.id)) return;
     if (message.method === "item/completed") {
       media.completed(p.threadId, p.turnId, p.item, () =>
@@ -1140,6 +1144,12 @@ async function createServerInternal(
       .parse(req.query);
     return service.read(id, cursor);
   });
+  app.post("/api/threads/:id/turns/:turnId/followups", async (req) => {
+    z.strictObject({}).parse(req.body);
+    const { id, turnId } = z.object({ id: z.string().min(1).max(200), turnId: z.string().min(1).max(200) }).parse(req.params);
+    if (!db.owns(id)) throw new PublicError("会话不存在");
+    return { threadId: id, turnId, suggestions: await service.followups(id, turnId) };
+  });
   const runningRequests = new Map<string, Promise<Json>>();
   const waitingRuns = new Map<
     string,
@@ -1383,7 +1393,7 @@ async function createServerInternal(
     const p = z
       .object({
         threadId: z.string().max(200).optional(),
-        text: z.string().trim().min(1).max(200000),
+        text: z.string().trim().max(200000),
         provider: z.string().max(200).optional(),
         model: z.string().max(200).optional(),
         effort: z.string().max(40).optional(),
@@ -1397,6 +1407,7 @@ async function createServerInternal(
         plugins: z.array(z.string().min(1).max(200)).max(8).optional(),
         requestId: z.string().uuid(),
       })
+      .refine((v) => v.text.length > 0 || v.attachments.length > 0, "请输入消息或添加附件")
       .parse(req.body);
     if (!p.skills?.length) delete p.skills;
     // Preserve successful idempotency records created by v0.2.
@@ -1462,6 +1473,7 @@ async function createServerInternal(
               providerConfigRevision,
             )),
             ...expertSelection!,
+            expertContextInputIndex: p.text ? 1 : 0,
             extensionSnapshot: await service.extensions?.capture(
               expertSelection!.plugins,
             ),
@@ -1649,6 +1661,10 @@ async function createServerInternal(
     "expert/delete",
     "runtime/presets",
     "skills/uninstall",
+    "marketplace/list",
+    "marketplace/add",
+    "marketplace/upgrade",
+    "marketplace/remove",
     "plugin/list",
     "plugin/read",
     "plugin/skill/read",

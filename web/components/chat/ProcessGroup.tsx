@@ -6,7 +6,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { ArrowDown, ChevronRight, LoaderCircle } from "lucide-react";
+import { ArrowDown, ChevronRight, LoaderCircle, Clock3 } from "lucide-react";
 import type { Item } from "../../../shared/types";
 import { anchorDisclosure } from "../../chat-scroll";
 import { ContentBoundary } from "./ContentBoundary";
@@ -18,6 +18,7 @@ export function ProcessGroup({
   turnId,
   label,
   running,
+  active = running,
   children,
 }: {
   items: Item[];
@@ -25,6 +26,7 @@ export function ProcessGroup({
   turnId: string;
   label: string;
   running: boolean;
+  active?: boolean;
   children?: ReactNode;
 }) {
   const [expanded, setExpanded] = useState(false);
@@ -76,8 +78,10 @@ export function ProcessGroup({
             anchorDisclosure(e.currentTarget, () => setExpanded((v) => !v))
           }
         >
-          {running && (
-            <LoaderCircle size={15} className="spin" aria-hidden="true" />
+          {running ? (
+            <LoaderCircle size={18} className="spin" aria-hidden="true" />
+          ) : (
+            <Clock3 size={18} aria-hidden="true" />
           )}
           <span>{label}</span>
           <ChevronRight
@@ -113,7 +117,7 @@ export function ProcessGroup({
             {items.map((item) => (
               <ContentBoundary key={item.id}>
                 <Message
-                  streaming={running}
+                  streaming={active}
                   item={item}
                   threadId={threadId}
                   turnId={turnId}

@@ -12,7 +12,7 @@ async function fixture(fn: (f: any) => Promise<void>) {
   const directory = mkdtempSync(join(tmpdir(), "newbot-mcp-config-")),
     codex = new McpConfigCodex(),
     ctx = await createServer({
-    providerRuntime: null,
+      providerRuntime: null,
       directory,
       cwd: join(directory, "work"),
       codex,
@@ -321,11 +321,29 @@ test("MCP management blocks tasks, approvals and pending OAuth, releasing guards
     });
     await assert.rejects(service.handle("mcp/save", input), /等待/);
     codex.approvals.clear();
-    await service.handle("mcp/oauth", { name: "local" });
+    const originalCall = codex.call.bind(codex);
+    let release!: (value: any) => void, entered!: () => void;
+    const entering = new Promise<void>(resolve => { entered = resolve; });
+    codex.call = async (method: string, params: any) => {
+      if (method !== "mcpServer/oauth/login") return originalCall(method, params);
+      entered();
+      return new Promise(resolve => { release = resolve; });
+    };
+    const starting = service.handle("mcp/oauth", { name: "local" });
+    await entering;
+    codex.emit("event", { method: "mcpServer/oauthLogin/completed", params: { loginId: "old-attempt", success: true } });
+    await assert.rejects(service.handle("mcp/save", input), /OAuth/);
+    release({ authorizationUrl: "https://oauth.example/authorize", loginId: "current-attempt" });
+    await starting;
     await assert.rejects(service.handle("mcp/save", input), /OAuth/);
     codex.emit("event", {
-      method: "mcpServer/oauth/login/completed",
-      params: {},
+      method: "mcpServer/oauthLogin/completed",
+      params: { loginId: "old-attempt", success: true },
+    });
+    await assert.rejects(service.handle("mcp/save", input), /OAuth/);
+    codex.emit("event", {
+      method: "mcpServer/oauthLogin/completed",
+      params: { loginId: "current-attempt", success: false },
     });
     await service.handle("mcp/save", input);
     assert.equal(service.busy, false);
@@ -485,5 +503,16 @@ test("paginated MCP catalogs keep App permissions discoverable and reload invali
       expectedRevision: settings.configuration.revision,
     });
     assert.equal(service.apps.records.size, 0);
+  });
+});
+
+test("OAuth completion bypasses chat ownership filtering and publishes only safe global feedback", async () => {
+  await fixture(async ({ service, codex }: any) => {
+    const seen: any[] = [];
+    service.events.on('event', (event: any) => seen.push(event));
+    for (const threadId of [null, 'internal-discovery-thread']) codex.emit('event', {method:'mcpServer/oauthLogin/completed',params:{name:'local',threadId,loginId:'login-'+threadId,success:false,error:configSecret}});
+    const completions=seen.filter(e=>e.name==='newbot.mcp.oauth.completed');
+    assert.equal(completions.length,2);
+    assert.equal(JSON.stringify(completions).includes(configSecret),false);
   });
 });

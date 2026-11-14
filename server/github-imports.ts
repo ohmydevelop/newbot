@@ -23,7 +23,10 @@ export function githubLocation(raw: string) {
   )
     throw new PublicError("仅支持公开 github.com 仓库");
   const tag = parts[2] === "releases" && parts[3] === "tag";
-  if (parts.length > 2 && !(tag ? parts[4] : parts[2] === "tree" && parts[3]))
+  if (
+    parts.length > 2 &&
+    !(tag ? parts[4] : ["tree", "blob"].includes(parts[2]) && parts[3])
+  )
     throw new PublicError("请使用仓库、分支、标签或子目录链接");
   let tail: string;
   try {
@@ -181,4 +184,40 @@ export function githubCatalog(fetcher: typeof fetch = fetch) {
     };
   }
   return { resolve };
+}
+
+export async function githubBytes(
+  url: string,
+  limit: number,
+  fetcher: typeof fetch = fetch,
+) {
+  const response = await fetcher(url, {
+    redirect: "error",
+    signal: AbortSignal.timeout(30_000),
+    headers: {
+      Accept: "application/vnd.github+json",
+      "User-Agent": "newbot-import/1",
+    },
+  });
+  if (!response.ok || !response.body)
+    throw new PublicError(
+      `GitHub 下载失败（${response.status}），请检查公开访问、ref 或改用本地 ZIP`,
+    );
+  if (Number(response.headers.get("content-length") || 0) > limit)
+    throw new PublicError("GitHub 内容超过下载预算");
+  const chunks: Uint8Array[] = [];
+  let bytes = 0;
+  const reader = response.body.getReader();
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      bytes += value.length;
+      if (bytes > limit) throw new PublicError("GitHub 内容超过下载预算");
+      chunks.push(value);
+    }
+  } finally {
+    await reader.cancel();
+  }
+  return Buffer.concat(chunks);
 }

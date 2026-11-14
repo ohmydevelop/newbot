@@ -14,11 +14,16 @@ export function Sidebar({
 }) {
   const narrow = useMediaQuery("(max-width: 760px)");
   if (!narrow)
-    return open ? (
-      <aside className="sidebar" aria-label="对话导航">
+    return (
+      <aside
+        className="sidebar desktop-sidebar"
+        aria-label="对话导航"
+        aria-hidden={!open}
+        inert={!open}
+      >
         {children}
       </aside>
-    ) : null;
+    );
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Portal>

@@ -157,14 +157,23 @@ export class ExtensionResources {
         },
       ],
     });
+    // Native requires this canonical filename. This generated descriptor lives
+    // outside the immutable package and can be upgraded atomically from the
+    // legacy marketplace identity without changing pinned package bytes.
+    let previous: string | undefined;
     try {
-      await writeFile(path, content, { flag: "wx", mode: 0o600 });
+      previous = await readFile(path, "utf8");
     } catch (e) {
-      if (
-        (e as NodeJS.ErrnoException).code !== "EEXIST" ||
-        (await readFile(path, "utf8")) !== content
-      )
-        throw e;
+      if ((e as NodeJS.ErrnoException).code !== "ENOENT") throw e;
+    }
+    if (previous !== content) {
+      const temporary = path + "." + randomUUID();
+      try {
+        await writeFile(temporary, content, { flag: "wx", mode: 0o600 });
+        await rename(temporary, path);
+      } finally {
+        await rm(temporary, { force: true });
+      }
     }
     return path;
   }

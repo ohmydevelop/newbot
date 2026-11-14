@@ -41,6 +41,11 @@ const definition = z
     url: z.string().max(4096).optional(),
     headers: z.record(z.string(), z.string().max(4096)).optional(),
     type: z.string().optional(),
+    oauth: z
+      .object({ client_id: z.string().min(1).max(512) })
+      .strict()
+      .optional(),
+    scopes: z.array(z.string().min(1).max(256)).max(32).optional(),
   })
   .strict()
   .refine((d) => !!d.command !== !!d.url, "连接器必须声明一种传输方式");
@@ -228,6 +233,28 @@ export async function pluginDescriptors(
       const fields = Object.entries(
         z.record(name, field).parse(configFields),
       ).map(([id, f]) => ({ ...f, id }));
+      if (config.oauth?.client_id && !bundle) {
+        const clientId = z
+          .string()
+          .min(1)
+          .max(512)
+          .parse(config.oauth.client_id);
+        fields.push({
+          id: "oauth_client_id",
+          type: "string",
+          title: "OAuth Client ID",
+          required: true,
+          sensitive: false,
+          default: clientId,
+        });
+        config = {
+          ...config,
+          oauth: {
+            ...config.oauth,
+            client_id: "${user_config.oauth_client_id}",
+          },
+        };
+      }
       if (fields.length > 32)
         throw new PublicError("插件配置字段超过 32 项限制");
       const def = definition.parse(config);
@@ -341,6 +368,9 @@ export function resolvePluginConfiguration(
     )
       throw new PublicError("连接地址需要不含凭证和查询参数的 HTTP/HTTPS URL");
     def.http_headers = {};
+    if (d.definition.oauth)
+      def.oauth = { client_id: expand(d.definition.oauth.client_id) };
+    if (d.definition.scopes) def.scopes = [...d.definition.scopes];
     for (const [key, value] of Object.entries(d.definition.headers || {})) {
       if (!/^[!#$%&'*+.^_`|~0-9A-Za-z-]+$/.test(key) || blockedHeader.test(key))
         throw new PublicError("插件声明了受保护或无效的请求头");

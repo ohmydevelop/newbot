@@ -1,0 +1,720 @@
+diff --git a/codex-rs/http-client/src/client_builder.rs b/codex-rs/http-client/src/client_builder.rs
+--- a/codex-rs/http-client/src/client_builder.rs
++++ b/codex-rs/http-client/src/client_builder.rs
+@@ -113,6 +113,11 @@
+     /// Keep pooled connections reusable during long gaps between requests.
+     pub fn without_pool_idle_timeout(mut self) -> Self {
+         self.disable_pool_idle_timeout = true;
++        self
++    }
++
++    pub fn with_explicit_tls(mut self, tls: HttpClientTlsConfig) -> Self {
++        self.tls = tls;
+         self
+     }
+ 
+diff --git a/codex-rs/ext/mcp/src/plugin/provider_tests.rs b/codex-rs/ext/mcp/src/plugin/provider_tests.rs
+--- a/codex-rs/ext/mcp/src/plugin/provider_tests.rs
++++ b/codex-rs/ext/mcp/src/plugin/provider_tests.rs
+@@ -208,6 +208,7 @@
+                     scopes: None,
+                     oauth: None,
+                     oauth_resource: None,
++                    tls_ca_certificate: None,
+                     tools: HashMap::new(),
+                 },
+             ),
+@@ -238,6 +239,7 @@
+                     scopes: None,
+                     oauth: None,
+                     oauth_resource: None,
++                    tls_ca_certificate: None,
+                     tools: HashMap::new(),
+                 },
+             ),
+@@ -298,6 +300,7 @@
+                 scopes: None,
+                 oauth: None,
+                 oauth_resource: None,
++                tls_ca_certificate: None,
+                 tools: HashMap::new(),
+             },
+         )]
+diff --git a/codex-rs/ext/agent-message-board/src/mcp.rs b/codex-rs/ext/agent-message-board/src/mcp.rs
+--- a/codex-rs/ext/agent-message-board/src/mcp.rs
++++ b/codex-rs/ext/agent-message-board/src/mcp.rs
+@@ -137,6 +137,7 @@
+                     scopes: None,
+                     oauth: None,
+                     oauth_resource: None,
++                    tls_ca_certificate: None,
+                     tools: HashMap::new(),
+                 }),
+             }]
+diff --git a/codex-rs/exec-server/src/client/route_aware_http_client.rs b/codex-rs/exec-server/src/client/route_aware_http_client.rs
+--- a/codex-rs/exec-server/src/client/route_aware_http_client.rs
++++ b/codex-rs/exec-server/src/client/route_aware_http_client.rs
+@@ -93,6 +93,16 @@
+                     ClientRouteClass::Other,
+                 ),
+         }
++    }
++
++    /// Explicit roots are opt-in for a connector-local client; redirect handling
++    /// remains manual so trust cannot travel to another origin.
++    pub fn with_root_certificate(factory: HttpClientFactory, pem: &[u8]) -> Result<Self, String> {
++        let tls = codex_http_client::HttpClientTlsConfig::default()
++            .with_root_certificate_pem(pem).map_err(|_| "invalid MCP CA certificate".to_string())?;
++        let pool = RouteAwareClientPool::with_builder(factory, ClientRouteClass::Other,
++            codex_http_client::HttpClientBuilder::new().without_request_logging().without_redirects().with_explicit_tls(tls));
++        Ok(Self { follow_redirects: pool.clone(), stop_redirects: pool })
+     }
+ 
+     /// Enables narrowly scoped TLS-backend fallback for both redirect policies.
+diff --git a/codex-rs/core/src/mcp_skill_dependencies.rs b/codex-rs/core/src/mcp_skill_dependencies.rs
+--- a/codex-rs/core/src/mcp_skill_dependencies.rs
++++ b/codex-rs/core/src/mcp_skill_dependencies.rs
+@@ -425,6 +425,7 @@
+                     ..Default::default()
+                 }),
+             oauth_resource: None,
++            tls_ca_certificate: None,
+             tools: HashMap::new(),
+         });
+     }
+@@ -459,6 +460,7 @@
+             scopes: None,
+             oauth: None,
+             oauth_resource: None,
++            tls_ca_certificate: None,
+             tools: HashMap::new(),
+         });
+     }
+diff --git a/codex-rs/core/tests/suite/code_mode.rs b/codex-rs/core/tests/suite/code_mode.rs
+--- a/codex-rs/core/tests/suite/code_mode.rs
++++ b/codex-rs/core/tests/suite/code_mode.rs
+@@ -767,6 +767,7 @@
+                 scopes: None,
+                 oauth: None,
+                 oauth_resource: None,
++                tls_ca_certificate: None,
+                 tools: HashMap::new(),
+             },
+         );
+diff --git a/codex-rs/core/tests/suite/hooks_mcp.rs b/codex-rs/core/tests/suite/hooks_mcp.rs
+--- a/codex-rs/core/tests/suite/hooks_mcp.rs
++++ b/codex-rs/core/tests/suite/hooks_mcp.rs
+@@ -316,6 +316,7 @@
+             scopes: None,
+             oauth: None,
+             oauth_resource: None,
++            tls_ca_certificate: None,
+             tools: HashMap::new(),
+         },
+     );
+diff --git a/codex-rs/core/tests/suite/mcp_refresh_cleanup.rs b/codex-rs/core/tests/suite/mcp_refresh_cleanup.rs
+--- a/codex-rs/core/tests/suite/mcp_refresh_cleanup.rs
++++ b/codex-rs/core/tests/suite/mcp_refresh_cleanup.rs
+@@ -163,6 +163,7 @@
+                     scopes: None,
+                     oauth: None,
+                     oauth_resource: None,
++                    tls_ca_certificate: None,
+                     tools: HashMap::new(),
+                 },
+             );
+diff --git a/codex-rs/core/tests/suite/mcp_startup_refresh_http_proxy.rs b/codex-rs/core/tests/suite/mcp_startup_refresh_http_proxy.rs
+--- a/codex-rs/core/tests/suite/mcp_startup_refresh_http_proxy.rs
++++ b/codex-rs/core/tests/suite/mcp_startup_refresh_http_proxy.rs
+@@ -148,6 +148,7 @@
+                     scopes: None,
+                     oauth: None,
+                     oauth_resource: None,
++                    tls_ca_certificate: None,
+                     tools: HashMap::new(),
+                 },
+             );
+diff --git a/codex-rs/core/tests/suite/rmcp_client.rs b/codex-rs/core/tests/suite/rmcp_client.rs
+--- a/codex-rs/core/tests/suite/rmcp_client.rs
++++ b/codex-rs/core/tests/suite/rmcp_client.rs
+@@ -403,6 +403,7 @@
+             scopes: None,
+             oauth: None,
+             oauth_resource: None,
++            tls_ca_certificate: None,
+             tools: HashMap::new(),
+         },
+     );
+diff --git a/codex-rs/core/tests/suite/search_tool.rs b/codex-rs/core/tests/suite/search_tool.rs
+--- a/codex-rs/core/tests/suite/search_tool.rs
++++ b/codex-rs/core/tests/suite/search_tool.rs
+@@ -1346,6 +1346,7 @@
+                     scopes: None,
+                     oauth: None,
+                     oauth_resource: None,
++                    tls_ca_certificate: None,
+                     supports_parallel_tool_calls: false,
+                     tool_input_schema_max_bytes: None,
+                     omit_tools_from: None,
+@@ -1481,6 +1482,7 @@
+                     scopes: None,
+                     oauth: None,
+                     oauth_resource: None,
++                    tls_ca_certificate: None,
+                     supports_parallel_tool_calls: false,
+                     tool_input_schema_max_bytes: None,
+                     omit_tools_from: None,
+@@ -1632,6 +1634,7 @@
+                     scopes: None,
+                     oauth: None,
+                     oauth_resource: None,
++                    tls_ca_certificate: None,
+                     supports_parallel_tool_calls: false,
+                     tool_input_schema_max_bytes: None,
+                     omit_tools_from: None,
+diff --git a/codex-rs/core/tests/suite/sqlite_state.rs b/codex-rs/core/tests/suite/sqlite_state.rs
+--- a/codex-rs/core/tests/suite/sqlite_state.rs
++++ b/codex-rs/core/tests/suite/sqlite_state.rs
+@@ -897,6 +897,7 @@
+                 scopes: None,
+                 oauth: None,
+                 oauth_resource: None,
++                tls_ca_certificate: None,
+                 tools: HashMap::new(),
+             },
+         );
+diff --git a/codex-rs/core/tests/suite/token_budget.rs b/codex-rs/core/tests/suite/token_budget.rs
+--- a/codex-rs/core/tests/suite/token_budget.rs
++++ b/codex-rs/core/tests/suite/token_budget.rs
+@@ -796,6 +796,7 @@
+                     scopes: None,
+                     oauth: None,
+                     oauth_resource: None,
++                    tls_ca_certificate: None,
+                     tools: HashMap::new(),
+                 },
+             );
+diff --git a/codex-rs/core/tests/suite/truncation.rs b/codex-rs/core/tests/suite/truncation.rs
+--- a/codex-rs/core/tests/suite/truncation.rs
++++ b/codex-rs/core/tests/suite/truncation.rs
+@@ -426,6 +426,7 @@
+                 scopes: None,
+                 oauth: None,
+                 oauth_resource: None,
++                tls_ca_certificate: None,
+                 tools: HashMap::new(),
+             },
+         );
+@@ -531,6 +532,7 @@
+                 scopes: None,
+                 oauth: None,
+                 oauth_resource: None,
++                tls_ca_certificate: None,
+                 tools: HashMap::new(),
+             },
+         );
+diff --git a/codex-rs/core/src/config/config_tests.rs b/codex-rs/core/src/config/config_tests.rs
+--- a/codex-rs/core/src/config/config_tests.rs
++++ b/codex-rs/core/src/config/config_tests.rs
+@@ -157,6 +157,7 @@
+         scopes: None,
+         oauth: None,
+         oauth_resource: None,
++        tls_ca_certificate: None,
+         tools: HashMap::new(),
+     }
+ }
+@@ -187,6 +188,7 @@
+         scopes: None,
+         oauth: None,
+         oauth_resource: None,
++        tls_ca_certificate: None,
+         tools: HashMap::new(),
+     }
+ }
+@@ -7379,6 +7381,7 @@
+             scopes: None,
+             oauth: None,
+             oauth_resource: None,
++            tls_ca_certificate: None,
+             tools: HashMap::new(),
+         },
+     );
+@@ -7820,6 +7823,7 @@
+             scopes: None,
+             oauth: None,
+             oauth_resource: None,
++            tls_ca_certificate: None,
+             tools: HashMap::new(),
+         },
+     )]);
+@@ -7900,6 +7904,7 @@
+             scopes: None,
+             oauth: None,
+             oauth_resource: None,
++            tls_ca_certificate: None,
+             tools: HashMap::new(),
+         },
+     )]);
+@@ -7965,6 +7970,7 @@
+             scopes: None,
+             oauth: None,
+             oauth_resource: None,
++            tls_ca_certificate: None,
+             tools: HashMap::new(),
+         },
+     )]);
+@@ -8021,6 +8027,7 @@
+             scopes: None,
+             oauth: None,
+             oauth_resource: None,
++            tls_ca_certificate: None,
+             tools: HashMap::new(),
+         },
+     )]);
+@@ -8080,6 +8087,7 @@
+             scopes: None,
+             oauth: None,
+             oauth_resource: None,
++            tls_ca_certificate: None,
+             tools: HashMap::new(),
+         },
+     )]);
+@@ -8156,6 +8164,7 @@
+             scopes: None,
+             oauth: None,
+             oauth_resource: None,
++            tls_ca_certificate: None,
+             tools: HashMap::new(),
+         },
+     )]);
+@@ -8243,6 +8252,7 @@
+             scopes: None,
+             oauth: None,
+             oauth_resource: None,
++            tls_ca_certificate: None,
+             tools: HashMap::new(),
+         },
+     )]);
+@@ -8283,6 +8293,7 @@
+             scopes: None,
+             oauth: None,
+             oauth_resource: None,
++            tls_ca_certificate: None,
+             tools: HashMap::new(),
+         },
+     );
+@@ -8359,6 +8370,7 @@
+                 scopes: None,
+                 oauth: None,
+                 oauth_resource: None,
++                tls_ca_certificate: None,
+                 tools: HashMap::new(),
+             },
+         ),
+@@ -8389,6 +8401,7 @@
+                 scopes: None,
+                 oauth: None,
+                 oauth_resource: None,
++                tls_ca_certificate: None,
+                 tools: HashMap::new(),
+             },
+         ),
+@@ -8481,6 +8494,7 @@
+             scopes: None,
+             oauth: None,
+             oauth_resource: None,
++            tls_ca_certificate: None,
+             tools: HashMap::new(),
+         },
+     )]);
+@@ -8535,6 +8549,7 @@
+             scopes: None,
+             oauth: None,
+             oauth_resource: None,
++            tls_ca_certificate: None,
+             tools: HashMap::new(),
+         },
+     )]);
+@@ -8589,6 +8604,7 @@
+             scopes: None,
+             oauth: None,
+             oauth_resource: None,
++            tls_ca_certificate: None,
+             tools: HashMap::new(),
+         },
+     )]);
+@@ -8653,6 +8669,7 @@
+                 ..Default::default()
+             }),
+             oauth_resource: Some("https://resource.example.com".to_string()),
++            tls_ca_certificate: None,
+             tools: HashMap::new(),
+         },
+     )]);
+diff --git a/codex-rs/core/src/config/edit_tests.rs b/codex-rs/core/src/config/edit_tests.rs
+--- a/codex-rs/core/src/config/edit_tests.rs
++++ b/codex-rs/core/src/config/edit_tests.rs
+@@ -1102,6 +1102,7 @@
+             scopes: None,
+             oauth: None,
+             oauth_resource: None,
++            tls_ca_certificate: None,
+             tools: HashMap::new(),
+         },
+     );
+@@ -1143,6 +1144,7 @@
+                 ..Default::default()
+             }),
+             oauth_resource: Some("https://resource.example.com".to_string()),
++            tls_ca_certificate: None,
+             tools: HashMap::new(),
+         },
+     );
+@@ -1233,6 +1235,7 @@
+             scopes: None,
+             oauth: None,
+             oauth_resource: None,
++            tls_ca_certificate: None,
+             tools: HashMap::from([(
+                 "search".to_string(),
+                 McpServerToolConfig {
+@@ -1311,6 +1314,7 @@
+             scopes: None,
+             oauth: None,
+             oauth_resource: None,
++            tls_ca_certificate: None,
+             tools: HashMap::new(),
+         },
+     );
+@@ -1365,6 +1369,7 @@
+             scopes: None,
+             oauth: None,
+             oauth_resource: None,
++            tls_ca_certificate: None,
+             tools: HashMap::new(),
+         },
+     );
+@@ -1418,6 +1423,7 @@
+             scopes: None,
+             oauth: None,
+             oauth_resource: None,
++            tls_ca_certificate: None,
+             tools: HashMap::new(),
+         },
+     );
+@@ -1472,6 +1478,7 @@
+             scopes: None,
+             oauth: None,
+             oauth_resource: None,
++            tls_ca_certificate: None,
+             tools: HashMap::new(),
+         },
+     );
+diff --git a/codex-rs/core/src/session/tests.rs b/codex-rs/core/src/session/tests.rs
+--- a/codex-rs/core/src/session/tests.rs
++++ b/codex-rs/core/src/session/tests.rs
+@@ -10293,6 +10293,7 @@
+             scopes: None,
+             oauth: None,
+             oauth_resource: None,
++            tls_ca_certificate: None,
+             tools: HashMap::new(),
+         },
+     )]);
+diff --git a/codex-rs/core-plugins/src/manager_tests.rs b/codex-rs/core-plugins/src/manager_tests.rs
+--- a/codex-rs/core-plugins/src/manager_tests.rs
++++ b/codex-rs/core-plugins/src/manager_tests.rs
+@@ -1070,6 +1070,7 @@
+                         ..Default::default()
+                     }),
+                     oauth_resource: None,
++                    tls_ca_certificate: None,
+                     tools: HashMap::new(),
+                 },
+             )]),
+@@ -1169,6 +1170,7 @@
+                 scopes: None,
+                 oauth: None,
+                 oauth_resource: None,
++                tls_ca_certificate: None,
+                 tools: HashMap::new(),
+             },
+         )])
+@@ -2349,6 +2351,7 @@
+                     scopes: None,
+                     oauth: None,
+                     oauth_resource: None,
++                    tls_ca_certificate: None,
+                     tools: HashMap::new(),
+                 },
+             )])
+@@ -2698,6 +2701,7 @@
+                 scopes: None,
+                 oauth: None,
+                 oauth_resource: None,
++                tls_ca_certificate: None,
+                 tools: HashMap::new(),
+             },
+         )])
+@@ -2955,6 +2959,7 @@
+         scopes: None,
+         oauth: None,
+         oauth_resource: None,
++        tls_ca_certificate: None,
+         tools: HashMap::new(),
+     };
+     let plugin = |config_name: &str, dir_name: &str, manifest_name: &str| LoadedPlugin {
+diff --git a/codex-rs/config/src/mcp_requirements_tests.rs b/codex-rs/config/src/mcp_requirements_tests.rs
+--- a/codex-rs/config/src/mcp_requirements_tests.rs
++++ b/codex-rs/config/src/mcp_requirements_tests.rs
+@@ -30,6 +30,7 @@
+         scopes: None,
+         oauth: None,
+         oauth_resource: None,
++        tls_ca_certificate: None,
+         tools: HashMap::new(),
+     }
+ }
+diff --git a/codex-rs/config/src/mcp_types.rs b/codex-rs/config/src/mcp_types.rs
+--- a/codex-rs/config/src/mcp_types.rs
++++ b/codex-rs/config/src/mcp_types.rs
+@@ -230,6 +230,9 @@
+ 
+ #[derive(Serialize, Debug, Clone, PartialEq)]
+ pub struct McpServerConfig {
++    /// Trust this PEM root only for the configured HTTPS MCP origin.
++    #[serde(default, skip_serializing_if = "Option::is_none")]
++    pub tls_ca_certificate: Option<String>,
+     #[serde(flatten)]
+     pub transport: McpServerTransportConfig,
+ 
+@@ -395,6 +398,8 @@
+ #[derive(Deserialize, Clone, JsonSchema)]
+ #[schemars(deny_unknown_fields)]
+ pub struct RawMcpServerConfig {
++    #[serde(default)]
++    pub tls_ca_certificate: Option<String>,
+     // stdio
+     pub command: Option<String>,
+     #[serde(default)]
+@@ -469,6 +474,7 @@
+ 
+     fn try_from(raw: RawMcpServerConfig) -> Result<Self, Self::Error> {
+         let RawMcpServerConfig {
++            tls_ca_certificate,
+             command,
+             args,
+             env,
+@@ -615,6 +621,7 @@
+         }
+ 
+         Ok(Self {
++            tls_ca_certificate,
+             transport,
+             auth,
+             environment_id,
+diff --git a/codex-rs/config/src/mcp_types_tests.rs b/codex-rs/config/src/mcp_types_tests.rs
+--- a/codex-rs/config/src/mcp_types_tests.rs
++++ b/codex-rs/config/src/mcp_types_tests.rs
+@@ -653,6 +653,7 @@
+             scopes: None,
+             oauth: None,
+             oauth_resource: None,
++            tls_ca_certificate: None,
+             tools: HashMap::new(),
+         }
+     );
+diff --git a/codex-rs/codex-mcp/src/catalog_tests.rs b/codex-rs/codex-mcp/src/catalog_tests.rs
+--- a/codex-rs/codex-mcp/src/catalog_tests.rs
++++ b/codex-rs/codex-mcp/src/catalog_tests.rs
+@@ -53,6 +53,7 @@
+         scopes: None,
+         oauth: None,
+         oauth_resource: None,
++        tls_ca_certificate: None,
+         tools: HashMap::from([(
+             "read".to_string(),
+             McpServerToolConfig {
+diff --git a/codex-rs/codex-mcp/src/connection_manager_tests.rs b/codex-rs/codex-mcp/src/connection_manager_tests.rs
+--- a/codex-rs/codex-mcp/src/connection_manager_tests.rs
++++ b/codex-rs/codex-mcp/src/connection_manager_tests.rs
+@@ -5092,6 +5092,7 @@
+                 scopes: None,
+                 oauth: None,
+                 oauth_resource: None,
++                tls_ca_certificate: None,
+                 tools: HashMap::new(),
+             }),
+         ),
+@@ -5122,6 +5123,7 @@
+                 scopes: None,
+                 oauth: None,
+                 oauth_resource: None,
++                tls_ca_certificate: None,
+                 tools: HashMap::new(),
+             }),
+         ),
+@@ -5239,6 +5241,7 @@
+         scopes: None,
+         oauth: None,
+         oauth_resource: None,
++        tls_ca_certificate: None,
+         tools: HashMap::new(),
+     };
+     let err: StartupOutcomeError = anyhow::anyhow!("OAuth is unsupported").into();
+@@ -5407,6 +5410,7 @@
+         scopes: None,
+         oauth: None,
+         oauth_resource: None,
++        tls_ca_certificate: None,
+         tools: HashMap::new(),
+     };
+     let err: StartupOutcomeError = anyhow::anyhow!("boom").into();
+@@ -5488,6 +5492,7 @@
+         scopes: None,
+         oauth: None,
+         oauth_resource: None,
++        tls_ca_certificate: None,
+         tools: HashMap::new(),
+     }
+ }
+diff --git a/codex-rs/codex-mcp/src/plugin_config_tests.rs b/codex-rs/codex-mcp/src/plugin_config_tests.rs
+--- a/codex-rs/codex-mcp/src/plugin_config_tests.rs
++++ b/codex-rs/codex-mcp/src/plugin_config_tests.rs
+@@ -549,6 +549,7 @@
+         scopes: None,
+         oauth: None,
+         oauth_resource: None,
++        tls_ca_certificate: None,
+         tools: HashMap::new(),
+     }
+ }
+@@ -593,6 +594,7 @@
+             ..Default::default()
+         }),
+         oauth_resource: None,
++        tls_ca_certificate: None,
+         tools: HashMap::new(),
+     };
+     let mut expected_helper = McpServerConfig {
+@@ -921,6 +923,7 @@
+                     scopes: None,
+                     oauth: None,
+                     oauth_resource: None,
++                    tls_ca_certificate: None,
+                     tools: HashMap::new(),
+                 },
+             )]),
+diff --git a/codex-rs/codex-mcp/src/runtime.rs b/codex-rs/codex-mcp/src/runtime.rs
+--- a/codex-rs/codex-mcp/src/runtime.rs
++++ b/codex-rs/codex-mcp/src/runtime.rs
+@@ -1205,6 +1205,21 @@
+             Some(environment) if environment.is_remote() => environment.get_http_client(),
+             Some(_) | None => self.local_http_client(),
+         };
++        let client = if let Some(pem) = &config.tls_ca_certificate {
++            if !config.is_local_environment() || environment.is_some_and(|e| e.is_remote()) {
++                return Err("MCP custom CA requires the local runtime".to_string());
++            }
++            let codex_config::McpServerTransportConfig::StreamableHttp { url, .. } = &config.transport else {
++                return Err("MCP custom CA requires HTTPS".to_string());
++            };
++            let url = url::Url::parse(url).map_err(|_| "invalid MCP URL".to_string())?;
++            if url.scheme() != "https" || pem.len() > 32768 {
++                return Err("invalid MCP custom CA configuration".to_string());
++            }
++            let trusted = RouteAwareHttpClient::with_root_certificate(
++                self.environment_manager.http_client_factory().clone(), pem.as_bytes())?;
++            Arc::new(OriginCertificateHttpClient { origin: url.origin().ascii_serialization(), trusted, fallback: client }) as Arc<dyn HttpClient>
++        } else { client };
+         apply_http_headers_helper(client, config, self.local_process_cwd())
+     }
+ }
+@@ -1257,6 +1272,7 @@
+             scopes: None,
+             oauth: None,
+             oauth_resource: None,
++            tls_ca_certificate: None,
+             tools: HashMap::new(),
+         }
+     }
+@@ -1639,3 +1655,26 @@
+         assert!(resolved_runtime.is_some());
+     }
+ }
++
++/// A root selected for one MCP origin never becomes a process-wide trust root.
++struct OriginCertificateHttpClient {
++    origin: String,
++    trusted: RouteAwareHttpClient,
++    fallback: Arc<dyn HttpClient>,
++}
++impl OriginCertificateHttpClient {
++    fn client(&self, params: &mut codex_exec_server::HttpRequestParams) -> &dyn HttpClient {
++        if url::Url::parse(&params.url).ok().is_some_and(|u| u.origin().ascii_serialization() == self.origin) {
++            params.redirect_policy = codex_exec_server::HttpRedirectPolicy::Stop;
++            &self.trusted
++        } else { self.fallback.as_ref() }
++    }
++}
++impl HttpClient for OriginCertificateHttpClient {
++    fn http_request(&self, mut params: codex_exec_server::HttpRequestParams) -> futures::future::BoxFuture<'_, Result<codex_exec_server::HttpRequestResponse, codex_exec_server::ExecServerError>> {
++        self.client(&mut params).http_request(params)
++    }
++    fn http_request_stream(&self, mut params: codex_exec_server::HttpRequestParams) -> futures::future::BoxFuture<'_, Result<(codex_exec_server::HttpRequestResponse, codex_exec_server::HttpResponseBodyStream), codex_exec_server::ExecServerError>> {
++        self.client(&mut params).http_request_stream(params)
++    }
++}
+diff --git a/codex-rs/codex-mcp/src/mcp/mod.rs b/codex-rs/codex-mcp/src/mcp/mod.rs
+--- a/codex-rs/codex-mcp/src/mcp/mod.rs
++++ b/codex-rs/codex-mcp/src/mcp/mod.rs
+@@ -735,6 +735,7 @@
+         scopes: None,
+         oauth: None,
+         oauth_resource: None,
++        tls_ca_certificate: None,
+         tools: HashMap::new(),
+     }
+ }
+diff --git a/codex-rs/codex-mcp/src/mcp/mod_tests.rs b/codex-rs/codex-mcp/src/mcp/mod_tests.rs
+--- a/codex-rs/codex-mcp/src/mcp/mod_tests.rs
++++ b/codex-rs/codex-mcp/src/mcp/mod_tests.rs
+@@ -835,6 +835,7 @@
+             scopes: None,
+             oauth: None,
+             oauth_resource: None,
++            tls_ca_certificate: None,
+             tools: HashMap::new(),
+         },
+     ));
+@@ -865,6 +866,7 @@
+             scopes: None,
+             oauth: None,
+             oauth_resource: None,
++            tls_ca_certificate: None,
+             tools: HashMap::new(),
+         },
+     ));
+diff --git a/codex-rs/cli/src/mcp_cmd.rs b/codex-rs/cli/src/mcp_cmd.rs
+--- a/codex-rs/cli/src/mcp_cmd.rs
++++ b/codex-rs/cli/src/mcp_cmd.rs
+@@ -440,6 +440,7 @@
+                 ..Default::default()
+             }),
+         oauth_resource: oauth_resource.clone(),
++        tls_ca_certificate: None,
+         tools: HashMap::new(),
+     };
+ 
+diff --git a/codex-rs/app-server/src/request_processors/initialize_processor.rs b/codex-rs/app-server/src/request_processors/initialize_processor.rs
+--- a/codex-rs/app-server/src/request_processors/initialize_processor.rs
++++ b/codex-rs/app-server/src/request_processors/initialize_processor.rs
+@@ -215,6 +215,7 @@
+         let response = InitializeResponse {
+             runtime_capabilities: [
+                 ("verifiedModelRoutes".to_string(), true),
++                ("mcpCustomCa".to_string(), true),
+                 ("pinnedPluginRoots".to_string(), true),
+                 ("sameThreadProviderSwitch".to_string(), true),
+                 (

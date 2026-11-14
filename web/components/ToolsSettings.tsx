@@ -1,14 +1,20 @@
+import MarketplaceSettings from "./MarketplaceSettings";
+import {
+  PluginIcon as Blocks,
+  ConnectionIcon,
+  StoreIcon,
+  ImportIcon,
+} from "./AppIcons";
 import SkillImport from "./SkillImport";
 import PluginComponents from "./PluginComponents";
 import { CatalogToolbar } from "./CatalogToolbar";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import * as Dropdown from "@radix-ui/react-dropdown-menu";
 import {
   Plus,
   RefreshCw,
-  MoreHorizontal,
-  Cable,
-  Blocks,
+  ChevronDown,
+  Check,
   Settings2,
   Power,
   PowerOff,
@@ -20,7 +26,9 @@ import { request, loadSettings, loadDiscovery, useApp } from "../store";
 import McpSettings from "./McpSettings";
 import { ActionMenuContent, ActionMenuItem } from "./ActionMenu";
 import CatalogIcon from "./CatalogIcon";
+import { MoreIcon as MoreHorizontal } from "./ReferenceIcons";
 import { Modal } from "./ui";
+import { CatalogDetail, CatalogUse } from "./CatalogNavigation";
 export default function ToolsSettings({
   mode = "plugins",
 }: {
@@ -30,38 +38,56 @@ export default function ToolsSettings({
     [catalog, setCatalog] = useState<Json | null>(null),
     [detail, setDetail] = useState<Json | null>(null),
     [query, setQuery] = useState(""),
+    [marketplace, setMarketplace] = useState(""),
+    [managingMarkets, setManagingMarkets] = useState(false),
     [busy, setBusy] = useState(false),
     [error, setError] = useState(""),
     [importing, setImporting] = useState(false),
     [updating, setUpdating] = useState<Json | null>(null),
     [marketUpdate, setMarketUpdate] = useState<Json | null>(null),
-    [available, setAvailable] = useState(false),
     [create, setCreate] = useState(0),
     [remove, setRemove] = useState<Json | null>(null);
+  const generation = useRef(0);
+  const detailOrigin = useRef<HTMLElement | null>(null);
   async function read() {
+    const current = ++generation.current;
     setBusy(true);
     setError("");
     try {
-      setCatalog(await request("plugin/list", { includeTools: true }));
+      const result = await request("plugin/list", { includeTools: true });
+      if (generation.current === current) setCatalog(result);
     } catch {
-      setError("插件目录读取失败，请刷新重试。");
+      if (generation.current === current)
+        setError("插件目录读取失败，请刷新重试。");
     } finally {
-      setBusy(false);
+      if (generation.current === current) setBusy(false);
     }
   }
   useEffect(() => {
-    if (mode === "plugins") void read();
-    else void loadDiscovery("mcp");
-  }, [mode]);
+    void read();
+    void loadDiscovery("mcp");
+    return () => {
+      generation.current++;
+    };
+  }, []);
   async function open(id: string) {
+    detailOrigin.current =
+      document.activeElement instanceof HTMLElement
+        ? document.activeElement
+        : null;
+    const current = ++generation.current;
     setBusy(true);
     setError("");
     try {
-      setDetail(await request("plugin/read", { id }));
-    } catch {
-      setError("详情读取失败，请重试。");
+      const result = await request("plugin/read", { id });
+      if (generation.current === current) setDetail(result);
+    } catch (error) {
+      if (generation.current === current)
+        setError(
+          error instanceof Error ? error.message : "详情读取失败，请重试。",
+        );
     } finally {
-      setBusy(false);
+      if (generation.current === current) setBusy(false);
     }
   }
   async function action(method: string, entry: Json, enabled?: boolean) {
@@ -85,7 +111,8 @@ export default function ToolsSettings({
       setMarketUpdate(null);
       await loadSettings();
       setCatalog(await request("plugin/list", { includeTools: true }));
-      if (detail?.id === entry.id)
+      if (method === "plugin/uninstall") setDetail(null);
+      else if (detail?.id === entry.id)
         setDetail(await request("plugin/read", { id: entry.id }));
     } catch (e) {
       setError(
@@ -108,13 +135,12 @@ export default function ToolsSettings({
     } else setMarketUpdate(entry);
   }
   const matches = (p: Json) =>
-    `${p.displayName} ${p.name}`.toLowerCase().includes(query.toLowerCase());
+    (!marketplace || p.marketplace === marketplace) &&
+    `${p.displayName} ${p.name} ${p.description || ""}`
+      .toLowerCase()
+      .includes(query.toLowerCase());
   return (
-    <section
-      className="tools-catalog"
-      data-mode={mode}
-      aria-label={mode === "plugins" ? "插件管理" : "连接器管理"}
-    >
+    <section className="tools-catalog" data-mode="all" aria-label="连接器管理">
       {importing && (
         <SkillImport
           kind="plugin"
@@ -134,21 +160,43 @@ export default function ToolsSettings({
           }}
         />
       )}
-      <CatalogToolbar
-        label={mode === "plugins" ? "插件" : "连接器"}
-        query={query}
-        onQuery={setQuery}
-      >
-        {mode === "connectors" && (
-          <button
-            type="button"
-            className="primary catalog-add"
-            disabled={!s.settings?.configuration}
-            onClick={() => setCreate((v) => v + 1)}
-          >
-            新连接器
-          </button>
-        )}
+      {managingMarkets && (
+        <MarketplaceSettings
+          onClose={() => {
+            setManagingMarkets(false);
+            void read();
+          }}
+        />
+      )}
+      <CatalogToolbar label="连接器" query={query} onQuery={setQuery}>
+        <Dropdown.Root>
+          <Dropdown.Trigger className="primary catalog-add">
+            新连接器 <ChevronDown size={14} />
+          </Dropdown.Trigger>
+          <Dropdown.Portal>
+            <ActionMenuContent className="dropdown" align="end" sideOffset={6}>
+              <ActionMenuItem
+                icon={ConnectionIcon}
+                disabled={!s.settings?.configuration}
+                onSelect={() => setCreate((v) => v + 1)}
+              >
+                连接器
+              </ActionMenuItem>
+              <ActionMenuItem
+                icon={ImportIcon}
+                onSelect={() => setImporting(true)}
+              >
+                导入插件
+              </ActionMenuItem>
+              <ActionMenuItem
+                icon={StoreIcon}
+                onSelect={() => setManagingMarkets(true)}
+              >
+                管理商店
+              </ActionMenuItem>
+            </ActionMenuContent>
+          </Dropdown.Portal>
+        </Dropdown.Root>
         <button
           className="icon-button"
           title={mode === "plugins" ? "刷新插件" : "刷新连接器"}
@@ -158,8 +206,8 @@ export default function ToolsSettings({
             void (async () => {
               try {
                 await loadSettings();
-                if (mode === "connectors") await loadDiscovery("mcp");
-                else await read();
+                await loadDiscovery("mcp");
+                await read();
               } catch {
                 setError("读取失败，请恢复连接后重试。");
               }
@@ -174,13 +222,33 @@ export default function ToolsSettings({
           {error}
         </p>
       )}
-      {mode === "plugins" && catalog?.warnings > 0 && (
+      {catalog?.warnings > 0 && (
         <p role="status" className="muted">
           部分插件详情读取失败，请刷新重试。
         </p>
       )}
-      {mode === "plugins" &&
-        entries
+      <label className="catalog-market-filter">
+        <select
+          aria-label="插件商店"
+          value={marketplace}
+          onChange={(e) => setMarketplace(e.target.value)}
+        >
+          <option value="">全部商店</option>
+          {(
+            catalog?.marketplaces ||
+            [...new Set(entries.map((p) => p.marketplace))]
+              .filter(Boolean)
+              .map((name) => ({ name, displayName: name }))
+          ).map((market: Json) => (
+            <option value={market.name} key={market.name}>
+              {market.displayName}
+            </option>
+          ))}
+        </select>
+      </label>
+      <h3 className="catalog-group-title">已添加</h3>
+      <div className="catalog-grid">
+        {entries
           .filter((p) => p.installed && matches(p))
           .map((p) => (
             <div className="catalog-entry plugin-entry" key={p.id}>
@@ -194,8 +262,16 @@ export default function ToolsSettings({
                 <CatalogIcon name={p.name} kind="plugin" />
                 <span>
                   <strong>{p.displayName}</strong>
-                  <small>
-                    {p.description || (p.enabled ? "已启用" : "已停用")}
+                  <small className="connection-summary">
+                    {p.needsRepair ? (
+                      "需要修复"
+                    ) : p.enabled ? (
+                      <>
+                        <Check size={14} /> 已启用
+                      </>
+                    ) : (
+                      "已停用"
+                    )}
                   </small>
                 </span>
               </button>
@@ -206,7 +282,7 @@ export default function ToolsSettings({
                   title="更多操作"
                   disabled={busy}
                 >
-                  <MoreHorizontal size={20} />
+                  <MoreHorizontal size={16} />
                 </Dropdown.Trigger>
                 <Dropdown.Portal>
                   <ActionMenuContent
@@ -220,6 +296,15 @@ export default function ToolsSettings({
                     >
                       详情
                     </ActionMenuItem>
+                    {p.needsRepair && (
+                      <ActionMenuItem
+                        icon={RefreshCw}
+                        disabled={!p.available || !p.installable}
+                        onSelect={() => void action("plugin/install", p)}
+                      >
+                        重新安装
+                      </ActionMenuItem>
+                    )}
                     <ActionMenuItem
                       icon={p.enabled ? PowerOff : Power}
                       disabled={!p.available}
@@ -252,41 +337,31 @@ export default function ToolsSettings({
               </Dropdown.Root>
             </div>
           ))}
-      {mode === "connectors" && (
+      </div>
+      <div hidden={!!marketplace}>
         <McpSettings embedded query={query} createSignal={create} />
-      )}
-      {available && (
-        <Modal
-          open
-          title="添加插件"
-          wide
-          className="catalog-detail-modal"
-          onOpenChange={(open) => {
-            if (!open) setAvailable(false);
-          }}
-        >
-          <button
-            className="secondary"
-            onClick={() => {
-              setAvailable(false);
-              setImporting(true);
-            }}
-          >
-            从目录、ZIP 或 GitHub 导入
-          </button>
-          <div className="catalog-detail-body">
-            {!catalog?.available && (
-              <p role="status">{catalog?.reason || "正在读取…"}</p>
-            )}
-            {catalog?.available && !entries.some((p) => !p.installed) && (
-              <p className="muted">已配置市场暂无可添加的插件。</p>
-            )}
+      </div>
+      {catalog &&
+        !entries.some((p) => p.installed && matches(p)) &&
+        (!!marketplace ||
+          !(s.settings?.configuration?.mcp || []).some((c: Json) =>
+            `${c.name || ""} ${c.id}`
+              .toLowerCase()
+              .includes(query.toLowerCase()),
+          )) && (
+          <p className="catalog-empty">
+            {query ? "没有匹配的连接器" : "尚未添加连接器"}
+          </p>
+        )}
+      {!!entries.filter((p) => !p.installed && matches(p)).length && (
+        <>
+          <h3 className="catalog-group-title">可添加</h3>
+          <div className="catalog-grid">
             {entries
-              .filter((p) => !p.installed)
+              .filter((p) => !p.installed && matches(p))
               .map((p) => (
                 <div className="catalog-entry" key={p.id}>
                   <button
-                    type="button"
                     className="catalog-entry-main"
                     onClick={() => void open(p.id)}
                   >
@@ -297,24 +372,24 @@ export default function ToolsSettings({
                     </span>
                   </button>
                   <button
-                    className="icon-button"
-                    aria-label={`安装 ${p.displayName}`}
-                    title="安装"
+                    className="secondary catalog-add"
                     disabled={busy || !p.available || !p.installable}
                     onClick={() => void action("plugin/install", p)}
                   >
-                    <Plus size={20} />
+                    添加
                   </button>
                 </div>
               ))}
-            {error && <p role="alert">{error}</p>}
           </div>
-        </Modal>
+        </>
       )}
+
       {detail && (
-        <Modal
+        <CatalogDetail
           open
           title={detail.displayName}
+          returnFocus={detailOrigin.current}
+          dismissible={!busy}
           wide
           className="catalog-detail-modal"
           onOpenChange={(open) => {
@@ -326,6 +401,13 @@ export default function ToolsSettings({
               <CatalogIcon name={detail.name} kind="plugin" />
               <p>{detail.description}</p>
             </div>
+            {detail.installed && (
+              <CatalogUse
+                kind="@"
+                entry={detail}
+                disabled={!detail.enabled || !detail.available || busy}
+              />
+            )}
             <PluginComponents
               key={detail.id}
               detail={detail}
@@ -337,24 +419,42 @@ export default function ToolsSettings({
             ).length && (
               <>
                 <h4>连接器</h4>
-                <McpSettings
-                  embedded
-                  onlyNames={[
-                    ...detail.tools.filter(
-                      (name: string) =>
-                        !detail.connections?.some((c: Json) => c.id === name),
-                    ),
-                    ...(s.settings?.mcp || [])
-                      .filter(
-                        (m: Json) =>
-                          m.pluginId === detail.id &&
-                          !detail.connections?.some(
-                            (c: Json) => c.id === m.name,
-                          ),
-                      )
-                      .map((m: Json) => m.name),
-                  ]}
-                />
+                {detail.installed ? (
+                  <McpSettings
+                    embedded
+                    onlyNames={[
+                      ...detail.tools.filter(
+                        (name: string) =>
+                          !detail.connections?.some((c: Json) => c.id === name),
+                      ),
+                      ...(s.settings?.mcp || [])
+                        .filter(
+                          (m: Json) =>
+                            m.pluginId === detail.id &&
+                            !detail.connections?.some(
+                              (c: Json) => c.id === m.name,
+                            ),
+                        )
+                        .map((m: Json) => m.name),
+                    ]}
+                  />
+                ) : (
+                  <div className="catalog-grid">
+                    {detail.tools.map((name: string) => (
+                      <div className="catalog-entry" key={name}>
+                        <div className="catalog-entry-main">
+                          <CatalogIcon name={name} kind="connection" />
+                          <span>
+                            <strong>{name}</strong>
+                            <small className="connection-summary">
+                              安装后可配置
+                            </small>
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </>
             )}
             <div className="editor-actions">
@@ -408,7 +508,7 @@ export default function ToolsSettings({
               </p>
             )}
           </div>
-        </Modal>
+        </CatalogDetail>
       )}
       {remove && (
         <Modal

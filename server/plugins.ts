@@ -1,13 +1,19 @@
+import {
+  installedPluginRoot,
+  installedPluginTree,
+  PluginInstallationError,
+} from "./plugin-cache.js";
+import { marketplaceLibrary } from "./marketplaces.js";
 import { confirmedPluginHooks } from "./plugin-hook-trust.js";
 import type { PreparedResource } from "./extension-resources.js";
 import type { Store } from "./db.js";
 import { nativePluginAssets } from "./plugin-assets.js";
 import { z } from "zod";
 import { Codex } from "./codex.js";
-import { join, relative } from "node:path";
-import { mkdir, rm } from "node:fs/promises";
+import { join, relative, resolve } from "node:path";
+import { cp, copyFile, mkdir, rm } from "node:fs/promises";
 import { randomUUID } from "node:crypto";
-import { fileDigest, importTree } from "./import-files.js";
+import { fileDigest } from "./import-files.js";
 import type { configuration } from "./configuration.js";
 import type { PluginSummary } from "../generated/codex/v2/PluginSummary.js";
 import type { UserInput } from "../generated/codex/v2/UserInput.js";
@@ -31,30 +37,79 @@ export function pluginLibrary(
   };
   const upgrading = new Set<string>();
   const migrations = new Map<string, Promise<void>>();
+  const brokenInstallations = new Set<string>();
   async function versionLegacy(plugin: PluginSummary, marketplace: string) {
     const extensions = config.extensions;
     if (!extensions || !codex.runtimeCapabilities?.pinnedPluginRoots) return;
     const resources = extensions.resources;
     const prior = resources.plugin(plugin.id);
-    if (prior?.path.startsWith(resources.root + "/") || (!prior && !plugin.installed)) return;
+    if (
+      prior?.path.startsWith(resources.root + "/") ||
+      (!prior && !plugin.installed)
+    )
+      return;
     if (prior && JSON.parse(prior.content).installed === false) return;
     const pending = migrations.get(plugin.id);
     if (pending) return pending;
-    const operation = resources.exclusive([prior?.id || fileDigest(`native-plugin:${plugin.id}`)], async () => {
-      const cached = join(codex.home!, "plugins/cache", marketplace, plugin.name, plugin.localVersion || plugin.version || "");
-      const source = prior?.path || cached;
-      const prepared = await resources.prepare(prior?.id || fileDigest(`native-plugin:${plugin.id}`), (await importTree(source)).files);
-      const state = extensions.snapshot().values;
-      const choices = state.skills.config.filter((s) => s.path.startsWith(source + "/") || s.path.startsWith(cached + "/"));
-      resources.publish(prepared, {
-        kind:"plugin", name:plugin.name,
-        content:{ ...(prior ? JSON.parse(prior.content) : {}), pluginId:plugin.id, version:plugin.localVersion || plugin.version },
-      }, prior?.digest || null, () => extensions.setSkills(choices.map((s) => ({
-        path:join(prepared.path, relative(s.path.startsWith(cached + "/") ? cached : source, s.path)), enabled:s.enabled,
-      })), plugin.id, extensions.pluginEnabled(plugin.id,plugin.enabled), choices.map((s) => s.path)), () => extensions.reload());
-    });
+    const operation = resources.exclusive(
+      [prior?.id || fileDigest(`native-plugin:${plugin.id}`)],
+      async () => {
+        const cached =
+          prior?.path ||
+          (await installedPluginRoot(
+            codex.home!,
+            marketplace,
+            plugin.name,
+            plugin.localVersion || plugin.version,
+          ));
+        const source = prior?.path || cached;
+        const prepared = await resources.prepare(
+          prior?.id || fileDigest(`native-plugin:${plugin.id}`),
+          (await installedPluginTree(source)).files,
+        );
+        const state = extensions.snapshot().values;
+        const choices = state.skills.config.filter(
+          (s) =>
+            s.path.startsWith(source + "/") || s.path.startsWith(cached + "/"),
+        );
+        resources.publish(
+          prepared,
+          {
+            kind: "plugin",
+            name: plugin.name,
+            content: {
+              ...(prior ? JSON.parse(prior.content) : {}),
+              pluginId: plugin.id,
+              version: plugin.localVersion || plugin.version,
+            },
+          },
+          prior?.digest || null,
+          () =>
+            extensions.setSkills(
+              choices.map((s) => ({
+                path: join(
+                  prepared.path,
+                  relative(
+                    s.path.startsWith(cached + "/") ? cached : source,
+                    s.path,
+                  ),
+                ),
+                enabled: s.enabled,
+              })),
+              plugin.id,
+              extensions.pluginEnabled(plugin.id, plugin.enabled),
+              choices.map((s) => s.path),
+            ),
+          () => extensions.reload(),
+        );
+      },
+    );
     migrations.set(plugin.id, operation);
-    try { await operation; } finally { migrations.delete(plugin.id); }
+    try {
+      await operation;
+    } finally {
+      migrations.delete(plugin.id);
+    }
   }
   const recovering = new Map<string, Promise<void>>();
   const upgradeKey = (id: string) => `plugin-upgrade:${id}`;
@@ -124,12 +179,20 @@ export function pluginLibrary(
         // Preserve it before overlaying the separately pinned installed version.
         if (plugin.source?.type === "local" && !plugin.version)
           plugin.version = plugin.localVersion;
-        await versionLegacy(plugin, marketplace.name);
+        try {
+          await versionLegacy(plugin, marketplace.name);
+          brokenInstallations.delete(plugin.id);
+        } catch (error) {
+          if (!(error instanceof PluginInstallationError)) throw error;
+          brokenInstallations.add(plugin.id);
+        }
         const owned = config.extensions?.resources.plugin(plugin.id);
         if (owned && codex.runtimeCapabilities?.pinnedPluginRoots) {
           const metadata = JSON.parse(owned.content);
           plugin.installed = metadata.installed !== false;
-          plugin.localVersion = plugin.installed ? metadata.version || null : null;
+          plugin.localVersion = plugin.installed
+            ? metadata.version || null
+            : null;
         }
         await recoverUpgrade(plugin);
         plugin.enabled =
@@ -154,6 +217,10 @@ export function pluginLibrary(
       displayName: p.interface?.displayName || p.name,
       description: p.interface?.shortDescription || "",
       installed: p.installed,
+      needsRepair:
+        !!p.installed &&
+        (brokenInstallations.has(p.id) ||
+          config.extensions?.resources.plugin(p.id)?.digest === fileDigest("")),
       enabled: config.extensions?.pluginEnabled(p.id, p.enabled) ?? p.enabled,
       available: p.availability === "AVAILABLE",
       installable: p.installPolicy !== "NOT_AVAILABLE",
@@ -231,6 +298,12 @@ export function pluginLibrary(
       return {
         available: true,
         entries,
+        marketplaces: result.marketplaces.map((m) => ({
+          name: m.name,
+          displayName:
+            m.interface?.displayName ||
+            (m.name === "openai-api-curated" ? "Codex" : m.name),
+        })),
         warnings:
           (result.marketplaceLoadErrors?.length || 0) + ownershipWarnings,
       };
@@ -246,9 +319,18 @@ export function pluginLibrary(
   async function read(id: string) {
     const entry = await locate(id);
     const pinned = config.extensions?.resources.plugin(id);
-    const params = pinned && codex.runtimeCapabilities?.pinnedPluginRoots
-      ? {marketplacePath:await config.extensions!.resources.catalog(pinned,entry.marketplace.name),pluginName:entry.plugin.name}
-      : entry.params;
+    if (brokenInstallations.has(id) || pinned?.digest === fileDigest(""))
+      throw new PublicError("插件安装内容缺失，请在更多操作中重新安装");
+    const params =
+      pinned && codex.runtimeCapabilities?.pinnedPluginRoots
+        ? {
+            marketplacePath: await config.extensions!.resources.catalog(
+              pinned,
+              "newbot-snapshot",
+            ),
+            pluginName: entry.plugin.name,
+          }
+        : entry.params;
     const detail = await codex.call("plugin/read", params);
     const owned = (await connections?.list(id)) || [];
     // plugin/read describes marketplace source files; execution and saved skill
@@ -266,7 +348,16 @@ export function pluginLibrary(
         }),
       );
     return {
-      ...publicSummary({ ...detail.plugin.summary, installed:entry.plugin.installed, localVersion:entry.plugin.localVersion, enabled:entry.plugin.enabled }, entry.marketplace.name),
+      ...publicSummary(
+        {
+          ...detail.plugin.summary,
+          id: entry.plugin.id,
+          installed: entry.plugin.installed,
+          localVersion: entry.plugin.localVersion,
+          enabled: entry.plugin.enabled,
+        },
+        entry.marketplace.name,
+      ),
       description:
         detail.plugin.description ||
         entry.plugin.interface?.longDescription ||
@@ -280,8 +371,11 @@ export function pluginLibrary(
             })
           : undefined,
         name: s.name,
+        displayName: s.interface?.displayName || s.name,
         description:
-          ("shortDescription" in s && s.shortDescription) || s.description,
+          s.interface?.shortDescription ||
+          ("shortDescription" in s && s.shortDescription) ||
+          s.description,
         enabled: s.path
           ? (config.extensions?.skillEnabled(s.path, s.enabled) ?? s.enabled)
           : s.enabled,
@@ -363,8 +457,14 @@ export function pluginLibrary(
     const entry = await locate(data.id);
     if (entry.plugin.availability !== "AVAILABLE")
       throw new PublicError("当前策略不允许使用此插件");
-    if (action !== "plugin/enabled" && config.extensions && db && codex.runtimeCapabilities?.pinnedPluginRoots) {
-      const extensions = config.extensions, resources = extensions.resources;
+    if (
+      action !== "plugin/enabled" &&
+      config.extensions &&
+      db &&
+      codex.runtimeCapabilities?.pinnedPluginRoots
+    ) {
+      const extensions = config.extensions,
+        resources = extensions.resources;
       const prior = resources.plugin(data.id);
       const resourceId = prior?.id || fileDigest(`native-plugin:${data.id}`);
       await resources.collect();
@@ -375,48 +475,152 @@ export function pluginLibrary(
           connections?.remove(data.id);
           return list();
         }
-        if (entry.plugin.installPolicy === "NOT_AVAILABLE") throw new PublicError("当前策略不允许安装此插件");
-        if (action === "plugin/update" && (!prior || !data.targetVersion || entry.plugin.version !== data.targetVersion || entry.plugin.localVersion !== data.expectedVersion))
+        if (entry.plugin.installPolicy === "NOT_AVAILABLE")
+          throw new PublicError("当前策略不允许安装此插件");
+        if (
+          action === "plugin/update" &&
+          (!prior ||
+            !data.targetVersion ||
+            entry.plugin.version !== data.targetVersion ||
+            entry.plugin.localVersion !== data.expectedVersion)
+        )
           throw new PublicError("插件版本与确认时不同，请刷新后重新选择");
         const previous = prior ? await installedSkills(data.id) : [];
-        const preferences = () => JSON.stringify([
-          extensions.pluginEnabled(data.id, entry.plugin.enabled),
-          previous.map((s) => [s.name, extensions.skillEnabled(s.path,s.enabled)]),
-        ]);
+        const preferences = () =>
+          JSON.stringify([
+            extensions.pluginEnabled(data.id, entry.plugin.enabled),
+            previous.map((s) => [
+              s.name,
+              extensions.skillEnabled(s.path, s.enabled),
+            ]),
+          ]);
         const expectedPreferences = preferences();
-        const staging = join(db.directory,"extensions","installers",randomUUID());
-        const work = join(staging,"work");
-        await mkdir(work,{recursive:true,mode:0o700});
-        const installer = new Codex(work,()=>({CODEX_HOME:join(staging,"codex")}));
+        const staging = join(
+          db.directory,
+          "extensions",
+          "installers",
+          randomUUID(),
+        );
+        const work = join(staging, "work");
+        await mkdir(work, { recursive: true, mode: 0o700 });
+        const installer = new Codex(work, () => ({
+          CODEX_HOME: join(staging, "codex"),
+        }));
         let prepared: PreparedResource | undefined;
         try {
+          let installParams = entry.params;
+          // Curated marketplace names are bound by Codex to its own Home.
+          // Preserve that boundary in the isolated installer rather than passing
+          // the live Home's reserved path (which Codex correctly rejects).
+          const curated =
+            codex.home &&
+            entry.marketplace.path &&
+            ["api_marketplace.json", "marketplace.json"].find(
+              (file) =>
+                resolve(entry.marketplace.path!) ===
+                resolve(codex.home!, ".tmp/plugins/.agents/plugins", file),
+            );
+          if (curated) {
+            const target = join(staging, "codex/.tmp/plugins");
+            await cp(join(codex.home!, ".tmp/plugins"), target, {
+              recursive: true,
+              dereference: false,
+              filter: (source) => !source.split("/").includes(".git"),
+            });
+            await copyFile(
+              join(codex.home!, ".tmp/plugins.sha"),
+              join(staging, "codex/.tmp/plugins.sha"),
+            );
+            installParams = {
+              marketplacePath: join(target, ".agents/plugins", curated),
+              pluginName: entry.plugin.name,
+            };
+          }
           // The native installer materializes Git/npm/local sources in its own cache.
           // It never owns the files used by conversations; npm lifecycle scripts are disabled upstream.
           await installer.start();
-          if (installer.state !== "ready") throw new PublicError("隔离安装器未就绪");
-          await installer.call("plugin/install",entry.params);
-          const found = (await installer.call("plugin/list",{cwds:[cwd,...extensions.marketplaceRoots()],marketplaceKinds:["local"]}))
-            .marketplaces.flatMap((m) => m.plugins).find((plugin) => plugin.id === data.id);
-          if (!found?.installed || (data.targetVersion && found.localVersion !== data.targetVersion))
+          if (installer.state !== "ready")
+            throw new PublicError("隔离安装器未就绪");
+          await installer.call("plugin/install", installParams);
+          const found = (
+            await installer.call("plugin/list", {
+              cwds: [cwd, ...extensions.marketplaceRoots()],
+              marketplaceKinds: ["local"],
+            })
+          ).marketplaces
+            .flatMap((m) => m.plugins)
+            .find((plugin) => plugin.id === data.id);
+          if (
+            !found?.installed ||
+            (data.targetVersion && found.localVersion !== data.targetVersion)
+          )
             throw new PublicError("原生安装器未确认目标版本");
-          const source = join(installer.home!,"plugins/cache",entry.marketplace.name,entry.plugin.name,found.localVersion || found.version || "");
-          prepared = await resources.prepare(resourceId,(await importTree(source)).files);
+          const source = await installedPluginRoot(
+            installer.home!,
+            entry.marketplace.name,
+            entry.plugin.name,
+            found.localVersion || found.version,
+          );
+          const tree = await installedPluginTree(source);
+          prepared = await resources.prepare(resourceId, tree.files);
           const preparedPath = prepared.path;
-          const hookTrust = await confirmedPluginHooks(db.directory,data.id,prepared.path);
-          const actual = (await installer.call("skills/list",{cwds:[work],forceReload:true})).data.flatMap((d)=>d.skills).filter((s)=>s.pluginId === data.id);
-          if (preferences() !== expectedPreferences) throw new PublicError("插件的启停或技能选择已变化，请重新确认");
-          const detail = (await installer.call("plugin/read",entry.params)).plugin;
-          resources.publish(prepared, {
-            kind:"plugin",name:entry.plugin.name,content:{pluginId:data.id,version:found.localVersion || found.version,mcp:detail.mcpServers,source:entry.plugin.source,hookTrust},
-          }, prior && JSON.parse(prior.content).installed !== false ? prior.digest : null, () => {
-            extensions.setSkills(actual.map((s)=>({
-              path:join(preparedPath,relative(source,s.path)),
-              enabled: prior ? previous.some((old)=>old.name===s.name && extensions.skillEnabled(old.path,old.enabled)) : s.enabled,
-            })),data.id,prior ? extensions.pluginEnabled(data.id,entry.plugin.enabled) : true,previous.map((s)=>s.path));
-          }, () => extensions.reload());
+          const hookTrust = await confirmedPluginHooks(
+            db.directory,
+            data.id,
+            prepared.path,
+          );
+          const actual = (
+            await installer.call("skills/list", {
+              cwds: [work],
+              forceReload: true,
+            })
+          ).data
+            .flatMap((d) => d.skills)
+            .filter((s) => s.pluginId === data.id);
+          if (preferences() !== expectedPreferences)
+            throw new PublicError("插件的启停或技能选择已变化，请重新确认");
+          const detail = (await installer.call("plugin/read", installParams))
+            .plugin;
+          resources.publish(
+            prepared,
+            {
+              kind: "plugin",
+              name: entry.plugin.name,
+              content: {
+                pluginId: data.id,
+                version: found.localVersion || found.version,
+                mcp: detail.mcpServers,
+                source: entry.plugin.source,
+                hookTrust,
+              },
+            },
+            prior && JSON.parse(prior.content).installed !== false
+              ? prior.digest
+              : null,
+            () => {
+              extensions.setSkills(
+                actual.map((s) => ({
+                  path: join(preparedPath, relative(source, s.path)),
+                  enabled: prior
+                    ? previous.some(
+                        (old) =>
+                          old.name === s.name &&
+                          extensions.skillEnabled(old.path, old.enabled),
+                      )
+                    : s.enabled,
+                })),
+                data.id,
+                prior
+                  ? extensions.pluginEnabled(data.id, entry.plugin.enabled)
+                  : true,
+                previous.map((s) => s.path),
+              );
+            },
+            () => extensions.reload(),
+          );
         } finally {
           await installer.stopAndWait();
-          await rm(staging,{recursive:true,force:true});
+          await rm(staging, { recursive: true, force: true });
           if (prepared) await resources.discardPrepared(prepared);
         }
         return list();
@@ -557,5 +761,23 @@ export function pluginLibrary(
   async function inputs(ids: string[]) {
     return (await prepare(ids)).inputs;
   }
-  return { list, read, mutate, inputs, prepare, enabled, skill };
+  const marketplaces =
+    db && config.extensions
+      ? marketplaceLibrary(db, config.extensions, native)
+      : undefined;
+  return {
+    list,
+    read,
+    mutate: (action: string, input: Record<string, unknown>) =>
+      config.extensions
+        ? config.extensions.resources.exclusive(["marketplace-registry"], () =>
+            mutate(action, input),
+          )
+        : mutate(action, input),
+    inputs,
+    prepare,
+    enabled,
+    skill,
+    marketplaces,
+  };
 }

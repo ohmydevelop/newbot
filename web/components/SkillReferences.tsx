@@ -1,5 +1,6 @@
+import { SkillIcon as BookOpen } from "./AppIcons";
 import { useRef, useState } from "react";
-import { BookOpen } from "lucide-react";
+
 import type { SkillReference } from "../../shared/types";
 import { useApp } from "../store";
 import { Modal } from "./ui";

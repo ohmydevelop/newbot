@@ -1,6 +1,10 @@
+import { useMcpOAuthCompletion, type OAuthAttempt } from "../use-mcp-oauth";
+import { connectionStateLabels as stateLabel } from "../connection-state";
+import { MoreIcon as MoreHorizontal } from "./ReferenceIcons";
 import ConnectorEditor from "./ConnectorEditor";
 import { connectorCatalogNames } from "../connector-catalog";
 import { Modal } from "./ui";
+import { CatalogDetail } from "./CatalogNavigation";
 import ConfigurationFeedback, {
   useConfigurationRecovery,
   savedReadFailure,
@@ -8,7 +12,6 @@ import ConfigurationFeedback, {
 import { useState, useEffect } from "react";
 import * as Dropdown from "@radix-ui/react-dropdown-menu";
 import {
-  MoreHorizontal,
   Info,
   Power,
   PowerOff,
@@ -48,15 +51,6 @@ type Draft = {
   enabled: boolean;
   startup: string;
   timeout: string;
-};
-const stateLabel: Record<string, string> = {
-  notStarted: "尚未启动",
-  starting: "连接中",
-  connected: "已连接",
-  authenticationRequired: "需要授权",
-  failed: "连接失败",
-  cancelled: "连接已取消",
-  disabled: "已停用",
 };
 function ConnectionState({ state }: { state: string }) {
   const label = stateLabel[state] || "已发现，尚未验证连接";
@@ -114,7 +108,16 @@ export default function McpSettings({
       toolCount: number;
       state: string;
     } | null>(null),
-    [oauth, setOauth] = useState<{ id: string; url: string } | null>(null);
+    [oauth, setOauth] = useState<OAuthAttempt | null>(null);
+  useMcpOAuthCompletion(oauth, (success, id) => {
+    setOauth(null);
+    setDiagnostic({
+      id,
+      note: success ? "账号授权已完成。" : "账号授权未完成，请重试。",
+      toolCount: 0,
+      state: success ? "authorized" : "failed",
+    });
+  });
   const recovery = useConfigurationRecovery();
   const busy = busyState || (recovery.busy ? "recovery" : "");
   const names = connectorCatalogNames(config?.mcp, onlyNames);
@@ -148,6 +151,7 @@ export default function McpSettings({
     }));
     setDraft(null);
     setDeleting(null);
+    if (method === "mcp/delete") setDetailId(null);
     setDiagnostic(null);
 
     if (result.state === "overridden")
@@ -199,7 +203,10 @@ export default function McpSettings({
     />
   );
   return (
-    <section className="provider-settings mcp-settings" aria-label="连接器管理">
+    <section
+      className="provider-settings mcp-settings catalog-grid"
+      aria-label="连接器管理"
+    >
       {!embedded && (
         <div className="section-heading">
           <h3>连接器</h3>
@@ -252,7 +259,9 @@ export default function McpSettings({
                             : native?.runtimeStatus || "discovered"
                         }
                       />
-                      {native?.toolCount ?? 0} 个工具
+                      {s?.enabled === false
+                        ? "已停用"
+                        : stateLabel[native?.runtimeStatus || ""] || "已添加"}
                     </small>
                   </span>
                 </button>
@@ -338,7 +347,7 @@ export default function McpSettings({
                 </Dropdown.Root>
               </div>
               {detailId === id && (
-                <Modal
+                <CatalogDetail
                   open
                   title={s?.name || id}
                   onOpenChange={(open) => {
@@ -346,8 +355,15 @@ export default function McpSettings({
                   }}
                   wide
                   className="connection-detail-modal"
+                  dismissible={!busy}
                 >
                   <div className="provider-row mcp-row">
+                    {!draft && !deleting && feedback}
+                    {notice && (
+                      <p className="configuration-notice" role="status">
+                        {notice}
+                      </p>
+                    )}
                     <div className="connection-meta">
                       <ConnectionState
                         state={
@@ -411,20 +427,20 @@ export default function McpSettings({
                       {s?.editable && (
                         <>
                           <button
-                            className="icon-button"
+                            className="secondary"
                             disabled={
                               !!busy ||
                               recovery.blocked ||
                               !(config?.nativeWritable ?? config?.writable)
                             }
-                            aria-label={`编辑 ${id}`}
+                            aria-label={`编辑 ${displayName}`}
                             title="编辑"
                             onClick={() => edit(id)}
                           >
-                            <Pencil size={16} aria-hidden="true" />
+                            <Pencil size={16} aria-hidden="true" /> 编辑
                           </button>
                           <button
-                            className="icon-button"
+                            className="secondary"
                             disabled={
                               !!busy ||
                               recovery.blocked ||
@@ -432,7 +448,7 @@ export default function McpSettings({
                               !!deleting ||
                               !(config?.nativeWritable ?? config?.writable)
                             }
-                            aria-label={`${s.enabled ? "停用" : "启用"} ${id}`}
+                            aria-label={`${s.enabled ? "停用" : "启用"} ${displayName}`}
                             title={s.enabled ? "停用" : "启用"}
                             onClick={() =>
                               void action(`toggle:${id}`, () =>
@@ -451,16 +467,17 @@ export default function McpSettings({
                             ) : (
                               <Power size={16} aria-hidden="true" />
                             )}
+                            {s.enabled ? "停用" : "启用"}
                           </button>
                           <button
-                            className="icon-button"
+                            className="secondary"
                             disabled={
                               !!busy ||
                               !!draft ||
                               !(config?.nativeWritable ?? config?.writable)
                             }
                             data-variant="destructive"
-                            aria-label={`删除 ${id}`}
+                            aria-label={`删除 ${displayName}`}
                             title="删除"
                             onClick={() => {
                               setDeleting({ id, revision: config!.revision });
@@ -468,13 +485,13 @@ export default function McpSettings({
                               setNotice("");
                             }}
                           >
-                            <Trash2 size={16} aria-hidden="true" />
+                            <Trash2 size={16} aria-hidden="true" /> 删除
                           </button>
                         </>
                       )}
                       {s && (
                         <button
-                          className="icon-button"
+                          className="secondary"
                           disabled={
                             !!busy ||
                             recovery.blocked ||
@@ -501,32 +518,37 @@ export default function McpSettings({
                             })
                           }
                         >
-                          <RefreshCw size={18} aria-hidden="true" />
+                          <RefreshCw size={18} aria-hidden="true" /> 测试连接
                         </button>
                       )}
                       {native?.authStatus === "notLoggedIn" && (
                         <button
-                          className="icon-button"
+                          className="secondary"
                           disabled={
                             !!busy || recovery.blocked || !!draft || !!deleting
                           }
-                          aria-label={`授权 ${id}`}
+                          aria-label={`授权 ${displayName}`}
                           title="授权"
                           onClick={() =>
                             void action(`oauth:${id}`, async () => {
                               const result = await request<{
                                 authorizationUrl: string;
+                                loginId?: string;
                               }>("mcp/oauth", { name: id });
                               const url = new URL(result.authorizationUrl);
                               if (!["http:", "https:"].includes(url.protocol))
                                 throw new Error(
                                   "授权地址不可用，请检查服务端 OAuth 配置",
                                 );
-                              setOauth({ id, url: url.href });
+                              setOauth({
+                                id,
+                                url: url.href,
+                                loginId: result.loginId,
+                              });
                             })
                           }
                         >
-                          <KeyRound size={16} aria-hidden="true" />
+                          <KeyRound size={16} aria-hidden="true" /> 授权
                         </button>
                       )}
                     </div>
@@ -553,11 +575,10 @@ export default function McpSettings({
                         >
                           打开 {id} 授权页面
                         </a>
-                        ，完成后重载连接。
                       </p>
                     )}
                   </div>
-                </Modal>
+                </CatalogDetail>
               )}
             </div>
           );
@@ -591,13 +612,15 @@ export default function McpSettings({
           }}
           dismissible={!busy}
         >
+          {feedback}
           <div
             className="provider-editor"
             role="group"
             aria-label="确认删除连接器"
           >
             <p>
-              删除 {deleting.id} 的用户配置？历史 App 的后续工具交互可能不可用。
+              删除 {summary(deleting.id)?.name || deleting.id} 的用户配置？历史
+              App 的后续工具交互可能不可用。
             </p>
             <div className="configuration-actions">
               <button
@@ -612,7 +635,7 @@ export default function McpSettings({
                   )
                 }
               >
-                确认删除 {deleting.id}
+                确认删除
               </button>
               <button
                 className="secondary"
@@ -630,9 +653,9 @@ export default function McpSettings({
           正在处理连接配置…
         </p>
       )}
-      {!draft && feedback}
+      {!draft && !detailId && !deleting && feedback}
 
-      {notice && (
+      {notice && !detailId && (
         <p className="configuration-notice" role="status">
           {notice}
         </p>

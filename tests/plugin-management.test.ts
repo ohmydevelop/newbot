@@ -27,6 +27,7 @@ class PluginCodex extends ConfigCodex {
   skill() {
     return {
       name: "bundle:included",
+      interface: { displayName: "资料摘要", shortDescription: "整理提供的资料" },
       description: "插件组成部分",
       path: this.skillPath,
       scope: "user",
@@ -330,6 +331,9 @@ test(
         await action("plugin/read", { id: codex.summary.id })
       ).json();
       assert.equal(detail.skills.length, 1);
+      assert.equal(detail.skills[0].name, "bundle:included");
+      assert.equal(detail.skills[0].displayName, "资料摘要");
+      assert.equal(detail.skills[0].description, "整理提供的资料");
       assert.equal(detail.connections.length, 1);
       // Legacy UI toggled the source path after installation cached a default.
       codex.extensionRuntime!.setSkill(codex.skillPath, true);

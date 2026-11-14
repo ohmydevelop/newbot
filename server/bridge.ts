@@ -1,3 +1,4 @@
+import { followupService } from "./followups.js";
 import { restoreFailures } from "./failure-store.js";
 import { presentationInstructions } from "./presentation.js";
 import type { MediaStore } from "./media.js";
@@ -182,6 +183,16 @@ export function bridge(
         ),
       ),
     );
+  const followups = followupService({
+    db, read: (threadId) => readObserved(threadId),
+    route: (threadId) => {
+      if (maintenance || draining) throw new PublicError("服务维护中，请稍后生成追问");
+      const runtime = runtimeSettings.get(threadId);
+      return { provider: runtime.provider, model: runtime.model,
+        revision: JSON.stringify([runtime.version, codex.providerRuntime?.revision, codex.privateVersion?.(threadId)]) };
+    },
+    generate: (...args) => providerStore.followups(...args),
+  });
   const events = new AgentEvents((threadId, turnId, item) =>
     ui.decorateItem(
       threadId,
@@ -234,12 +245,21 @@ export function bridge(
   let draining = false;
   let inflight = 0;
   let oauthUntil = 0;
+  let oauthLoginId: string | undefined;
+  let oauthPending = false, oauthGeneration = 0;
+  const oauthEarlyCompletions = new Set<string>();
   const maxTurns = Math.max(
     1,
     Math.min(5, Number(process.env.MAX_ACTIVE_TURNS) || 2),
   );
   codex.on("event", (message) => {
-    if (message.method === "mcpServer/oauth/login/completed") oauthUntil = 0;
+    if (!["mcpServer/oauthLogin/completed", "mcpServer/oauth/login/completed"].includes(message.method) || !oauthUntil) return;
+    const loginId = message.params.loginId;
+    if (oauthPending) {
+      if (typeof loginId === "string" && oauthEarlyCompletions.size < 16) oauthEarlyCompletions.add(loginId);
+      return;
+    }
+    if (oauthLoginId ? loginId === oauthLoginId : !loginId) { oauthUntil = 0; oauthLoginId = undefined; }
   });
   let skills: Json[] = [];
   const grants = new Map<
@@ -275,6 +295,10 @@ export function bridge(
     if (codex.state === "offline") {
       // Requests belonging to a stopped process cannot authorize a future connection.
       oauthUntil = 0;
+      oauthLoginId = undefined;
+      oauthPending = false;
+      oauthGeneration++;
+      oauthEarlyCompletions.clear();
       grants.clear();
       apps.clear();
     }
@@ -1307,6 +1331,7 @@ export function bridge(
     plugins,
     pluginConnections: connections,
     read: readObserved,
+    followups,
     async handle(method: string, p: Json, context?: { sessionId: string }) {
       if (method === "app/close") {
         const data = z
@@ -1383,6 +1408,7 @@ export function bridge(
             if (
               enabled &&
               (codex.active.size ||
+                followups.pending() ||
                 starting.size ||
                 codex.approvals.size ||
                 codex.toolRequests.size ||
@@ -1439,6 +1465,14 @@ export function bridge(
           }
           case "session/inputs":
             return inputs.update(p);
+          case "marketplace/list":
+            if (!plugins.marketplaces) throw new PublicError("商店管理不可用");
+            return plugins.marketplaces.list();
+          case "marketplace/add":
+          case "marketplace/upgrade":
+          case "marketplace/remove":
+            if (!plugins.marketplaces) throw new PublicError("商店管理不可用");
+            return plugins.marketplaces.mutate(method, p);
           case "plugin/list":
             return plugins.list(p.includeTools === true);
           case "plugin/read":
@@ -1793,7 +1827,7 @@ export function bridge(
             const data = z
               .object({
                 threadId: id,
-                text: z.string().trim().min(1).max(200000),
+                text: z.string().trim().max(200000),
                 attachments: z.array(z.string()).max(8).default([]),
                 skills: skillSelections.default([]),
                 plugins: z.array(z.string().min(1).max(200)).max(8).default([]),
@@ -1801,6 +1835,7 @@ export function bridge(
                 effort: z.string().optional(),
                 clientUserMessageId: z.string().uuid().optional(),
               })
+              .refine((v) => v.text.length > 0 || v.attachments.length > 0, "请输入消息或添加附件")
               .parse(p);
             own(data.threadId);
             if (codex.active.has(data.threadId) || starting.has(data.threadId))
@@ -1931,7 +1966,7 @@ export function bridge(
                 .prepare("SELECT title FROM threads WHERE id=?")
                 .get(data.threadId) as Json;
               if (row.title === "新对话") {
-                const title = data.text.slice(0, 36);
+                const title = data.text.slice(0, 36) || "附件消息";
                 db.rename(data.threadId, title);
                 void codex
                   .call("thread/name/set", {
@@ -1943,14 +1978,14 @@ export function bridge(
               const prepared = await library.prepare(data.skills);
               const selectedPlugins = await plugins.prepare(data.plugins);
               const input = [
-                { type: "text" as const, text: data.text, text_elements: [] },
-                ...(p.expertSnapshot && p.connectorIds?.length
+                ...(data.text ? [{ type: "text" as const, text: data.text, text_elements: [] }] : []),
+                ...(p.expertSnapshot && (p.connectorIds?.length || p.expertSnapshot.instructions)
                   ? [
                       {
                         type: "text" as const,
                         text: expertContextText(
                           p.expertSnapshot,
-                          p.connectorIds,
+                          p.connectorIds || [],
                         ),
                         text_elements: [],
                       },
@@ -2125,13 +2160,28 @@ export function bridge(
             if (oauthUntil > Date.now())
               throw new PublicError("已有 OAuth 授权正在进行");
             oauthUntil = Date.now() + 600000;
+            const generation = ++oauthGeneration;
+            oauthLoginId = undefined;
+            oauthPending = true;
+            oauthEarlyCompletions.clear();
             try {
-              return await codex.call("mcpServer/oauth/login", {
+              const result = await codex.call("mcpServer/oauth/login", {
                 name,
                 ...(probeThread ? { threadId: probeThread } : {}),
               });
+              if (generation !== oauthGeneration) throw new PublicError("授权请求已过期，请重新连接账号");
+              oauthLoginId = result.loginId;
+              oauthPending = false;
+              if (result.loginId && oauthEarlyCompletions.has(result.loginId)) { oauthUntil = 0; oauthLoginId = undefined; }
+              oauthEarlyCompletions.clear();
+              return result;
             } catch (e) {
-              oauthUntil = 0;
+              if (generation === oauthGeneration) {
+                oauthLoginId = undefined;
+                oauthPending = false;
+                oauthEarlyCompletions.clear();
+                oauthUntil = 0;
+              }
               throw e;
             }
           }

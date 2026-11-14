@@ -1,3 +1,4 @@
+import { marketplaceState } from "./marketplace-state.js";
 import { randomUUID, createHash } from "node:crypto";
 import { z } from "zod";
 import type { Store } from "./db.js";
@@ -37,6 +38,7 @@ const mcp = z
     enabled: z.boolean().optional(),
     startup_timeout_sec: z.number().positive().optional(),
     tool_timeout_sec: z.number().positive().optional(),
+    tls_ca_certificate: z.string().max(32768).optional(),
   })
   .refine((v) => Boolean(v.command) !== Boolean(v.url));
 const content = z.strictObject({
@@ -239,15 +241,29 @@ export class ExtensionRuntime {
     }
     this.save(value);
   }
+  invalidate() {
+    this.save(structuredClone(this.value));
+  }
   marketplaceRoots() {
     const path = this.db.get("imports:marketplace");
-    return path ? [path] : [];
+    return [
+      ...(path ? [path] : []),
+      ...marketplaceState(this.db).entries.map((e) => e.root),
+    ];
   }
   marketplaceConfig() {
-    const root = this.marketplaceRoots()[0];
-    return root
-      ? { "newbot-imports": { source_type: "local", source: root } }
-      : {};
+    const root = this.db.get("imports:marketplace");
+    return {
+      ...(root
+        ? { "newbot-imports": { source_type: "local", source: root } }
+        : {}),
+      ...Object.fromEntries(
+        marketplaceState(this.db).entries.map((e) => [
+          e.name,
+          { source_type: "local", source: e.root },
+        ]),
+      ),
+    };
   }
   packageRoot(path: string) {
     const rows = this.db.raw

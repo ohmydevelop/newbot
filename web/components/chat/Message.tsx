@@ -1,23 +1,19 @@
+import UserMessage from "./UserMessage";
 import { MediaGallery } from "../MediaImage";
 import { lazy, memo, Suspense, useEffect, useRef, useState } from "react";
 import {
-  BookOpen,
-  UsersRound,
   Check,
   ChevronRight,
-  Circle,
   Copy,
-  FilePenLine,
   LoaderCircle,
-  Plug,
-  Search,
-  ListChecks,
-  Wrench,
-  Terminal,
+  Lightbulb,
+  CircleAlert,
+  Ban,
+  Square,
 } from "lucide-react";
+import { processIcons, ToolIcon } from "../AppIcons";
 import type { Item, Json } from "../../../shared/types";
 import { extractSuggestions } from "../../../shared/suggestions";
-import AttachmentPreview, { type AttachmentSource } from "../AttachmentPreview";
 import { useApp } from "../../store";
 import {
   messageKind,
@@ -51,7 +47,9 @@ function ToolItem({
   threadId,
   turnId,
   processExpanded,
+  active,
 }: {
+  active: boolean;
   item: Item;
   threadId: string;
   turnId: string;
@@ -66,91 +64,95 @@ function ToolItem({
   const descriptor = settings?.mcp.find(
     (server: Json) => server.name === item.server,
   )?.tools?.[item.tool];
-  const { failed, running, label } = toolStatus(item);
-  if (item.type === "reasoning") {
-    if (!item.summary?.length) return null;
-    return (
-      <details className="tool-item process-content" open={expanded}>
-        <summary onClick={toggle}>
-          <Circle size={13} aria-hidden="true" />
-          <span>思考过程</span>
-          <ChevronRight size={14} aria-hidden="true" />
-        </summary>
-        {expanded && processExpanded && (
-          <div className="tool-detail" tabIndex={0} role="region" aria-label="思考过程正文">{item.summary.join("\n")}</div>
-        )}
-      </details>
-    );
-  }
-  const Icon =
-    item.type === "commandExecution"
-      ? Terminal
-      : item.type === "fileChange"
-        ? FilePenLine
-        : item.type === "mcpToolCall"
-          ? Plug
-          : item.type === "webSearch"
-            ? Search
-            : item.type === "plan"
-              ? ListChecks
-              : Wrench;
-  const title = toolTitle(
-    item,
-    item.display?.toolTitle ||
-      descriptor?.title ||
-      descriptor?.annotations?.title,
-  );
+  const { failed, running, label } = toolStatus(item, active);
+  const reasoning = item.type === "reasoning";
+  const commentary =
+    item.type === "agentMessage" && item.phase === "commentary";
+  const Icon = reasoning ? Lightbulb : processIcons[item.type] || ToolIcon;
+  const title = reasoning
+    ? "思考过程"
+    : commentary
+      ? "进度说明"
+      : toolTitle(
+          item,
+          item.display?.toolTitle ||
+            descriptor?.title ||
+            descriptor?.annotations?.title,
+        );
   return (
     <>
       <details
-        className={`tool-item process-content ${failed ? "failed" : ""}`}
+        className={`tool-item process-content ${reasoning ? "reasoning-step" : ""} ${failed ? "failed" : ""}`}
         open={expanded}
       >
-        <summary onClick={toggle}>
-          {running ? (
-            <LoaderCircle size={15} className="spin" aria-hidden="true" />
-          ) : (
-            <Icon size={15} aria-hidden="true" />
-          )}
-          <span>{title}</span>
-          <small className={label === "已完成" ? "sr-only" : undefined}>
+        <summary onClick={toggle} aria-expanded={expanded}>
+          <Icon size={18} className="process-kind-icon" aria-hidden="true" />
+          <span className="process-step-title">{title}</span>
+          <small className="process-step-status">
+            {running ? (
+              <LoaderCircle size={14} className="spin" aria-hidden="true" />
+            ) : failed ? (
+              <CircleAlert size={14} aria-hidden="true" />
+            ) : label === "未执行" ? (
+              <Ban size={14} aria-hidden="true" />
+            ) : label === "未完成" ? (
+              <Square size={12} aria-hidden="true" />
+            ) : null}
             {label}
           </small>
           <ChevronRight size={14} aria-hidden="true" />
         </summary>
-        {expanded && processExpanded && (
-          <div className="tool-detail" tabIndex={0} role="region" aria-label="执行详情正文">
-            {item.server && (
-              <p className="muted">
-                {item.server} / {item.tool}
-              </p>
-            )}
-            {item.command && <code>{item.command}</code>}
-            {item.text && <Renderer text={item.text} />}
-            {item.error ? (
-              <p className="tool-failure">
-                {item.error.message || "工具执行失败"}
-              </p>
-            ) : (
-              <pre aria-label="工具详情">
-                {item.aggregatedOutput ||
-                  (item.error
-                    ? JSON.stringify(item.error, null, 2)
-                    : item.result
-                      ? JSON.stringify(
-                          item.result.structuredContent || item.result.content,
-                          null,
-                          2,
-                        )
-                      : item.changes
-                        ? JSON.stringify(item.changes, null, 2)
-                        : item.arguments
-                          ? JSON.stringify(item.arguments, null, 2)
-                          : "暂无附加信息")}
-              </pre>
-            )}
-          </div>
-        )}
+        {expanded &&
+          processExpanded &&
+          (reasoning ? (
+            <div className="reasoning-text">{item.summary?.join("\n")}</div>
+          ) : commentary ? (
+            <div className="reasoning-text">
+              <Renderer
+                text={extractSuggestions(item.text || "").text}
+                item={item}
+                streaming={active}
+              />
+            </div>
+          ) : (
+            <div
+              className="tool-detail"
+              tabIndex={0}
+              role="region"
+              aria-label="执行详情正文"
+            >
+              {item.server && (
+                <p className="muted">
+                  {item.server} / {item.tool}
+                </p>
+              )}
+              {item.command && <code>{item.command}</code>}
+              {item.text && <Renderer text={item.text} />}
+              {item.error ? (
+                <p className="tool-failure">
+                  {item.error.message || "工具执行失败"}
+                </p>
+              ) : (
+                <pre aria-label="工具详情">
+                  {item.aggregatedOutput ||
+                    (item.error
+                      ? JSON.stringify(item.error, null, 2)
+                      : item.result
+                        ? JSON.stringify(
+                            item.result.structuredContent ||
+                              item.result.content,
+                            null,
+                            2,
+                          )
+                        : item.changes
+                          ? JSON.stringify(item.changes, null, 2)
+                          : item.arguments
+                            ? JSON.stringify(item.arguments, null, 2)
+                            : "暂无附加信息")}
+                </pre>
+              )}
+            </div>
+          ))}
       </details>
     </>
   );
@@ -198,7 +200,6 @@ export function ItemOutput({
   );
 }
 
-const SkillReferences = lazy(() => import("../SkillReferences"));
 export const Message = memo(function Message({
   item,
   threadId,
@@ -212,7 +213,6 @@ export const Message = memo(function Message({
   processExpanded?: boolean;
   streaming?: boolean;
 }) {
-  const [preview, setPreview] = useState<AttachmentSource | null>(null);
   const [copied, setCopied] = useState(false);
   const [copyError, setCopyError] = useState("");
   const copyTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -244,83 +244,20 @@ export const Message = memo(function Message({
         正在生成表单…
       </p>
     );
-  if (kind === "user")
-    return (
-      <div className="user-message" data-content-kind="user">
-        <div>
-          {item.content?.map((c: Json, i: number) =>
-            c.type === "text" ? (
-              <span key={i}>{c.text}</span>
-            ) : c.type === "image" ? (
-              <button
-                type="button"
-                className="message-image"
-                key={i}
-                aria-label={`预览 ${c.name || "图片"}`}
-                onClick={() =>
-                  setPreview({
-                    name: c.name || "图片",
-                    url: c.url,
-                    mime: "image/png",
-                  })
-                }
-              >
-                <img src={c.url} alt={c.name || "用户附件"} />
-              </button>
-            ) : c.type === "attachment" ? (
-              <button
-                type="button"
-                className="secondary"
-                key={i}
-                onClick={() => setPreview({ name: c.name, url: c.url })}
-              >
-                {c.name}
-              </button>
-            ) : null,
-          )}
-          {preview && (
-            <AttachmentPreview
-              value={preview}
-              onClose={() => setPreview(null)}
-            />
-          )}
-          {item.expert && (
-            <div className="skill-message-refs" aria-label="此消息使用的专家">
-              <span>
-                <UsersRound size={14} aria-hidden="true" />
-                {item.expert.name}
-              </span>
-            </div>
-          )}
-          {!!item.pluginRefs?.length && (
-            <div className="skill-message-refs" aria-label="此消息使用的插件">
-              {item.pluginRefs.map((p) => (
-                <span key={p.id}>
-                  <Plug size={14} aria-hidden="true" />
-                  {p.displayName}
-                </span>
-              ))}
-            </div>
-          )}
-          {!!item.skillRefs?.length && (
-            <Suspense fallback={<p className="muted">正在加载技能引用…</p>}>
-              <SkillReferences references={item.skillRefs} />
-            </Suspense>
-          )}
-        </div>
-      </div>
-    );
-  if (kind === "assistant")
-    if (item.phase === "commentary" && !processExpanded)
-      return (
-        <article
-          className="assistant-message process-content"
-          data-content-kind="assistant"
-        />
-      );
+  if (kind === "user") return <UserMessage content={item.content || []} />;
   if (kind === "assistant")
     if (item.text != null && typeof item.text !== "string")
       throw new Error("Unsupported message text");
+  if (kind === "assistant" && item.phase === "commentary")
+    return (
+      <ToolItem
+        active={streaming}
+        item={item}
+        threadId={threadId}
+        turnId={turnId}
+        processExpanded={processExpanded}
+      />
+    );
   if (kind === "assistant") {
     const body = extractSuggestions(item.text || "").text;
     return (
@@ -374,6 +311,7 @@ export const Message = memo(function Message({
   }
   return (
     <ToolItem
+      active={streaming}
       item={item}
       threadId={threadId}
       turnId={turnId}

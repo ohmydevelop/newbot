@@ -1,0 +1,684 @@
+/* Application composition. Feature-specific layout remains with its components. */
+::selection {
+  background: color-mix(in srgb, var(--text) 18%, transparent);
+}
+:root {
+  caret-color: var(--text);
+  scrollbar-color: var(--line) transparent;
+}
+button {
+  transition-duration: var(--motion-fast);
+}
+button:focus-visible,
+a:focus-visible,
+summary:focus-visible {
+  outline-color: var(--focus);
+}
+.icon-button {
+  border-radius: 50%;
+  color: var(--muted);
+}
+.icon-button:hover:not(:disabled),
+.icon-button[data-state="open"] {
+  color: var(--text);
+}
+.lucide {
+  stroke-width: 2;
+}
+.navigation-slot {
+  position: relative;
+  flex: 0 0 auto;
+  width: var(--navigation-width);
+  height: 100%;
+  overflow: clip;
+  transition: width var(--motion-navigation) var(--ease-navigation);
+}
+.navigation-slot[data-open="false"] {
+  width: var(--navigation-rail-width);
+}
+.desktop-sidebar {
+  height: 100%;
+  transition: opacity var(--motion-fast);
+}
+.navigation-slot[data-open="false"] .desktop-sidebar {
+  opacity: 0;
+  visibility: hidden;
+}
+.sidebar {
+  width: var(--navigation-width);
+  padding: 0 10px 8px;
+  border-right: 1px solid var(--line);
+}
+.sidebar-top {
+  height: 56px;
+  flex-shrink: 0;
+  margin-bottom: 0;
+  padding: 0 2px;
+}
+.sidebar-top > .icon-button {
+  width: 32px;
+  height: 32px;
+  border-radius: 12px;
+}
+.brand-button {
+  gap: 8px;
+  font-size: 20px;
+  letter-spacing: -0.6px;
+}
+.main-nav {
+  gap: 4px;
+  padding-top: 2px;
+}
+.main-nav > button {
+  min-height: 36px;
+  padding: 6px;
+  gap: 6px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 500;
+}
+.main-nav kbd {
+  font-size: 11px;
+  opacity: 0;
+}
+.main-nav button:focus-visible kbd {
+  opacity: 1;
+}
+.history {
+  padding-top: 24px;
+}
+.history h2 {
+  font-size: 13px;
+  margin: 0;
+}
+.history-disclosure {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 6px;
+  border-radius: 8px;
+  color: var(--muted);
+}
+.history-disclosure:hover {
+  color: var(--text);
+}
+.history-disclosure svg {
+  transition: transform var(--motion-fast);
+}
+.history-disclosure[aria-expanded="false"] svg {
+  transform: rotate(-90deg);
+}
+.history-link {
+  padding: 10px 12px;
+  font-size: 14px;
+}
+.history-row {
+  min-height: 42px;
+}
+.history-empty {
+  font-size: 13px;
+  line-height: 1.7;
+}
+.sidebar-bottom {
+  border-top: 0;
+  padding-top: 12px;
+}
+.sidebar-plugins {
+  min-height: 36px;
+  padding: 6px;
+  gap: 6px;
+  border-radius: 12px;
+}
+.account-button {
+  margin-top: 6px;
+  padding: 10px;
+}
+.account-button strong {
+  font-size: 13px;
+  font-weight: 500;
+}
+.account-button small {
+  font-size: 11px;
+}
+.avatar {
+  width: 34px;
+  height: 34px;
+}
+.sidebar-rail {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: var(--navigation-rail-width);
+  padding: 12px 10px 8px;
+  gap: 4px;
+  border-right: 1px solid var(--line);
+}
+.rail-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  color: var(--text);
+}
+.rail-toggle-navigation {
+  width: 32px;
+  height: 32px;
+  margin-bottom: 10px;
+  color: var(--muted);
+}
+.rail-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+.topbar {
+  height: 56px;
+  padding-inline: 22px;
+}
+.topbar-left {
+  flex: 1;
+  overflow: hidden;
+}
+.topbar-right {
+  flex-shrink: 0;
+  gap: 10px;
+  padding-right: 0;
+}
+.workspace-title {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 16px;
+  font-weight: 500;
+}
+.runtime-status {
+  font-size: 12px;
+}
+.rail-toggle {
+  position: relative;
+  flex-shrink: 0;
+}
+.rail-toggle.open {
+  color: var(--text);
+  background: var(--hover);
+}
+.main {
+  min-height: 0;
+}
+.conversation {
+  min-height: 0;
+}
+.main.is-home {
+  overflow-y: auto;
+}
+.is-home .conversation.empty {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: flex-end;
+  justify-content: center;
+  overflow: visible;
+  padding: clamp(54px, calc(23vh - 56px), 180px) 24px 28px;
+  scrollbar-gutter: auto;
+}
+.welcome {
+  text-align: center;
+  width: 100%;
+  max-width: var(--content-width);
+  transform: none;
+}
+.welcome h1 {
+  font-size: 28px;
+  font-weight: 550;
+  line-height: 1.4;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+.composer-area {
+  width: min(100% - 48px, var(--content-width));
+  padding-top: 8px;
+  padding-bottom: 18px;
+}
+.is-home .composer-area {
+  padding-top: 0;
+  padding-bottom: 24px;
+}
+.composer {
+  min-height: 106px;
+}
+.composer textarea {
+  font-size: 16px;
+  line-height: 1.75;
+  padding-inline: 8px;
+}
+.composer-tools {
+  gap: 8px;
+  margin-top: 8px;
+}
+.composer-tools-left {
+  gap: 2px;
+}
+.composer-tools .icon-button {
+  width: 36px;
+  height: 36px;
+}
+.composer:has(textarea:focus-visible) {
+  outline: 1px solid var(--focus);
+  outline-offset: 2px;
+}
+.send-button {
+  width: 36px;
+  height: 36px;
+}
+.send-button:not(:disabled):hover {
+  transform: translateY(-1px);
+}
+.send-button:not(:disabled):active {
+  transform: translateY(0);
+}
+.message-column {
+  width: min(100% - 48px, var(--content-width));
+  padding-block: 24px 32px;
+}
+.user-message .user-bubble {
+  border-radius: 22px;
+  font-size: 15px;
+  line-height: 1.75;
+  padding: 12px 18px;
+}
+.prose {
+  font-size: 15.5px;
+  line-height: 1.85;
+}
+.prose > p,
+.prose > ul,
+.prose > ol {
+  margin-bottom: 18px;
+}
+.prose a {
+  text-underline-offset: 3px;
+}
+.message-actions {
+  margin-top: 10px;
+}
+.tool-item > summary {
+  font-size: 13px;
+}
+.dropdown,
+.picker-panel {
+  box-shadow: var(--panel-shadow);
+  border-radius: 16px;
+}
+.dropdown [role="menuitem"] {
+  min-height: 40px;
+  border-radius: 10px;
+}
+.picker-results > button {
+  border-radius: 10px;
+}
+.modal {
+  border-radius: var(--radius-panel);
+  box-shadow: var(--panel-shadow);
+}
+.modal.settings-modal {
+  width: min(960px, calc(100vw - 48px));
+  height: min(720px, calc(100dvh - 64px));
+}
+.settings-modal > .modal-header {
+  padding: 20px 24px;
+}
+.settings-layout > nav {
+  width: 190px;
+  padding: 18px 12px;
+  background: var(--sidebar);
+}
+.settings-layout > nav > button {
+  font-size: 14px;
+  min-height: 44px;
+  padding: 10px 12px;
+  border-radius: 10px;
+}
+.settings-layout > nav > button.selected {
+  background: var(--hover);
+}
+.settings-content,
+.plugins-modal .settings-content {
+  padding: 28px 32px;
+}
+.settings-content h3 {
+  font-size: 22px;
+  margin-bottom: 24px;
+}
+.settings-content h4 {
+  font-size: 14px;
+}
+.setting-row {
+  padding-block: 18px;
+}
+.setting-row strong {
+  font-size: 14px;
+  font-weight: 500;
+}
+.setting-row p {
+  font-size: 13px;
+  line-height: 1.7;
+}
+.extension-tabs {
+  border-radius: 12px;
+  padding: 4px;
+  gap: 4px;
+}
+.extension-tabs > button {
+  border-radius: 9px;
+  min-height: 36px;
+}
+.catalog-toolbar {
+  gap: 12px;
+}
+.catalog-entry {
+  border-radius: 12px;
+}
+.rail {
+  background: var(--bg);
+}
+.rail-tabs {
+  height: 64px;
+  padding: 10px 12px;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.rail-tab {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+}
+.rail-body {
+  padding: 24px 20px;
+}
+.rail-heading {
+  font-size: 18px;
+  font-weight: 550;
+  margin-bottom: 20px;
+}
+.association-hint {
+  font-size: 13px;
+  line-height: 1.7;
+  margin-bottom: 22px;
+}
+.association-group h3 {
+  font-size: 13px;
+}
+.rail-row {
+  padding: 12px 8px;
+  gap: 5px;
+}
+.rail-row > span {
+  font-size: 14px;
+}
+.rail-resizer:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: -1px;
+}
+.rail-overlay {
+  outline: none;
+}
+.login h1 {
+  font-size: 28px;
+  letter-spacing: -0.02em;
+}
+.login form {
+  width: min(100%, 360px);
+}
+.login input {
+  background: var(--surface);
+  border-radius: 12px;
+  min-height: 48px;
+}
+.login form > .primary {
+  border-radius: 999px;
+  min-height: 46px;
+}
+.login footer {
+  font-size: 12px;
+}
+@keyframes navigation-arrive {
+  from {
+    transform: translateX(-16px);
+    opacity: 0.6;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+@keyframes workbench-arrive {
+  from {
+    transform: translateX(20px);
+    opacity: 0.6;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .sidebar[role="dialog"] {
+    animation: navigation-arrive var(--motion-panel) var(--ease-out);
+  }
+  .rail {
+    animation: workbench-arrive var(--motion-panel) var(--ease-out);
+  }
+}
+@media (max-width: 1080px) {
+  .rail.rail-overlay {
+    position: fixed;
+    inset: 0 0 0 auto;
+    width: min(380px, 100vw);
+    z-index: 109;
+  }
+  .rail-scrim {
+    z-index: 108;
+  }
+}
+@media (max-width: 760px) {
+  .navigation-slot {
+    display: contents;
+  }
+  .sidebar {
+    width: min(288px, calc(100vw - 40px));
+    padding-top: max(12px, env(safe-area-inset-top));
+  }
+  .sidebar-top > .icon-button {
+    width: 44px;
+    height: 44px;
+  }
+  .sidebar-rail {
+    display: none;
+  }
+  .main-nav > button,
+  .sidebar-plugins,
+  .history-disclosure {
+    min-height: 44px;
+  }
+  .topbar {
+    height: auto;
+    min-height: 60px;
+    padding-inline: 12px;
+  }
+  .workspace-title {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 15px;
+  }
+  .topbar-right {
+    gap: 4px;
+  }
+  .topbar .icon-button {
+    width: 40px;
+    height: 40px;
+  }
+  .is-home .conversation.empty {
+    padding: clamp(44px, 12vh, 112px) 20px 28px;
+  }
+  .welcome h1 {
+    font-size: 26px;
+  }
+  .composer-area {
+    width: calc(100% - 24px);
+    padding-bottom: max(10px, env(safe-area-inset-bottom));
+  }
+  .composer {
+    padding: 12px 10px 8px;
+  }
+  .composer-tools {
+    gap: 4px;
+  }
+  .composer-tools-left {
+    gap: 0;
+  }
+  .composer-tools .icon-button,
+  .composer .send-button {
+    width: 40px;
+    height: 40px;
+  }
+  .composer .runtime-selectors {
+    gap: 2px;
+  }
+  .message-column {
+    width: calc(100% - 32px);
+    padding-top: 12px;
+  }
+  .prose {
+    font-size: 15px;
+  }
+  .modal.settings-modal {
+    width: calc(100vw - 20px);
+    height: calc(100dvh - 32px);
+  }
+  .settings-modal > .modal-header {
+    padding: 16px 18px;
+  }
+  .settings-layout > nav {
+    width: 100%;
+    padding: 8px;
+    gap: 4px;
+  }
+  .settings-layout > nav > button {
+    font-size: 13px;
+    padding: 8px 12px;
+  }
+  .settings-layout > nav > button svg {
+    width: 17px;
+  }
+  .settings-modal .settings-content {
+    padding: 22px 18px;
+  }
+  .settings-content h3 {
+    font-size: 20px;
+  }
+  .rail.rail-overlay {
+    width: min(380px, 100vw);
+  }
+}
+@media (max-width: 480px) {
+  .main.is-home {
+    overflow: hidden;
+  }
+  .is-home .conversation.empty {
+    flex: 1;
+    align-items: flex-start;
+    padding-top: clamp(80px, 23vh, 220px);
+    overflow: auto;
+  }
+  .is-home .composer-area {
+    padding-bottom: max(10px, env(safe-area-inset-bottom));
+  }
+  .welcome h1 {
+    font-size: 25px;
+  }
+  .composer-tools-left > [data-composer-picker] {
+    display: none;
+  }
+  .composer-tools .runtime-selectors {
+    margin-left: auto;
+    flex: 0 1 auto;
+    min-width: 0;
+  }
+  .settings-layout > nav > button {
+    padding-inline: 10px;
+    gap: 6px;
+  }
+}
+@media (max-height: 500px) {
+  .is-home .conversation.empty {
+    flex: 0 0 auto;
+    padding-block: 20px;
+  }
+  .main.is-home {
+    overflow-y: auto;
+  }
+}
+
+/* Capabilities belong to the draft once, and to the conversation sidebar after send. */
+.capabilities { display: flex; align-items: flex-start; gap: 4px; min-width: 0; margin: 0 0 10px; }
+.capability-row { display: flex; flex: 1; gap: 6px; min-width: 0; overflow: hidden; }
+.capability-chip { display: flex; align-items: center; gap: 4px; flex: 0 0 auto; max-width: 100%; height: 36px; padding: 0 7px 0 10px; border: 1px solid var(--line); border-radius: 18px; font-size: 13px; }
+.capability-label { display: inline-flex; align-items: center; gap: 6px; min-width: 0; max-width: 240px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.capability-label svg { flex: none; }
+.capability-chip button { background: transparent; color: inherit; border: 0; padding: 4px; border-radius: 50%; min-width: 28px; min-height: 28px; }
+.capability-chip button.capability-label { border-radius: 12px; }
+.capability-chip button:hover { background: var(--hover); }
+.capability-expand { display: flex; align-items: center; justify-content: center; gap: 2px; min-width: 48px; height: 36px; border: 0; border-radius: 18px; background: transparent; color: var(--muted); font-size: 13px; }
+.capabilities.is-expanded .capability-row { flex-wrap: wrap; }
+.rail-capability-actions { display: flex; flex-direction: column; gap: 4px; margin-top: 18px; }
+.rail-capability-actions button { display: flex; align-items: center; gap: 8px; background: transparent; border: 0; text-align: left; min-height: 40px; padding: 8px; border-radius: 10px; color: var(--text); font-size: 14px; }
+.rail-capability-actions button:hover { background: var(--hover); }
+.reasoning-text { white-space: pre-wrap; line-height: 1.65; font-size: 14px; color: var(--muted); }
+.submission-status { display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: 14px; margin-top: 28px; }
+.pending-message .user-bubble p { white-space: pre-wrap; margin: 0; }
+.pending-file { display: inline-flex; align-items: center; gap: 6px; padding-top: 8px; font-size: 13px; }
+.send-button.is-submitting:disabled { opacity: 1; cursor: progress; }
+.submission-stop { position: relative; display: grid; place-items: center; }
+.submission-stop > .spin { position: absolute; opacity: .6; }
+
+.reasoning-text { min-width: 0; }
+
+/* Recovery belongs to the chat layout, so it cannot cover the title or messages. */
+.submission-notices { flex: none; min-width: 0; max-height: 24vh; overflow: auto; padding: 0 12px; }
+.submission-notices:has(.pending-run), .submission-notices:has(.pending-navigation) { padding-bottom: 8px; }
+.submission-notices .pending-run, .submission-notices .pending-navigation-list {
+  position: static; inset: auto; transform: none; width: 100%; max-width: none;
+  box-sizing: border-box; margin: 0; box-shadow: none;
+}
+.submission-notices .pending-run { gap: 4px 12px; padding: 4px 12px; background: var(--surface); }
+.submission-notices .pending-navigation-list { gap: 6px; overflow: auto; }
+.submission-notices .pending-navigation-list:empty { display: none; }
+.submission-notices .pending-run + .pending-navigation-list:not(:empty) { margin-top: 6px; }
+.submission-notices .pending-navigation { min-height: 40px; font-size: 13px; }
+.chat-notifications { position: static; inset: auto; flex: none; min-height: 0; max-height: 24vh; overflow: auto; padding: 0 12px; }
+.chat-notifications:has(> *) { padding-bottom: 8px; }
+
+/* One icon slot and baseline for every execution step; status never replaces identity. */
+.app-icon { flex: none; vertical-align: middle; }
+.process-group .tool-item > summary { gap: 8px; min-height: 32px; padding: 4px 0; }
+.process-kind-icon, .process-toggle > svg:first-child { flex: 0 0 18px; width: 18px; height: 18px; }
+.process-step-status { display: inline-flex; align-items: center; gap: 4px; flex: none; }
+.process-group .tool-item > summary > svg:last-child { flex: 0 0 14px; }
+.process-group .reasoning-text { margin: 0 0 10px 26px; overflow-wrap: anywhere; }
+.process-group .tool-detail { margin-left: 26px; }
+.process-group .process-toggle { gap: 8px; }
+@media (max-width: 760px), (pointer: coarse) {
+  .process-group .tool-item > summary { min-height: 36px; }
+}
+
+/* Navigation uses a 24px slot around an 18px glyph, matching the observed reference. */
+.main-nav > button, .sidebar-plugins { gap: 4px; }
+.main-nav > button > svg, .sidebar-plugins > svg { flex: none; margin-inline: 3px; }
+
+.user-message-stack { display:flex; flex-direction:column; align-items:flex-end; gap:10px; max-width:85%; min-width:0; }
+.user-message .user-bubble { max-width:100%; }
+.user-message .message-image { display:block; padding:0; border:0; background:none; max-width:100%; overflow:hidden; border-radius:16px; }
+.user-message .message-image img { display:block; max-width:100%; width:auto; max-height:420px; object-fit:contain; border-radius:16px; }
+.user-message .message-file { display:flex; gap:10px; align-items:center; padding:14px 16px; border:1px solid var(--line); border-radius:14px; background:var(--surface); max-width:100%; text-align:left; }
+.user-message .message-file span { overflow-wrap:anywhere; }
+@media(max-width:700px) { .user-message-stack { max-width:92%; } }

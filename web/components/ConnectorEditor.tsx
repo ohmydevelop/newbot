@@ -1,11 +1,11 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { LoaderCircle, Plus, Trash2 } from "lucide-react";
 import type {
   ConfigurationView,
   DefaultsSaveResult,
 } from "../../shared/configuration";
 import { request } from "../store";
-import { Modal } from "./ui";
+import { CatalogDetail as Modal } from "./CatalogNavigation";
 import ConfigurationFeedback, {
   useConfigurationRecovery,
 } from "./ConfigurationFeedback";
@@ -35,9 +35,24 @@ export default function ConnectorEditor({
   const operationId = useRef(crypto.randomUUID());
   const [name, setName] = useState(connector?.name || connector?.id || "");
   const [transport, setTransport] = useState(
-    connector?.transport === "http" ? "http" : "stdio",
+    !connector || connector.transport === "http" ? "http" : "stdio",
   );
   const [url, setUrl] = useState(connector?.definition?.url || "");
+  const [caCertificate, setCaCertificate] = useState(
+    connector?.definition?.caCertificate || "",
+  );
+  const [certificateName, setCertificateName] = useState(
+    connector?.definition?.caCertificate ? "已保存证书" : "",
+  );
+  const certificateInput = useRef<HTMLInputElement>(null);
+  const certificateRead = useRef(0);
+  const [readingCertificate, setReadingCertificate] = useState(false);
+  useEffect(
+    () => () => {
+      certificateRead.current++;
+    },
+    [],
+  );
   const [command, setCommand] = useState(connector?.definition?.command || "");
   const [args, setArgs] = useState<string[]>(connector?.definition?.args || []);
   const [startup, setStartup] = useState(connector?.startupTimeout || 10);
@@ -88,7 +103,7 @@ export default function ConnectorEditor({
   }
   async function save(event: React.FormEvent) {
     event.preventDefault();
-    if (busy) return;
+    if (busy || readingCertificate) return;
     setBusy(true);
     recovery.clear();
     setPrivateError("");
@@ -111,7 +126,7 @@ export default function ConnectorEditor({
               toolTimeout: timeout,
               ...(transport === "http"
                 ? url
-                  ? { url }
+                  ? { url, caCertificate: caCertificate || null }
                   : {}
                 : {
                     ...(command ? { command } : {}),
@@ -155,14 +170,15 @@ export default function ConnectorEditor({
         if (!open && !busy) onClose();
       }}
       dismissible={!busy}
-      className="connection-editor-modal"
+      className="connection-editor-modal catalog-form-step"
     >
-      <form className="connector-editor" onSubmit={save}>
+      <form className="connector-editor catalog-form" onSubmit={save}>
         <div className="connection-editor-body">
           <label className="field-label">
-            名称
+            <span className="sr-only">名称</span>
             <input
               aria-label="连接器名称"
+              placeholder="连接器名称"
               value={name}
               required
               maxLength={80}
@@ -172,20 +188,20 @@ export default function ConnectorEditor({
             />
           </label>
           <label className="field-label">
-            连接方式
+            <span className="sr-only">连接方式</span>
             <select
               aria-label="连接方式"
               value={transport}
               disabled={busy || !!connector}
               onChange={(e) => setTransport(e.target.value)}
             >
-              <option value="http">远程 HTTP</option>
-              <option value="stdio">服务端本地程序</option>
+              <option value="http">远程服务</option>
+              <option value="stdio">本地程序</option>
             </select>
           </label>
           {transport === "http" ? (
             <label className="field-label">
-              服务地址
+              <span className="sr-only">服务地址</span>
               <input
                 aria-label="服务地址"
                 type="url"
@@ -195,13 +211,26 @@ export default function ConnectorEditor({
                 placeholder={
                   connector ? "留空保留现有地址" : "https://example.com/mcp"
                 }
-                onChange={(e) => setUrl(e.target.value)}
+                onChange={(e) => {
+                  certificateRead.current++;
+                  setReadingCertificate(false);
+                  let sameOrigin = false;
+                  try {
+                    sameOrigin =
+                      new URL(url).origin === new URL(e.target.value).origin;
+                  } catch {}
+                  if (!sameOrigin) {
+                    setCaCertificate("");
+                    setCertificateName("");
+                  }
+                  setUrl(e.target.value);
+                }}
               />
             </label>
           ) : (
             <>
               <label className="field-label">
-                启动程序
+                <span className="sr-only">启动程序</span>
                 <input
                   aria-label="启动程序"
                   required={!connector}
@@ -250,7 +279,80 @@ export default function ConnectorEditor({
               </fieldset>
             </>
           )}
+          {transport === "http" && (
+            <details
+              className="catalog-advanced"
+              open={caCertificate ? true : undefined}
+            >
+              <summary>服务器证书{caCertificate ? " · 自定义" : ""}</summary>
+              <div className="connector-certificate">
+                <input
+                  ref={certificateInput}
+                  type="file"
+                  accept=".pem,.crt,.cer,.der"
+                  hidden
+                  aria-label="选择服务器 CA 证书"
+                  disabled={busy || !!saved}
+                  onChange={async (e) => {
+                    const file = e.target.files?.[0];
+                    e.target.value = "";
+                    if (!file) return;
+                    if (file.size > 32768) {
+                      setPrivateError("证书不能超过 32 KiB");
+                      return;
+                    }
+                    const generation = ++certificateRead.current;
+                    setReadingCertificate(true);
+                    try {
+                      const bytes = new Uint8Array(await file.arrayBuffer());
+                      if (generation !== certificateRead.current) return;
+                      setCaCertificate(btoa(String.fromCharCode(...bytes)));
+                      setCertificateName(file.name);
+                      setPrivateError("");
+                    } catch {
+                      if (generation === certificateRead.current)
+                        setPrivateError("证书读取失败，请重新选择");
+                    } finally {
+                      if (generation === certificateRead.current)
+                        setReadingCertificate(false);
+                    }
+                  }}
+                />
+                <span className="muted">{certificateName || "系统信任"}</span>
+                <div className="certificate-actions">
+                  <button
+                    type="button"
+                    className="secondary"
+                    disabled={busy || !!saved || !url.startsWith("https://")}
+                    onClick={() => certificateInput.current?.click()}
+                  >
+                    选择证书
+                  </button>
+                  {caCertificate && (
+                    <button
+                      type="button"
+                      className="secondary"
+                      disabled={busy || !!saved}
+                      onClick={() => {
+                        certificateRead.current++;
+                        setReadingCertificate(false);
+                        setCaCertificate("");
+                        setCertificateName("");
+                      }}
+                    >
+                      恢复系统信任
+                    </button>
+                  )}
+                </div>
+                <small className="muted">
+                  仅用于此服务地址。支持 PEM／DER 格式的 CA
+                  或自签名证书，仍校验域名和有效期。
+                </small>
+              </div>
+            </details>
+          )}
           <PrivateFieldEditor
+            compact
             key={transport}
             ref={fields}
             transport={transport as "http" | "stdio"}
@@ -372,10 +474,21 @@ export default function ConnectorEditor({
         </div>
         <div className="editor-actions">
           <button
-            className="primary"
-            disabled={busy || recovery.blocked || !!unknown}
+            type="button"
+            className="secondary"
+            disabled={busy}
+            onClick={onClose}
           >
-            {busy && <LoaderCircle size={16} className="spin" />}保存
+            取消
+          </button>
+          <button
+            className="primary"
+            disabled={
+              busy || readingCertificate || recovery.blocked || !!unknown
+            }
+          >
+            {busy && <LoaderCircle size={16} className="spin" />}
+            {connector ? "保存" : "添加"}
           </button>
         </div>
       </form>

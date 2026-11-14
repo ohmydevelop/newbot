@@ -1,3 +1,5 @@
+import { SearchIcon as Search } from "./ReferenceIcons";
+import { SkillIcon, PluginIcon, ExpertIcon } from "./AppIcons";
 import {
   useEffect,
   useId,
@@ -8,7 +10,7 @@ import {
   type RefObject,
 } from "react";
 import * as Popover from "@radix-ui/react-popover";
-import { Check, RefreshCw, Search, X } from "lucide-react";
+import { Check, RefreshCw, X } from "lucide-react";
 import type { Json } from "../../shared/types";
 import { skillLabel } from "../../shared/skills";
 import { request, loadSettings, useApp } from "../store";
@@ -421,6 +423,13 @@ export function useComposerMentions({
               onPointerMove={() => setIndex(i)}
               onClick={() => void select(entry)}
             >
+              {entry.kind === "expert" ? (
+                <ExpertIcon size={18} />
+              ) : entry.kind === "plugin" ? (
+                <PluginIcon size={18} />
+              ) : (
+                <SkillIcon size={18} />
+              )}
               <span>
                 <strong>{entry.displayName || entry.name}</strong>
                 <small>

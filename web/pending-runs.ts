@@ -1,7 +1,9 @@
+import type { SubmissionPreview } from "./submission-preview";
 export type PendingSubmission = {
   id: string;
   origin: string;
   fingerprint: string;
+  preview?: SubmissionPreview;
   state: "submitting" | "unknown" | "awaiting_credentials";
   status?: Record<string, any>;
 };
@@ -33,6 +35,19 @@ export function restorePending(
           id,
           {
             ...r,
+            preview:
+              typeof r.preview?.text === "string" &&
+              Array.isArray(r.preview?.beforeTurns) &&
+              r.preview.beforeTurns.every(
+                (x: unknown) => typeof x === "string",
+              ) &&
+              Array.isArray(r.preview?.files) &&
+              r.preview.files.every(
+                (f: any) =>
+                  typeof f?.id === "string" && typeof f?.name === "string",
+              )
+                ? r.preview
+                : undefined,
             state:
               r.state === "awaiting_credentials"
                 ? "awaiting_credentials"

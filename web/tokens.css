@@ -1,0 +1,80 @@
+/* Shared semantic tokens: chat, settings, menus, apps and previews. */
+:root {
+  font-family:
+    "Noto Sans", "Noto Sans CJK SC", "PingFang SC", "Microsoft YaHei",
+    "Segoe UI", "Hiragino Sans GB", "Source Han Sans SC", system-ui, sans-serif;
+  font-synthesis: none;
+  font-weight: 500;
+  color-scheme: light;
+  --content-width: 752px;
+  --navigation-width: 256px;
+  --navigation-rail-width: 57px;
+  --motion-navigation: 300ms;
+  --ease-navigation: cubic-bezier(0.23, 1, 0.32, 1);
+  --radius-control: 12px;
+  --radius-panel: 20px;
+  --radius-composer: 24px;
+  --motion-fast: 100ms;
+  --motion-panel: 180ms;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --panel-shadow: 0 12px 40px #00000018;
+  --focus: #545454;
+  --bg: #ffffff;
+  --sidebar: #f8f8f7;
+  --surface: #f3f3f2;
+  --hover: #eaeae8;
+  --text: #171717;
+  --muted: #646464;
+  --line: #e5e5e3;
+  --strong: #1b1a18;
+  --on-strong: #fff;
+  --danger: #b42318;
+  --danger-fill: #b42318;
+  --permission-risk: #b54708;
+  --on-danger: #ffffff;
+  --menu-bg: #ffffff;
+  --control-hover: #2b2a27;
+  --code: #f4f2ef;
+  --success: #25694d;
+  --accent: #0b7ce0;
+  --accent-soft: #e8f3fe;
+  --entity: #a86412;
+  --on-accent: #ffffff;
+  --a2ui-radius-panel: 18px;
+  --a2ui-radius-field: 12px;
+  --a2ui-pad: 24px;
+  --a2ui-gap: 16px;
+  --a2ui-font: 15.5px;
+  --a2ui-line: 1.75;
+  --a2ui-track: 0.04em;
+  color: var(--text);
+  background: var(--bg);
+  font-size: 14px;
+  line-height: 1.5;
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --panel-shadow: 0 16px 48px #00000055;
+  --focus: #c4c4c4;
+  --bg: #131211;
+  --sidebar: #131211;
+  --surface: #201f1d;
+  --hover: #2a2928;
+  --text: #fcfcfc;
+  --muted: #9e9e9e;
+  --line: #2d2c2a;
+  --strong: #fcfcfc;
+  --on-strong: #131211;
+  --danger: #ff9a90;
+  --danger-fill: #f08e85;
+  --permission-risk: #ff975a;
+  --on-danger: #30120f;
+  --menu-bg: #201f1d;
+  --control-hover: #ffffff;
+  --code: #1b1a18;
+  --success: #8fd3b3;
+  --accent: #299fff;
+  --accent-soft: #14293b;
+  --entity: #f5a742;
+  --on-accent: #0d1b2a;
+}

@@ -1,7 +1,7 @@
 import { confirmedPluginHooks } from "./plugin-hook-trust.js";
 import { ExtensionResources, type PreparedResource } from "./extension-resources.js";
 import { nativePluginAssets } from "./plugin-assets.js";
-import { githubCatalog, pinnedGithubSource } from "./github-imports.js";
+import { githubBytes, githubCatalog, pinnedGithubSource } from "./github-imports.js";
 import { randomUUID } from "node:crypto";
 import {
   lstat,
@@ -77,37 +77,6 @@ const selection = z.object({
     .min(1)
     .max(limits.skills),
 });
-async function githubBytes(url: string, limit: number) {
-  const response = await fetch(url, {
-    redirect: "error",
-    signal: AbortSignal.timeout(30_000),
-    headers: {
-      Accept: "application/vnd.github+json",
-      "User-Agent": "newbot-import/1",
-    },
-  });
-  if (!response.ok || !response.body)
-    throw new PublicError(
-      `GitHub 下载失败（${response.status}），请检查公开访问、ref 或改用本地 ZIP`,
-    );
-  if (Number(response.headers.get("content-length") || 0) > limit)
-    throw new PublicError("GitHub 内容超过下载预算");
-  const chunks: Uint8Array[] = [];
-  let bytes = 0;
-  const reader = response.body.getReader();
-  try {
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      bytes += value.length;
-      if (bytes > limit) throw new PublicError("GitHub 内容超过下载预算");
-      chunks.push(value);
-    }
-  } finally {
-    await reader.cancel();
-  }
-  return Buffer.concat(chunks);
-}
 export function extensionImports(
   directory: string,
   db: Store,

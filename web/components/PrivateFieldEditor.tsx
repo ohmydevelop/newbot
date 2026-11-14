@@ -1,6 +1,10 @@
 import { forwardRef, useImperativeHandle, useRef, useState } from "react";
 import { Plus, Trash2 } from "lucide-react";
-import type { AuthenticationView, PrivateField, PrivateFieldView } from "../../shared/credentials";
+import type {
+  AuthenticationView,
+  PrivateField,
+  PrivateFieldView,
+} from "../../shared/credentials";
 export type PrivateFieldsDraft = {
   fields: PrivateField[];
   values: Record<string, string>;
@@ -19,16 +23,27 @@ export default forwardRef<
     legacyBearer?: boolean;
     authentication?: AuthenticationView;
     disabled: boolean;
+    compact?: boolean;
     provider?: boolean;
   }
 >(function PrivateFieldEditor(
-  { transport, initial, legacyBearer, authentication, disabled, provider },
+  {
+    transport,
+    initial,
+    legacyBearer,
+    authentication,
+    disabled,
+    provider,
+    compact,
+  },
   ref,
 ) {
   const [auth, setAuth] = useState(
-    authentication?.source === "external" ? "external" : initial?.fields.some((f) => f.kind === "bearer") || legacyBearer
-      ? "bearer"
-      : "none",
+    authentication?.source === "external"
+      ? "external"
+      : initial?.fields.some((f) => f.kind === "bearer") || legacyBearer
+        ? "bearer"
+        : "none",
   );
   const [rows, setRows] = useState(
     () =>
@@ -40,9 +55,10 @@ export default forwardRef<
     !!initial?.fields.length && initial.fields.every((f) => !f.stored),
   );
   const inputs = useRef(new Map<string, HTMLInputElement>());
-  const bearerStored = authentication?.state !== "invalid" && (
-    initial?.fields.some((f) => f.kind === "bearer" && f.stored) ||
-    (legacyBearer && authentication?.state !== "missing"));
+  const bearerStored =
+    authentication?.state !== "invalid" &&
+    (initial?.fields.some((f) => f.kind === "bearer" && f.stored) ||
+      (legacyBearer && authentication?.state !== "missing"));
   const fields = () => [
     ...(transport === "http" && auth === "bearer"
       ? [{ kind: "bearer" as const, name: "Authorization" }]
@@ -90,18 +106,25 @@ export default forwardRef<
     else inputs.current.delete(id);
   };
   return (
-    <fieldset className="private-fields" disabled={disabled || authentication?.source === "external"}>
-      <legend>{transport === "stdio" ? "环境变量" : "认证"}</legend>
+    <fieldset
+      className="private-fields"
+      disabled={disabled || authentication?.source === "external"}
+    >
+      <legend className={compact ? "sr-only" : undefined}>
+        {transport === "stdio" ? "环境变量" : "认证"}
+      </legend>
       {transport === "http" && (
         <label className="field-label">
-          认证方式
+          <span className={compact ? "sr-only" : undefined}>认证方式</span>
           <select
             aria-label="认证方式"
             value={auth}
             onChange={(e) => setAuth(e.target.value)}
           >
             <option value="none">无需认证</option>
-            {auth === "external" && <option value="external">由服务端配置</option>}
+            {auth === "external" && (
+              <option value="external">由服务端配置</option>
+            )}
             {!provider && <option value="oauth">OAuth 登录</option>}
             <option value="bearer">
               {provider ? "API Key" : "Bearer Token"}
@@ -109,8 +132,14 @@ export default forwardRef<
           </select>
         </label>
       )}
-      {authentication?.state === "invalid" && <p className="inline-error" role="status">已保存凭证与当前接收方不匹配或暂不可用，请重新填写。</p>}
-      {authentication?.source === "external" && <p className="muted">认证由服务端配置管理，本次编辑会保留。</p>}
+      {authentication?.state === "invalid" && (
+        <p className="inline-error" role="status">
+          已保存凭证与当前接收方不匹配或暂不可用，请重新填写。
+        </p>
+      )}
+      {authentication?.source === "external" && (
+        <p className="muted">认证由服务端配置管理，本次编辑会保留。</p>
+      )}
       {(auth === "bearer" || rows.length > 0) && (
         <label className="provider-checkbox">
           <input

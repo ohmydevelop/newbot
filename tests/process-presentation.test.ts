@@ -40,17 +40,17 @@ test("process grouping preserves order, visible forms and stable app identity", 
     "output:t",
   );
 });
-test("tool labels are semantic without disguising an unknown function", () => {
+test("tool summaries use published labels and leave protocol identifiers to details", () => {
   assert.equal(
     toolTitle({ id: "1", type: "mcpToolCall", tool: "opaque_tool" }),
-    "调用工具 · opaque_tool",
+    "使用工具",
   );
   assert.equal(
     toolTitle(
       { id: "1", type: "mcpToolCall", tool: "opaque_tool" },
       "查询账单",
     ),
-    "调用工具 · 查询账单",
+    "查询账单",
   );
   assert.equal(toolTitle({ id: "1", type: "imageGeneration" }), "生成图片");
   assert.equal(toolTitle({ id: "1", type: "futureActivity" }), "执行活动");
@@ -65,11 +65,62 @@ test("unlabelled intermediate replies group consistently across streaming and hi
     { id: "answer", type: "agentMessage", text: "Verified" },
   ];
   const running = presentationBlocks(items, new Set(["tool"]), "inProgress");
-  const history = presentationBlocks(structuredClone(items), new Set(["tool"]), "completed");
-  assert.deepEqual(running.map((b) => b.id), history.map((b) => b.id));
-  assert.deepEqual(history.map((b) => b.id), ["message:u", "process:intro", "output:tool", "process:mid", "message:answer"]);
-  assert.equal(Object.hasOwn(items[1], "phase"), false, "native evidence remains unchanged");
-  const explicit = presentationBlocks([{ id: "f", type: "agentMessage", phase: "final_answer" }, { id: "late", type: "sleep" }], new Set(), "completed");
-  assert.equal(explicit[0].kind, "message", "an explicit final answer is authoritative");
-  assert.equal(presentationBlocks([items[5]], new Set(), "failed")[0].kind, "message");
+  const history = presentationBlocks(
+    structuredClone(items),
+    new Set(["tool"]),
+    "completed",
+  );
+  assert.deepEqual(
+    running.map((b) => b.id),
+    history.map((b) => b.id),
+  );
+  assert.deepEqual(
+    history.map((b) => b.id),
+    [
+      "message:u",
+      "process:intro",
+      "output:tool",
+      "process:mid",
+      "message:answer",
+    ],
+  );
+  assert.equal(
+    Object.hasOwn(items[1], "phase"),
+    false,
+    "native evidence remains unchanged",
+  );
+  const explicit = presentationBlocks(
+    [
+      { id: "f", type: "agentMessage", phase: "final_answer" },
+      { id: "late", type: "sleep" },
+    ],
+    new Set(),
+    "completed",
+  );
+  assert.equal(
+    explicit[0].kind,
+    "message",
+    "an explicit final answer is authoritative",
+  );
+  assert.equal(
+    presentationBlocks([items[5]], new Set(), "failed")[0].kind,
+    "message",
+  );
+});
+
+
+test("native reasoning lifecycle carries truthful step states and cancellation never completes unfinished work", async () => {
+  const {AgentEvents}=await import("../server/ag-ui.js");
+  const {toolStatus}=await import("../web/chat-presentation.js");
+  const events=new AgentEvents(), output:any[]=[];
+  events.on("event",e=>output.push(e));
+  const item={id:"r",type:"reasoning",summary:["Inspect records"],content:[]};
+  events.notification({method:"item/started",params:{threadId:"t",turnId:"u",item}} as any);
+  const started=output.find(e=>e.content?.item)?.content.item;
+  assert.equal(toolStatus(started,true).label,"执行中");
+  assert.equal(toolStatus(started,false).label,"未完成");
+  events.notification({method:"item/completed",params:{threadId:"t",turnId:"u",item}} as any);
+  const completed=output.filter(e=>e.content?.item).at(-1).content.item;
+  assert.equal(toolStatus(completed,false).label,"已完成");
+  assert.equal(toolStatus({...item,status:"failed"},false).label,"失败");
 });

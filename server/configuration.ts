@@ -231,6 +231,7 @@ export function configuration(
                     command: server.command,
                     args: server.args,
                     url: server.url,
+                    caCertificate: server.tls_ca_certificate,
                   },
                 }
               : {}),
@@ -283,25 +284,49 @@ export function configuration(
       ["mcp", publicView.mcp],
     ] as const) {
       for (const entry of targets) {
-        const raw = object(object(scope === "provider" ? config.model_providers : config.mcp_servers)[entry.id]);
+        const raw = object(
+          object(
+            scope === "provider" ? config.model_providers : config.mcp_servers,
+          )[entry.id],
+        );
         const fieldSet = entry.privateFields;
-        const ref = scope === "provider" ? raw.env_key : raw.bearer_token_env_var;
-        const legacyManaged = typeof ref === "string" && ref.startsWith("NEWBOT_CREDENTIAL_KEY_");
-        const legacySaved = (!fieldSet || fieldSet.revision === "absent") && entry.managedCredential?.stored;
+        const ref =
+          scope === "provider" ? raw.env_key : raw.bearer_token_env_var;
+        const legacyManaged =
+          typeof ref === "string" && ref.startsWith("NEWBOT_CREDENTIAL_KEY_");
+        const legacySaved =
+          (!fieldSet || fieldSet.revision === "absent") &&
+          entry.managedCredential?.stored;
         // A saved field set, including an explicitly empty one, supersedes the
         // legacy credential reference. The injector follows the same precedence.
         const fieldsOwned = !!fieldSet && fieldSet.revision !== "absent";
-        const managed = fieldsOwned ? !!fieldSet.fields.length : legacyManaged || legacySaved;
-        const external = scope === "provider"
-          ? entry.credentials !== "none" && !legacyManaged
-          : !!(entry.credentials || ("hasEnvironment" in entry && entry.hasEnvironment)) && !legacyManaged;
+        const managed = fieldsOwned
+          ? !!fieldSet.fields.length
+          : legacyManaged || legacySaved;
+        const external =
+          scope === "provider"
+            ? entry.credentials !== "none" && !legacyManaged
+            : !!(
+                entry.credentials ||
+                ("hasEnvironment" in entry && entry.hasEnvironment)
+              ) && !legacyManaged;
         entry.authentication = managed
           ? {
               source: "managed",
               state: fieldSet?.fields.length
-                ? !fieldSet.valid ? "invalid" : fieldSet.fields.every((f) => f.stored) ? "saved" : "missing"
-                : ["binding_changed", "locked"].includes(entry.managedCredential?.state || "") || (legacySaved && entry.managedCredential?.state === "none")
-                  ? "invalid" : entry.managedCredential?.stored ? "saved" : "missing",
+                ? !fieldSet.valid
+                  ? "invalid"
+                  : fieldSet.fields.every((f) => f.stored)
+                    ? "saved"
+                    : "missing"
+                : ["binding_changed", "locked"].includes(
+                      entry.managedCredential?.state || "",
+                    ) ||
+                    (legacySaved && entry.managedCredential?.state === "none")
+                  ? "invalid"
+                  : entry.managedCredential?.stored
+                    ? "saved"
+                    : "missing",
             }
           : external
             ? { source: "external", state: "external" }
@@ -330,7 +355,13 @@ export function configuration(
     try {
       const before = await read();
       if (!matches(before, expectedRevision, scope))
-        fail(expectedRevision === "absent" ? "目标已存在，请读取最新配置后编辑" : "配置已被其他操作修改，请读取最新配置并重新确认", 409, "conflict");
+        fail(
+          expectedRevision === "absent"
+            ? "目标已存在，请读取最新配置后编辑"
+            : "配置已被其他操作修改，请读取最新配置并重新确认",
+          409,
+          "conflict",
+        );
       const change = await prepare(before);
       if (runtime && change.edits.some((e) => providerParameter(e.keyPath))) {
         if (!change.edits.every((e) => providerParameter(e.keyPath)))

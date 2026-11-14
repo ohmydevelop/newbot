@@ -41,7 +41,12 @@ export type ConfigurationView = {
   mcp: {
     id: string;
     name?: string;
-    definition?: { command?: string; args?: string[]; url?: string };
+    definition?: {
+      command?: string;
+      args?: string[];
+      url?: string;
+      caCertificate?: string;
+    };
     editable: boolean;
     managedCredential?: CredentialMetadata;
     privateFields?: import("./credentials.js").PrivateFieldView;

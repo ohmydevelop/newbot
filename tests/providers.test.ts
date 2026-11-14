@@ -633,3 +633,25 @@ test("model catalog retains all purposes including default and manual entries", 
     await new Promise<void>((r) => upstream.close(() => r()));
   }
 });
+
+test("supplemental followups use the selected route, disable tools and accept only structured text", async () => {
+  const bodies: any[] = [];
+  let output: any[] = [{type: "message", content: [{type: "output_text",text: JSON.stringify({suggestions: ["如何监控连接池等待时间？", "怎样识别未释放的数据库连接？"]})}]}];
+  const server = httpServer(async (req, res) => {
+    let body = "";for await(const chunk of req) body += chunk;
+    bodies.push(JSON.parse(body));assert.equal(req.url,"/v1/responses");
+    res.setHeader("Content-Type","application/json");res.end(JSON.stringify({status:"completed",output}));
+  });
+  await new Promise<void>(r=>server.listen(0,"127.0.0.1",r));
+  try {
+    await fixture(async ({manager,codex}:any)=>{
+      const questions = await manager.followups("thread-id","secondary","secondary-model","连接池等待超时");
+      assert.equal(questions.length,2);assert.equal(bodies[0].model,"secondary-model");
+      assert.deepEqual(bodies[0].tools,[]);assert.equal(bodies[0].tool_choice,"none");assert.equal(bodies[0].store,false);
+      assert.equal(bodies[0].text.format.type,"json_schema");
+      assert.equal(codex.calls.filter((c:any)=>c.method==="turn/start").length,0);
+      output=[{type:"function_call",name:"exec",arguments:"{}"}];
+      await assert.rejects(manager.followups("thread-id","secondary","secondary-model","context"),/追问生成失败/);
+    },`http://127.0.0.1:${(server.address() as any).port}/v1`);
+  } finally {await new Promise<void>(r=>server.close(()=>r()));}
+});

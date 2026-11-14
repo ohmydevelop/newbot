@@ -1,5 +1,5 @@
 import { lazy, Suspense, useState, useEffect, useRef } from "react";
-import { AlertCircle, CornerDownRight, LoaderCircle, RefreshCw } from "lucide-react";
+import { AlertCircle, LoaderCircle, RefreshCw } from "lucide-react";
 import type { Turn } from "../../../shared/types";
 import { loadThread, useApp } from "../../store";
 import {
@@ -8,11 +8,12 @@ import {
 } from "../../../shared/thread-activity";
 import {
   turnFeedback,
+  activityLabel,
   hasItemOutput,
   presentationBlocks,
 } from "../../chat-presentation";
 import { Message, ItemOutput } from "./Message";
-import { extractSuggestions } from "../../../shared/suggestions";
+import { FollowUps } from "./FollowUps";
 import { ContentBoundary } from "./ContentBoundary";
 import { ProcessGroup } from "./ProcessGroup";
 const Artifacts = lazy(() =>
@@ -67,7 +68,7 @@ function TurnFeedback({ turn, threadId }: { turn: Turn; threadId: string }) {
           <details className="turn-diagnostic">
             <summary>诊断信息</summary>
             {turn.error?.httpStatus && (
-              <small>网关响应：HTTP {turn.error.httpStatus}</small>
+              <small>模型服务响应：HTTP {turn.error.httpStatus}</small>
             )}
             {turn.error?.code && <small>错误类型：{turn.error.code}</small>}
             <small>任务编号：{turn.id}</small>
@@ -108,25 +109,6 @@ function TurnFeedback({ turn, threadId }: { turn: Turn; threadId: string }) {
     </div>
   );
 }
-function modelSuggestions(turn: Turn): string[] {
-  for (const item of [...turn.items].reverse())
-    if (item.type === "agentMessage" && typeof item.text === "string")
-      return extractSuggestions(item.text).suggestions;
-  return [];
-}
-
-function followUps(turn: Turn): string[] {
-  const text = turn.items
-    .filter((item) => item.type === "agentMessage" && typeof item.text === "string")
-    .map((item) => item.text)
-    .join("\n");
-  if (/```/.test(text))
-    return ["解释这段代码", "给一个可直接运行的示例", "这段代码有什么潜在问题？"];
-  if (/^\s*[-*]\s/m.test(text) || /\|/.test(text))
-    return ["把上面几点总结成三条", "展开第一点", "给一个具体例子"];
-  return ["继续展开", "给一个具体例子", "还有别的方案吗？"];
-}
-
 export function ChatTurn({
   turn,
   threadId,
@@ -178,7 +160,7 @@ export function ChatTurn({
     elapsed === null
       ? "时长未知"
       : `${Math.floor(elapsed / 60000) > 0 ? `${Math.floor(elapsed / 60000)} 分 ` : ""}${Math.floor(elapsed / 1000) % 60} 秒`;
-  const heading = `${waiting ? `${waitingLabel(waiting)} · 总历时` : turn.status === "inProgress" ? "正在处理" : elapsed === null ? "执行过程" : "用时"}${elapsed !== null ? ` ${label}` : ""}`;
+  const heading = `${waiting ? `${waitingLabel(waiting)} · 总历时` : turn.status === "inProgress" ? activityLabel(turn.items) : elapsed === null ? "执行过程" : "用时"}${elapsed !== null ? ` ${label}` : ""}`;
   let firstProcess = true;
   return (
     <div className="turn" data-turn-id={turn.id}>
@@ -194,6 +176,7 @@ export function ChatTurn({
               turnId={turn.id}
               label={first ? heading : `后续过程 · ${block.items.length} 项`}
               running={turn.status === "inProgress" && !waiting}
+              active={turn.status === "inProgress"}
             >
               {first && <WaitingLink waiting={waiting} />}
             </ProcessGroup>
@@ -244,27 +227,14 @@ export function ChatTurn({
           </div>
         )}
       <TurnFeedback turn={turn} threadId={threadId} />
-      {isLast &&
-        onSuggest &&
-        turn.status === "completed" &&
-        !turn.items.some((item) => item.type === "agentMessage" && !item.text) && (
-          <div className="follow-ups" aria-label="推荐追问">
-            {(modelSuggestions(turn).length
-              ? modelSuggestions(turn)
-              : followUps(turn)
-            ).map((text) => (
-              <button
-                type="button"
-                className="follow-up"
-                key={text}
-                onClick={() => onSuggest(text)}
-              >
-                <CornerDownRight size={16} aria-hidden="true" />
-                <span>{text}</span>
-              </button>
-            ))}
-          </div>
-        )}
+      {isLast && onSuggest && (
+        <FollowUps
+          key={`${threadId}:${turn.id}`}
+          threadId={threadId}
+          turn={turn}
+          onSuggest={onSuggest}
+        />
+      )}
     </div>
   );
 }

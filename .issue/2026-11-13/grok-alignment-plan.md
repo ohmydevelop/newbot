@@ -110,3 +110,6 @@
 **验证**：`tests/suggestions.test.ts` 3 项（正常、无块、非法/超长/超量）；用模拟模型输出验证：正文只显示“这是动态答案。”，脚本块不出现，按钮为模型给出的两条（截图 `followups-dynamic.png`）。真实模型是否每次都遵守提示词，需要后续用实际对话观察；不遵守时仍有启发式兜底。
 
 `npm test` 512 项（511 通过 / 1 跳过 / 0 失败），构建通过，服务已重启。
+
+## 后续纠正：固定追问与真实漏块（2026-11-13）
+上文“推荐引导改为模型动态生成（已完成）”没有覆盖真实模型漏块，并保留了固定兜底，不能视为该缺陷的完整验收。新一轮原因、实施及真实验证见[context-followups-plan.md](context-followups-plan.md)与[context-followups-progress.md](context-followups-progress.md)。历史记录保留，最终行为以新记录为准。

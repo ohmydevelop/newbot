@@ -13,17 +13,21 @@ export const expertSave = z
     expectedRevision: z.number().int().nonnegative().optional(),
     name: z.string().trim().min(1).max(80),
     description: z.string().trim().max(500).default(""),
+    instructions: z.string().trim().max(20000).default(""),
     ...expertMembers.shape,
   })
   .refine(
-    (p) => p.skillIds.length + p.pluginIds.length + p.connectorIds.length > 0,
-    { message: "请至少选择一个扩展" },
+    (p) =>
+      !!p.instructions ||
+      p.skillIds.length + p.pluginIds.length + p.connectorIds.length > 0,
+    { message: "请填写提示词或选择一个扩展" },
   );
 export type ExpertMembers = z.infer<typeof expertMembers>;
 export type ExpertReference = { id: string; name: string; revision: number };
 export type Expert = ExpertMembers &
   ExpertReference & {
     description: string;
+    instructions?: string;
     available: boolean;
     problems: string[];
   };

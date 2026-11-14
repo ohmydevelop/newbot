@@ -1,3 +1,4 @@
+import { SearchIcon as Search } from "./ReferenceIcons";
 import { useEffect, useRef, useState } from "react";
 import * as Popover from "@radix-ui/react-popover";
 import * as Slider from "@radix-ui/react-slider";
@@ -8,7 +9,6 @@ import {
   RefreshCw,
   RotateCcw,
   LoaderCircle,
-  Search,
   X,
   ChevronLeft,
 } from "lucide-react";
@@ -406,8 +406,8 @@ export default function RuntimeSelector({
             <input
               ref={search}
               type="search"
-              aria-label="搜索网关或模型"
-              placeholder="搜索网关或模型"
+              aria-label="搜索模型服务或模型"
+              placeholder="搜索模型服务或模型"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               onKeyDown={(e) => modelKeys(e, true)}
@@ -459,7 +459,7 @@ export default function RuntimeSelector({
             )}
             {mutating && (
               <p role="status" className="muted">
-                正在检查并更新模型设置…首次使用可能需要验证网关能力。
+                正在检查并更新模型设置…首次使用可能需要验证模型服务能力。
               </p>
             )}
           </div>
@@ -529,7 +529,7 @@ export default function RuntimeSelector({
                         </button>
                       ))}
                       {!g.matches.length && !g.error && !g.profileError && (
-                        <p className="menu-empty">此网关暂未提供模型</p>
+                        <p className="menu-empty">此模型服务暂未提供模型</p>
                       )}
                     </div>
                   )}
@@ -538,7 +538,7 @@ export default function RuntimeSelector({
             })}
             {!reading && !groups.length && (
               <p className="menu-empty">
-                {filter ? "没有匹配的模型" : "没有可用的网关"}
+                {filter ? "没有匹配的模型" : "没有可用的模型服务"}
               </p>
             )}
           </div>

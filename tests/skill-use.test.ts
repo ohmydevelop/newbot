@@ -423,7 +423,14 @@ test("session associations survive restart, reject stale sends, and persist afte
     // Dispatch keeps the association: the next turn inherits the same skill.
     assert.deepEqual(c.ctx.service.inputs.get(threadId), {
       revision: 2,
-      skills: [c.selected],
+      skills: [
+        {
+          ...c.selected,
+          name: "code-review",
+          displayName: "代码审查",
+          scope: c.doc.skill.scope,
+        },
+      ],
       plugins: [],
     });
     const count = c.codex.calls.filter((v) => v.method === "turn/start").length;
@@ -472,6 +479,43 @@ test("session associations survive restart, reject stale sends, and persist afte
         })
       ).statusCode,
       200,
+    );
+  } finally {
+    await c.close();
+  }
+});
+
+test("dispatch keeps skill labels and repairs legacy references by exact thread and hash after restart", async () => {
+  const c = await setup();
+  try {
+    const result = await c.post({
+      requestId: randomUUID(),
+      text: "legacy labels",
+      skills: [c.selected],
+    });
+    assert.equal(result.statusCode, 200, result.body);
+    const threadId = result.json().threadId;
+    const saved = c.ctx.service.inputs.get(threadId);
+    assert.equal(saved.skills[0].displayName, "代码审查");
+    assert.equal(saved.skills[0].name, "code-review");
+    c.codex.finish(threadId);
+    // Reproduce the old stored shape, then change the current catalog.
+    c.ctx.db.raw
+      .prepare("UPDATE session_inputs SET content=? WHERE thread_id=?")
+      .run(JSON.stringify({ skills: [c.selected], plugins: [] }), threadId);
+    c.codex.skills[0].name = "new name";
+    c.codex.skills[0].enabled = false;
+    writeFileSync(c.doc.skill.path, "changed content");
+    await c.restart();
+    assert.deepEqual(c.ctx.service.inputs.get(threadId), saved);
+    const wrongHash = { ...c.selected, sha256: "unmatched-version" };
+    c.ctx.db.raw
+      .prepare("UPDATE session_inputs SET content=? WHERE thread_id=?")
+      .run(JSON.stringify({ skills: [wrongHash], plugins: [] }), threadId);
+    assert.deepEqual(c.ctx.service.inputs.get(threadId).skills, [wrongHash]);
+    assert.equal(
+      (await c.ctx.service.skills.read(c.selected.id)).skill.enabled,
+      false,
     );
   } finally {
     await c.close();

@@ -29,7 +29,7 @@ app.post("/api/test/mcp-config", async (request) => {
   else if (action === "ok") codex.states.delete("local");
   else if (action === "oauth-complete")
     codex.emit("event", {
-      method: "mcpServer/oauth/login/completed",
+      method: "mcpServer/oauthLogin/completed",
       params: {},
     });
   else if (action === "fail-reload") codex.failReload = true;

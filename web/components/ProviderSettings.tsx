@@ -161,9 +161,9 @@ export default function ProviderSettings() {
     />
   );
   return (
-    <section className="provider-settings" aria-label="网关管理">
+    <section className="provider-settings" aria-label="模型服务管理">
       <div className="section-heading">
-        <h3>网关</h3>
+        <h3>模型服务</h3>
         <div className="section-actions">
           {config?.providerSourceConfigured && (
             <button
@@ -191,8 +191,8 @@ export default function ProviderSettings() {
 
           <button
             className="icon-button"
-            aria-label="添加网关"
-            title="添加网关"
+            aria-label="添加模型服务"
+            title="添加模型服务"
             disabled={!!busy || recovery.blocked || !config?.writable}
             onClick={() => edit()}
           >
@@ -200,8 +200,8 @@ export default function ProviderSettings() {
           </button>
           <button
             className="icon-button"
-            aria-label="刷新网关"
-            title="刷新网关"
+            aria-label="刷新模型服务"
+            title="刷新模型服务"
             disabled={!!busy}
             onClick={() => void action("reload", refresh)}
           >
@@ -219,17 +219,17 @@ export default function ProviderSettings() {
         </p>
       )}
       {config?.providerStorage === "memory" && (
-        <p className="muted">当前网关仅临时保存，服务重启后需重新配置。</p>
+        <p className="muted">当前模型服务仅临时保存，服务重启后需重新配置。</p>
       )}
       {config && !config.providers.some((p) => !p.missing) && (
-        <p className="muted">尚未添加网关</p>
+        <p className="muted">尚未添加模型服务</p>
       )}
       {catalogError && (
         <p role="alert" className="inline-error">
           {catalogError}
         </p>
       )}
-      <div className="gateway-grid" role="group" aria-label="选择默认网关">
+      <div className="gateway-grid" role="group" aria-label="选择默认模型服务">
         {providers.map((p) => {
           const entry = catalog[p.id],
             name = p.summary?.name || p.id;
@@ -248,7 +248,7 @@ export default function ProviderSettings() {
                 type="button"
                 className="gateway-select"
                 aria-pressed={p.current}
-                aria-label={`${name}，${p.current ? "当前默认网关" : "选择为默认网关"}`}
+                aria-label={`${name}，${p.current ? "当前默认模型服务" : "选择为默认模型服务"}`}
                 disabled={disabled}
                 onClick={() => {
                   if (p.current) return;
@@ -299,7 +299,7 @@ export default function ProviderSettings() {
                   data-variant="destructive"
                   aria-label={`删除 ${name}`}
                   title={
-                    p.summary?.editable ? "删除网关" : "此网关由其他来源管理"
+                    p.summary?.editable ? "删除模型服务" : "此模型服务由其他来源管理"
                   }
                   onClick={() => {
                     edit(p.id);
@@ -374,9 +374,9 @@ export default function ProviderSettings() {
               return (
                 <>
                   {deleting && (
-                    <div role="group" aria-label="确认删除网关">
+                    <div role="group" aria-label="确认删除模型服务">
                       <p>
-                        删除后无法从此处恢复。历史会话仍在使用的网关不能删除。
+                        删除后无法从此处恢复。历史会话仍在使用的模型服务不能删除。
                       </p>
                       <button
                         type="button"
@@ -408,7 +408,7 @@ export default function ProviderSettings() {
         </GatewayEditor>
       )}
       <span className="sr-only" role="status">
-        {busy ? "正在处理网关配置" : notice}
+        {busy ? "正在处理模型服务配置" : notice}
       </span>
       {!draft && feedback}
     </section>

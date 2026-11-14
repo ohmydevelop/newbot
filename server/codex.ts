@@ -11,6 +11,7 @@ import {
 import { PublicError } from "./public-error.js";
 import type { ChildProcessWithoutNullStreams } from "node:child_process";
 import { EventEmitter } from "node:events";
+import { mcpOAuthSettings } from "./oauth.js";
 import { testMcpArgs } from "./test-mcp.js";
 import { CODEX_VERSION } from "../generated/version.js";
 import { prepareRuntimeIsolation } from "./runtime-isolation.js";
@@ -22,7 +23,10 @@ import type { Method, Params, Result } from "./protocol.js";
 import type { DynamicToolCallResponse } from "../generated/codex/v2/DynamicToolCallResponse.js";
 export type ToolRequest = Extract<ServerRequest, { method: "item/tool/call" }>;
 export class Codex extends EventEmitter {
-  discoveryMarketplaces?: string[];
+  discoveryMarketplaces?: Record<
+    string,
+    { source_type: string; source: string }
+  >;
   discoveryPlugins?: Record<string, { enabled: boolean }>;
   get child(): ChildProcessWithoutNullStreams | undefined {
     return this.transport.child;
@@ -162,21 +166,25 @@ export class Codex extends EventEmitter {
           `sqlite_home=${JSON.stringify(isolated.codexHome)}`,
           ...(this.providerRuntime ? ["-c", 'model_provider="openai"'] : []),
           ...(logs ? ["-c", `log_dir=${JSON.stringify(logs.path)}`] : []),
-          ...(process.env.MCP_OAUTH_CALLBACK_PORT &&
-          process.env.MCP_OAUTH_CALLBACK_URL
+          ...(mcpOAuthSettings()
             ? [
                 "-c",
-                `mcp_oauth_callback_port=${Number(process.env.MCP_OAUTH_CALLBACK_PORT)}`,
+                `mcp_oauth_callback_port=${mcpOAuthSettings()!.port}`,
                 "-c",
-                `mcp_oauth_callback_url=${JSON.stringify(process.env.MCP_OAUTH_CALLBACK_URL)}`,
+                `mcp_oauth_callback_url=${JSON.stringify(mcpOAuthSettings()!.callback)}`,
               ]
             : []),
-          ...(this.discoveryMarketplaces || []).flatMap((path) => [
-            "-c",
-            'marketplaces.newbot-imports.source_type="local"',
-            "-c",
-            `marketplaces.newbot-imports.source=${JSON.stringify(path)}`,
-          ]),
+          ...(this.discoveryMarketplaces
+            ? [
+                "-c",
+                `marketplaces={${Object.entries(this.discoveryMarketplaces)
+                  .map(
+                    ([name, value]) =>
+                      `${JSON.stringify(name)}={source_type="local",source=${JSON.stringify(value.source)}}`,
+                  )
+                  .join(",")}}`,
+              ]
+            : []),
           ...(this.discoveryPlugins
             ? [
                 "-c",
@@ -313,7 +321,7 @@ export class Codex extends EventEmitter {
       this.emit("toolResolved", params.requestId);
     }
     if (
-      /^(thread\/|turn\/|item\/|error$|serverRequest\/resolved$|mcpServer\/oauth\/login\/completed$)/.test(
+      /^(thread\/|turn\/|item\/|error$|serverRequest\/resolved$|mcpServer\/(?:oauthLogin|oauth\/login)\/completed$)/.test(
         message.method,
       )
     )
@@ -347,7 +355,7 @@ export class Codex extends EventEmitter {
     if (!this.home || this.state !== "ready")
       throw new PublicError("原生扩展目录未就绪");
     const probe = new Codex(this.cwd, () => ({ CODEX_HOME: this.home }));
-    probe.discoveryMarketplaces = this.extensionRuntime?.marketplaceRoots();
+    probe.discoveryMarketplaces = this.extensionRuntime?.marketplaceConfig();
     probe.discoveryPlugins = {
       ...Object.fromEntries(
         Object.entries(this.extensionRuntime?.nativePlugins() || {}).filter(
@@ -616,6 +624,27 @@ export class Codex extends EventEmitter {
 }
 
 export function nativeRequestError(method: string, error: unknown) {
+  const message = typeof (error as { message?: unknown })?.message === "string" ? (error as { message: string }).message : "";
+  if (["plugin/install", "plugin/read"].includes(method) && /reserved and cannot be loaded from this source/.test(message))
+    return "官方商店运行目录不匹配，请更新服务后重试";
+  if (["plugin/install", "plugin/read"].includes(method) && /chatgpt authentication required/.test(message))
+    return "此插件需要 Codex 的 ChatGPT 账号授权，当前服务尚未连接该账号";
+  if (method === "mcpServer/oauth/login") {
+    if (/invalid_client|client.registration|client ID|client_id|registration.*not supported/i.test(message))
+      return "此服务需要有效的 OAuth Client ID，请在连接器配置中填写";
+    if (/redirect_uri|callback.*(?:invalid|not allowed|mismatch)/i.test(message))
+      return "OAuth 回调地址未获服务端允许，请在应用设置中登记当前回调地址";
+    if (/certificate|unknownissuer|unknown issuer/i.test(message))
+      return "OAuth 服务证书未通过验证，请检查证书及服务地址";
+  }
+  if (
+    method === "marketplace/add" &&
+    typeof (error as { message?: unknown })?.message === "string" &&
+    /marketplace .* is reserved and cannot be added from this source/.test(
+      (error as { message: string }).message,
+    )
+  )
+    return "此商店由 Codex 内置管理，无需重复添加";
   if (!["thread/start", "thread/resume", "turn/start"].includes(method))
     return "Codex 操作未完成，请检查该操作的配置与权限。";
   const failure = publicFailure(error);

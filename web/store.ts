@@ -1,3 +1,4 @@
+import type { SubmissionPreview } from "./submission-preview";
 import {
   pendingFor,
   restorePending,
@@ -24,6 +25,7 @@ import type {
   ThreadSummary,
 } from "../shared/types";
 type State = {
+  mcpOAuthCompletions: Record<string, { name: string; loginId: string; success: boolean }>;
   authenticated: boolean | null;
   pendingRun: string | null;
   pendingRuns: Record<string, PendingSubmission>;
@@ -71,6 +73,7 @@ type State = {
   effort: string;
   theme: string;
   sidebar: boolean;
+  desktopSidebar: boolean;
   gatewayCollapsed: Record<string, boolean>;
   set: (value: Partial<State>) => void;
   notify: (error: unknown) => void;
@@ -84,6 +87,7 @@ const saved = (() => {
 })();
 export const useApp = create<State>((set) => ({
   authenticated: null,
+  mcpOAuthCompletions: {},
   pendingRun: null,
   pendingRuns: restorePending(sessionStorage.getItem("ma_pending_runs")),
   newDraftKey: sessionStorage.getItem("ma_new_draft") || "$new",
@@ -131,7 +135,8 @@ export const useApp = create<State>((set) => ({
   theme: ["light", "dark", "system"].includes(saved.theme)
     ? saved.theme
     : "system",
-  sidebar: window.innerWidth > 760,
+  sidebar: window.innerWidth > 760 && saved.sidebar !== false,
+  desktopSidebar: saved.sidebar !== false,
   gatewayCollapsed:
     saved.gatewayCollapsed &&
     typeof saved.gatewayCollapsed === "object" &&
@@ -144,7 +149,13 @@ export const useApp = create<State>((set) => ({
           ),
         )
       : {},
-  set,
+  set: (value) =>
+    set({
+      ...value,
+      ...(typeof value.sidebar === "boolean" && window.innerWidth > 760
+        ? { desktopSidebar: value.sidebar }
+        : {}),
+    }),
   notify: (e) => set({ error: e instanceof Error ? e.message : String(e) }),
 }));
 // Navigation selects its own pending request; unrelated conversations remain usable.
@@ -188,6 +199,7 @@ useApp.subscribe((s) => {
     effort: s.effort,
     theme: s.theme,
     gatewayCollapsed: s.gatewayCollapsed,
+    sidebar: s.desktopSidebar,
   });
   if (preferences !== lastPreferences) {
     lastPreferences = preferences;
@@ -212,7 +224,9 @@ const seenFailures = new Set<string>();
 export async function request<T = any>(
   method: string,
   params: Json = {},
-  options: Pick<RequestInit, "signal" | "keepalive"> & { operationId?: string } = {},
+  options: Pick<RequestInit, "signal" | "keepalive"> & {
+    operationId?: string;
+  } = {},
 ): Promise<T> {
   const requestGeneration = connectionGeneration;
   let path = "/api/agent/action";
@@ -710,6 +724,15 @@ export function consume(event: Event) {
   }
   if (event.type === EventType.CUSTOM) {
     const value = event.value;
+    if (event.name === "newbot.mcp.oauth.completed") {
+      if (typeof value.loginId === "string") useApp.setState(s => {
+        const completions: State["mcpOAuthCompletions"] = { ...s.mcpOAuthCompletions, [value.loginId]: { name: String(value.name), loginId: value.loginId, success: value.success === true } };
+        for (const key of Object.keys(completions).slice(0, -32)) delete completions[key];
+        return { mcpOAuthCompletions: completions };
+      });
+      void loadDiscovery("mcp");
+      return;
+    }
     if (
       [
         "newbot.session.runtime",
@@ -1053,6 +1076,7 @@ const submittingOrigins = new Set<string>();
 export async function submitRun(
   payload: Json,
   reserved?: (id: string) => void,
+  preview?: SubmissionPreview,
 ) {
   const origin = payload.threadId || useApp.getState().newDraftKey;
   if (
@@ -1079,6 +1103,17 @@ export async function submitRun(
           id: requestId,
           origin,
           fingerprint,
+          preview: preview || {
+            text: String(payload.text || ""),
+            files: (payload.attachments || []).map((id: string) => ({
+              id,
+              name: "附件",
+            })),
+            beforeTurns:
+              useApp.getState().thread?.id === origin
+                ? useApp.getState().thread!.turns.map((t) => t.id)
+                : [],
+          },
           state: "submitting",
         },
       },

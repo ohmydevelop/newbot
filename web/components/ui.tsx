@@ -1,6 +1,23 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import { X } from "lucide-react";
 import { useId, useRef, type ReactNode } from "react";
+
+export function dialogReturnTarget(): HTMLElement | null {
+  const active =
+    document.activeElement instanceof HTMLElement
+      ? document.activeElement
+      : null;
+  const menu = active?.closest('[role="menu"]');
+  const trigger = Array.from(
+    document.querySelectorAll<HTMLElement>('[aria-haspopup="menu"]'),
+  ).find((el) =>
+    menu
+      ? el.getAttribute("aria-controls") === menu.id
+      : el.dataset.state === "open",
+  );
+  return menu || active === document.body ? trigger || active : active;
+}
+
 const modalClosers = new WeakMap<HTMLElement, () => void>();
 export function Modal({
   open,
@@ -32,20 +49,7 @@ export function Modal({
   const wasOpen = useRef(false),
     returnTarget = useRef<HTMLElement | null>(null);
   if (open && !wasOpen.current) {
-    const active =
-      document.activeElement instanceof HTMLElement
-        ? document.activeElement
-        : null;
-    const menu = active?.closest('[role="menu"]');
-    const trigger = Array.from(
-      document.querySelectorAll<HTMLElement>('[aria-haspopup="menu"]'),
-    ).find((el) =>
-      menu
-        ? el.getAttribute("aria-controls") === menu.id
-        : el.dataset.state === "open",
-    );
-    returnTarget.current =
-      menu || active === document.body ? trigger || active : active;
+    returnTarget.current = dialogReturnTarget();
   }
   wasOpen.current = open;
   return (
@@ -94,7 +98,16 @@ export function Modal({
                 '.modal[role="dialog"][data-state="open"]',
               ),
             ).at(-1);
-            if (top) modalClosers.get(top)?.();
+            if (top) {
+              // Catalog steps stay inside one dialog. Escape returns one visible step.
+              const back = Array.from(
+                top.querySelectorAll<HTMLButtonElement>("[data-modal-back]"),
+              )
+                .filter((button) => button.getClientRects().length)
+                .at(-1);
+              if (back) back.click();
+              else modalClosers.get(top)?.();
+            }
           }}
           onPointerDownOutside={(event) => {
             if (!dismissible) event.preventDefault();

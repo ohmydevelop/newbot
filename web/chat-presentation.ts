@@ -98,14 +98,15 @@ export function toolTitle(item: Item, displayName?: string) {
     functionCallOutput: "工具结果",
   };
   if (item.type === "mcpToolCall" || item.type === "dynamicToolCall")
-    return `调用工具${displayName || item.tool ? ` · ${displayName || item.tool}` : ""}`;
+    return displayName || (item.display?.serverTitle ? `使用 ${item.display.serverTitle}` : "使用工具");
   return labels[item.type] || "执行活动";
 }
-export function toolStatus(item: Item) {
+export function toolStatus(item: Item, active = true) {
   if (item.status === "declined")
     return { label: "未执行", failed: false, running: false };
   const failed = item.status === "failed" || !!item.error;
-  const running = ["inProgress", "running"].includes(item.status);
+  const unfinished = ["inProgress", "running"].includes(item.status);
+  const running = unfinished && active;
   return {
     failed,
     running,
@@ -113,9 +114,11 @@ export function toolStatus(item: Item) {
       ? "失败"
       : running
         ? "执行中"
-        : typeof item.exitCode === "number" && item.exitCode !== 0
-          ? `退出码 ${item.exitCode}`
-          : "已完成",
+        : unfinished && !active
+          ? "未完成"
+          : typeof item.exitCode === "number" && item.exitCode !== 0
+            ? `退出码 ${item.exitCode}`
+            : "已完成",
   };
 }
 export function turnFeedback(turn: Turn) {
@@ -172,4 +175,24 @@ export function failureTarget(event: Event) {
             : null,
       }
     : null;
+}
+
+/** Human activity on the chat surface; raw tool names remain in expanded details. */
+export function activityLabel(items: Item[]) {
+  const active = [...items]
+    .reverse()
+    .find((item) => item.status === "inProgress" || item.status === "running");
+  const last = active || items.at(-1);
+  if (!last || last.type === "userMessage" || last.type === "reasoning")
+    return "正在思考";
+  if (last.type === "agentMessage")
+    return last.phase === "final_answer" ? "正在回答" : "正在思考";
+  if (last.type === "webSearch") return "正在搜索";
+  if (last.type === "fileChange") return "正在编辑文件";
+  if (last.type === "imageGeneration") return "正在生成图片";
+  if (last.type === "mcpToolCall" || last.type === "dynamicToolCall")
+    return last.display?.toolTitle
+      ? `正在使用 ${last.display.toolTitle}`
+      : "正在使用工具";
+  return "正在处理";
 }

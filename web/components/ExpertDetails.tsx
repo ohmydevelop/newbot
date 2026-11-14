@@ -6,6 +6,7 @@ import type {
 } from "../../shared/experts";
 import { request } from "../store";
 import { Modal } from "./ui";
+import { CatalogDetail, CatalogUse } from "./CatalogNavigation";
 export type ExpertCatalog = {
   entries: Expert[];
   catalog: Record<
@@ -78,7 +79,7 @@ export default function ExpertDetails({
   }, [value.id, reload]);
   const expert = data?.entries.find((e) => e.id === value.id);
   return (
-    <Modal
+    <CatalogDetail
       open
       title={value.name}
       onOpenChange={(open) => {
@@ -107,6 +108,12 @@ export default function ExpertDetails({
             {expert.description && (
               <p className="expert-description">{expert.description}</p>
             )}
+            {expert.instructions && (
+              <section className="expert-instructions">
+                <h3>提示词</h3>
+                <p style={{ whiteSpace: "pre-wrap" }}>{expert.instructions}</p>
+              </section>
+            )}
             {!!expert.problems.length && (
               <p className="inline-error" role="status">
                 {expert.problems.join("；")}
@@ -116,9 +123,14 @@ export default function ExpertDetails({
               <p className="muted">专家已更新，下一轮使用当前配置。</p>
             )}
             <ExpertMembersView expert={expert} catalog={data.catalog} />
+            <CatalogUse
+              kind="@"
+              entry={{ ...expert, kind: "expert" }}
+              disabled={!expert.available}
+            />
           </>
         )}
       </div>
-    </Modal>
+    </CatalogDetail>
   );
 }

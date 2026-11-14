@@ -108,9 +108,6 @@ export default function SkillReader({
           {skillLabel(current)}
         </h3>
         <p className="skill-description">{current.description}</p>
-        {current.removalReason && !pluginId && (
-          <p className="skill-origin-note muted">{current.removalReason}</p>
-        )}
         <p className="skill-metadata">
           {pluginId ? "插件技能" : skillScopes[current.scope] || "已发现技能"} ·{" "}
           {typeof current.enabled === "boolean"
@@ -118,7 +115,6 @@ export default function SkillReader({
               ? "已启用"
               : "已停用"
             : "历史指定"}{" "}
-          · SKILL.md
         </p>
         {reference && document && document.sha256 !== reference.sha256 && (
           <p className="skill-reference-notice" role="status">

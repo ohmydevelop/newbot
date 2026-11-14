@@ -21,6 +21,7 @@ export const RUNNER_METHODS = new Set([
   "model/list",
   "hooks/list",
   "plugin/install",
+  "marketplace/add",
   "plugin/list",
   "plugin/read",
   "plugin/uninstall",

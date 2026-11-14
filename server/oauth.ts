@@ -1,9 +1,31 @@
 import { PublicError } from "./public-error.js";
 import type { FastifyInstance } from "fastify";
+export function mcpOAuthSettings(env = process.env) {
+  const explicit = !!(
+    env.MCP_OAUTH_CALLBACK_URL || env.MCP_OAUTH_CALLBACK_PORT
+  );
+  const origins = (env.PUBLIC_ORIGIN || "")
+    .split(",")
+    .map((x) => x.trim())
+    .filter(Boolean);
+  const origin =
+    origins.length === 1 && origins[0].startsWith("https://")
+      ? origins[0]
+      : undefined;
+  if (!explicit && !origin) return undefined;
+  return {
+    explicit,
+    port: Number(env.MCP_OAUTH_CALLBACK_PORT || (!explicit ? 3101 : 0)),
+    callback:
+      env.MCP_OAUTH_CALLBACK_URL ||
+      (!explicit ? `${origin}/oauth/mcp/callback` : ""),
+  };
+}
 export function oauthCallback(app: FastifyInstance, origins: Set<string>) {
-  const port = Number(process.env.MCP_OAUTH_CALLBACK_PORT);
-  const callback = process.env.MCP_OAUTH_CALLBACK_URL;
-  if (!callback && !port) return;
+  const settings = mcpOAuthSettings();
+  if (!settings) return;
+  const { port, callback } = settings;
+  if (!settings.explicit && !origins.has(new URL(callback).origin)) return;
   if (
     !Number.isInteger(port) ||
     port < 1024 ||
@@ -42,7 +64,11 @@ export function oauthCallback(app: FastifyInstance, origins: Set<string>) {
     try {
       const response = await fetch(
         `http://127.0.0.1:${port}${source.pathname}${source.search}`,
-        { redirect: "manual", signal: AbortSignal.timeout(5000) },
+        {
+          redirect: "manual",
+          signal: AbortSignal.timeout(5000),
+          headers: { Connection: "close" },
+        },
       );
       await response.body?.cancel();
       reply

@@ -210,7 +210,7 @@ test("recovery respects active tasks, approvals and pending OAuth and never inte
       service.handle("configuration/recover", { mode: "read" }),
     );
     codex.emit("event", {
-      method: "mcpServer/oauth/login/completed",
+      method: "mcpServer/oauthLogin/completed",
       params: {},
     });
     await service.handle("configuration/recover", { mode: "read" });

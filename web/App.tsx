@@ -1,10 +1,20 @@
+import UserMessage from "./components/chat/UserMessage";
+import { SearchIcon as Search } from "./components/ReferenceIcons";
+import {
+  PluginIcon as Blocks,
+  ExpertIcon as UsersRound,
+  SkillIcon as BookOpen,
+} from "./components/AppIcons";
 import SessionPrivateAccess from "./components/SessionPrivateAccess";
 import { privateApi } from "./private-input";
 import { responseJson } from "./http";
 import ChatPrivateInputs from "./components/ChatPrivateInputs";
-import ThreadStatus from "./components/ThreadStatus";
-import { absoluteTime, relativeTime } from "./time";
 import WorkbenchRail from "./components/WorkbenchRail";
+import { CapabilityRow } from "./components/CapabilityRow";
+import {
+  submissionPreviewVisible,
+  type SubmissionPreview,
+} from "./submission-preview";
 import {
   lazy,
   Suspense,
@@ -18,24 +28,15 @@ import { ActionMenuContent, ActionMenuItem } from "./components/ActionMenu";
 import {
   ArrowUp,
   Square,
+  SlidersHorizontal,
   Plus,
-  Search,
-  PanelLeft,
-  SquarePen,
   MessageSquare,
-  Settings as SettingsIcon,
   ChevronDown,
   Check,
   X,
   MoreHorizontal,
-  Archive,
-  Pencil,
   CheckCheck,
   ArrowDown,
-  Blocks,
-  UsersRound,
-  BookOpen,
-  Terminal,
   LoaderCircle,
   ShieldCheck,
   ArrowRight,
@@ -68,7 +69,7 @@ import {
 } from "./store";
 import { useComposerMentions } from "./components/ComposerMentions";
 import type { ComposerPanel } from "./components/Picker";
-import { removeMention } from "./composer-selection";
+import { removeMention, type MentionToken } from "./composer-selection";
 import { useChatDrop } from "./chat-drop";
 import { readSkill } from "./skills";
 import RuntimeSelector from "./components/RuntimeSelector";
@@ -80,7 +81,8 @@ import AttachmentPreview, {
   type AttachmentSource,
 } from "./components/AttachmentPreview";
 import { Mark, Modal } from "./components/ui";
-import { Sidebar } from "./components/Sidebar";
+import { ConversationNavigation } from "./components/ConversationNavigation";
+import { SidebarIcon } from "./components/SidebarIcon";
 import { DeferredPanel } from "./components/DeferredPanel";
 import { publishAppearance } from "./appearance";
 import { chatShortcut, composerEnter, resolveTheme } from "./interaction";
@@ -285,12 +287,45 @@ export default function App() {
   const pendingSubmission = s.pendingRun
     ? s.pendingRuns[s.pendingRun]
     : undefined;
+  const [localSubmission, setLocalSubmission] = useState<
+    | (SubmissionPreview & {
+        key: string;
+        localId: string;
+        requestId?: string;
+        turnId?: string;
+      })
+    | null
+  >(null);
+  const submission =
+    localSubmission?.key === composer.key
+      ? localSubmission
+      : pendingSubmission?.preview;
+  const showSubmission =
+    !!submission && submissionPreviewVisible(submission, s.thread?.turns || []);
   const [privateAccess, setPrivateAccess] = useState<string | null>(null);
   const threadTitle = (() => {
     const summary = s.threads.find((t) => t.id === s.selectedId);
     const title = summary?.title || s.thread?.name || "";
     return title && title !== "新对话" ? title : "";
   })();
+  const railToggle = useRef<HTMLButtonElement>(null);
+  const afterRailClose = useRef<(() => void) | null>(null);
+  const workbenchReturnFocus = useRef<HTMLElement | null>(null);
+  function rememberWorkbenchFocus() {
+    const active = document.activeElement;
+    workbenchReturnFocus.current =
+      active instanceof HTMLElement && active.closest(".rail") ? active : null;
+  }
+  function restoreWorkbenchFocus(event: Event) {
+    event.preventDefault();
+    const target = workbenchReturnFocus.current;
+    if (target?.isConnected) target.focus({ preventScroll: true });
+    else textarea.current?.focus({ preventScroll: true });
+  }
+  function openWorkspaceFiles() {
+    rememberWorkbenchFocus();
+    setWorkspacePicker(true);
+  }
   const [railArtifact, setRailArtifact] = useState<Artifact | null>(null);
   const [railOpen, setRailOpen] = useState(
     () => localStorage.getItem("newbot:rail") === "1",
@@ -373,7 +408,9 @@ export default function App() {
   useEffect(() => {
     const media = matchMedia("(max-width: 760px)");
     const collapse = () => {
-      if (media.matches) useApp.setState({ sidebar: false });
+      useApp.setState({
+        sidebar: media.matches ? false : useApp.getState().desktopSidebar,
+      });
     };
     media.addEventListener("change", collapse);
     return () => media.removeEventListener("change", collapse);
@@ -386,7 +423,7 @@ export default function App() {
       publishAppearance(theme);
       document
         .querySelector('meta[name="theme-color"]')
-        ?.setAttribute("content", theme === "dark" ? "#1a1a1a" : "#ffffff");
+        ?.setAttribute("content", theme === "dark" ? "#131211" : "#ffffff");
     };
     apply();
     media.addEventListener("change", apply);
@@ -435,11 +472,11 @@ export default function App() {
       textarea.current.style.height = "auto";
       textarea.current.style.height = `${Math.min(textarea.current.scrollHeight, 220)}px`;
     }
-  }, [draft]);
+  }, [draft, sending, !!pendingSubmission]);
   useEffect(() => {
     if (pinned.current && scroll.current)
       scroll.current.scrollTop = scroll.current.scrollHeight;
-  }, [s.thread, s.approvals]);
+  }, [s.thread, s.approvals, showSubmission]);
   useEffect(() => {
     pinned.current = true;
     setShowDown(false);
@@ -466,6 +503,69 @@ export default function App() {
     );
   const selectionDisabled =
     selectionContextDisabled || expertBusy || inputsBusy;
+  async function selectCapability(
+    kind: "$" | "@",
+    entry: Json,
+    token: MentionToken | null,
+    signal: AbortSignal,
+  ) {
+    const scope = composer.store.get(composer.key);
+    let selection: SkillReference | undefined;
+    if (kind === "$" && !scope.skills.some((x) => x.id === entry.id)) {
+      const document = await readSkill(
+        entry.id,
+        AbortSignal.any([signal, AbortSignal.timeout(20000)]),
+      );
+      if (!document.skill.enabled) throw new Error("技能已停用，请刷新后重试");
+      selection = {
+        id: document.skill.id,
+        name: document.skill.name,
+        displayName: entry.displayName,
+        scope: document.skill.scope,
+        sha256: document.sha256,
+      };
+    }
+    if (entry.kind === "expert") {
+      if (signal.aborted) return;
+      await chooseExpert({
+        id: entry.id,
+        name: entry.name,
+        revision: entry.revision,
+      });
+    }
+    const current = composer.store.get(scope.key);
+    if (signal.aborted || current.generation !== scope.generation) return;
+    if (kind === "$") {
+      if (!current.skills.some((x) => x.id === entry.id)) {
+        if (current.skills.length >= 8)
+          throw new Error("每条消息最多选择 8 个技能");
+        await saveInputs(
+          scope.key,
+          [...current.skills, selection!],
+          current.plugins,
+        );
+      }
+    } else if (
+      entry.kind !== "expert" &&
+      !current.plugins.some((x) => x.id === entry.id)
+    ) {
+      if (current.plugins.length >= 8)
+        throw new Error("每条消息最多选择 8 个插件");
+      await saveInputs(scope.key, current.skills, [
+        ...current.plugins,
+        { id: entry.id, name: entry.name, displayName: entry.displayName },
+      ]);
+    }
+    const latest = composer.store.get(scope.key);
+    if (
+      !signal.aborted &&
+      latest.generation === scope.generation &&
+      token &&
+      latest.text === scope.text
+    )
+      composer.store.setText(scope.key, removeMention(latest.text, token));
+    composer.refresh();
+  }
   const mentions = useComposerMentions({
     value: draft,
     scope: `${composer.key}:${composer.value.generation}`,
@@ -476,66 +576,22 @@ export default function App() {
     selectedSkills: selectedSkills.map((x) => x.id),
     selectedPlugins: selectedPlugins.map((x) => x.id),
     selectedExpert: selectedExpert?.id,
-    async onSelect(kind, entry, token, signal) {
-      const scope = composer.store.get(composer.key);
-      let selection: SkillReference | undefined;
-      if (kind === "$" && !scope.skills.some((x) => x.id === entry.id)) {
-        const document = await readSkill(
-          entry.id,
-          AbortSignal.any([signal, AbortSignal.timeout(20000)]),
-        );
-        if (!document.skill.enabled)
-          throw new Error("技能已停用，请刷新后重试");
-        selection = {
-          id: document.skill.id,
-          name: document.skill.name,
-          displayName: entry.displayName,
-          scope: document.skill.scope,
-          sha256: document.sha256,
-        };
-      }
-      if (entry.kind === "expert") {
-        if (signal.aborted) return;
-        await chooseExpert({
-          id: entry.id,
-          name: entry.name,
-          revision: entry.revision,
-        });
-      }
-      const current = composer.store.get(scope.key);
-      if (signal.aborted || current.generation !== scope.generation) return;
-      if (kind === "$") {
-        if (!current.skills.some((x) => x.id === entry.id)) {
-          if (current.skills.length >= 8)
-            throw new Error("每条消息最多选择 8 个技能");
-          await saveInputs(
-            scope.key,
-            [...current.skills, selection!],
-            current.plugins,
-          );
-        }
-      } else if (
-        entry.kind !== "expert" &&
-        !current.plugins.some((x) => x.id === entry.id)
-      ) {
-        if (current.plugins.length >= 8)
-          throw new Error("每条消息最多选择 8 个插件");
-        await saveInputs(scope.key, current.skills, [
-          ...current.plugins,
-          { id: entry.id, name: entry.name, displayName: entry.displayName },
-        ]);
-      }
-      const latest = composer.store.get(scope.key);
-      if (
-        !signal.aborted &&
-        latest.generation === scope.generation &&
-        token &&
-        latest.text === scope.text
-      )
-        composer.store.setText(scope.key, removeMention(latest.text, token));
-      composer.refresh();
-    },
+    onSelect: selectCapability,
   });
+  useEffect(() => {
+    if (
+      railOpen ||
+      !afterRailClose.current ||
+      window.matchMedia("(max-width: 1080px)").matches
+    )
+      return;
+    const action = afterRailClose.current;
+    const frame = requestAnimationFrame(() => {
+      afterRailClose.current = null;
+      action();
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [railOpen]);
   useEffect(() => {
     if (
       settings ||
@@ -572,7 +628,7 @@ export default function App() {
     e?.preventDefault();
     const text = (override ?? composer.store.get(composer.key).text).trim();
     if (
-      !text ||
+      (!text && !attachments.length) ||
       expertRequest.current ||
       inputsRequest.current ||
       runtimeBusy ||
@@ -602,7 +658,15 @@ export default function App() {
     sendingOrigin.current = origin;
     const files = [...attachments];
     const skills = selectedSkills.map(({ id, sha256 }) => ({ id, sha256 }));
+    const localId = crypto.randomUUID();
+    const preview = {
+      text,
+      files: files.map((f) => ({ id: f.id, name: f.name, mime: f.mime })),
+      beforeTurns: s.thread?.turns.map((t) => t.id) || [],
+    };
+    setLocalSubmission({ key: composer.key, localId, ...preview });
     setSending(true);
+    if (uploadOwner === snapshot.key) setUploadNotice("");
     s.set({ error: "" });
     pinned.current = true;
     try {
@@ -628,9 +692,20 @@ export default function App() {
             : { approval: newApproval }),
           ...(s.model ? { model: s.model, effort: s.effort || undefined } : {}),
         },
-        (id) => origins.current.set(id, origin),
+        (id) => {
+          origins.current.set(id, origin);
+          setLocalSubmission((value) =>
+            value?.localId === localId ? { ...value, requestId: id } : value,
+          );
+        },
+        preview,
       );
       if (result.state === "awaiting_credentials") return;
+      setLocalSubmission((value) =>
+        value?.localId === localId
+          ? { ...value, turnId: result.turn?.id }
+          : value,
+      );
       if (!origins.current.has(result.requestId)) return;
       origins.current.delete(result.requestId);
       const follow =
@@ -661,6 +736,9 @@ export default function App() {
         s.notify(message);
       }
     } finally {
+      setLocalSubmission((value) =>
+        value?.localId === localId ? null : value,
+      );
       if (sendingOrigin.current === origin) {
         sendingOrigin.current = null;
         setSending(false);
@@ -873,6 +951,10 @@ export default function App() {
         void loadThreads().catch(() => {});
       } else if (["rejected", "abandoned"].includes(status.state)) {
         const visible = useApp.getState().pendingRun === id;
+        if (entry.preview && !origins.current.has(id)) {
+          composer.store.recoverSubmission(entry.origin, entry.preview);
+          composer.refresh();
+        }
         clearPendingRun(id);
         origins.current.delete(id);
         clearSubmissionError();
@@ -937,6 +1019,11 @@ export default function App() {
         return;
       }
       if (useApp.getState().pendingRun === id) {
+        const entry = useApp.getState().pendingRuns[id];
+        if (entry?.preview && !origins.current.has(id)) {
+          composer.store.recoverSubmission(entry.origin, entry.preview);
+          composer.refresh();
+        }
         clearPendingRun(id);
         clearSubmissionError();
       }
@@ -968,45 +1055,6 @@ export default function App() {
           onClose={() => setPrivateAccess(null)}
         />
       )}
-      {pendingSubmission?.state === "unknown" && (
-        <div className="pending-run" role="status">
-          <span>上次发送等待确认</span>
-          <button
-            disabled={checkingRun}
-            onClick={() => void inspectSubmission()}
-          >
-            {checkingRun ? "正在核对…" : "检查发送状态"}
-          </button>
-          {s.abandonUnseen && canAbandon === s.pendingRun && (
-            <button
-              disabled={checkingRun}
-              onClick={() => void abandonSubmission()}
-            >
-              放弃尚未登记的发送
-            </button>
-          )}
-        </div>
-      )}
-      <div className="pending-navigation-list">
-        {Object.values(s.pendingRuns)
-          .filter((r) => r.id !== s.pendingRun && r.state !== "submitting")
-          .map((r) => (
-            <button
-              key={r.id}
-              className="pending-navigation"
-              onClick={() => {
-                navigation.current++;
-                if (r.status?.threadId) void loadThread(r.status.threadId);
-                else if (r.origin.startsWith("$new")) newChat(r.origin);
-                else void loadThread(r.origin);
-              }}
-            >
-              {r.state === "awaiting_credentials"
-                ? "待授权的任务"
-                : "待确认的发送"}
-            </button>
-          ))}
-      </div>
       <a
         className="skip-link"
         href="#message-input"
@@ -1017,57 +1065,7 @@ export default function App() {
       >
         跳到消息输入
       </a>
-      {!s.sidebar && (
-        <aside className="sidebar-rail" aria-label="对话导航">
-          <button
-            type="button"
-            className="rail-icon"
-            aria-label="展开侧栏"
-            title="展开侧栏"
-            onClick={() => s.set({ sidebar: true })}
-          >
-            <PanelLeft size={18} aria-hidden="true" />
-          </button>
-          <button
-            type="button"
-            className="rail-icon"
-            aria-label="搜索聊天"
-            title="搜索聊天"
-            onClick={() => setSearch(true)}
-          >
-            <Search size={18} aria-hidden="true" />
-          </button>
-          <button
-            type="button"
-            className="rail-icon"
-            aria-label="新建聊天"
-            title="新建聊天"
-            onClick={fresh}
-          >
-            <SquarePen size={18} aria-hidden="true" />
-          </button>
-          <span className="rail-spacer" />
-          <button
-            type="button"
-            className="rail-icon"
-            aria-label="插件"
-            title="插件"
-            onClick={() => setSettings("plugins")}
-          >
-            <Blocks size={18} aria-hidden="true" />
-          </button>
-          <button
-            type="button"
-            className="rail-icon rail-avatar"
-            aria-label="设置"
-            title="设置"
-            onClick={() => setSettings("general")}
-          >
-            n
-          </button>
-        </aside>
-      )}
-      <Sidebar
+      <ConversationNavigation
         open={s.sidebar}
         onOpenChange={(sidebar) => s.set({ sidebar })}
         restoreFocus={() =>
@@ -1075,131 +1073,25 @@ export default function App() {
             preventScroll: true,
           })
         }
+        threads={s.threads}
+        selectedId={s.selectedId}
+        loading={s.threadsLoading}
+        error={s.threadsError}
+        archiving={archiving}
+        appleKeys={appleKeys}
+        onNewChat={fresh}
+        onSearch={() => setSearch(true)}
+        onReload={() => void loadThreads().catch(() => {})}
+        onSettings={setSettings}
+        onSelect={chooseThread}
+        onRename={setRename}
+        onArchive={(id) => void archive(id)}
+      />
+      <main
+        className={`main ${!s.thread && !s.selectedId && !s.loading && !pendingSubmission && !showSubmission ? "is-home" : ""}`}
+        aria-label="聊天工作区"
+        {...drop.handlers}
       >
-        <div className="sidebar-top">
-          <button
-            className="icon-button"
-            title="收起侧栏"
-            aria-label="收起侧栏"
-            aria-expanded={true}
-            onClick={() => s.set({ sidebar: false })}
-          >
-            <PanelLeft size={18} />
-          </button>
-          <button
-            className="icon-button sidebar-search"
-            title="搜索聊天"
-            aria-label="搜索聊天"
-            onClick={() => setSearch(true)}
-          >
-            <Search size={18} />
-          </button>
-        </div>
-        <nav className="main-nav" aria-label="主导航">
-          <button onClick={fresh}>
-            <SquarePen size={18} />
-            <span>新建聊天</span>
-            <kbd>{appleKeys ? "⇧ ⌘ O" : "Ctrl ⇧ O"}</kbd>
-          </button>
-        </nav>
-        <div className="history">
-          <div className="history-heading">
-            <h2>最近对话</h2>
-            <ReadIndicator
-              busy={s.threadsLoading}
-              error={s.threadsError}
-              label="正在读取对话"
-              onRetry={() => void loadThreads().catch(() => {})}
-            />
-          </div>
-          <span className="sr-only" role="alert">
-            {s.threadsError}
-          </span>
-          {s.threads.length === 0 && !s.threadsLoading && !s.threadsError ? (
-            <p className="history-empty">新的想法，从这里开始。</p>
-          ) : (
-            s.threads.map((t) => (
-              <div
-                className={`history-row ${s.selectedId === t.id ? "selected" : ""}`}
-                key={t.id}
-                data-thread-id={t.id}
-              >
-                <button
-                  className="history-link"
-                  onClick={() => chooseThread(t.id)}
-                  title={t.title}
-                  aria-current={s.selectedId === t.id ? "page" : undefined}
-                >
-                  <span className="history-title">{t.title}</span>
-                  <time
-                    className="history-time"
-                    dateTime={new Date(t.updated).toISOString()}
-                    title={absoluteTime(t.updated)}
-                  >
-                    {relativeTime(t.updated)}
-                  </time>
-                </button>
-                <div className="history-actions">
-                  <ThreadStatus activity={t.activity} />
-                  <Dropdown.Root>
-                    <Dropdown.Trigger
-                      className="icon-button history-more"
-                      aria-label={`更多操作：${t.title}`}
-                    >
-                      <MoreHorizontal size={16} />
-                    </Dropdown.Trigger>
-                    <Dropdown.Portal>
-                      <ActionMenuContent
-                        className="dropdown"
-                        sideOffset={4}
-                        align="start"
-                      >
-                        <ActionMenuItem
-                          icon={Pencil}
-                          onSelect={() =>
-                            setRename({ id: t.id, name: t.title })
-                          }
-                        >
-                          重命名
-                        </ActionMenuItem>
-                        <ActionMenuItem
-                          icon={Archive}
-                          disabled={!!archiving}
-                          onSelect={() => void archive(t.id)}
-                        >
-                          {archiving === t.id ? "正在归档…" : "归档"}
-                        </ActionMenuItem>
-                      </ActionMenuContent>
-                    </Dropdown.Portal>
-                  </Dropdown.Root>
-                </div>
-              </div>
-            ))
-          )}
-        </div>
-        <div className="sidebar-bottom">
-          <button
-            type="button"
-            className="sidebar-plugins"
-            onClick={() => setSettings("plugins")}
-          >
-            <Blocks size={18} aria-hidden="true" />
-            <span>插件</span>
-          </button>
-          <button
-            className="account-button"
-            onClick={() => setSettings("general")}
-          >
-            <span className="avatar">n</span>
-            <span>
-              <strong>个人工作台</strong>
-              <small>私有实例</small>
-            </span>
-            <SettingsIcon size={18} />
-          </button>
-        </div>
-      </Sidebar>
-      <main className="main" aria-label="聊天工作区" {...drop.handlers}>
         {drop.dragging && (
           <div className="chat-drop-hint" role="status">
             <span>
@@ -1222,11 +1114,11 @@ export default function App() {
                 title="展开侧栏"
                 onClick={() => s.set({ sidebar: true })}
               >
-                <PanelLeft size={18} />
+                <SidebarIcon size={18} />
               </button>
             )}
-            <strong className="workspace-title" title={threadTitle || "新对话"}>
-              {threadTitle || "新对话"}
+            <strong className="workspace-title" title={threadTitle || "newbot"}>
+              {threadTitle || "newbot"}
             </strong>
           </div>
           <div className="topbar-right">
@@ -1260,8 +1152,77 @@ export default function App() {
                 <ShieldCheck size={17} />
               </button>
             )}
+            {s.selectedId && (
+              <button
+                type="button"
+                ref={railToggle}
+                className={`icon-button rail-toggle ${railOpen ? "open" : ""}`}
+                aria-label={railOpen ? "关闭右侧栏" : "打开右侧栏"}
+                aria-expanded={railOpen}
+                aria-pressed={railOpen}
+                title={
+                  railOpen
+                    ? "关闭右侧栏（Ctrl Shift A）"
+                    : "打开右侧栏（Ctrl Shift A）"
+                }
+                onClick={() => setRailOpen((v) => !v)}
+              >
+                <SidebarIcon size={18} side="right" />
+                {(s.thread?.nextInput?.skills.length || 0) +
+                  (s.thread?.nextInput?.plugins.length || 0) +
+                  (selectedExpert ? 1 : 0) >
+                  0 && (
+                  <span className="association-count" aria-hidden="true">
+                    {(s.thread?.nextInput?.skills.length || 0) +
+                      (s.thread?.nextInput?.plugins.length || 0) +
+                      (selectedExpert ? 1 : 0)}
+                  </span>
+                )}
+              </button>
+            )}
           </div>
         </header>
+        <div className="submission-notices" aria-label="发送状态">
+          {pendingSubmission?.state === "unknown" && (
+            <div className="pending-run" role="status">
+              <span>上次发送等待确认</span>
+              <button
+                disabled={checkingRun}
+                onClick={() => void inspectSubmission()}
+              >
+                {checkingRun ? "正在核对…" : "检查发送状态"}
+              </button>
+              {s.abandonUnseen && canAbandon === s.pendingRun && (
+                <button
+                  disabled={checkingRun}
+                  onClick={() => void abandonSubmission()}
+                >
+                  放弃尚未登记的发送
+                </button>
+              )}
+            </div>
+          )}
+          <div className="pending-navigation-list">
+            {Object.values(s.pendingRuns)
+              .filter((r) => r.id !== s.pendingRun && r.state !== "submitting")
+              .map((r) => (
+                <button
+                  key={r.id}
+                  className="pending-navigation"
+                  onClick={() => {
+                    navigation.current++;
+                    if (r.status?.threadId) void loadThread(r.status.threadId);
+                    else if (r.origin.startsWith("$new")) newChat(r.origin);
+                    else void loadThread(r.origin);
+                  }}
+                >
+                  {r.state === "awaiting_credentials"
+                    ? "待授权的任务"
+                    : "待确认的发送"}
+                </button>
+              ))}
+          </div>
+        </div>
         <div className="chat-notifications">
           {!s.error && <BackgroundNotice />}
           {s.error && (
@@ -1323,53 +1284,13 @@ export default function App() {
             }
           }}
         >
-          {pendingSubmission?.state === "awaiting_credentials" ? (
-            <ChatPrivateInputs
-              runId={pendingSubmission.id}
-              status={pendingSubmission.status || {}}
-              onChanged={() =>
-                void inspectSubmission(pendingSubmission.id, true)
-              }
-            />
-          ) : !s.thread && !s.loading && !s.selectedId ? (
+          {!s.thread &&
+          !s.loading &&
+          !s.selectedId &&
+          !showSubmission &&
+          pendingSubmission?.state !== "awaiting_credentials" ? (
             <div className="welcome">
-              <div className="welcome-mark">
-                <Mark size={43} />
-              </div>
-              <h1>有什么可以帮忙的？</h1>
-              <p>从一个问题开始，把想法变成现实。</p>
-              <div className="suggestions">
-                {[
-                  {
-                    icon: Terminal,
-                    tone: "violet",
-                    title: "一起写点代码",
-                    text: "帮我分析一个项目的结构，并提出改进建议。",
-                  },
-                  {
-                    icon: BookOpen,
-                    tone: "amber",
-                    title: "梳理一个想法",
-                    text: "我有一个新想法，请帮我厘清目标、约束和第一步。",
-                  },
-                  {
-                    icon: Blocks,
-                    tone: "teal",
-                    title: "连接我的工具",
-                    text: "查看当前可用的 MCP 工具，告诉我它们可以帮我做什么。",
-                  },
-                ].map((x) => (
-                  <button
-                    key={x.title}
-                    onClick={() => void send(undefined, x.text)}
-                  >
-                    <span className="suggestion-icon">
-                      <x.icon size={17} aria-hidden="true" />
-                    </span>
-                    <span>{x.title}</span>
-                  </button>
-                ))}
-              </div>
+              <h1>今天想探索什么？</h1>
             </div>
           ) : (
             <div
@@ -1410,15 +1331,50 @@ export default function App() {
                   onSuggest={(value) => void send(undefined, value)}
                 />
               ))}
+              {showSubmission && submission && (
+                <div
+                  className="turn pending-message"
+                  aria-label="正在提交的消息"
+                >
+                  <UserMessage content={[
+                    { type: "text", text: submission.text },
+                    ...submission.files.map(file => ({ type: file.mime?.startsWith("image/") ? "image" : "attachment", id:file.id, name:file.name, mime:file.mime, url:`/api/files/${file.id}` }))
+                  ]} />
+                  <div className="submission-status" role="status">
+                    <LoaderCircle
+                      size={15}
+                      className="spin"
+                      aria-hidden="true"
+                    />
+                    {pendingSubmission?.state === "unknown"
+                      ? "正在确认发送状态…"
+                      : pendingSubmission?.state === "awaiting_credentials"
+                        ? "等待你提供授权"
+                        : "正在发送…"}
+                  </div>
+                </div>
+              )}
+              {pendingSubmission?.state === "awaiting_credentials" && (
+                <ChatPrivateInputs
+                  runId={pendingSubmission.id}
+                  status={pendingSubmission.status || {}}
+                  onChanged={() =>
+                    void inspectSubmission(pendingSubmission.id, true)
+                  }
+                />
+              )}
               {pending.map((a) => (
                 <ApprovalCard
                   key={a.params.elicitation?.token || a.id}
                   approval={a}
                 />
               ))}
-              {s.thread && !s.thread.turns.length && !s.loading && (
-                <p className="empty-thread">准备好了，发送第一条消息吧。</p>
-              )}
+              {s.thread &&
+                !s.thread.turns.length &&
+                !s.loading &&
+                !showSubmission && (
+                  <p className="empty-thread">准备好了，发送第一条消息吧。</p>
+                )}
             </div>
           )}
         </div>
@@ -1506,15 +1462,12 @@ export default function App() {
                 threadId={s.thread.id}
                 turnId={s.thread.turns.at(-1)!.id}
                 onClose={() => setWorkspacePicker(false)}
-                onCloseAutoFocus={(e) => {
-                  e.preventDefault();
-                  textarea.current?.focus();
-                }}
+                onCloseAutoFocus={restoreWorkbenchFocus}
               />
             </DeferredPanel>
           )}
           <form className="composer" onSubmit={(e) => void send(e)}>
-            {attachments.length > 0 && (
+            {attachments.length > 0 && !sending && !pendingSubmission && (
               <div className="attachment-list">
                 {attachments.map((a) => (
                   <div
@@ -1588,41 +1541,90 @@ export default function App() {
                 ))}
               </div>
             )}
-            {selectedExpert && (
-              <div
-                className="skill-draft-list expert-draft"
-                aria-label="当前会话的专家"
-              >
-                <span>
-                  <button
-                    type="button"
-                    className="expert-chip-detail"
-                    title="查看专家"
-                    onClick={() => setExpertDetail(selectedExpert)}
-                  >
-                    <UsersRound size={15} />
-                    {selectedExpert.name}
-                  </button>
-                  <button
-                    type="button"
-                    title="更换专家"
-                    aria-label="更换专家"
-                    disabled={selectionDisabled}
-                    onClick={(e) => mentions.open("plugins", e.currentTarget)}
-                  >
-                    <ChevronDown size={14} />
-                  </button>
-                  <button
-                    type="button"
-                    title="移除专家"
-                    aria-label="移除会话专家"
-                    disabled={selectionDisabled}
-                    onClick={() => void chooseExpert(null).catch(s.notify)}
-                  >
-                    <X size={14} />
-                  </button>
-                </span>
-              </div>
+            {!s.selectedId && !sending && !pendingSubmission && (
+              <CapabilityRow
+                items={[
+                  ...(selectedExpert
+                    ? [
+                        {
+                          id: `expert:${selectedExpert.id}`,
+                          content: (
+                            <>
+                              <button
+                                type="button"
+                                className="capability-label"
+                                onClick={() => setExpertDetail(selectedExpert)}
+                              >
+                                <UsersRound size={15} />
+                                {selectedExpert.name}
+                              </button>
+                              <button
+                                type="button"
+                                aria-label="移除会话专家"
+                                disabled={selectionDisabled}
+                                onClick={() =>
+                                  void chooseExpert(null).catch(s.notify)
+                                }
+                              >
+                                <X size={14} />
+                              </button>
+                            </>
+                          ),
+                        },
+                      ]
+                    : []),
+                  ...selectedPlugins.map((p) => ({
+                    id: `plugin:${p.id}`,
+                    content: (
+                      <>
+                        <span className="capability-label">
+                          <Blocks size={15} />
+                          {p.displayName || p.name}
+                        </span>
+                        <button
+                          type="button"
+                          aria-label={`移除插件 ${p.displayName || p.name}`}
+                          disabled={selectionDisabled}
+                          onClick={() =>
+                            void saveInputs(
+                              composer.key,
+                              selectedSkills,
+                              selectedPlugins.filter((v) => v.id !== p.id),
+                            ).catch(s.notify)
+                          }
+                        >
+                          <X size={14} />
+                        </button>
+                      </>
+                    ),
+                  })),
+                  ...selectedSkills.map((skill) => ({
+                    id: `skill:${skill.id}`,
+                    content: (
+                      <>
+                        <span className="capability-label">
+                          <BookOpen size={15} />
+                          {skill.displayName || skill.name || "名称暂不可用"}
+                        </span>
+                        <button
+                          type="button"
+                          aria-label={`移除技能 ${skill.displayName || skill.name || "名称暂不可用"}`}
+                          disabled={selectionDisabled}
+                          onClick={() =>
+                            void saveInputs(
+                              composer.key,
+                              selectedSkills.filter((v) => v.id !== skill.id),
+                              selectedPlugins,
+                            ).catch(s.notify)
+                          }
+                        >
+                          <X size={14} />
+                        </button>
+                      </>
+                    ),
+                  })),
+                ]}
+              />
             )}
             {expertDetail && (
               <DeferredPanel
@@ -1635,74 +1637,15 @@ export default function App() {
                 />
               </DeferredPanel>
             )}
-            {selectedPlugins.length > 0 && (
-              <div className="skill-draft-list" aria-label="下一条消息的插件">
-                {selectedPlugins.map((p) => (
-                  <span key={p.id}>
-                    <Blocks size={14} />
-                    {p.displayName}
-                    <button
-                      type="button"
-                      disabled={selectionDisabled}
-                      aria-label={`移除插件 ${p.displayName}`}
-                      onClick={() => {
-                        void saveInputs(
-                          composer.key,
-                          selectedSkills,
-                          selectedPlugins.filter((v) => v.id !== p.id),
-                        ).catch(s.notify);
-                      }}
-                    >
-                      <X size={14} />
-                    </button>
-                  </span>
-                ))}
-              </div>
-            )}
             {mentions.menu}
-            {selectedSkills.length > 0 && (
-              <div className="skill-draft-list" aria-label="下一条消息的技能">
-                {selectedSkills.map((skill) => {
-                  const current = s.settings?.skills.find(
-                    (s: Json) => s.id === skill.id,
-                  );
-                  const unavailable = !current || !current.enabled;
-                  return (
-                    <span
-                      key={skill.id}
-                      className={unavailable ? "is-unavailable" : ""}
-                    >
-                      <BookOpen size={14} aria-hidden="true" />
-                      <span>
-                        {skill.displayName}
-                        {unavailable ? "（已停用或失效）" : ""}
-                      </span>
-                      <button
-                        type="button"
-                        aria-label={`移除技能 ${skill.displayName}`}
-                        disabled={selectionDisabled}
-                        onClick={() =>
-                          void saveInputs(
-                            composer.key,
-                            selectedSkills.filter((s) => s.id !== skill.id),
-                            selectedPlugins,
-                          ).catch(s.notify)
-                        }
-                      >
-                        <X size={14} aria-hidden="true" />
-                      </button>
-                    </span>
-                  );
-                })}
-              </div>
-            )}
             <textarea
               ref={textarea}
               id="message-input"
               aria-label="消息"
               placeholder="询问任何问题"
               rows={1}
-              value={draft}
+              value={sending || pendingSubmission ? "" : draft}
+              readOnly={sending || !!pendingSubmission}
               onPaste={(e) => {
                 const images = Array.from(e.clipboardData.files).filter((f) =>
                   f.type.startsWith("image/"),
@@ -1787,64 +1730,82 @@ export default function App() {
                         disabled={
                           !s.artifactRegistration || !s.thread?.turns.length
                         }
-                        onSelect={() => setWorkspacePicker(true)}
+                        onSelect={openWorkspaceFiles}
                       >
                         添加工作区文件
                       </ActionMenuItem>
-                      <ActionMenuItem
-                        icon={Blocks}
-                        separated
-                        disabled={!s.pluginSelection && !s.expertSelection}
-                        onSelect={() =>
-                          mentions.open(
-                            "plugins",
-                            document.getElementById("composer-add"),
-                          )
-                        }
-                      >
-                        选择专家或插件
-                      </ActionMenuItem>
-                      <ActionMenuItem
-                        icon={BookOpen}
-                        disabled={!s.skillSelection}
-                        onSelect={() =>
-                          mentions.open(
-                            "skills",
-                            document.getElementById("composer-add"),
-                          )
-                        }
-                      >
-                        选择技能
-                      </ActionMenuItem>
+                      {!s.selectedId ? (
+                        <>
+                          <ActionMenuItem
+                            icon={Blocks}
+                            separated
+                            disabled={!s.pluginSelection && !s.expertSelection}
+                            onSelect={() =>
+                              mentions.open(
+                                "plugins",
+                                document.getElementById("composer-add"),
+                              )
+                            }
+                          >
+                            选择专家或插件
+                          </ActionMenuItem>
+                          <ActionMenuItem
+                            icon={BookOpen}
+                            disabled={!s.skillSelection}
+                            onSelect={() =>
+                              mentions.open(
+                                "skills",
+                                document.getElementById("composer-add"),
+                              )
+                            }
+                          >
+                            选择技能
+                          </ActionMenuItem>
+                        </>
+                      ) : (
+                        <ActionMenuItem
+                          icon={SlidersHorizontal}
+                          separated
+                          onSelect={() => setRailOpen(true)}
+                        >
+                          管理会话能力
+                        </ActionMenuItem>
+                      )}
                     </ActionMenuContent>
                   </Dropdown.Portal>
                 </Dropdown.Root>
-                <button
-                  type="button"
-                  className="icon-button"
-                  aria-label="选择专家或插件"
-                  data-composer-picker
-                  title="选择专家或插件"
-                  disabled={
-                    selectionDisabled ||
-                    (!s.pluginSelection && !s.expertSelection)
-                  }
-                  onClick={(e) => mentions.open("plugins", e.currentTarget)}
-                >
-                  <Blocks size={18} />
-                </button>
-                {s.skillSelection && (
-                  <button
-                    type="button"
-                    className="icon-button skill-picker-trigger"
-                    title="选择技能"
-                    aria-label="选择技能"
-                    data-composer-picker
-                    disabled={selectionDisabled}
-                    onClick={(e) => mentions.open("skills", e.currentTarget)}
-                  >
-                    <BookOpen size={17} aria-hidden="true" />
-                  </button>
+                {!s.selectedId && !sending && !pendingSubmission && (
+                  <>
+                    <button
+                      type="button"
+                      className="icon-button"
+                      aria-label="选择专家或插件"
+                      data-composer-picker
+                      title="选择专家或插件"
+                      disabled={
+                        selectionDisabled ||
+                        (!s.pluginSelection && !s.expertSelection)
+                      }
+                      onClick={(e) => mentions.open("plugins", e.currentTarget)}
+                    >
+                      <Blocks size={18} />
+                    </button>
+                    {s.skillSelection && (
+                      <button
+                        type="button"
+                        className="icon-button skill-picker-trigger"
+                        title="选择技能"
+                        aria-label="选择技能"
+                        data-composer-picker
+                        disabled={selectionDisabled}
+                        onClick={(e) =>
+                          mentions.open("skills", e.currentTarget)
+                        }
+                      >
+                        <BookOpen size={17} aria-hidden="true" />
+                      </button>
+                    )}
+                  </>
                 )}
               </div>
               <RuntimeSelector
@@ -1872,6 +1833,19 @@ export default function App() {
                 >
                   <Square size={15} fill="currentColor" />
                 </button>
+              ) : sending || pendingSubmission ? (
+                <button
+                  type="button"
+                  className="send-button is-submitting"
+                  disabled
+                  aria-label="正在发送，等待确认"
+                  title="正在发送，确认后可停止回答"
+                >
+                  <span className="submission-stop">
+                    <Square size={13} fill="currentColor" />
+                    <LoaderCircle size={27} className="spin" />
+                  </span>
+                </button>
               ) : (
                 <button
                   type="submit"
@@ -1879,7 +1853,7 @@ export default function App() {
                   aria-label="发送消息"
                   title="发送消息"
                   disabled={
-                    !draft.trim() ||
+                    (!draft.trim() && !attachments.length) ||
                     expertBusy ||
                     inputsBusy ||
                     runtimeBusy ||
@@ -1903,42 +1877,38 @@ export default function App() {
               )}
             </div>
           </form>
-          <p className="composer-note">newbot 可能会犯错。重要信息请核实。</p>
         </div>
       </main>
-      {s.selectedId && (
-        <button
-          type="button"
-          className={`rail-toggle ${railOpen ? "open" : ""}`}
-          aria-label={railOpen ? "关闭右侧栏" : "打开右侧栏"}
-          aria-expanded={railOpen}
-          aria-pressed={railOpen}
-          title={
-            railOpen
-              ? "关闭右侧栏（Ctrl Shift A）"
-              : "打开右侧栏（Ctrl Shift A）"
-          }
-          onClick={() => setRailOpen((v) => !v)}
-        >
-          <PanelLeft size={18} aria-hidden="true" />
-          {(s.thread?.nextInput?.skills.length || 0) +
-            (s.thread?.nextInput?.plugins.length || 0) >
-            0 && (
-            <span className="association-count" aria-hidden="true">
-              {(s.thread?.nextInput?.skills.length || 0) +
-                (s.thread?.nextInput?.plugins.length || 0)}
-            </span>
-          )}
-        </button>
-      )}
       {railOpen && s.selectedId && (
         <>
-          <div className="rail-scrim" onClick={() => setRailOpen(false)} />
           <WorkbenchRail
+            onClose={() => setRailOpen(false)}
+            restoreFocus={() => {
+              const action = afterRailClose.current;
+              afterRailClose.current = null;
+              if (action) requestAnimationFrame(action);
+              else railToggle.current?.focus();
+            }}
             thread={s.thread || undefined}
-            busy={inputsBusy}
-            onPickFiles={() => setWorkspacePicker(true)}
-            onOpenArtifact={setRailArtifact}
+            busy={selectionDisabled}
+            expert={selectedExpert || undefined}
+            onExpert={() => {
+              afterRailClose.current = () => setExpertDetail(selectedExpert);
+              setRailOpen(false);
+            }}
+            onRemoveExpert={() => void chooseExpert(null).catch(s.notify)}
+            canPickPlugins={s.pluginSelection || s.expertSelection}
+            canPickSkills={s.skillSelection}
+            onAdd={(kind) => {
+              afterRailClose.current = () =>
+                mentions.open(kind, railToggle.current);
+              setRailOpen(false);
+            }}
+            onPickFiles={openWorkspaceFiles}
+            onOpenArtifact={(artifact) => {
+              rememberWorkbenchFocus();
+              setRailArtifact(artifact);
+            }}
             onRemove={(kind, id) => {
               const current = s.thread?.nextInput;
               if (!current || !s.selectedId) return;
@@ -1950,7 +1920,7 @@ export default function App() {
                 kind === "plugins"
                   ? current.plugins.filter((x) => x.id !== id)
                   : current.plugins;
-              void saveInputs(s.selectedId, skills, plugins);
+              void saveInputs(s.selectedId, skills, plugins).catch(s.notify);
             }}
           />
         </>
@@ -1960,10 +1930,7 @@ export default function App() {
           <ArtifactPreview
             artifact={railArtifact}
             onClose={() => setRailArtifact(null)}
-            onCloseAutoFocus={(event) => {
-              event.preventDefault();
-              textarea.current?.focus();
-            }}
+            onCloseAutoFocus={restoreWorkbenchFocus}
           />
         </Suspense>
       )}
@@ -2046,6 +2013,23 @@ export default function App() {
               if (!v) setSettings(null);
             }}
             initialTab={settings}
+            onUse={async (kind, entry, signal) => {
+              const current = useApp.getState();
+              if (
+                !current.connected ||
+                current.loading ||
+                current.runtime !== "ready" ||
+                sending ||
+                inputsRequest.current ||
+                expertRequest.current
+              )
+                throw new Error("当前会话暂不可修改，请稍后重试");
+              await selectCapability(kind, entry, null, signal);
+              if (!signal.aborted) {
+                setSettings(null);
+                requestAnimationFrame(() => textarea.current?.focus());
+              }
+            }}
           />
         </DeferredPanel>
       )}

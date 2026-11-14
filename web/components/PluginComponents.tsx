@@ -1,6 +1,9 @@
+import { useMcpOAuthCompletion, type OAuthAttempt } from "../use-mcp-oauth";
+import { connectionStateLabels } from "../connection-state";
+import { CatalogDetail } from "./CatalogNavigation";
+import { SkillIcon as BookOpen } from "./AppIcons";
 import { useId, useRef, useState } from "react";
 import {
-  BookOpen,
   Check,
   ChevronDown,
   Power,
@@ -28,10 +31,18 @@ function ConnectionEditor({
   connection: c,
   onSaved,
   onDirty,
+  onCheck,
+  checking,
+  blocked,
+  canCheck,
 }: {
   connection: PluginConnection;
   onSaved: () => Promise<void>;
   onDirty: () => void;
+  onCheck: () => void;
+  checking: boolean;
+  blocked: boolean;
+  canCheck: boolean;
 }) {
   const form = useRef<HTMLFormElement>(null),
     uid = useId();
@@ -50,6 +61,7 @@ function ConnectionEditor({
     [busy, setBusy] = useState(false),
     [unknown, setUnknown] = useState(""),
     [error, setError] = useState("");
+  const [dirty, setDirty] = useState(false);
   async function accepted() {
     if (form.current)
       for (const el of form.current.querySelectorAll<HTMLInputElement>(
@@ -57,6 +69,7 @@ function ConnectionEditor({
       ))
         el.value = "";
     setUnknown("");
+    setDirty(false);
     try {
       await onSaved();
     } catch {
@@ -121,14 +134,19 @@ function ConnectionEditor({
       ref={form}
       className="plugin-connection-form"
       onSubmit={submit}
-      onChange={onDirty}
+      onChange={() => {
+        setDirty(true);
+        onDirty();
+      }}
     >
-      <fieldset disabled={busy || !!unknown}>
+      <fieldset disabled={busy || blocked || !!unknown}>
         {c.fields.map((f) => (
           <div className="plugin-config-field" key={f.id}>
             <label htmlFor={`${uid}-${f.id}`}>
               {f.title}
-              {!f.required && <span className="muted">（可选）</span>}
+              {!f.required && !/[（(]可选[）)]/.test(f.title) && (
+                <span className="muted">（可选）</span>
+              )}
             </label>
             {f.type === "boolean" ? (
               <input
@@ -167,6 +185,7 @@ function ConnectionEditor({
                     className="secondary"
                     aria-pressed={clear.includes(f.id)}
                     onClick={() => {
+                      setDirty(true);
                       onDirty();
                       setClear((v) =>
                         v.includes(f.id)
@@ -221,6 +240,7 @@ function ConnectionEditor({
           values={values}
           onUse={(selection) => {
             if (!certificateSelectionValid(c, values, selection)) return;
+            setDirty(true);
             onDirty();
             acquiredCertificate.current = selection;
             setValues((v) =>
@@ -242,6 +262,16 @@ function ConnectionEditor({
           启用连接器
         </label>
         <div className="editor-actions">
+          <button
+            className="secondary"
+            type="button"
+            disabled={!canCheck || dirty || checking}
+            onClick={onCheck}
+            title={dirty ? "请先保存更改" : undefined}
+          >
+            <Unplug size={16} />
+            {checking ? "正在检查…" : dirty ? "保存后检查" : "检查连接"}
+          </button>
           <button className="primary" type="submit">
             {busy ? "正在保存…" : "保存"}
           </button>
@@ -279,7 +309,16 @@ export default function PluginComponents({
     [error, setError] = useState(""),
     [notice, setNotice] = useState<Record<string, string>>({}),
     [statuses, setStatuses] = useState<Record<string, Json>>({});
-  const [oauth, setOauth] = useState<Record<string, string>>({});
+  const [oauth, setOauth] = useState<OAuthAttempt | null>(null);
+  useMcpOAuthCompletion(oauth, (success, id) => {
+    setOauth(null);
+    const connection = detail.connections?.find(
+      (c: PluginConnection) => c.id === id,
+    );
+    if (!connection) return;
+    if (success) void check(connection);
+    else setError("账号授权未完成，请重新连接账号。");
+  });
   const diagnosticGeneration = useRef<Record<string, number>>({});
   function invalidateConnection(id: string) {
     diagnosticGeneration.current[id] =
@@ -290,7 +329,7 @@ export default function PluginComponents({
       delete next[id];
       return next;
     });
-    setOauth((v) => ({ ...v, [id]: "" }));
+    setOauth((v) => (v?.id === id ? null : v));
   }
   const refresh = async () => {
     const next = await request<Json>("plugin/read", { id: detail.id });
@@ -309,7 +348,7 @@ export default function PluginComponents({
     }
   }
   const check = (c: PluginConnection) =>
-    action(c.id, async () => {
+    action(`check:${c.id}`, async () => {
       invalidateConnection(c.id);
       const generation = diagnosticGeneration.current[c.id];
       let result: Json;
@@ -324,31 +363,30 @@ export default function PluginComponents({
       }
       if (diagnosticGeneration.current[c.id] !== generation) return;
       setStatuses((v) => ({ ...v, [c.id]: result }));
-      setNotice((v) => ({
-        ...v,
-        [c.id]:
-          result.authStatus === "notLoggedIn" ||
-          result.runtimeStatus === "authenticationRequired"
-            ? "需要连接账号。"
-            : result.runtimeStatus === "starting" ||
-                result.runtimeStatus === "notStarted"
-              ? "连接正在启动，请稍后再次检查。"
-              : `发现 ${result.toolCount} 个工具。`,
-      }));
+      setNotice((v) => ({ ...v, [c.id]: "" }));
     });
   if (reading)
     return (
-      <SkillReader
-        skill={{
-          id: reading.id,
-          name: reading.name,
-          scope: "user",
-          pluginId: detail.id,
+      <CatalogDetail
+        open
+        title={reading.displayName || reading.name}
+        onOpenChange={(open) => {
+          if (!open) setReading(null);
         }}
-        pluginId={detail.id}
-        backLabel="返回插件"
-        onBack={() => setReading(null)}
-      />
+      >
+        <SkillReader
+          skill={{
+            id: reading.id,
+            name: reading.name,
+            displayName: reading.displayName || reading.name,
+            scope: "user",
+            pluginId: detail.id,
+          }}
+          pluginId={detail.id}
+          backLabel="返回插件"
+          onBack={() => setReading(null)}
+        />
+      </CatalogDetail>
     );
   return (
     <div className="plugin-components">
@@ -366,9 +404,11 @@ export default function PluginComponents({
                         ? "插件已停用"
                         : !c.enabled
                           ? "已停用"
-                          : c.configured
-                            ? "已配置"
-                            : "待配置")}
+                          : statuses[c.id]?.authStatus === "notLoggedIn"
+                            ? "需要授权"
+                            : connectionStateLabels[
+                                statuses[c.id]?.runtimeStatus
+                              ] || (c.configured ? "已配置" : "待配置"))}
                   </small>
                 </span>
                 {c.fields.length || c.reviewRequired ? (
@@ -436,6 +476,12 @@ export default function PluginComponents({
                   <ConnectionEditor
                     key={`${c.id}:${c.revision}:${c.schemaDigest}`}
                     connection={c}
+                    onCheck={() => void check(c)}
+                    checking={busy === `check:${c.id}`}
+                    blocked={!!busy}
+                    canCheck={
+                      !!detail.enabled && c.enabled && c.configured && !c.reason
+                    }
                     onDirty={() => invalidateConnection(c.id)}
                     onSaved={async () => {
                       const next = await refresh();
@@ -453,21 +499,6 @@ export default function PluginComponents({
                       }));
                     }}
                   />
-                  <button
-                    type="button"
-                    className="secondary"
-                    disabled={
-                      !!busy ||
-                      !detail.enabled ||
-                      !c.enabled ||
-                      !c.configured ||
-                      !!c.reason
-                    }
-                    onClick={() => void check(c)}
-                  >
-                    <Unplug size={16} />
-                    {busy === c.id ? "正在检查…" : "检查连接"}
-                  </button>
                 </div>
               )}
               {notice[c.id] && (
@@ -524,17 +555,21 @@ export default function PluginComponents({
                         )
                       )
                         throw Error("授权地址无效");
-                      setOauth((v) => ({ ...v, [c.id]: url.href }));
+                      setOauth({
+                        id: c.id,
+                        url: url.href,
+                        loginId: result.loginId,
+                      });
                     })
                   }
                 >
                   连接账号
                 </button>
               )}
-              {oauth[c.id] && (
+              {oauth?.id === c.id && (
                 <a
                   className="secondary"
-                  href={oauth[c.id]}
+                  href={oauth.url}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -558,7 +593,7 @@ export default function PluginComponents({
               >
                 <BookOpen size={20} />
                 <span>
-                  <strong>{skill.name}</strong>
+                  <strong>{skill.displayName || skill.name}</strong>
                   <small>{skill.description}</small>
                 </span>
               </button>
@@ -566,7 +601,7 @@ export default function PluginComponents({
                 type="button"
                 className="icon-button"
                 title={skill.enabled ? "停用技能" : "启用技能"}
-                aria-label={`${skill.enabled ? "停用" : "启用"} ${skill.name}`}
+                aria-label={`${skill.enabled ? "停用" : "启用"} ${skill.displayName || skill.name}`}
                 disabled={!skill.id || !!busy || !detail.available}
                 onClick={() =>
                   void action(skill.id, async () => {

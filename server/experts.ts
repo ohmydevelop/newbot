@@ -22,10 +22,10 @@ type Row = {
   content: string;
 };
 export function expertContextText(
-  expert: ExpertReference,
+  expert: ExpertReference & { instructions?: string },
   connectorIds: string[],
 ) {
-  return `本轮使用专家“${expert.name}”。可使用已连接的工具服务：${connectorIds.join("、")}。`;
+  return `本轮使用专家“${expert.name}”。${connectorIds.length ? `可使用已连接的工具服务：${connectorIds.join("、")}。` : ""}${expert.instructions ? `\n\n${expert.instructions}` : ""}`;
 }
 export function experts(
   db: Store,
@@ -43,6 +43,7 @@ export function experts(
       name: row.name,
       revision: row.revision,
       description: row.description,
+      instructions: "",
       ...JSON.parse(row.content),
     } as Expert;
     value.pluginIds = [
@@ -140,6 +141,9 @@ export function experts(
       old = p.id ? get(p.id) : undefined;
     if (p.id && (!old || old.revision !== p.expectedRevision))
       throw new PublicError("专家已变化，请重新读取");
+    // Older clients do not send this new field; preserve a saved prompt unless explicitly edited.
+    if (old && !Object.hasOwn(input as object, "instructions"))
+      p.instructions = dto(old).instructions || "";
     const entries = await catalog();
     for (const id of p.skillIds) {
       const owner = skillPlugin(db, id);
@@ -158,6 +162,7 @@ export function experts(
     const id = p.id || randomUUID(),
       revision = (old?.revision || 0) + 1,
       content = JSON.stringify({
+        instructions: p.instructions,
         skillIds: [...new Set(p.skillIds)],
         pluginIds: [...new Set(p.pluginIds)],
         connectorIds: [...new Set(p.connectorIds)],
@@ -293,7 +298,12 @@ export function experts(
       skills: selectedSkills,
       plugins: selectedPlugins,
       expertId: e.id,
-      expertSnapshot: { id: e.id, name: e.name, revision: e.revision },
+      expertSnapshot: {
+        id: e.id,
+        name: e.name,
+        revision: e.revision,
+        instructions: e.instructions || "",
+      },
       connectorIds: e.connectorIds,
       extensionRevision: bound?.revision || 0,
     };
@@ -329,15 +339,18 @@ export function experts(
               revision: r.revision,
             };
             const context = r.context ? JSON.parse(r.context) : null;
-            if (context?.connectorIds?.length) {
+            if (
+              context?.connectorIds?.length ||
+              context?.expertSnapshot?.instructions
+            ) {
               const generated = expertContextText(
-                item.expert,
-                context.connectorIds,
+                context.expertSnapshot || item.expert,
+                context.connectorIds || [],
               );
               // This extra input belongs to the recorded expert, not the user's composed message.
               item.content = item.content?.filter(
                 (part, index) =>
-                  index === 0 ||
+                  index !== (context.expertContextInputIndex ?? 1) ||
                   part.type !== "text" ||
                   part.text !== generated,
               );

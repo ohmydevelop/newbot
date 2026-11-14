@@ -64,7 +64,7 @@ export const ActionMenuItem = forwardRef<
         <Icon
           className="action-menu-icon"
           size={18}
-          strokeWidth={1.7}
+          strokeWidth={2}
           aria-hidden="true"
         />
         <span className="action-menu-label">

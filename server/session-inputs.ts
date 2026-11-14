@@ -3,7 +3,11 @@ import type { Store } from "./db.js";
 import type { skillLibrary } from "./skills.js";
 import type { pluginLibrary } from "./plugins.js";
 import { skillSelections } from "./skills.js";
-import type { SessionInputs, SkillSelection } from "../shared/types.js";
+import type {
+  SessionInputs,
+  SkillSelection,
+  SkillReference,
+} from "../shared/types.js";
 import { PublicError } from "./public-error.js";
 import { unifyPluginInputs, skillPlugin } from "./plugin-ownership.js";
 
@@ -17,12 +21,26 @@ export function sessionInputs(
     const row = db.raw
       .prepare("SELECT revision,content FROM session_inputs WHERE thread_id=?")
       .get(threadId) as { revision: number; content: string } | undefined;
-    return unifyPluginInputs(
-      db,
-      row
-        ? { ...JSON.parse(row.content), revision: row.revision }
-        : { revision: 0, skills: [], plugins: [] },
-    );
+    const value: SessionInputs = row
+      ? { ...JSON.parse(row.content), revision: row.revision }
+      : { revision: 0, skills: [], plugins: [] };
+    // Older dispatches stored only id/hash. Recover the exact version's label,
+    // never replace a selection with the current catalog's possibly newer file.
+    value.skills = value.skills.map((ref) => {
+      if (ref.name && ref.displayName && ref.scope) return ref;
+      const saved = db.raw
+        .prepare(
+          `SELECT s.name,s.display_name AS displayName,s.scope
+        FROM run_skills s JOIN runs r ON r.request_id=s.request_id
+        WHERE r.thread_id=? AND s.skill_id=? AND s.sha256=?
+        ORDER BY r.created DESC LIMIT 1`,
+        )
+        .get(threadId, ref.id, ref.sha256) as
+        | Pick<SkillReference, "name" | "displayName" | "scope">
+        | undefined;
+      return saved ? { ...ref, ...saved } : ref;
+    });
+    return unifyPluginInputs(db, value);
   }
   async function update(input: unknown) {
     const p = z
@@ -102,13 +120,19 @@ export function sessionInputs(
    */
   function remember(
     threadId: string,
-    skills: { id: string; sha256: string }[],
+    skills: SkillReference[],
     plugins: { id: string; name: string; displayName?: string }[],
   ) {
     // A turn without associations must not churn the revision.
     if (!skills.length && !plugins.length) return;
     const content = JSON.stringify({
-      skills: skills.map(({ id, sha256 }) => ({ id, sha256 })),
+      skills: skills.map(({ id, sha256, name, displayName, scope }) => ({
+        id,
+        sha256,
+        name,
+        displayName,
+        scope,
+      })),
       plugins: plugins.map(({ id, name, displayName }) => ({
         id,
         name,

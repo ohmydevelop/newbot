@@ -1,15 +1,9 @@
+import { MoreIcon as MoreHorizontal } from "./ReferenceIcons";
+import { ExpertIcon as UsersRound } from "./AppIcons";
 import { CatalogToolbar } from "./CatalogToolbar";
 import { useEffect, useState } from "react";
 import * as Dropdown from "@radix-ui/react-dropdown-menu";
-import {
-  Plus,
-  RefreshCw,
-  MoreHorizontal,
-  Pencil,
-  Trash2,
-  UsersRound,
-  Eye,
-} from "lucide-react";
+import { Plus, RefreshCw, Pencil, Trash2, Eye } from "lucide-react";
 import type {
   Expert,
   ExpertMembers,
@@ -17,6 +11,7 @@ import type {
 } from "../../shared/experts";
 import { request } from "../store";
 import { Modal } from "./ui";
+import { CatalogDetail } from "./CatalogNavigation";
 import { ActionMenuContent, ActionMenuItem } from "./ActionMenu";
 import ExpertDetails, {
   memberGroups,
@@ -27,10 +22,12 @@ type Draft = ExpertMembers & {
   revision?: number;
   name: string;
   description: string;
+  instructions?: string;
 };
 const empty = (): Draft => ({
   name: "",
   description: "",
+  instructions: "",
   skillIds: [],
   pluginIds: [],
   connectorIds: [],
@@ -74,6 +71,7 @@ export default function ExpertsSettings() {
         expectedRevision: draft.revision,
         name: draft.name,
         description: draft.description,
+        instructions: draft.instructions || "",
         skillIds: draft.skillIds,
         pluginIds: draft.pluginIds,
         connectorIds: draft.connectorIds,
@@ -97,13 +95,13 @@ export default function ExpertsSettings() {
       <CatalogToolbar label="专家" query={query} onQuery={setQuery}>
         <button
           type="button"
-          className="icon-button"
+          className="primary catalog-add"
           aria-label="添加专家"
           title="添加专家"
           disabled={busy || !data}
           onClick={() => edit(empty())}
         >
-          <Plus size={20} />
+          新专家
         </button>
         <button
           type="button"
@@ -129,11 +127,7 @@ export default function ExpertsSettings() {
       {data && !matches.length && (
         <div className="extension-empty">
           <UsersRound size={24} aria-hidden="true" />
-          <p>
-            {query
-              ? "没有匹配的专家"
-              : "将常用扩展组合成专家，在聊天中用 @ 选择。"}
-          </p>
+          <p>{query ? "没有匹配的专家" : "尚未创建专家"}</p>
           {!query && (
             <button
               type="button"
@@ -145,82 +139,85 @@ export default function ExpertsSettings() {
           )}
         </div>
       )}
-      {matches.map((e) => (
-        <div className="catalog-entry expert-entry" key={e.id}>
-          <button
-            type="button"
-            className="catalog-entry-main"
-            onClick={() => setDetail(e)}
-            aria-label={`查看专家 ${e.name}`}
-          >
-            <span className="expert-icon">
-              <UsersRound size={22} aria-hidden="true" />
-            </span>
-            <span>
-              <strong>{e.name}</strong>
-              <small>
-                {e.description ||
-                  memberGroups
-                    .filter((g) => e[g.key].length)
-                    .map((g) => `${e[g.key].length} 个${g.label}`)
-                    .join(" · ")}
-              </small>
-              {!e.available && (
-                <small className="danger-text">有扩展不可用</small>
-              )}
-            </span>
-          </button>
-          <Dropdown.Root>
-            <Dropdown.Trigger
-              className="icon-button catalog-more"
-              aria-label={`${e.name} 更多操作`}
-              title="更多操作"
-              disabled={busy}
+      <div className="catalog-grid">
+        {matches.map((e) => (
+          <div className="catalog-entry expert-entry" key={e.id}>
+            <button
+              type="button"
+              className="catalog-entry-main"
+              onClick={() => setDetail(e)}
+              aria-label={`查看专家 ${e.name}`}
             >
-              <MoreHorizontal size={20} />
-            </Dropdown.Trigger>
-            <Dropdown.Portal>
-              <ActionMenuContent
-                className="dropdown"
-                align="end"
-                sideOffset={5}
+              <span className="expert-icon">
+                <UsersRound size={22} aria-hidden="true" />
+              </span>
+              <span>
+                <strong>{e.name}</strong>
+                <small>
+                  {e.description ||
+                    memberGroups
+                      .filter((g) => e[g.key].length)
+                      .map((g) => `${e[g.key].length} 个${g.label}`)
+                      .join(" · ")}
+                </small>
+                {!e.available && (
+                  <small className="danger-text">有扩展不可用</small>
+                )}
+              </span>
+            </button>
+            <Dropdown.Root>
+              <Dropdown.Trigger
+                className="icon-button catalog-more"
+                aria-label={`${e.name} 更多操作`}
+                title="更多操作"
+                disabled={busy}
               >
-                <ActionMenuItem icon={Eye} onSelect={() => setDetail(e)}>
-                  详情
-                </ActionMenuItem>
-                <ActionMenuItem icon={Pencil} onSelect={() => edit(e)}>
-                  编辑
-                </ActionMenuItem>
-                <ActionMenuItem
-                  icon={Trash2}
-                  destructive
-                  separated
-                  onSelect={() => {
-                    setFormError("");
-                    setRemoving(e);
-                  }}
+                <MoreHorizontal size={20} />
+              </Dropdown.Trigger>
+              <Dropdown.Portal>
+                <ActionMenuContent
+                  className="dropdown"
+                  align="end"
+                  sideOffset={5}
                 >
-                  删除
-                </ActionMenuItem>
-              </ActionMenuContent>
-            </Dropdown.Portal>
-          </Dropdown.Root>
-        </div>
-      ))}
+                  <ActionMenuItem icon={Eye} onSelect={() => setDetail(e)}>
+                    详情
+                  </ActionMenuItem>
+                  <ActionMenuItem icon={Pencil} onSelect={() => edit(e)}>
+                    编辑
+                  </ActionMenuItem>
+                  <ActionMenuItem
+                    icon={Trash2}
+                    destructive
+                    separated
+                    onSelect={() => {
+                      setFormError("");
+                      setRemoving(e);
+                    }}
+                  >
+                    删除
+                  </ActionMenuItem>
+                </ActionMenuContent>
+              </Dropdown.Portal>
+            </Dropdown.Root>
+          </div>
+        ))}
+      </div>
       {detail && (
         <ExpertDetails value={detail} onClose={() => setDetail(null)} />
       )}
       {draft && data && (
-        <Modal
+        <CatalogDetail
           open
           title={draft.id ? "编辑专家" : "创建专家"}
-          className="expert-editor"
+          className="expert-editor catalog-form-step"
           dismissible={!busy}
           onOpenChange={(open) => {
             if (!open) setDraft(null);
           }}
         >
           <form
+            className="catalog-form"
             onSubmit={(e) => {
               e.preventDefault();
               void save();
@@ -244,6 +241,18 @@ export default function ExpertsSettings() {
                 rows={2}
                 onChange={(e) =>
                   setDraft({ ...draft, description: e.target.value })
+                }
+              />
+            </label>
+            <label>
+              提示词
+              <textarea
+                value={draft.instructions || ""}
+                maxLength={20000}
+                rows={5}
+                placeholder="这个专家应该如何回答、使用哪些方法…"
+                onChange={(e) =>
+                  setDraft({ ...draft, instructions: e.target.value })
                 }
               />
             </label>
@@ -333,14 +342,15 @@ export default function ExpertsSettings() {
                 disabled={
                   busy ||
                   !draft.name.trim() ||
-                  !memberGroups.some((g) => draft[g.key].length)
+                  (!draft.instructions?.trim() &&
+                    !memberGroups.some((g) => draft[g.key].length))
                 }
               >
                 {busy ? "保存中…" : "保存"}
               </button>
             </div>
           </form>
-        </Modal>
+        </CatalogDetail>
       )}
       {removing && (
         <Modal

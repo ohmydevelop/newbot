@@ -14,8 +14,8 @@ import {
 } from "../../shared/imports";
 import { loadSettings } from "../store";
 import { responseJson } from "../http";
-import { Modal } from "./ui";
-async function api(
+import { CatalogDetail as Modal } from "./CatalogNavigation";
+export async function importApi(
   path: string,
   body?: unknown,
   method = body === undefined ? "GET" : "POST",
@@ -67,7 +67,7 @@ export default function SkillImport({
     sessionId?: string;
   } | null>(null);
   useEffect(() => {
-    void api("")
+    void importApi("")
       .then(setRecent)
       .catch(() => {});
   }, []);
@@ -75,7 +75,7 @@ export default function SkillImport({
     if (!session || !["scanning", "installing"].includes(session.state)) return;
     let active = true;
     const timer = setInterval(() => {
-      void api("/" + session.id)
+      void importApi("/" + session.id)
         .then((next) => {
           if (active) setSession(next);
         })
@@ -91,10 +91,11 @@ export default function SkillImport({
   const pending =
     !!busy || (!!session && ["scanning", "installing"].includes(session.state));
   async function otherSource() {
-    if (session?.retained) await api("/" + session.id, undefined, "DELETE");
+    if (session?.retained)
+      await importApi("/" + session.id, undefined, "DELETE");
     setSession(null);
     pendingFiles.current = null;
-    setRecent(await api(""));
+    setRecent(await importApi(""));
     setError("");
   }
   async function run(label: string, fn: () => Promise<void>) {
@@ -132,7 +133,7 @@ export default function SkillImport({
     const pending = pendingFiles.current!;
     let id = pending.sessionId;
     if (!id) {
-      const next = await api("", {
+      const next = await importApi("", {
         kind: pending.kind,
         updatePluginId: updatePlugin?.id,
         name:
@@ -146,15 +147,15 @@ export default function SkillImport({
     }
     for (const [index, file] of pending.files.entries()) {
       setBusy(`上传 ${index + 1} / ${pending.files.length}`);
-      await api(
+      await importApi(
         `/${id}/${pending.kind === "zip" ? "archive" : "file?path=" + encodeURIComponent(file.webkitRelativePath || file.name)}`,
         file,
         "PUT",
       );
     }
     pendingFiles.current = null;
-    setBusy("扫描技能与插件…");
-    preview(await api(`/${id}/scan`, {}));
+    setBusy("正在读取…");
+    preview(await importApi(`/${id}/scan`, {}));
   }
   const chooseFiles = (files: FileList | null, kind: "files" | "zip") => {
     if (!files?.length) return;
@@ -168,7 +169,8 @@ export default function SkillImport({
     }
     pendingFiles.current = { files: values, kind };
     void run("上传…", async () => {
-      if (session?.retained) await api("/" + session.id, undefined, "DELETE");
+      if (session?.retained)
+        await importApi("/" + session.id, undefined, "DELETE");
       await uploadFiles();
     });
   };
@@ -215,7 +217,7 @@ export default function SkillImport({
       signature = JSON.stringify(body);
     if (!op.current || op.current.signature !== signature)
       op.current = { signature, id: crypto.randomUUID() };
-    const next: ImportSession = await api(`/${session.id}/install`, {
+    const next: ImportSession = await importApi(`/${session.id}/install`, {
       ...body,
       operationId: op.current.id,
     });
@@ -247,7 +249,7 @@ export default function SkillImport({
             : "添加技能"
       }
       wide
-      className="skill-import"
+      className="skill-import catalog-form-step"
       dismissible={!busy}
       onOpenChange={(open) => {
         if (!open) onClose();
@@ -258,7 +260,7 @@ export default function SkillImport({
         session.state === "uploading" ||
         session.state === "failed" ? (
           <>
-            <div className="import-sources">
+            <div className="import-sources catalog-source-options">
               <button
                 className="secondary"
                 disabled={pending}
@@ -306,14 +308,14 @@ export default function SkillImport({
                   e.preventDefault();
                   void run("下载并扫描…", async () => {
                     if (session?.retained)
-                      await api("/" + session.id, undefined, "DELETE");
-                    const next = await api("", {
+                      await importApi("/" + session.id, undefined, "DELETE");
+                    const next = await importApi("", {
                       kind: "github",
                       url,
                       updatePluginId: updatePlugin?.id,
                     });
                     setSession(next);
-                    preview(await api(`/${next.id}/scan`, {}));
+                    preview(await importApi(`/${next.id}/scan`, {}));
                   });
                 }}
               >
@@ -330,14 +332,11 @@ export default function SkillImport({
                   />
                 </label>
                 <p className="muted" id="github-import-source-hint">
-                  仓库首页使用默认分支；分支、标签和子目录按链接导入。
+                  支持仓库、分支或子目录链接。
                 </p>
                 <button className="primary" disabled={pending}>
-                  扫描来源
+                  继续
                 </button>
-                <p className="muted">
-                  私有内容请使用本地目录或 ZIP。需要保留执行权限时使用 ZIP。
-                </p>
               </form>
             )}
             {!!recent.length && !session && (
@@ -356,7 +355,7 @@ export default function SkillImport({
                         key={s.id}
                         onClick={() =>
                           void run("读取结果…", async () =>
-                            preview(await api("/" + s.id)),
+                            preview(await importApi("/" + s.id)),
                           )
                         }
                       >
@@ -378,8 +377,12 @@ export default function SkillImport({
                             disabled={pending}
                             onClick={() =>
                               void run("取消导入…", async () => {
-                                await api("/" + s.id, undefined, "DELETE");
-                                setRecent(await api(""));
+                                await importApi(
+                                  "/" + s.id,
+                                  undefined,
+                                  "DELETE",
+                                );
+                                setRecent(await importApi(""));
                               })
                             }
                           >
@@ -395,9 +398,7 @@ export default function SkillImport({
           <>
             <div className="import-summary">
               <strong>{session.source.name}</strong>
-              <span>
-                {rows.length} 个技能 · {(session.bytes / 1024).toFixed(0)} KiB
-              </span>
+              <span>{rows.length} 个技能</span>
             </div>
             {session.source.kind === "github" && session.source.ref && (
               <p className="muted import-source-path">
@@ -446,7 +447,7 @@ export default function SkillImport({
                             : ""}
                         {e.skills.length} 个技能 · 连接器：
                         {e.mcp.join("、") || "无"} · 钩子：
-                        {e.hooks.join("、") || "无"}。仅启用下方勾选的技能。
+                        {e.hooks.join("、") || "无"}
                       </p>
                     )}
                     {e.kind === "plugin" && e.conflict?.kind === "changed" && (
@@ -592,7 +593,7 @@ export default function SkillImport({
         {(busy || pending) && (
           <p role="status" className="muted">
             {busy ||
-              (session?.state === "scanning" ? "扫描技能与插件…" : "正在导入…")}
+              (session?.state === "scanning" ? "正在读取…" : "正在导入…")}
           </p>
         )}
         {(error || session?.error) && (

@@ -105,6 +105,23 @@ export class AgentEvents extends EventEmitter {
   }
   notification(message: ServerNotification) {
     const p = message.params as Json;
+    if (
+      [
+        "mcpServer/oauthLogin/completed",
+        "mcpServer/oauth/login/completed",
+      ].includes(message.method)
+    ) {
+      this.publish({
+        type: EventType.CUSTOM,
+        name: "newbot.mcp.oauth.completed",
+        value: {
+          name: p.name,
+          loginId: p.loginId || null,
+          success: p.success === true,
+        },
+      });
+      return;
+    }
     const threadId = p.threadId || p.thread?.id;
     if (!threadId) return;
     const runId = p.turnId || p.turn?.id;
@@ -179,8 +196,11 @@ export class AgentEvents extends EventEmitter {
       message.method === "item/started" ||
       message.method === "item/completed"
     ) {
-      const item = p.item as ThreadItem;
       const completed = message.method === "item/completed";
+      const item = {
+        ...p.item,
+        status: p.item.status || (completed ? "completed" : "inProgress"),
+      } as ThreadItem;
       if (item.type === "agentMessage" || item.type === "userMessage") {
         textStart(item.id, item.type === "userMessage" ? "user" : "assistant");
         const text =

@@ -162,7 +162,7 @@ test("abandoning an unseen request fences late POSTs across restart without star
     assert.equal((await abandon()).json().state, "abandoned");
     await ctx.app.close();
     ctx = await createServer({
-    providerRuntime: null,
+      providerRuntime: null,
       directory,
       cwd: join(directory, "workspace"),
       password: "recovery-test-password",
@@ -194,7 +194,7 @@ test("abandon refuses a recorded or in-flight request and preserves its authorit
     origin = "http://127.0.0.1:3136",
     codex = new FakeCodex(),
     ctx = await createServer({
-    providerRuntime: null,
+      providerRuntime: null,
       directory,
       cwd: join(directory, "workspace"),
       password: "recovery-test-password",
@@ -249,7 +249,7 @@ test("legacy accepted receipts cannot be fenced as unseen and remain readable", 
     origin = "http://127.0.0.1:3136",
     id = randomUUID(),
     ctx = await createServer({
-    providerRuntime: null,
+      providerRuntime: null,
       directory,
       cwd: join(directory, "workspace"),
       password: "recovery-test-password",
@@ -300,7 +300,7 @@ test("archive is blocked while a native turn is starting before its first event"
   const directory = mkdtempSync(join(tmpdir(), "newbot-archive-start-")),
     codex = new FakeCodex(),
     ctx = await createServer({
-    providerRuntime: null,
+      providerRuntime: null,
       directory,
       cwd: join(directory, "workspace"),
       password: "recovery-test-password",
@@ -344,4 +344,21 @@ test("archive is blocked while a native turn is starting before its first event"
     await ctx.app.close();
     rmSync(directory, { recursive: true, force: true });
   }
+});
+
+test("rejected submission recovery after reload restores text/files without overwriting newer edits", () => {
+  const d = new ComposerDrafts();
+  const preview = {
+    text: "original",
+    files: [{ id: "file", name: "note.txt" }],
+  };
+  d.recoverSubmission("old", preview);
+  assert.equal(d.get("old").text, "original");
+  assert.equal(d.get("old").files[0].name, "note.txt");
+  d.setText("new", "newer draft");
+  d.recoverSubmission("new", preview);
+  assert.equal(d.get("new").text, "newer draft");
+  d.setText("cleared", "");
+  d.recoverSubmission("cleared", preview);
+  assert.equal(d.get("cleared").text, "");
 });

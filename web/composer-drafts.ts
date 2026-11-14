@@ -76,6 +76,16 @@ export class ComposerDrafts {
       pluginsVersion: prior.pluginsVersion + 1,
     });
   }
+  /** Restore a rejected submission after reload only into an untouched draft. */
+  recoverSubmission(
+    key: string,
+    preview: { text: string; files: DraftFile[] },
+  ) {
+    const prior = this.get(key);
+    if (prior.textVersion || prior.text || prior.files.length) return;
+    this.setText(key, preview.text);
+    this.setFiles(key, preview.files);
+  }
   reset(key: string) {
     this.entries.set(key, empty(key, ++this.sequence));
   }
@@ -133,7 +143,7 @@ export class ComposerDrafts {
     this.entries.clear();
   }
 }
-export function useComposerDrafts(threadId: string | null, newKey="$new") {
+export function useComposerDrafts(threadId: string | null, newKey = "$new") {
   const store = useRef(new ComposerDrafts()).current,
     [, render] = useReducer((v) => v + 1, 0);
   const key = threadId || newKey,

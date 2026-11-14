@@ -4,6 +4,7 @@ import {
   type credentialVault,
 } from "./credential-vault.js";
 import { configFail } from "./configuration-error.js";
+import { mcpCertificate } from "./mcp-certificate.js";
 import { z } from "zod";
 import { mcpEditable } from "./mcp-policy.js";
 import { record, providerError as fail } from "./providers.js";
@@ -51,6 +52,7 @@ export const mcpSave = z
         enabled: z.boolean().optional(),
         startupTimeout: z.number().int().min(1).max(120).optional(),
         toolTimeout: z.number().int().min(1).max(600).optional(),
+        caCertificate: z.string().max(43692).nullable().optional(),
       })
       .strict()
       .refine((p) => Object.keys(p).length > 0),
@@ -172,6 +174,19 @@ export function mcpManager(
         if (!data.create && transport(def) !== data.transport)
           fail("不能切换现有 MCP 的传输类型，请另建连接");
         const p = data.patch;
+        const ca = p.caCertificate
+          ? mcpCertificate(p.caCertificate)
+          : p.caCertificate;
+        if (ca && (!codex.runtimeCapabilities?.mcpCustomCa || !core.extensions))
+          fail("当前运行内核不支持连接器独立证书，请先更新服务");
+        if (
+          ca &&
+          (data.transport !== "http" ||
+            !String(p.url || def.url).startsWith("https://"))
+        )
+          fail("自定义证书仅用于 HTTPS 连接器");
+        const changedOrigin =
+          p.url && def.url && new URL(p.url).origin !== new URL(def.url).origin;
         if (
           (data.transport === "stdio" &&
             (p.url !== undefined || p.bearerEnv !== undefined)) ||
@@ -201,6 +216,11 @@ export function mcpManager(
         ])
           checkEnv(before, ref);
         const fields: Record<string, any> = {
+          ...(ca !== undefined
+            ? { tls_ca_certificate: ca }
+            : changedOrigin && def.tls_ca_certificate
+              ? { tls_ca_certificate: null }
+              : {}),
           ...(data.rebindCredentials &&
           p.url !== undefined &&
           p.url !== def.url &&
@@ -233,6 +253,8 @@ export function mcpManager(
             fail("新增 MCP 需要命令或 HTTP 端点", 400);
           if (fields.bearer_token_env_var === null)
             delete fields.bearer_token_env_var;
+          if (fields.tls_ca_certificate === null)
+            delete fields.tls_ca_certificate;
           Object.assign(fields, {
             enabled: p.enabled ?? true,
             startup_timeout_sec: p.startupTimeout ?? 10,
