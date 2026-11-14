@@ -1,3 +1,8 @@
+import {
+  agentCommands,
+  AgentCommandError,
+  rejectAgentCommand,
+} from "./agent-commands.js";
 import { RunnerControl } from "./runner/control.js";
 import {
   runnerRoutes,
@@ -607,6 +612,8 @@ async function createServerInternal(
     });
   });
   app.setErrorHandler((error, req, reply) => {
+    if (error instanceof AgentCommandError)
+      return reply.code(error.statusCode).send(error.response);
     const reportedStatus = (error as { statusCode?: unknown }).statusCode;
     const revisionError =
       error instanceof z.ZodError &&
@@ -1389,7 +1396,7 @@ async function createServerInternal(
     if (turn) value.turn = { id: turn.id, status: turn.status };
     return value;
   });
-  app.post("/api/agent/run", { bodyLimit: 256 * 1024 }, async (req, reply) => {
+  async function submitAgentRun(body: unknown): Promise<Json> {
     const p = z
       .object({
         threadId: z.string().max(200).optional(),
@@ -1408,7 +1415,7 @@ async function createServerInternal(
         requestId: z.string().uuid(),
       })
       .refine((v) => v.text.length > 0 || v.attachments.length > 0, "请输入消息或添加附件")
-      .parse(req.body);
+      .parse(body);
     if (!p.skills?.length) delete p.skills;
     // Preserve successful idempotency records created by v0.2.
     const legacy = db.get(`run:${p.requestId}`);
@@ -1422,13 +1429,13 @@ async function createServerInternal(
     }
     const prior = runs.get(p.requestId);
     if (prior?.state === "abandoned")
-      return reply.code(409).send({
+      return rejectAgentCommand(409, {
         ...runs.view(prior),
         error: "该发送已放弃，迟到的请求不会执行",
       });
     if (!prior) {
       if (runtime.state !== "ready" || service.busy)
-        return reply.code(503).send({ error: "Codex 尚未就绪，请稍后重试" });
+        return rejectAgentCommand(503, { error: "Codex 尚未就绪，请稍后重试" });
       const limit = Math.max(
         1,
         Math.min(5, Number(process.env.MAX_ACTIVE_TURNS) || 2),
@@ -1437,7 +1444,7 @@ async function createServerInternal(
         runningRequests.size + runtime.active.size >= limit ||
         waitingRuns.size >= 10
       )
-        return reply.code(429).send({ error: "并行任务已满，请等待任务结束" });
+        return rejectAgentCommand(429, { error: "并行任务已满，请等待任务结束" });
       if (
         p.threadId &&
         db.raw
@@ -1446,9 +1453,7 @@ async function createServerInternal(
           )
           .get(p.threadId)
       )
-        return reply
-          .code(409)
-          .send({ error: "此会话有等待授权的任务，请先授权或取消。" });
+        return rejectAgentCommand(409, { error: "此会话有等待授权的任务，请先授权或取消。" });
       if (p.threadId && !db.owns(p.threadId))
         throw new PublicError("会话不存在");
       await files.inputs(p.attachments); // Validate before creating a durable reservation.
@@ -1494,20 +1499,18 @@ async function createServerInternal(
           )
           .get(p.threadId)
       )
-        return reply
-          .code(409)
-          .send({ error: "此会话有待处理的发送，请先确认或取消。" });
+        return rejectAgentCommand(409, { error: "此会话有待处理的发送，请先确认或取消。" });
       const { run, fresh } = runs.reserve(p.requestId, p);
       ownsReservation = fresh;
       if (runningRequests.has(p.requestId))
-        return runningRequests.get(p.requestId);
+        return runningRequests.get(p.requestId)!;
       if (!fresh) {
         if (run.turn_id || run.state === "awaiting_credentials")
           return {
             ...runs.view(run),
             privateInputs: privateFieldStore.pending(p.requestId),
           };
-        return reply.code(409).send({
+        return rejectAgentCommand(409, {
           ...runs.view(run),
           error: "该请求可能已经提交，请查询请求状态；系统不会重复执行",
         });
@@ -1647,7 +1650,11 @@ async function createServerInternal(
     } finally {
       if (!waitingRuns.has(p.requestId)) releaseProviderConfig?.();
     }
-  });
+  }
+  const commands = agentCommands({ submit: submitAgentRun, db, service, runtime });
+  app.post("/api/agent/run", { bodyLimit: 256 * 1024 }, (req) =>
+    commands.submit(req.body),
+  );
   const actions = new Set([
     "configuration/recover",
     "gateway/catalog",
@@ -2095,6 +2102,7 @@ async function createServerInternal(
   });
   return {
     app,
+    agentCommands: commands,
     runtime,
     db,
     service,

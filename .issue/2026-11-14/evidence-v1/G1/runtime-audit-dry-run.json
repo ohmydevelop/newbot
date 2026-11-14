@@ -1,0 +1,7 @@
+{
+  "error": {
+    "code": "ERESOLVE",
+    "summary": "could not resolve",
+    "detail": "While resolving: @ag-ui/a2ui-middleware@0.0.16\nFound: @ag-ui/client@1.0.2\nnode_modules/@ag-ui/client\n  @ag-ui/client@\"1.0.2\" from the root project\n  peer @ag-ui/client@\">=0.0.42\" from @ag-ui/langgraph@0.0.44\n  node_modules/@ag-ui/langgraph\n    @ag-ui/langgraph@\"0.0.44\" from @copilotkit/runtime@1.88.0\n    node_modules/@copilotkit/runtime\n      @copilotkit/runtime@\"1.88.0\" from the root project\n  14 more (@copilotkit/channels-core, ...)\n\nCould not resolve dependency:\npeer @ag-ui/client@\">=1.0.0\" from @ag-ui/a2ui-middleware@0.0.16\nnode_modules/@copilotkit/runtime/node_modules/@ag-ui/a2ui-middleware\n  @ag-ui/a2ui-middleware@\"0.0.16\" from @copilotkit/runtime@1.88.0\n  node_modules/@copilotkit/runtime\n    @copilotkit/runtime@\"1.88.0\" from the root project\n\nConflicting peer dependency: @ag-ui/client@1.0.4\nnode_modules/@ag-ui/client\n  peer @ag-ui/client@\">=1.0.0\" from @ag-ui/a2ui-middleware@0.0.16\n  node_modules/@copilotkit/runtime/node_modules/@ag-ui/a2ui-middleware\n    @ag-ui/a2ui-middleware@\"0.0.16\" from @copilotkit/runtime@1.88.0\n    node_modules/@copilotkit/runtime\n      @copilotkit/runtime@\"1.88.0\" from the root project\n\nFix the upstream dependency conflict, or retry this command with --no-strict-peer-deps, --force, or --legacy-peer-deps to accept an incorrect (and potentially broken) dependency resolution.\n\n\nFor a full report see:\n/home/a/.npm/_logs/2026-11-14T09_52_21_504Z-eresolve-report.txt"
+  }
+}

@@ -1,0 +1,19 @@
+(node:1668454) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+{
+  "kind": "real-provider",
+  "startedAt": "2026-11-14T09:31:38.412Z",
+  "passed": true,
+  "model": "deepseek-flash",
+  "stage": "completed",
+  "nativeTurnStarts": 1,
+  "markerMatched": true,
+  "completed": true,
+  "sdkReconnectRestoredMessage": true,
+  "duplicateRunDidNotDispatch": true,
+  "productionDataModified": false,
+  "browserTested": false,
+  "actionsTested": false,
+  "finishedAt": "2026-11-14T09:31:41.701Z",
+  "isolatedDataRemoved": true
+}

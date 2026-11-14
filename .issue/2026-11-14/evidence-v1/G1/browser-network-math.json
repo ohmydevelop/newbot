@@ -1,0 +1,76 @@
+{
+  "requests": [
+    {
+      "origin": "http://127.0.0.1:3161",
+      "path": "/",
+      "method": "GET"
+    },
+    {
+      "origin": "http://127.0.0.1:3161",
+      "path": "/assets/index-BWhd6QQl.js",
+      "method": "GET"
+    },
+    {
+      "origin": "http://127.0.0.1:3161",
+      "path": "/assets/index-HXZ7TFIR.css",
+      "method": "GET"
+    },
+    {
+      "origin": "http://127.0.0.1:3161",
+      "path": "/api/session",
+      "method": "GET"
+    },
+    {
+      "origin": "http://127.0.0.1:3161",
+      "path": "/favicon.ico",
+      "method": "GET"
+    },
+    {
+      "origin": "http://127.0.0.1:3161",
+      "path": "/api/threads/:id",
+      "method": "GET"
+    },
+    {
+      "origin": "http://127.0.0.1:3161",
+      "path": "/api/copilot/info",
+      "method": "GET"
+    },
+    {
+      "origin": "http://127.0.0.1:3161",
+      "path": "/api/copilot/info",
+      "method": "GET"
+    },
+    {
+      "origin": "http://127.0.0.1:3161",
+      "path": "/api/copilot/agent/newbot/connect",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:3161",
+      "path": "/assets/katex-BYZTj3zW.css",
+      "method": "GET"
+    },
+    {
+      "origin": "http://127.0.0.1:3161",
+      "path": "/assets/KaTeX_Math-Italic-t53AETM-.woff2",
+      "method": "GET"
+    },
+    {
+      "origin": "http://127.0.0.1:3161",
+      "path": "/assets/KaTeX_Main-Regular-B22Nviop.woff2",
+      "method": "GET"
+    }
+  ],
+  "responses": [
+    {
+      "path": "/assets/KaTeX_Math-Italic-t53AETM-.woff2",
+      "status": 200
+    },
+    {
+      "path": "/assets/KaTeX_Main-Regular-B22Nviop.woff2",
+      "status": 200
+    }
+  ],
+  "truncated": false,
+  "hasMore": false
+}

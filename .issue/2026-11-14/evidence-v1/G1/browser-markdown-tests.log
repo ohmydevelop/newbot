@@ -1,0 +1,15 @@
+
+> newbot-v1-integration-lab@0.0.0 test:render
+> COPILOTKIT_TELEMETRY_DISABLED=1 DO_NOT_TRACK=1 node --import tsx --test markdown.test.ts
+
+(node:1685344) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+✔ math markup survives while untrusted HTML and executable URLs remain blocked (27.122238ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 371.546711

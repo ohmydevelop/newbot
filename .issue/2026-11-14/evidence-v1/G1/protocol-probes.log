@@ -3,11 +3,11 @@
 > COPILOTKIT_TELEMETRY_DISABLED=1 DO_NOT_TRACK=1 node --test compatibility.test.mjs
 
 [CopilotKit] identifyUser is set, but the runner RecordingRunner does not enforce thread ownership: it has no isThreadAccessible method. Thread routes, run, connect and stop are refused so that no user can reach another user's threads. Use InMemoryAgentRunner or SqliteAgentRunner, or implement isThreadAccessible and honor ownerId in run, connect, stop and isRunning.
-✔ self-hosted Runtime exposes SSE mode with telemetry disabled (4.441183ms)
-✔ official HTTP handler separates run and reconnect without another agent loop (8.58879ms)
-✔ identity-enabled Runtime refuses a runner without ownership enforcement (1.508234ms)
-✔ official core and CopilotKit catalog accept A2UI 1.0 incremental state and deletion (5.601735ms)
-✔ A2UI 1.0 rejects an unavailable catalog instead of accepting arbitrary components (0.389318ms)
+✔ self-hosted Runtime exposes SSE mode with telemetry disabled (3.888366ms)
+✔ official HTTP handler separates run and reconnect without another agent loop (7.467078ms)
+✔ identity-enabled Runtime refuses a runner without ownership enforcement (1.228326ms)
+✔ official core and CopilotKit catalog accept A2UI 1.0 incremental state and deletion (4.416131ms)
+✔ A2UI 1.0 rejects an unavailable catalog instead of accepting arbitrary components (0.312684ms)
 ℹ tests 5
 ℹ suites 0
 ℹ pass 5
@@ -15,4 +15,4 @@
 ℹ cancelled 0
 ℹ skipped 0
 ℹ todo 0
-ℹ duration_ms 634.362332
+ℹ duration_ms 506.881577

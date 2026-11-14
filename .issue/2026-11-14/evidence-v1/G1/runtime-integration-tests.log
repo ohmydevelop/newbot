@@ -1,0 +1,21 @@
+
+> newbot-v1-integration-lab@0.0.0 test:runtime
+> COPILOTKIT_TELEMETRY_DISABLED=1 DO_NOT_TRACK=1 node --import tsx --test runtime.test.ts
+
+(node:1685266) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+✔ Fastify keeps cookie, Origin, body limits and thread ownership around the new runtime (127.094515ms)
+✔ native process loss closes the stream with an error instead of an endless spinner (66.697426ms)
+✔ duplicate sends, disconnected clients, reconnect and completed replay dispatch one native turn (73.61363ms)
+✔ old or missing run IDs cannot cancel a new native turn (66.859162ms)
+✔ client history is never replayed as execution, and expired login detaches without cancelling (1037.740903ms)
+✔ official AG-UI client reconstructs the streamed assistant message (86.941151ms)
+✔ streams and request receipts cannot cross native thread boundaries (63.044594ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2439.920866

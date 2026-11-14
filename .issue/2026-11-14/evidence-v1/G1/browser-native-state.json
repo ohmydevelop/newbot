@@ -1,0 +1,20 @@
+{
+  "kind": "browser-triggered-real-provider",
+  "nativeTurns": [
+    {
+      "status": "completed",
+      "itemTypes": [
+        "userMessage",
+        "reasoning",
+        "agentMessage"
+      ]
+    },
+    {
+      "status": "interrupted",
+      "itemTypes": [
+        "userMessage"
+      ]
+    }
+  ],
+  "runReceipts": 2
+}

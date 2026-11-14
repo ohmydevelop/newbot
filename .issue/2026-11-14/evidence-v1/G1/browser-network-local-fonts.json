@@ -1,0 +1,56 @@
+{
+  "requests": [
+    {
+      "origin": "http://127.0.0.1:3161",
+      "path": "/",
+      "method": "GET"
+    },
+    {
+      "origin": "http://127.0.0.1:3161",
+      "path": "/assets/index-5Kvl8AZg.js",
+      "method": "GET"
+    },
+    {
+      "origin": "http://127.0.0.1:3161",
+      "path": "/assets/index-BRFDZQNI.css",
+      "method": "GET"
+    },
+    {
+      "origin": "http://127.0.0.1:3161",
+      "path": "/api/session",
+      "method": "GET"
+    },
+    {
+      "origin": "http://127.0.0.1:3161",
+      "path": "/favicon.ico",
+      "method": "GET"
+    },
+    {
+      "origin": "http://127.0.0.1:3161",
+      "path": "/api/threads/:id",
+      "method": "GET"
+    },
+    {
+      "origin": "http://127.0.0.1:3161",
+      "path": "/api/copilot/info",
+      "method": "GET"
+    },
+    {
+      "origin": "http://127.0.0.1:3161",
+      "path": "/api/copilot/info",
+      "method": "GET"
+    },
+    {
+      "origin": "http://127.0.0.1:3161",
+      "path": "/api/copilot/agent/newbot/connect",
+      "method": "POST"
+    },
+    {
+      "origin": "http://127.0.0.1:3161",
+      "path": "/assets/katex-BYZTj3zW.css",
+      "method": "GET"
+    }
+  ],
+  "truncated": false,
+  "hasMore": false
+}

@@ -9,18 +9,44 @@
     "skipped": 1,
     "failure": "precompressed static assets: expected br, received no content-encoding",
     "reproducedStandalone": true,
-    "scope": "current existing dist, before product migration"
+    "scope": "current existing dist, same failure before and after command extraction"
   },
   "lab": {
     "install": "strict peers, no force/legacy flags",
-    "cleanCi": "passed; npm default blocks unapproved Scarf postinstall",
+    "cleanCi": "passed after final lock; default npm blocked unapproved Scarf/esbuild scripts, build passed",
     "protocolProbes": {
       "passed": 5,
       "failed": 0
     },
-    "realCodex": false,
-    "browser": false,
-    "productionConnected": false
+    "realCodex": true,
+    "browser": true,
+    "productionConnected": false,
+    "agUi": "1.0.2",
+    "rxjs": "7.8.1",
+    "runtimeContracts": {
+      "passed": 7,
+      "failed": 0,
+      "upstream": "FakeCodex over real HTTP"
+    },
+    "markdownSecurity": {
+      "passed": 1,
+      "failed": 0
+    },
+    "realModel": "deepseek-flash",
+    "realSdkNativeTurnStarts": 1,
+    "browserStop": "native interrupted",
+    "fullG1Complete": false,
+    "performanceGatePassed": false,
+    "securityAudit": {
+      "affectedPackages": 37,
+      "high": 24,
+      "moderate": 6,
+      "low": 7,
+      "critical": 0,
+      "reachabilityAssessed": false,
+      "productionGatePassed": false,
+      "nonForceFixDryRun": "ERESOLVE; lock unchanged"
+    }
   },
   "production": {
     "serviceRestarted": false,
