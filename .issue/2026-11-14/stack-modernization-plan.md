@@ -1,5 +1,7 @@
 # STACK-02 · Codex + CopilotKit + A2UI 1.0 迁移计划
 
+> 2026-11-14 后续执行入口已更新为 [NB-V1正式实施计划](newbot-v1-implementation-plan.md)。本文件保留历史选型/评审证据；涉及默认视觉、备选框架与阶段安排，以NB-V1为准。
+
 日期：2026-11-14。状态：方案制定完成，实施尚未开始。
 源码检查点：`d9f9d56`，已推送 `origin/main`。本计划与版本调查单独提交。
 前置调查：[STACK-01](stack-reuse-audit-plan.md)。进度：[本轮进度](stack-modernization-progress.md)。版本及关注度：[官方注册表/API快照](stack-modernization-metadata.json)。

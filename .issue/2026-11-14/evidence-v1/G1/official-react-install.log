@@ -1,0 +1,23 @@
+npm error code ERESOLVE
+npm error ERESOLVE unable to resolve dependency tree
+npm error
+npm error While resolving: @a2ui/react@0.15.0
+npm error Found: @a2ui/web_core@0.15.0
+npm error node_modules/@a2ui/web_core
+npm error   @a2ui/web_core@"^0.15.0" from @a2ui/react@0.15.0
+npm error   node_modules/@a2ui/react
+npm error     @a2ui/react@"0.15.0" from the root project
+npm error
+npm error Could not resolve dependency:
+npm error peer @a2ui/web_core@"^0.14.0" from @a2ui/markdown-it@0.2.2
+npm error node_modules/@a2ui/markdown-it
+npm error   @a2ui/markdown-it@"^0.2.2" from @a2ui/react@0.15.0
+npm error   node_modules/@a2ui/react
+npm error     @a2ui/react@"0.15.0" from the root project
+npm error
+npm error Fix the upstream dependency conflict, or retry this command with --no-strict-peer-deps, --force, or --legacy-peer-deps to accept an incorrect (and potentially broken) dependency resolution.
+npm error
+npm error
+npm error For a full report see:
+npm error /home/a/.npm/_logs/2026-11-14T04_23_47_149Z-eresolve-report.txt
+npm error A complete log of this run can be found in: /home/a/.npm/_logs/2026-11-14T04_23_47_149Z-debug-0.log

@@ -1,0 +1,30 @@
+{
+  "rootTypecheck": {
+    "passed": true
+  },
+  "rootTests": {
+    "total": 546,
+    "passed": 544,
+    "failed": 1,
+    "skipped": 1,
+    "failure": "precompressed static assets: expected br, received no content-encoding",
+    "reproducedStandalone": true,
+    "scope": "current existing dist, before product migration"
+  },
+  "lab": {
+    "install": "strict peers, no force/legacy flags",
+    "cleanCi": "passed; npm default blocks unapproved Scarf postinstall",
+    "protocolProbes": {
+      "passed": 5,
+      "failed": 0
+    },
+    "realCodex": false,
+    "browser": false,
+    "productionConnected": false
+  },
+  "production": {
+    "serviceRestarted": false,
+    "rootDependenciesChanged": false,
+    "dataMigrated": false
+  }
+}

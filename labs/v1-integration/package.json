@@ -1,0 +1,27 @@
+{
+  "name": "newbot-v1-integration-lab",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "COPILOTKIT_TELEMETRY_DISABLED=1 DO_NOT_TRACK=1 node --test compatibility.test.mjs"
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "dependencies": {
+    "@ag-ui/client": "1.0.4",
+    "@ag-ui/core": "1.0.4",
+    "@a2ui/web_core": "0.15.0",
+    "@copilotkit/a2ui-renderer": "1.88.0",
+    "@copilotkit/react-core": "1.88.0",
+    "@copilotkit/react-ui": "1.88.0",
+    "@copilotkit/runtime": "1.88.0",
+    "@modelcontextprotocol/ext-apps": "2.0.4",
+    "@openai/apps-sdk-ui": "0.2.2",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "rxjs": "7.8.2",
+    "tailwindcss": "4.3.5"
+  }
+}
