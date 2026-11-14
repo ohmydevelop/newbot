@@ -1,0 +1,725 @@
+{
+  "observedAt": "2026-11-14T03:53:35.903520+00:00",
+  "note": "Primary registry/repository snapshot; stars are attention, not quality or guarantees. Latest means npm latest tag, not installed or tested.",
+  "repositories": [
+    {
+      "name": "CopilotKit",
+      "source": "https://api.github.com/repos/CopilotKit/CopilotKit",
+      "repository": "https://github.com/CopilotKit/CopilotKit",
+      "stars": 38694,
+      "forks": 4826,
+      "pushedAt": "2026-11-13T23:29:50Z",
+      "archived": false,
+      "license": "MIT"
+    },
+    {
+      "name": "assistant-ui",
+      "source": "https://api.github.com/repos/assistant-ui/assistant-ui",
+      "repository": "https://github.com/assistant-ui/assistant-ui",
+      "stars": 13114,
+      "forks": 1332,
+      "pushedAt": "2026-11-14T02:28:42Z",
+      "archived": false,
+      "license": "MIT"
+    },
+    {
+      "name": "A2UI",
+      "source": "https://api.github.com/repos/a2ui-project/a2ui",
+      "repository": "https://github.com/a2ui-project/a2ui",
+      "stars": 17320,
+      "forks": 1404,
+      "pushedAt": "2026-11-14T00:40:33Z",
+      "archived": false,
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "AG-UI",
+      "source": "https://api.github.com/repos/ag-ui-protocol/ag-ui",
+      "repository": "https://github.com/ag-ui-protocol/ag-ui",
+      "stars": 17170,
+      "forks": 1576,
+      "pushedAt": "2026-11-13T21:01:20Z",
+      "archived": false,
+      "license": "MIT"
+    },
+    {
+      "name": "Radix",
+      "source": "https://api.github.com/repos/radix-ui/primitives",
+      "repository": "https://github.com/radix-ui/primitives",
+      "stars": 19500,
+      "forks": 1322,
+      "pushedAt": "2026-10-14T21:52:47Z",
+      "archived": false,
+      "license": "MIT"
+    },
+    {
+      "name": "shadcn/ui",
+      "source": "https://api.github.com/repos/shadcn-ui/ui",
+      "repository": "https://github.com/shadcn-ui/ui",
+      "stars": 128141,
+      "forks": 11383,
+      "pushedAt": "2026-11-13T10:58:16Z",
+      "archived": false,
+      "license": "MIT"
+    },
+    {
+      "name": "Motion",
+      "source": "https://api.github.com/repos/motiondivision/motion",
+      "repository": "https://github.com/motiondivision/motion",
+      "stars": 35122,
+      "forks": 1536,
+      "pushedAt": "2026-11-13T17:56:54Z",
+      "archived": false,
+      "license": "MIT"
+    },
+    {
+      "name": "ECharts",
+      "source": "https://api.github.com/repos/apache/echarts",
+      "repository": "https://github.com/apache/echarts",
+      "stars": 67720,
+      "forks": 19943,
+      "pushedAt": "2026-10-13T09:27:20Z",
+      "archived": false,
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "Monaco",
+      "source": "https://api.github.com/repos/microsoft/monaco-editor",
+      "repository": "https://github.com/microsoft/monaco-editor",
+      "stars": 46969,
+      "forks": 4166,
+      "pushedAt": "2026-11-13T23:33:25Z",
+      "archived": false,
+      "license": "MIT"
+    },
+    {
+      "name": "Codex",
+      "source": "https://api.github.com/repos/openai/codex",
+      "repository": "https://github.com/openai/codex",
+      "stars": 135204,
+      "forks": 21441,
+      "pushedAt": "2026-11-14T02:56:17Z",
+      "archived": false,
+      "license": "Apache-2.0"
+    }
+  ],
+  "packages": [
+    {
+      "name": "@copilotkit/react-core",
+      "source": "https://registry.npmjs.org/@copilotkit/react-core",
+      "latest": "1.88.0",
+      "published": "2026-11-13T23:31:36.625Z",
+      "license": "MIT",
+      "peerDependencies": {
+        "zod": ">=3.25",
+        "react": "^18 || ^19 || ^19.0.0-rc",
+        "react-dom": "^18 || ^19 || ^19.0.0-rc",
+        "maplibre-gl": "^5.0.0"
+      },
+      "engines": null,
+      "exports": {
+        ".": {
+          "import": "./dist/index.mjs",
+          "require": "./dist/index.cjs"
+        },
+        "./v2": {
+          "import": "./dist/v2/index.mjs",
+          "require": "./dist/v2/index.cjs"
+        },
+        "./v2/context": {
+          "import": "./dist/v2/context.mjs",
+          "require": "./dist/v2/context.cjs"
+        },
+        "./v2/headless": {
+          "import": "./dist/v2/headless.mjs",
+          "require": "./dist/v2/headless.cjs"
+        },
+        "./package.json": "./package.json",
+        "./v2/styles.css": "./dist/v2/index.css",
+        "./v2/generative-ui": {
+          "import": "./dist/v2/generative-ui.mjs",
+          "require": "./dist/v2/generative-ui.cjs"
+        },
+        "./v2/generative-ui/native": {
+          "import": "./dist/v2/generative-ui/native.mjs",
+          "require": "./dist/v2/generative-ui/native.cjs"
+        }
+      },
+      "peerDependenciesMeta": {
+        "maplibre-gl": {
+          "optional": true
+        }
+      },
+      "dependencies": {
+        "lit": "^3.3.2",
+        "clsx": "^2.1.1",
+        "rxjs": "7.8.1",
+        "katex": "^0.16.22",
+        "recharts": "^3.1.0",
+        "streamdown": "^1.3.0",
+        "@ag-ui/core": "1.0.2",
+        "@scarf/scarf": "^1.3.0",
+        "lucide-react": "^0.525.0",
+        "@ag-ui/client": "1.0.2",
+        "@a2ui/web_core": "0.15.0",
+        "react-markdown": "^8.0.7",
+        "tailwind-merge": "^3.3.1",
+        "tw-animate-css": "^1.3.5",
+        "untruncate-json": "^0.0.1",
+        "@copilotkit/core": "1.88.0",
+        "@copilotkit/shared": "1.88.0",
+        "zod-to-json-schema": "^3.24.5",
+        "use-stick-to-bottom": "^1.1.1",
+        "@radix-ui/react-slot": "^1.2.3",
+        "@jetbrains/websandbox": "^1.1.3",
+        "@radix-ui/react-popover": "^1.1.15",
+        "@radix-ui/react-tooltip": "^1.2.7",
+        "@tanstack/react-virtual": "^3.14.13",
+        "class-variance-authority": "^0.7.1",
+        "@copilotkit/a2ui-renderer": "1.88.0",
+        "@copilotkit/web-inspector": "1.88.0",
+        "@copilotkit/web-components": "1.88.0",
+        "@copilotkit/mcp-apps-renderer": "1.88.0",
+        "@radix-ui/react-dropdown-menu": "^2.1.15",
+        "@copilotkit/runtime-client-gql": "1.88.0"
+      }
+    },
+    {
+      "name": "@copilotkit/react-ui",
+      "source": "https://registry.npmjs.org/@copilotkit/react-ui",
+      "latest": "1.88.0",
+      "published": "2026-11-13T23:30:54.366Z",
+      "license": "MIT",
+      "peerDependencies": {
+        "react": "^18 || ^19 || ^19.0.0-rc"
+      },
+      "engines": null,
+      "exports": {
+        ".": {
+          "import": "./dist/index.mjs",
+          "require": "./dist/index.cjs"
+        },
+        "./styles.css": "./dist/index.css",
+        "./package.json": "./package.json",
+        "./v2/styles.css": "./dist/v2/index.css"
+      },
+      "peerDependenciesMeta": null,
+      "dependencies": {
+        "rehype-raw": "^7.0.0",
+        "remark-gfm": "^4.0.1",
+        "remark-math": "^6.0.0",
+        "react-markdown": "^10.1.0",
+        "rehype-sanitize": "^6.0.0",
+        "@headlessui/react": "^2.2.9",
+        "@copilotkit/shared": "1.88.0",
+        "@copilotkit/react-core": "1.88.0",
+        "react-syntax-highlighter": "^16.1.1",
+        "@copilotkit/runtime-client-gql": "1.88.0"
+      }
+    },
+    {
+      "name": "@copilotkit/runtime",
+      "source": "https://registry.npmjs.org/@copilotkit/runtime",
+      "latest": "1.88.0",
+      "published": "2026-11-13T23:31:15.628Z",
+      "license": "MIT",
+      "peerDependencies": {
+        "openai": "^4.85.1 || >=5.0.0",
+        "express": "^4.18.0 || ^5.0.0",
+        "groq-sdk": ">=0.3.0 <1.0.0",
+        "langchain": ">=0.3.3",
+        "@langchain/aws": ">=0.1.9",
+        "@langchain/core": ">=0.3.66",
+        "@anthropic-ai/sdk": ">=0.57.0",
+        "@langchain/openai": ">=0.4.2",
+        "@langchain/community": ">=0.3.58",
+        "@langchain/google-gauth": ">=0.1.0",
+        "@langchain/langgraph-sdk": ">=0.1.2"
+      },
+      "engines": {
+        "node": ">=20"
+      },
+      "exports": {
+        ".": {
+          "import": "./dist/index.mjs",
+          "require": "./dist/index.cjs"
+        },
+        "./v2": {
+          "import": "./dist/v2/index.mjs",
+          "require": "./dist/v2/index.cjs"
+        },
+        "./v2/hono": {
+          "import": "./dist/v2/hono.mjs",
+          "require": "./dist/v2/hono.cjs"
+        },
+        "./v2/node": {
+          "import": "./dist/v2/node.mjs",
+          "require": "./dist/v2/node.cjs"
+        },
+        "./langgraph": {
+          "import": "./dist/langgraph.mjs",
+          "require": "./dist/langgraph.cjs"
+        },
+        "./v2/express": {
+          "import": "./dist/v2/express.mjs",
+          "require": "./dist/v2/express.cjs"
+        },
+        "./package.json": "./package.json",
+        "./internal/learned-skills": {
+          "import": "./dist/internal/learned-skills.mjs",
+          "require": "./dist/internal/learned-skills.cjs"
+        }
+      },
+      "peerDependenciesMeta": {
+        "express": {
+          "optional": true
+        },
+        "groq-sdk": {
+          "optional": true
+        },
+        "langchain": {
+          "optional": true
+        },
+        "@langchain/aws": {
+          "optional": true
+        },
+        "@anthropic-ai/sdk": {
+          "optional": true
+        },
+        "@langchain/openai": {
+          "optional": true
+        },
+        "@langchain/community": {
+          "optional": true
+        },
+        "@langchain/google-gauth": {
+          "optional": true
+        },
+        "@langchain/langgraph-sdk": {
+          "optional": true
+        }
+      },
+      "dependencies": {
+        "ai": "^6.0.104",
+        "ws": "^8.18.0",
+        "zod": "^3.25.18",
+        "cors": "^2.8.5",
+        "hono": "^4.11.4",
+        "pino": "^10.1.1",
+        "rxjs": "7.8.1",
+        "uuid": "^11.1.0",
+        "yauzl": "2.10.0",
+        "openai": "^4.85.1 || >=5.0.0",
+        "graphql": "^16.8.1",
+        "phoenix": "^1.8.4",
+        "@ag-ui/core": "1.0.2",
+        "@ai-sdk/mcp": "^1.0.21",
+        "@types/cors": "^2.8.17",
+        "pino-pretty": "^11.2.1",
+        "@scarf/scarf": "^1.3.0",
+        "graphql-yoga": "^5.3.1",
+        "partial-json": "^0.1.7",
+        "type-graphql": "2.0.0-rc.1",
+        "@ag-ui/client": "1.0.2",
+        "@ag-ui/encoder": "1.0.2",
+        "@ai-sdk/google": "^3.0.33",
+        "@ai-sdk/openai": "^3.0.36",
+        "class-validator": "^0.14.1",
+        "graphql-scalars": "^1.23.0",
+        "@ag-ui/langgraph": "0.0.44",
+        "reflect-metadata": "^0.2.2",
+        "@ai-sdk/anthropic": "^3.0.49",
+        "@hono/node-server": "^1.13.5",
+        "class-transformer": "^0.5.1",
+        "@copilotkit/shared": "1.88.0",
+        "@ag-ui/mcp-middleware": "0.0.2",
+        "@ai-sdk/google-vertex": "^3.0.97",
+        "@cfworker/json-schema": "^4.1.1",
+        "@ag-ui/a2ui-middleware": "0.0.16",
+        "@segment/analytics-node": "^2.1.2",
+        "@copilotkit/channels-core": "^0.12.0",
+        "@modelcontextprotocol/sdk": "^1.18.2",
+        "@ag-ui/mcp-apps-middleware": "0.1.1",
+        "@copilotkit/license-verifier": "~0.5.0",
+        "@remix-run/node-fetch-server": "^0.13.0",
+        "@copilotkit/channels-intelligence": "^0.12.0",
+        "@graphql-yoga/plugin-defer-stream": "^3.3.1"
+      }
+    },
+    {
+      "name": "@assistant-ui/react",
+      "source": "https://registry.npmjs.org/@assistant-ui/react",
+      "latest": "0.15.36",
+      "published": "2026-11-12T04:32:24.225Z",
+      "license": "MIT",
+      "peerDependencies": {
+        "react": "^18 || ^19",
+        "react-dom": "^18 || ^19",
+        "@types/react": "*",
+        "@types/react-dom": "*"
+      },
+      "engines": null,
+      "exports": null
+    },
+    {
+      "name": "@assistant-ui/react-ag-ui",
+      "source": "https://registry.npmjs.org/@assistant-ui/react-ag-ui",
+      "latest": "0.1.10",
+      "published": "2026-11-13T18:50:53.186Z",
+      "license": "MIT",
+      "peerDependencies": {
+        "react": "^18 || ^19",
+        "@types/react": "*"
+      },
+      "engines": null,
+      "exports": null
+    },
+    {
+      "name": "@a2ui/web_core",
+      "source": "https://registry.npmjs.org/@a2ui/web_core",
+      "latest": "0.15.0",
+      "published": "2026-11-02T02:44:15.018Z",
+      "license": "Apache-2.0",
+      "peerDependencies": null,
+      "engines": null,
+      "exports": {
+        ".": {
+          "types": "./src/index.d.ts",
+          "default": "./src/index.js"
+        },
+        "./rpc": {
+          "types": "./src/rpc/index.d.ts",
+          "default": "./src/rpc/index.js"
+        },
+        "./v0_8": {
+          "types": "./src/v0_8/index.d.ts",
+          "default": "./src/v0_8/index.js"
+        },
+        "./v0_9": {
+          "types": "./src/v0_9/index.d.ts",
+          "default": "./src/v0_9/index.js"
+        },
+        "./v1_0": {
+          "types": "./src/v1_0/index.d.ts",
+          "default": "./src/v1_0/index.js"
+        },
+        "./state": {
+          "types": "./src/state/index.d.ts",
+          "default": "./src/state/index.js"
+        },
+        "./data/*": {
+          "types": "./src/v0_8/data/*.d.ts",
+          "default": "./src/v0_8/data/*.js"
+        },
+        "./errors": {
+          "types": "./src/errors.d.ts",
+          "default": "./src/errors.js"
+        },
+        "./events": {
+          "types": "./src/common/events.d.ts",
+          "default": "./src/common/events.js"
+        },
+        "./semver": {
+          "types": "./src/common/semver.d.ts",
+          "default": "./src/common/semver.js"
+        },
+        "./catalog": {
+          "types": "./src/catalog/index.d.ts",
+          "default": "./src/catalog/index.js"
+        },
+        "./types/*": {
+          "types": "./src/v0_8/types/*.d.ts",
+          "default": "./src/v0_8/types/*.js"
+        },
+        "./adapters": {
+          "types": "./src/processing/adapters/index.d.ts",
+          "default": "./src/processing/adapters/index.js"
+        },
+        "./styles/*": {
+          "types": "./src/v0_8/styles/*.d.ts",
+          "default": "./src/v0_8/styles/*.js"
+        },
+        "./rendering": {
+          "types": "./src/resolution/index.d.ts",
+          "default": "./src/resolution/index.js"
+        },
+        "./universal": {
+          "types": "./src/universal/index.d.ts",
+          "default": "./src/universal/index.js"
+        },
+        "./processing": {
+          "types": "./src/processing/index.d.ts",
+          "default": "./src/processing/index.js"
+        },
+        "./reactivity": {
+          "types": "./src/reactivity/index.d.ts",
+          "default": "./src/reactivity/index.js"
+        },
+        "./resolution": {
+          "types": "./src/resolution/index.d.ts",
+          "default": "./src/resolution/index.js"
+        },
+        "./validating": {
+          "types": "./src/validation/integrity-checker.d.ts",
+          "default": "./src/validation/integrity-checker.js"
+        },
+        "./validation": {
+          "types": "./src/validation/index.d.ts",
+          "default": "./src/validation/index.js"
+        },
+        "./expressions": {
+          "types": "./src/expressions/index.d.ts",
+          "default": "./src/expressions/index.js"
+        },
+        "./v0_9/universal": {
+          "types": "./src/v0_9/universal/index.d.ts",
+          "default": "./src/v0_9/universal/index.js"
+        },
+        "./catalogs/basic/v1": {
+          "types": "./src/catalogs/basic/v1/index.d.ts",
+          "default": "./src/catalogs/basic/v1/index.js"
+        },
+        "./v0_8/basic_catalog": {
+          "types": "./src/v0_8/basic_catalog/index.d.ts",
+          "default": "./src/v0_8/basic_catalog/index.js"
+        },
+        "./v0_9/basic_catalog": {
+          "types": "./src/v0_9/basic_catalog/index.d.ts",
+          "default": "./src/v0_9/basic_catalog/index.js"
+        }
+      },
+      "peerDependenciesMeta": null,
+      "dependencies": {
+        "lit": "^3.3.3",
+        "zod": "^3.25.76",
+        "@lit/context": "^1.1.6",
+        "redos-detector": "^6.1.4",
+        "validate-color": "^2.2.4",
+        "zod-to-json-schema": "^3.25.2",
+        "@preact/signals-core": "^1.14.2"
+      }
+    },
+    {
+      "name": "@a2ui/react",
+      "source": "https://registry.npmjs.org/@a2ui/react",
+      "latest": "0.15.0",
+      "published": "2026-11-02T02:43:37.733Z",
+      "license": "Apache-2.0",
+      "peerDependencies": {
+        "zod": "^3.25.76",
+        "react": "^18.0.0 || ^19.0.0",
+        "react-dom": "^18.0.0 || ^19.0.0"
+      },
+      "engines": {
+        "node": ">=18.0.0"
+      },
+      "exports": {
+        ".": {
+          "import": {
+            "types": "./index.d.ts",
+            "default": "./index.js"
+          },
+          "require": {
+            "types": "./index.d.cts",
+            "default": "./index.cjs"
+          }
+        },
+        "./v0_8": {
+          "import": {
+            "types": "./v0_8/index.d.ts",
+            "default": "./v0_8/index.js"
+          },
+          "require": {
+            "types": "./v0_8/index.d.cts",
+            "default": "./v0_8/index.cjs"
+          }
+        },
+        "./v0_9": {
+          "import": {
+            "types": "./v0_9/index.d.ts",
+            "default": "./v0_9/index.js"
+          },
+          "require": {
+            "types": "./v0_9/index.d.cts",
+            "default": "./v0_9/index.cjs"
+          }
+        },
+        "./styles": {
+          "import": {
+            "types": "./styles/index.d.ts",
+            "default": "./styles/index.js"
+          },
+          "require": {
+            "types": "./styles/index.d.cts",
+            "default": "./styles/index.cjs"
+          }
+        },
+        "./styles/structural.css": "./structural.css"
+      },
+      "peerDependenciesMeta": null,
+      "dependencies": {
+        "zod": "^3.25.76",
+        "clsx": "^2.1.1",
+        "markdown-it": "^14.2.0",
+        "@a2ui/web_core": "^0.15.0",
+        "@a2ui/markdown-it": "^0.2.2"
+      }
+    },
+    {
+      "name": "@ag-ui/core",
+      "source": "https://registry.npmjs.org/@ag-ui/core",
+      "latest": "1.0.4",
+      "published": "2026-11-05T13:32:59.965Z",
+      "license": "MIT",
+      "peerDependencies": {
+        "zod": "^3.25.18 || ^4.0.0"
+      },
+      "engines": null,
+      "exports": null
+    },
+    {
+      "name": "@ag-ui/client",
+      "source": "https://registry.npmjs.org/@ag-ui/client",
+      "latest": "1.0.4",
+      "published": "2026-11-05T13:31:52.720Z",
+      "license": "MIT",
+      "peerDependencies": {
+        "zod": "^3.25.18 || ^4.0.0"
+      },
+      "engines": null,
+      "exports": null
+    },
+    {
+      "name": "@modelcontextprotocol/ext-apps",
+      "source": "https://registry.npmjs.org/@modelcontextprotocol/ext-apps",
+      "latest": "2.0.4",
+      "published": "2026-10-27T07:16:07.264Z",
+      "license": "MIT",
+      "peerDependencies": {
+        "zod": "^4.2.0",
+        "react": "^17.0.0 || ^18.0.0 || ^19.0.0",
+        "react-dom": "^17.0.0 || ^18.0.0 || ^19.0.0",
+        "@modelcontextprotocol/core": "^2.0.0",
+        "@modelcontextprotocol/client": "^2.0.0",
+        "@modelcontextprotocol/server": "^2.0.0"
+      },
+      "engines": {
+        "node": ">=20"
+      },
+      "exports": null
+    },
+    {
+      "name": "@radix-ui/react-dialog",
+      "source": "https://registry.npmjs.org/@radix-ui/react-dialog",
+      "latest": "1.3.1",
+      "published": "2026-10-12T21:03:50.186Z",
+      "license": "MIT",
+      "peerDependencies": {
+        "react": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc",
+        "react-dom": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc",
+        "@types/react": "*",
+        "@types/react-dom": "*"
+      },
+      "engines": null,
+      "exports": null
+    },
+    {
+      "name": "motion",
+      "source": "https://registry.npmjs.org/motion",
+      "latest": "14.14.0",
+      "published": "2026-11-13T14:49:15.222Z",
+      "license": "MIT",
+      "peerDependencies": {
+        "react": "^18.0.0 || ^19.0.0",
+        "remix": "^3.1.0",
+        "react-dom": "^18.0.0 || ^19.0.0"
+      },
+      "engines": null,
+      "exports": null
+    },
+    {
+      "name": "echarts",
+      "source": "https://registry.npmjs.org/echarts",
+      "latest": "6.1.0",
+      "published": "2026-05-19T17:52:11.076Z",
+      "license": "Apache-2.0",
+      "peerDependencies": null,
+      "engines": null,
+      "exports": null
+    },
+    {
+      "name": "monaco-editor",
+      "source": "https://registry.npmjs.org/monaco-editor",
+      "latest": "0.57.0",
+      "published": "2026-09-24T21:33:55.189Z",
+      "license": "MIT",
+      "peerDependencies": null,
+      "engines": null,
+      "exports": null
+    },
+    {
+      "name": "@openai/codex",
+      "source": "https://registry.npmjs.org/@openai/codex",
+      "latest": "0.169.0",
+      "published": "2026-11-13T08:43:21.818Z",
+      "license": "Apache-2.0",
+      "peerDependencies": null,
+      "engines": {
+        "node": ">=16"
+      },
+      "exports": null
+    },
+    {
+      "name": "@copilotkit/a2ui-renderer",
+      "source": "https://registry.npmjs.org/@copilotkit/a2ui-renderer",
+      "latest": "1.88.0",
+      "published": "2026-11-13T23:31:06.610Z",
+      "license": "MIT",
+      "dependencies": {
+        "zod": "^3.25.75",
+        "clsx": "^2.1.1",
+        "marked": "12.0.2",
+        "@a2ui/web_core": "0.15.0",
+        "@copilotkit/shared": "1.88.0",
+        "zod-to-json-schema": "^3.24.1"
+      },
+      "peerDependencies": {
+        "react": "^18 || ^19 || ^19.0.0-rc",
+        "react-dom": "^18 || ^19 || ^19.0.0-rc"
+      },
+      "exports": {
+        ".": {
+          "import": {
+            "types": "./dist/index.d.mts",
+            "default": "./dist/index.mjs"
+          },
+          "require": {
+            "types": "./dist/index.d.cts",
+            "default": "./dist/index.cjs"
+          }
+        },
+        "./package.json": "./package.json"
+      }
+    },
+    {
+      "name": "@a2ui/markdown-it",
+      "source": "https://registry.npmjs.org/@a2ui/markdown-it",
+      "latest": "0.2.2",
+      "published": "2026-10-17T01:02:43.454Z",
+      "license": "Apache-2.0",
+      "dependencies": {
+        "dompurify": "3.4.11",
+        "markdown-it": "^14.2.0"
+      },
+      "peerDependencies": {
+        "@a2ui/web_core": "^0.14.0"
+      },
+      "exports": {
+        ".": {
+          "types": "./src/markdown.d.ts",
+          "default": "./src/markdown.js"
+        }
+      }
+    }
+  ]
+}

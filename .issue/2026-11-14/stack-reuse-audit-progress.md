@@ -11,3 +11,5 @@
 后续依赖：若进入实施，沿用计划的不变量和验收矩阵，先隔离POC再决定推广；不创建第二套Agent Loop或消息状态所有者。
 
 补充完成CopilotKit官方文档审查：应列为完整Agent前端整合候选，assistant-ui列为局部聊天替换候选；已记录TS开源runtime与生产直连Enterprise选项差异。仅文档/架构分析，无接入或性能结论。
+
+用户后续明确要求先提交推送再制定当前主流方案：源码检查点已推送d9f9d56；正式执行计划升级为STACK-02（stack-modernization-plan.md），采用CopilotKit主候选并明确兼容门槛。本轮仍未实施迁移。
