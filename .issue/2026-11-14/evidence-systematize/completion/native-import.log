@@ -1,0 +1,15 @@
+✔ only repository homepages discover defaults; tree links resolve slash refs, tags, commits and directories without a catalog (4.687471ms)
+✔ release links resolve the exact tag, including annotated slash tags, without a same-name branch (0.686718ms)
+✔ an explicit missing ref never falls back to default; malformed and cyclic tag objects fail (0.995106ms)
+✔ URL and upstream validation reject credentials, unrelated hosts, malformed JSON and oversized responses (1.433464ms)
+✔ existing pinned sources keep captured ref/path; unpinned legacy drafts and traversal fail (0.213595ms)
+✔ a new scan reads the current branch tip while an existing scan keeps its snapshot (0.312886ms)
+✔ new imports reject overrides; restart and native scanning download the pinned commit and exact directory (328.500459ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 698.064789

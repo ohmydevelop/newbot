@@ -155,14 +155,22 @@ export default forwardRef<
       )}
       {transport === "http" && auth === "bearer" && !chat && (
         <label className="field-label">
-          {provider ? "API Key" : "Token"}
+          <span className={compact ? "sr-only" : undefined}>
+            {provider ? "API Key" : "Token"}
+          </span>
           <input
             ref={bind("bearer")}
             type="password"
             autoComplete="off"
             spellCheck={false}
             aria-label={provider ? "API Key" : "Bearer Token"}
-            placeholder={bearerStored ? "已加密保存，留空保留" : "私密输入"}
+            placeholder={
+              bearerStored
+                ? "已加密保存，留空保留"
+                : provider
+                  ? "API Key"
+                  : "Bearer Token"
+            }
             maxLength={4096}
           />
         </label>

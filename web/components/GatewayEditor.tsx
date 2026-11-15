@@ -1,5 +1,5 @@
 import { FormActions, FormSubmit } from "./FormActions";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { RefreshCw } from "lucide-react";
 import { Modal } from "./ui";
 import { request, useApp } from "../store";
@@ -23,12 +23,16 @@ export default function GatewayEditor({
   onClose,
   onSaved,
   children,
+  blocked = false,
+  onBusyChange,
 }: {
   provider?: Provider;
   revision: string;
   onClose: () => void;
   onSaved: () => Promise<void>;
   children?: React.ReactNode;
+  blocked?: boolean;
+  onBusyChange?: (busy: boolean) => void;
 }) {
   const fields = useRef<PrivateFieldsHandle>(null),
     posting = useRef(false),
@@ -48,6 +52,11 @@ export default function GatewayEditor({
   const [saved, setSaved] = useState<
     (DefaultsSaveResult & { id: string }) | null
   >(null);
+  useEffect(() => {
+    onBusyChange?.(busy);
+    return () => onBusyChange?.(false);
+  }, [busy, onBusyChange]);
+  const locked = busy || blocked;
   const readOnly = !!provider && !provider.editable;
   const [rebind, setRebind] = useState(false);
   const [unknownWrite, setUnknownWrite] = useState<string | null>(null);
@@ -65,7 +74,8 @@ export default function GatewayEditor({
   }
   async function save(e: React.FormEvent) {
     e.preventDefault();
-    if (posting.current || readOnly || unknown || unknownWrite) return;
+    if (posting.current || locked || readOnly || unknown || unknownWrite)
+      return;
     posting.current = true;
     setBusy(true);
     setError("");
@@ -135,7 +145,7 @@ export default function GatewayEditor({
   }
   async function refresh() {
     const id = saved?.id || provider?.id;
-    if (!id) return;
+    if (!id || locked) return;
     setBusy(true);
     setModelError("");
     try {
@@ -153,6 +163,7 @@ export default function GatewayEditor({
     }
   }
   async function read() {
+    if (locked) return;
     setBusy(true);
     try {
       const ticket = await privateApi(`/api/credentials/${unknown}`);
@@ -177,9 +188,9 @@ export default function GatewayEditor({
       title={provider ? provider.name : "添加模型服务"}
       wide
       className="connection-editor-modal gateway-editor-modal"
-      dismissible={!busy}
+      dismissible={!locked}
       onOpenChange={(open) => {
-        if (!open && !busy) onClose();
+        if (!open && !locked) onClose();
       }}
     >
       <form
@@ -189,13 +200,14 @@ export default function GatewayEditor({
       >
         <div className="connection-editor-body">
           <label className="field-label">
-            名称
+            <span className="sr-only">名称</span>
             <input
               autoFocus
+              placeholder="模型服务名称"
               required
               maxLength={80}
               value={name}
-              disabled={busy || readOnly || !!saved}
+              disabled={locked || readOnly || !!saved}
               onChange={(e) => setName(e.target.value)}
             />
           </label>
@@ -211,12 +223,12 @@ export default function GatewayEditor({
           {!readOnly && (
             <>
               <label className="field-label">
-                连接地址
+                <span className="sr-only">连接地址</span>
                 <input
                   type="url"
                   required={!provider || provider.missing}
                   value={url}
-                  disabled={busy || !!saved}
+                  disabled={locked || !!saved}
                   placeholder={
                     provider && !provider.missing
                       ? "留空保留当前完整地址"
@@ -233,7 +245,7 @@ export default function GatewayEditor({
                   <input
                     type="checkbox"
                     checked={rebind}
-                    disabled={busy || !!saved}
+                    disabled={locked || !!saved}
                     required
                     onChange={(e) => setRebind(e.target.checked)}
                   />
@@ -244,6 +256,7 @@ export default function GatewayEditor({
                 ref={fields}
                 transport="http"
                 provider
+                compact
                 initial={provider?.privateFields}
                 authentication={provider?.authentication}
                 legacyBearer={
@@ -251,7 +264,7 @@ export default function GatewayEditor({
                     provider.privateFields.revision === "absent") &&
                   provider?.authentication?.source === "managed"
                 }
-                disabled={busy || !!unknown}
+                disabled={locked || !!unknown}
               />
             </>
           )}
@@ -274,10 +287,10 @@ export default function GatewayEditor({
                 className="icon-button"
                 title="获取模型"
                 aria-label="获取模型"
-                disabled={busy}
+                disabled={locked}
                 onClick={() => void refresh()}
               >
-                <RefreshCw size={18} className={busy ? "spin" : ""} />
+                <RefreshCw size={18} className={locked ? "spin" : ""} />
               </button>
             </div>
           )}
@@ -287,19 +300,16 @@ export default function GatewayEditor({
           >
             <summary>自定义模型</summary>
             <label className="field-label">
-              模型 ID
+              <span className="sr-only">模型 ID</span>
               <textarea
                 aria-label="自定义模型"
                 value={customModels}
                 rows={3}
                 spellCheck={false}
-                disabled={busy || readOnly || !!saved}
+                disabled={locked || readOnly || !!saved}
                 onChange={(e) => setCustomModels(e.target.value)}
                 placeholder="每行一个模型 ID，例如 my-model"
               />
-              <span className="muted">
-                无法获取目录时可手动添加。实际可用性由模型服务决定。
-              </span>
             </label>
           </details>
           {readOnly && (
@@ -322,8 +332,9 @@ export default function GatewayEditor({
             <button
               type="button"
               className="secondary"
-              disabled={busy}
+              disabled={locked}
               onClick={async () => {
+                if (locked) return;
                 setBusy(true);
                 try {
                   const receipt = await privateApi(
@@ -352,7 +363,7 @@ export default function GatewayEditor({
             <button
               type="button"
               className="secondary"
-              disabled={busy}
+              disabled={locked}
               onClick={() => void read()}
             >
               读取保存状态
@@ -360,7 +371,7 @@ export default function GatewayEditor({
           )}
           {!readOnly && (
             <FormSubmit
-              busy={busy}
+              busy={locked}
               spinner
               disabled={!!unknown || !!unknownWrite}
             >

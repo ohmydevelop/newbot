@@ -1,0 +1,14 @@
+
+> newbot@0.2.0 test:official
+> node scripts/prepare-official-app.mjs && tsx --test tests/official-mcp-app.test.ts
+
+Verified official MCP App 2.0.4 (stdio test only).
+✔ unmodified official Vanilla JS App: stdio discovery, time tool, inline resource and Host result schema (160.61365ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 333.701297

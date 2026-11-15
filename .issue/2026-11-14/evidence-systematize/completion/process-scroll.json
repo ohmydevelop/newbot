@@ -1,0 +1,24 @@
+{
+  "before": {
+    "inner": 0,
+    "innerHeight": 324,
+    "innerTotal": 1544,
+    "outer": 0,
+    "overscroll": "auto",
+    "rect": {
+      "height": 324,
+      "width": 752,
+      "x": 392,
+      "y": 224.75
+    }
+  },
+  "innerEdge": {
+    "inner": 0,
+    "outer": 0
+  },
+  "outerScrolled": {
+    "expanded": "true",
+    "inner": 0,
+    "outer": 0
+  }
+}

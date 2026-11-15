@@ -1,0 +1,25 @@
+{
+  "threadId": "3e18bdfe-3f77-4b80-9993-0596081640f6",
+  "resourceCalls": 4,
+  "toolCalls": 1,
+  "waitingTools": 0,
+  "seededCalls": 2,
+  "inputCalls": 0,
+  "records": [
+    {
+      "itemId": "official-first"
+    },
+    {
+      "itemId": "official-second"
+    },
+    {
+      "itemId": "official-first"
+    },
+    {
+      "itemId": "official-second"
+    }
+  ],
+  "modelCalls": 0,
+  "replayedTurns": 1,
+  "inputs": []
+}

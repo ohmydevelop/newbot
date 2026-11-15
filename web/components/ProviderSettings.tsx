@@ -1,6 +1,8 @@
+import { useOperationScope } from "../use-operation-scope";
+import { readCurrentConfiguration } from "../configuration-read";
+import type { Operation } from "../operation-scope";
 import ConfigurationFeedback, {
   useConfigurationRecovery,
-  savedReadFailure,
 } from "./ConfigurationFeedback";
 import { useState, useEffect } from "react";
 import { Plus, RefreshCw, Pencil, CloudDownload, Trash2 } from "lucide-react";
@@ -26,19 +28,43 @@ export default function ProviderSettings() {
     >
   >({});
   const [catalogError, setCatalogError] = useState("");
+  const scope = useOperationScope();
+  const providerRevision = () =>
+    JSON.stringify(
+      useApp
+        .getState()
+        .settings?.configuration?.providers.map((p: { id: string }) => [
+          p.id,
+          useApp.getState().settings?.configuration?.revisions?.[
+            `provider:${p.id}`
+          ],
+        ]),
+    );
+  async function readCatalog(task: Operation, refresh = false) {
+    const entries = await readCurrentConfiguration(
+      providerRevision,
+      () =>
+        request<import("../../shared/types").Json[]>(
+          "gateway/catalog",
+          { refresh },
+          { signal: task.signal },
+        ),
+      task.isCurrent,
+    );
+    if (entries && task.isCurrent()) {
+      setCatalog(Object.fromEntries(entries.map((g) => [g.id, g])));
+      setCatalogError("");
+    }
+  }
   useEffect(() => {
-    let live = true;
-    void request<import("../../shared/types").Json[]>("gateway/catalog")
-      .then((list) => {
-        if (live) setCatalog(Object.fromEntries(list.map((g) => [g.id, g])));
-      })
+    const task = scope.start("read", "catalog");
+    if (!task) return;
+    void readCatalog(task)
       .catch(() => {
-        if (live) setCatalogError("模型目录读取失败，请刷新重试");
-      });
-    return () => {
-      live = false;
-    };
-  }, [JSON.stringify(settings?.configuration?.providers.map((p: {id:string}) => [p.id, settings?.configuration?.revisions?.[`provider:${p.id}`]]))]);
+        if (task.isCurrent()) setCatalogError("模型目录读取失败，请刷新重试");
+      })
+      .finally(task.finish);
+  }, [providerRevision()]);
   const config = settings?.configuration as ConfigurationView | null;
   const [draft, setDraft] = useState<Draft | null>(null);
   const [deleting, setDeleting] = useState<{
@@ -46,8 +72,10 @@ export default function ProviderSettings() {
     revision: string;
   } | null>(null);
   const recovery = useConfigurationRecovery();
-  const [busyState, setBusy] = useState("");
-  const busy = busyState || (recovery.busy ? "recovery" : "");
+  const busyState = scope.busy;
+  const [editorBusy, setEditorBusy] = useState(false);
+  const busy =
+    busyState || (editorBusy ? "editor" : recovery.busy ? "recovery" : "");
   const [notice, setNotice] = useState("");
   const providers: {
     id: string;
@@ -74,40 +102,61 @@ export default function ProviderSettings() {
       (p: { summary?: unknown; current: boolean }) => !!p.summary || p.current,
     )
     .sort((a: { id: string }, b: { id: string }) => a.id.localeCompare(b.id));
-  async function action(key: string, fn: () => Promise<void>) {
-    setBusy(key);
+  async function action(key: string, fn: (task: Operation) => Promise<void>) {
+    if (editorBusy || recovery.busy) return;
+    const task = scope.start("write", key);
+    if (!task) return;
     recovery.clear();
     setNotice("");
     try {
-      await fn();
+      await fn(task);
     } catch (e) {
+      if (!task.isCurrent()) return;
       recovery.capture(
         e,
         draft?.revision || deleting?.revision || config?.revision,
       );
     } finally {
-      setBusy("");
+      task.finish();
     }
   }
-  async function refresh() {
+  async function refresh(task: Operation) {
     await loadSettings();
+    if (!task.isCurrent()) return;
     if (!useApp.getState().settings?.configuration)
       throw new Error("配置暂不可读，请恢复连接后重新读取");
-    const entries = await request<import("../../shared/types").Json[]>(
-      "gateway/catalog",
-      { refresh: true },
-    );
-    setCatalog(Object.fromEntries(entries.map((g) => [g.id, g])));
-    setCatalogError("");
+    await readCatalog(task, true);
   }
-  async function saveGatewayDefault(data: object) {
+  async function saveGatewayDefault(data: object, task: Operation) {
     const result = await request<DefaultsSaveResult>("gateway/defaults", data);
-    useApp.setState(s => ({settings:s.settings ? {...s.settings, configuration:result.configuration, providers:s.settings.providers.map((p: {id:string})=>({...p,current:p.id===result.configuration.defaults.provider}))}:s.settings}));
-    const selected = data as {id:string;model:string};
-    setCatalog(previous => Object.fromEntries(Object.entries(previous).map(([id, entry]) => [id, {...entry,
-      ...(id===selected.id ? {defaultModel:selected.model} : {}),
-      defaultRevision:result.configuration.revisions?.[`gateway-default:${id}`] || entry.defaultRevision,
-    }])));
+    if (!task.isCurrent()) return;
+    useApp.setState((s) => ({
+      settings: s.settings
+        ? {
+            ...s.settings,
+            configuration: result.configuration,
+            providers: s.settings.providers.map((p: { id: string }) => ({
+              ...p,
+              current: p.id === result.configuration.defaults.provider,
+            })),
+          }
+        : s.settings,
+    }));
+    const selected = data as { id: string; model: string };
+    setCatalog((previous) =>
+      Object.fromEntries(
+        Object.entries(previous).map(([id, entry]) => [
+          id,
+          {
+            ...entry,
+            ...(id === selected.id ? { defaultModel: selected.model } : {}),
+            defaultRevision:
+              result.configuration.revisions?.[`gateway-default:${id}`] ||
+              entry.defaultRevision,
+          },
+        ]),
+      ),
+    );
     if (result.state === "overridden")
       recovery.report(
         "配置已保存，但全局默认值受其他配置或管理策略覆盖。",
@@ -116,8 +165,9 @@ export default function ProviderSettings() {
       );
     else setNotice("默认模型已保存。");
   }
-  async function changed(method: string, data: object) {
+  async function changed(method: string, data: object, task: Operation) {
     const saved = await request<DefaultsSaveResult>(method, data);
+    if (!task.isCurrent()) return;
     useApp.setState((s) => ({
       settings: s.settings
         ? { ...s.settings, configuration: saved.configuration }
@@ -141,7 +191,9 @@ export default function ProviderSettings() {
     setDeleting(null);
     setDraft({
       id: id || "",
-      revision: id ? config.revisions?.[`provider:${id}`] || config.revision : config.revision,
+      revision: id
+        ? config.revisions?.[`provider:${id}`] || config.revision
+        : config.revision,
     });
   }
   const feedback = (
@@ -173,7 +225,7 @@ export default function ProviderSettings() {
               aria-label="从配置来源刷新"
               disabled={!!busy}
               onClick={() =>
-                void action("source", async () => {
+                void action("source", async (task) => {
                   const response = await fetch("/api/runtime/config/reload", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -181,7 +233,7 @@ export default function ProviderSettings() {
                   });
                   if (!response.ok)
                     throw new Error("配置来源暂不可用，已保留当前参数。");
-                  await refresh();
+                  await refresh(task);
                 })
               }
             >
@@ -252,18 +304,23 @@ export default function ProviderSettings() {
                 disabled={disabled}
                 onClick={() => {
                   if (p.current) return;
-                  if (!entry?.models.some(m => m.model === entry.defaultModel)) {
+                  if (
+                    !entry?.models.some((m) => m.model === entry.defaultModel)
+                  ) {
                     document.getElementById(`gateway-model-${p.id}`)?.focus();
                     return;
                   }
-                  void action(`default:${p.id}`, () =>
-                    saveGatewayDefault({
-                      id: p.id,
-                      model: entry.defaultModel,
-                      expectedDefaultRevision: entry.defaultRevision,
-                      expectedRevision: config?.revision,
-                      makeDefault: true,
-                    }),
+                  void action(`default:${p.id}`, (task) =>
+                    saveGatewayDefault(
+                      {
+                        id: p.id,
+                        model: entry.defaultModel,
+                        expectedDefaultRevision: entry.defaultRevision,
+                        expectedRevision: config?.revision,
+                        makeDefault: true,
+                      },
+                      task,
+                    ),
                   );
                 }}
               >
@@ -299,7 +356,9 @@ export default function ProviderSettings() {
                   data-variant="destructive"
                   aria-label={`删除 ${name}`}
                   title={
-                    p.summary?.editable ? "删除模型服务" : "此模型服务由其他来源管理"
+                    p.summary?.editable
+                      ? "删除模型服务"
+                      : "此模型服务由其他来源管理"
                   }
                   onClick={() => {
                     edit(p.id);
@@ -316,16 +375,23 @@ export default function ProviderSettings() {
                   id={`gateway-model-${p.id}`}
                   aria-label={`${name} 默认模型`}
                   disabled={disabled || !entry?.models.length}
-                  value={entry?.models.some(m => m.model === entry.defaultModel) ? entry.defaultModel : ""}
+                  value={
+                    entry?.models.some((m) => m.model === entry.defaultModel)
+                      ? entry.defaultModel
+                      : ""
+                  }
                   onChange={(e) => {
                     const model = e.target.value;
-                    void action(`default:${p.id}`, () =>
-                      saveGatewayDefault({
-                        id: p.id,
-                        model,
-                        expectedDefaultRevision: entry?.defaultRevision,
-                        expectedRevision: config?.revision,
-                      }),
+                    void action(`default:${p.id}`, (task) =>
+                      saveGatewayDefault(
+                        {
+                          id: p.id,
+                          model,
+                          expectedDefaultRevision: entry?.defaultRevision,
+                          expectedRevision: config?.revision,
+                        },
+                        task,
+                      ),
                     );
                   }}
                 >
@@ -367,6 +433,8 @@ export default function ProviderSettings() {
             recovery.clear();
           }}
           onSaved={loadSettings}
+          blocked={!!busyState || !!recovery.busy}
+          onBusyChange={setEditorBusy}
         >
           {draft.id &&
             (() => {
@@ -381,12 +449,17 @@ export default function ProviderSettings() {
                       <button
                         type="button"
                         className="secondary danger-text"
+                        disabled={!!busy}
                         onClick={() =>
-                          void action("delete", () =>
-                            changed("provider/delete", {
-                              id: deleting.id,
-                              expectedRevision: deleting.revision,
-                            }),
+                          void action("delete", (task) =>
+                            changed(
+                              "provider/delete",
+                              {
+                                id: deleting.id,
+                                expectedRevision: deleting.revision,
+                              },
+                              task,
+                            ),
                           )
                         }
                       >
@@ -395,6 +468,7 @@ export default function ProviderSettings() {
                       <button
                         type="button"
                         className="secondary"
+                        disabled={!!busy}
                         onClick={() => setDeleting(null)}
                       >
                         保留
