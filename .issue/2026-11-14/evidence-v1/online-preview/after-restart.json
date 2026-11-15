@@ -1,0 +1,19 @@
+{
+  "threads": [
+    [
+      "01a1dcae-939e-74c2-a7f3-73462d9228e7"
+    ]
+  ],
+  "runs": [
+    [
+      "2fb3a767-85c8-4cf8-8f36-710c6f107a5e",
+      "01a1dcae-939e-74c2-a7f3-73462d9228e7",
+      "01a1dcae-e5e5-7963-82e1-3041b2f4e964",
+      "accepted"
+    ]
+  ],
+  "same_records_after_restart": true,
+  "browser_restored_response": "在线聊天已连接。",
+  "original_service_pid": "1291921",
+  "preview_service_pid": "2307278"
+}

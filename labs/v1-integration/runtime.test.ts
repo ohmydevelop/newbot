@@ -7,6 +7,7 @@ import { randomUUID } from "node:crypto";
 import { createServer } from "../../server/index.js";
 import { FakeCodex } from "../../tests/fixture.js";
 import { mountCopilotRuntime } from "./fastify-runtime.js";
+import { restrictPreview } from "./online-preview.js";
 import { HttpAgent } from "@ag-ui/client";
 
 async function setup() {
@@ -22,6 +23,7 @@ async function setup() {
     origins: [origin],
     webDirectory: join(directory, "no-web"),
   });
+  restrictPreview(ctx.app);
   const mounted = mountCopilotRuntime(ctx);
   await ctx.app.listen({ host: "127.0.0.1", port: 0 });
   const address = ctx.app.server.address();
@@ -87,6 +89,35 @@ async function until(condition: () => boolean) {
 }
 const starts = (codex: FakeCodex) =>
   codex.calls.filter((call) => call.method === "turn/start");
+
+test("online preview blocks configuration, plugins and alternate execution routes", async () => {
+  const s = await setup();
+  try {
+    for (const path of [
+      "/api/agent/action",
+      "/api/config",
+      "/api/plugins",
+      "/api/attachments",
+      "/api/copilot/agent/other/run",
+      "/api/copilot/agent/newbot/run/",
+    ]) {
+      assert.equal((await s.post(path, {})).status, 404, path);
+      assert.equal(
+        (await fetch(s.base + path, { headers: s.headers })).status,
+        404,
+        path,
+      );
+    }
+    assert.equal(
+      (await fetch(s.base + "/api/copilot/info", { headers: s.headers }))
+        .status,
+      200,
+    );
+    assert.equal(starts(s.codex).length, 0);
+  } finally {
+    await s.close();
+  }
+});
 
 test("Fastify keeps cookie, Origin, body limits and thread ownership around the new runtime", async () => {
   const s = await setup();

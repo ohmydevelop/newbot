@@ -1,0 +1,19 @@
+{
+  "unauthenticated_run": 401,
+  "missing_origin": 403,
+  "invalid_origin": 403,
+  "original_password_login": 200,
+  "cookie_flags": {
+    "Secure": true,
+    "HttpOnly": true,
+    "SameSite=Strict": true
+  },
+  "authenticated_info": 200,
+  "blocked": {
+    "/api/agent/action": 404,
+    "/api/config": 404,
+    "/api/plugins": 404,
+    "/api/attachments": 404,
+    "/api/copilot/agent/other/run": 404
+  }
+}
