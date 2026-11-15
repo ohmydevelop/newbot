@@ -1,3 +1,4 @@
+import { CatalogRefreshButton } from "./CatalogRefreshButton";
 import MarketplaceSettings from "./MarketplaceSettings";
 import {
   PluginIcon as Blocks,
@@ -197,11 +198,9 @@ export default function ToolsSettings({
             </ActionMenuContent>
           </Dropdown.Portal>
         </Dropdown.Root>
-        <button
-          className="icon-button"
-          title={mode === "plugins" ? "刷新插件" : "刷新连接器"}
-          aria-label={mode === "plugins" ? "刷新插件" : "刷新连接器"}
-          disabled={busy}
+        <CatalogRefreshButton
+          label={mode === "plugins" ? "刷新插件" : "刷新连接器"}
+          busy={busy}
           onClick={() =>
             void (async () => {
               try {
@@ -213,9 +212,7 @@ export default function ToolsSettings({
               }
             })()
           }
-        >
-          <RefreshCw size={18} className={busy ? "spin" : ""} />
-        </button>
+        />
       </CatalogToolbar>
       {error && (
         <p role="alert" className="inline-error">

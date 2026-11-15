@@ -1,5 +1,6 @@
+import { FormActions, FormSubmit } from "./FormActions";
 import { useEffect, useRef, useState } from "react";
-import { LoaderCircle, Plus, Trash2 } from "lucide-react";
+import { Plus, Trash2 } from "lucide-react";
 import type {
   ConfigurationView,
   DefaultsSaveResult,
@@ -472,7 +473,7 @@ export default function ConnectorEditor({
             }}
           />
         </div>
-        <div className="editor-actions">
+        <FormActions layout="editor">
           <button
             type="button"
             className="secondary"
@@ -481,16 +482,14 @@ export default function ConnectorEditor({
           >
             取消
           </button>
-          <button
-            className="primary"
-            disabled={
-              busy || readingCertificate || recovery.blocked || !!unknown
-            }
+          <FormSubmit
+            busy={busy}
+            spinner
+            disabled={readingCertificate || recovery.blocked || !!unknown}
           >
-            {busy && <LoaderCircle size={16} className="spin" />}
             {connector ? "保存" : "添加"}
-          </button>
-        </div>
+          </FormSubmit>
+        </FormActions>
       </form>
     </Modal>
   );

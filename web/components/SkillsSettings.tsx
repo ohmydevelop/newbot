@@ -1,3 +1,4 @@
+import { CatalogRefreshButton } from "./CatalogRefreshButton";
 import SkillCreate from "./SkillCreate";
 import * as Dropdown from "@radix-ui/react-dropdown-menu";
 import { ActionMenuContent, ActionMenuItem } from "./ActionMenu";
@@ -6,14 +7,7 @@ import { SkillIcon as BookOpen } from "./AppIcons";
 import SkillImport from "./SkillImport";
 import { CatalogToolbar } from "./CatalogToolbar";
 import { useRef, useState, useEffect } from "react";
-import {
-  RefreshCw,
-  Trash2,
-  Plus,
-  Check,
-  ChevronDown,
-  Upload,
-} from "lucide-react";
+import { Trash2, Plus, Check, ChevronDown, Upload } from "lucide-react";
 import type { Skill, SkillDocument } from "../../shared/types";
 import { loadSettings, loadDiscovery, request, useApp } from "../store";
 import {
@@ -152,20 +146,14 @@ export default function SkillsSettings({ scope = "" }: { scope?: string }) {
             </ActionMenuContent>
           </Dropdown.Portal>
         </Dropdown.Root>
-        <button
+        <CatalogRefreshButton
           ref={refresh}
-          className="icon-button"
-          aria-label="刷新技能"
-          title="刷新技能"
+          label="刷新技能"
+          iconSize={17}
+          busy={busy === "refresh"}
           disabled={!!busy}
           onClick={() => void action("refresh", () => loadDiscovery("skills"))}
-        >
-          <RefreshCw
-            size={17}
-            className={busy === "refresh" ? "spin" : ""}
-            aria-hidden="true"
-          />
-        </button>
+        />
       </CatalogToolbar>
       {importing && <SkillImport onClose={() => setImporting(false)} />}
       {(error || discoveryFailed) && (

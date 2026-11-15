@@ -1,0 +1,11 @@
+✔ disabled telemetry does not import SDK/exporter or change operation success/failure (50.89186ms)
+✔ enabled telemetry exports only allowed metadata, never synthetic prompt, result or error message (276.507617ms)
+✔ precompressed static assets negotiate correctly; wildcard routing preserves authentication and API 404s (142.486665ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 831.680986

@@ -1,3 +1,4 @@
+import { FormActions, FormSubmit } from "./FormActions";
 import { useMcpOAuthCompletion, type OAuthAttempt } from "../use-mcp-oauth";
 import { connectionStateLabels } from "../connection-state";
 import { CatalogDetail } from "./CatalogNavigation";
@@ -261,7 +262,7 @@ function ConnectionEditor({
           />
           启用连接器
         </label>
-        <div className="editor-actions">
+        <FormActions layout="editor">
           <button
             className="secondary"
             type="button"
@@ -272,10 +273,10 @@ function ConnectionEditor({
             <Unplug size={16} />
             {checking ? "正在检查…" : dirty ? "保存后检查" : "检查连接"}
           </button>
-          <button className="primary" type="submit">
-            {busy ? "正在保存…" : "保存"}
-          </button>
-        </div>
+          <FormSubmit busy={busy} busyLabel="正在保存…">
+            保存
+          </FormSubmit>
+        </FormActions>
       </fieldset>
       {error && (
         <p className="inline-error" role="alert">

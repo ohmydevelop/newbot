@@ -1,9 +1,11 @@
+import { CatalogRefreshButton } from "./CatalogRefreshButton";
+import { FormActions, FormSubmit } from "./FormActions";
 import { MoreIcon as MoreHorizontal } from "./ReferenceIcons";
 import { ExpertIcon as UsersRound } from "./AppIcons";
 import { CatalogToolbar } from "./CatalogToolbar";
 import { useEffect, useState } from "react";
 import * as Dropdown from "@radix-ui/react-dropdown-menu";
-import { Plus, RefreshCw, Pencil, Trash2, Eye } from "lucide-react";
+import { Plus, Pencil, Trash2, Eye } from "lucide-react";
 import type {
   Expert,
   ExpertMembers,
@@ -103,16 +105,11 @@ export default function ExpertsSettings() {
         >
           新专家
         </button>
-        <button
-          type="button"
-          className="icon-button"
-          aria-label="刷新专家"
-          title="刷新专家"
-          disabled={busy}
+        <CatalogRefreshButton
+          label="刷新专家"
+          busy={busy}
           onClick={() => void read()}
-        >
-          <RefreshCw size={18} className={busy ? "spin" : ""} />
-        </button>
+        />
       </CatalogToolbar>
       {error && (
         <p role="alert" className="inline-error">
@@ -328,7 +325,7 @@ export default function ExpertsSettings() {
                 {formError}
               </p>
             )}
-            <div className="modal-actions">
+            <FormActions layout="modal">
               <button
                 type="button"
                 className="secondary"
@@ -337,18 +334,18 @@ export default function ExpertsSettings() {
               >
                 取消
               </button>
-              <button
-                className="primary"
+              <FormSubmit
+                busy={busy}
+                busyLabel="保存中…"
                 disabled={
-                  busy ||
                   !draft.name.trim() ||
                   (!draft.instructions?.trim() &&
                     !memberGroups.some((g) => draft[g.key].length))
                 }
               >
-                {busy ? "保存中…" : "保存"}
-              </button>
-            </div>
+                保存
+              </FormSubmit>
+            </FormActions>
           </form>
         </CatalogDetail>
       )}

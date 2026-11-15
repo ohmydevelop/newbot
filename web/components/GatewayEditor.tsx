@@ -1,5 +1,6 @@
+import { FormActions, FormSubmit } from "./FormActions";
 import { useRef, useState } from "react";
-import { LoaderCircle, RefreshCw } from "lucide-react";
+import { RefreshCw } from "lucide-react";
 import { Modal } from "./ui";
 import { request, useApp } from "../store";
 import type {
@@ -316,7 +317,7 @@ export default function GatewayEditor({
           )}
           {modelError && <p className="inline-error">{modelError}</p>}
         </div>
-        <div className="editor-actions">
+        <FormActions layout="editor">
           {unknownWrite && (
             <button
               type="button"
@@ -358,14 +359,15 @@ export default function GatewayEditor({
             </button>
           )}
           {!readOnly && (
-            <button
-              className="primary"
-              disabled={busy || !!unknown || !!unknownWrite}
+            <FormSubmit
+              busy={busy}
+              spinner
+              disabled={!!unknown || !!unknownWrite}
             >
-              {busy && <LoaderCircle size={16} className="spin" />}保存
-            </button>
+              保存
+            </FormSubmit>
           )}
-        </div>
+        </FormActions>
       </form>
     </Modal>
   );

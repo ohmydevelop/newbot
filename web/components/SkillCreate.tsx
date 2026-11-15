@@ -1,3 +1,4 @@
+import { FormActions, FormSubmit } from "./FormActions";
 import { useRef, useState } from "react";
 import { CatalogDetail } from "./CatalogNavigation";
 import { importApi } from "./SkillImport";
@@ -127,7 +128,7 @@ export default function SkillCreate({ onClose }: { onClose: () => void }) {
             {error}
           </p>
         )}
-        <div className="catalog-form-actions">
+        <FormActions layout="catalog">
           <button
             type="button"
             className="secondary"
@@ -136,10 +137,10 @@ export default function SkillCreate({ onClose }: { onClose: () => void }) {
           >
             取消
           </button>
-          <button className="primary" disabled={busy}>
-            {busy ? "正在创建…" : "创建"}
-          </button>
-        </div>
+          <FormSubmit busy={busy} busyLabel="正在创建…">
+            创建
+          </FormSubmit>
+        </FormActions>
       </form>
     </CatalogDetail>
   );

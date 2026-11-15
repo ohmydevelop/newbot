@@ -1,3 +1,4 @@
+import { FormActions, FormSubmit } from "./FormActions";
 import { useEffect, useRef, useState } from "react";
 import { Plus, RefreshCw, Trash2 } from "lucide-react";
 import { CatalogDetail } from "./CatalogNavigation";
@@ -168,7 +169,7 @@ export default function MarketplaceSettings({
                 {error}
               </p>
             )}
-            <div className="catalog-form-actions">
+            <FormActions layout="catalog">
               <button
                 type="button"
                 className="secondary"
@@ -180,10 +181,10 @@ export default function MarketplaceSettings({
               >
                 取消
               </button>
-              <button className="primary" disabled={!!busy || !view}>
-                {busy ? "正在添加…" : "添加商店"}
-              </button>
-            </div>
+              <FormSubmit busy={!!busy} disabled={!view} busyLabel="正在添加…">
+                添加商店
+              </FormSubmit>
+            </FormActions>
           </form>
         </CatalogDetail>
       )}
