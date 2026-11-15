@@ -1,0 +1,7 @@
+{
+  "unauthenticated_threads": 401,
+  "invalid_origin": 403,
+  "login": 200,
+  "secure_cookie": true,
+  "httponly_cookie": true
+}

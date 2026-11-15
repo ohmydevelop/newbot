@@ -1,0 +1,26 @@
+{
+  "threads": {
+    "rows": 24,
+    "unchanged": true
+  },
+  "extension_packages": {
+    "rows": 5,
+    "unchanged": true
+  },
+  "extension_imports": {
+    "rows": 3,
+    "unchanged": true
+  },
+  "plugin_connection_settings": {
+    "rows": 2,
+    "unchanged": true
+  },
+  "private_field_sets": {
+    "rows": 4,
+    "unchanged": true
+  },
+  "provider_configuration": {
+    "rows": 1,
+    "unchanged": true
+  }
+}
