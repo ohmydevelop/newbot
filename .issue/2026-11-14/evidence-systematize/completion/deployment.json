@@ -1,0 +1,58 @@
+{
+  "sourceCommit": "05018cb",
+  "at": "2026-11-15T08:43:29.860064+00:00",
+  "backup": "/home/a/Documents/ChatGPT/newbot/.data/backups/2026-11-15-systematize-completion",
+  "oldEntry": "/assets/index-DoLZW7Ln.js",
+  "entry": "/assets/index-BiINhf_V.js",
+  "sha256": "05405e6269735833718be95055e73a27c369aa3d5bc85d1b9c2c93987893ee7f",
+  "localMatch": true,
+  "oldAssetStatus": 200,
+  "pidBefore": "2322970",
+  "pidAfterFrontend": "2322970",
+  "tables": {
+    "threads": {
+      "before": 26,
+      "after": 26,
+      "unchanged": true,
+      "unchangedAfterRestart": true
+    },
+    "extension_packages": {
+      "before": 5,
+      "after": 5,
+      "unchanged": true,
+      "unchangedAfterRestart": true
+    },
+    "extension_imports": {
+      "before": 3,
+      "after": 3,
+      "unchanged": true,
+      "unchangedAfterRestart": true
+    },
+    "plugin_connection_settings": {
+      "before": 2,
+      "after": 2,
+      "unchanged": true,
+      "unchangedAfterRestart": true
+    },
+    "private_field_sets": {
+      "before": 4,
+      "after": 4,
+      "unchanged": true,
+      "unchangedAfterRestart": true
+    },
+    "provider_configuration": {
+      "before": 1,
+      "after": 1,
+      "unchanged": true,
+      "unchangedAfterRestart": true
+    }
+  },
+  "publicVerification": "HTTP hash, original login, full UI entries, real deepseek-flash reply and reload verified",
+  "pidAfterOriginRecovery": "2738180",
+  "publicUrl": "https://integration-love-angela-heated.trycloudflare.com",
+  "appOrigin": "https://three-laws-pharmaceuticals-methods.trycloudflare.com",
+  "restartReason": "Quick tunnels failed through DNS fake-IP; recovered tunnel-specific edges, updated origins; backend code unchanged.",
+  "publicEntry": "/assets/index-BiINhf_V.js",
+  "publicMatch": true,
+  "publicOldAssetStatus": 200
+}

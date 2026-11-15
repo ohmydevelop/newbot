@@ -2,7 +2,7 @@
 
 2026-11-15。承接NB-SYS-01，保持完整旧版产品与现有协议/数据格式。计划先于产品代码落盘，开发基线79445d0，发布前线上产品ce02f48。
 
-## NB-SYS-04 配置：实现与验收完成，待公网发布
+## NB-SYS-04 配置：实现、验收与公网发布完成
 
 **已复现根因**：ProviderSettings自动目录读取与手动刷新是两个独立的状态写入者。自动请求延迟失败、手动刷新先成功时，旧失败仍覆盖当前反馈；见before-model-late-error.png与before-model-events.json。父级删除与GatewayEditor保存又分别持有busy，未维护同一编辑对象的互斥约束。
 
@@ -40,3 +40,19 @@
 - 生产凭证、已装插件、数据库和后端不迁移。模型创建/删除等写入试验只在临时数据中进行。
 
 所有证据位于[evidence-systematize/completion](evidence-systematize/completion/)。公网发布、数据一致性与真实模型结果在后续段落补齐；未补齐前不标记部署完成。
+
+## 公网发布与真实模型完成
+
+产品源码05018cb已推送codex/newbot-systematize；只替换前端构建，保留旧manifest所引用资产用于未刷新的浏览器。最初前端替换没有重启后端；随后实际公网检查发现Cloudflare 1016，两个旧隧道持续TLS EOF，系统edge解析为假IP。用Cloudflare DoH确认真实edge，仅给两个Newbot隧道设置专用edge参数后恢复注册，没有修改系统DNS/VPN或跳过TLS验证。临时域名随重连改变，因此更新原.env中PUBLIC_ORIGIN/APP_ORIGIN并重启同一后端代码，使Origin校验对应新地址。重启前22个已完成/4个已中断会话，没有活动等待。
+
+- 主站：https://integration-love-angela-heated.trycloudflare.com/
+- Apps隔离域：https://three-laws-pharmaceuticals-methods.trycloudflare.com
+- deployment.json：公网入口/assets/index-BiINhf_V.js与本地构建SHA-256一致；旧入口资源HTTP200。26条会话及5个插件包、3个导入、2条连接器配置、4组私密字段、Provider配置在前端替换和Origin重启后均逐表内容一致。备份含原前端、SQLite、私有env及分享元数据，位于原工作区.data/backups/2026-11-15-systematize-completion/，不进入Git。
+- 公网用原密码登录成功，原历史、插件和设置入口保留。通过已配置的真实模型发送一条不调用工具、不读写文件的验收消息，立即出现正在提交的消息，随后完成回复“原版界面保留，配置与聊天连接正常。”；步骤默认折叠，3条追问与此上下文相关。刷新后消息及回复恢复，见public-chat.png、public-model.json；数据库只新增1个验收会话、1个有效run（会话总数27）。
+- 测试夹具3164—3168全部停止，临时cookie/合成上传图已删除。登录密码未更改。
+
+临时Cloudflare域名仍不具备固定域名的稳定性；本次只恢复原有公开分享方式。下一次网络变化可能需要重新连接，永久固定域名需要已有Cloudflare域名/Named Tunnel配置，不能凭空保证。
+
+线上复核补充：模型目录仍有25个模型，默认deepseek-flash；public-model-form.png为精简后的模型表单。连接器页保留原已装插件和3个商店，public-connectors.png；新MCP连接器切换Bearer Token，输入仍有可访问名称且视觉仅保留明确占位符，public-mcp-form.png。检查只打开/关闭表单，没有写入生产配置。Apps独立域根路径返回预期403“Invalid sandbox host or path”，证明未把主站暴露到沙盒域；这不是线上真实第三方App运行证明。
+
+**本轮收尾状态**：NB-SYS-02公共控件、03目录生命周期、04配置/模型界面、05聊天边界审计与验收、06附件/A2UI/MCP Apps选定验收及发布均完成。实现与验收不包含未获授权的实际第三方OAuth、所有模型平台兼容性、手机实机触摸边界验证；NB-SYS-03提到的专家未知写入跨挂载幂等仍属独立服务端回执调查，不得因本轮关闭而标记已解决。详细职责边界已固化在docs/frontend-boundaries.md。

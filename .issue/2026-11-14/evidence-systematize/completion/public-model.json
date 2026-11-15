@@ -1,0 +1,12 @@
+{
+  "threadId": "01a1de62-0fb0-7c22-bf30-1fcb76dd4ce4",
+  "provider": "gateway_a26181cc65e9408bbcacc4392aaadd66",
+  "state": "completed",
+  "turnId": "01a1de62-1571-7390-8f92-3d2ff63bbf83",
+  "runCount": 1,
+  "threadCount": 27,
+  "model": "deepseek-flash",
+  "reply": "原版界面保留，配置与聊天连接正常。",
+  "restoredAfterReload": true,
+  "contextualFollowupsVisible": true
+}
