@@ -1,0 +1,20 @@
+{
+  "connectors": {
+    "exit_code": 1,
+    "raw_AE_metric": "131.288 (0.000142456)"
+  },
+  "expert-form": {
+    "exit_code": 1,
+    "raw_AE_metric": "3.77516 (4.09631e-06)"
+  },
+  "mobile": {
+    "method": "CDP Emulation.setDeviceMetricsOverride after viewport capability had no effect",
+    "viewport": {
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    },
+    "screenshot": "public-expert-390.png",
+    "before_after_pixel_comparison": false
+  }
+}
