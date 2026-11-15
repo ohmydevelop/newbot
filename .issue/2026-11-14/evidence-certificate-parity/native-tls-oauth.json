@@ -1,0 +1,20 @@
+{
+  "checks": [
+    "new native advertises connector-local CA",
+    "self-signed HTTPS MCP discovers tools",
+    "unconfigured connector does not inherit CA",
+    "custom CA does not disable hostname validation",
+    "real native tool call crosses verified TLS",
+    "protected MCP requires OAuth",
+    "native OAuth generates state and PKCE",
+    "invalid OAuth state rejected before token exchange",
+    "authorization denial does not issue tokens and permits retry",
+    "OAuth exchanges code using PKCE",
+    "native OAuth completion succeeds",
+    "authorized MCP now exposes tools",
+    "OAuth credential survives runtime restart"
+  ],
+  "tokenExchanges": 1,
+  "refreshes": 0,
+  "scope": "Real native runtime with isolated synthetic TLS/OAuth server; not Slack account authorization"
+}

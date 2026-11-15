@@ -1,0 +1,15 @@
+{
+  "upstream": "fe2f18520864ddbee86cdd4b103a9fefffe9c6a2",
+  "rust": "1.95.0",
+  "profile": "dev-small",
+  "patches": {
+    "patches/main-0001-newbot-runtime.patch": "1856acdc9acbd8f0952e6353b87d9c435cecf1c999f460c89f6f7cbd1fa43c22",
+    "patches/main-0002-verified-model-routes.patch": "9683227ab1482b851792b13e75c256b77c61d79fe3806d286d3f8792602f10ca",
+    "patches/main-0003-connector-local-ca.patch": "d8d36948255f18947b873f7e15d0e53e2b1e55899e87a792f215beb4aa233d2d",
+    "patches/main-0004-provider-local-ca.patch": "13dd3040659159a4cf11852c95e6f7369d4daa099893805dce757e94203a4f97"
+  },
+  "binarySha256": "5bc94bde1cff4270e9de8cd69f7c6a9cee105da5dbdee8b86cea9adca49d8162",
+  "source": ".data/native/certificate-source",
+  "patchVerification": "forward dry-run against prior 3-patch source and reverse dry-run against compiled source",
+  "builtAt": "2026-11-15T09:34:59.286518+00:00"
+}

@@ -13,6 +13,7 @@ export const customModelIds = z
   .transform((rows) => [...new Set(rows)]);
 export const gatewayFields = {
   customModels: customModelIds.optional(),
+  caCertificate: z.string().max(43692).nullable().optional(),
   requestId: z.string().uuid(),
   targetId: gatewayId.optional(),
   expectedRevision: z.string().regex(/^cfg1\.[a-f0-9]{64}$/),

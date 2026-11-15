@@ -1,0 +1,14 @@
+{"at":"2026-11-15T09:29:11.468Z","event":"runtime.status","status":"ready"}
+{
+  "checks": [
+    "self-signed request fails without provider trust",
+    "actual native Responses stream succeeds with provider-local certificate",
+    "hostname validation remains active",
+    "trust does not leak into another provider or global TLS"
+  ],
+  "calls": 1,
+  "realNative": true,
+  "realTLS": true,
+  "privateIssuer": true,
+  "syntheticModel": true
+}

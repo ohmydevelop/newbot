@@ -357,7 +357,7 @@ try {
   check("OAuth credential survives runtime restart", !!persisted?.tools.echo);
   await writeFile(
     resolve(
-      ".issue/2026-11-13/evidence-connector-contracts/native-tls-oauth.json",
+      process.env.CONNECTOR_TEST_EVIDENCE || ".issue/2026-11-13/evidence-connector-contracts/native-tls-oauth.json",
     ),
     JSON.stringify(
       {

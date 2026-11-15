@@ -16,9 +16,17 @@ export type CertificateObservation = {
   validFrom: number;
   validTo: number;
   fingerprint: string;
+  /** Public certificate material; observation does not establish trust. */
+  certificatePem?: string;
+  trustSubject?: string;
+  trustFingerprint?: string;
   systemTrusted: boolean;
   hostnameMatches: boolean;
   canUse: boolean;
   observedAt: number;
   expiresAt: number;
 };
+
+export const certificateInspectRequest = z.strictObject({
+  address: z.string().min(1).max(4096),
+});

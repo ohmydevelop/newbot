@@ -1,3 +1,4 @@
+import { certificateInspectRequest } from "../shared/certificates.js";
 import { RunnerControl } from "./runner/control.js";
 import {
   runnerRoutes,
@@ -462,7 +463,12 @@ async function createServerInternal(
       service.events.resolved(p.requestId);
       return;
     }
-    if (["mcpServer/oauthLogin/completed", "mcpServer/oauth/login/completed"].includes(message.method)) {
+    if (
+      [
+        "mcpServer/oauthLogin/completed",
+        "mcpServer/oauth/login/completed",
+      ].includes(message.method)
+    ) {
       service.events.notification(message);
       return;
     }
@@ -885,10 +891,16 @@ async function createServerInternal(
     )
       throw new CredentialFailure("私密输入需要安全连接", 403);
   };
+  app.post("/api/certificates/inspect", { bodyLimit: 8192 }, async (req) => {
+    privateOrigin(req.headers.origin);
+    return inspectCertificate(
+      certificateInspectRequest.parse(req.body).address,
+    );
+  });
   app.post("/api/plugins/certificate", { bodyLimit: 8192 }, async (req) =>
     service.pluginConnections.certificate(req.body, inspectCertificate),
   );
-  app.post("/api/credentials/requests", { bodyLimit: 8192 }, async (req) => {
+  app.post("/api/credentials/requests", { bodyLimit: 65536 }, async (req) => {
     privateOrigin(req.headers.origin);
     const input = credentialCreate.parse(req.body),
       owner = hash(req.cookies.ma_session!);
@@ -1146,9 +1158,18 @@ async function createServerInternal(
   });
   app.post("/api/threads/:id/turns/:turnId/followups", async (req) => {
     z.strictObject({}).parse(req.body);
-    const { id, turnId } = z.object({ id: z.string().min(1).max(200), turnId: z.string().min(1).max(200) }).parse(req.params);
+    const { id, turnId } = z
+      .object({
+        id: z.string().min(1).max(200),
+        turnId: z.string().min(1).max(200),
+      })
+      .parse(req.params);
     if (!db.owns(id)) throw new PublicError("会话不存在");
-    return { threadId: id, turnId, suggestions: await service.followups(id, turnId) };
+    return {
+      threadId: id,
+      turnId,
+      suggestions: await service.followups(id, turnId),
+    };
   });
   const runningRequests = new Map<string, Promise<Json>>();
   const waitingRuns = new Map<
@@ -1407,7 +1428,10 @@ async function createServerInternal(
         plugins: z.array(z.string().min(1).max(200)).max(8).optional(),
         requestId: z.string().uuid(),
       })
-      .refine((v) => v.text.length > 0 || v.attachments.length > 0, "请输入消息或添加附件")
+      .refine(
+        (v) => v.text.length > 0 || v.attachments.length > 0,
+        "请输入消息或添加附件",
+      )
       .parse(req.body);
     if (!p.skills?.length) delete p.skills;
     // Preserve successful idempotency records created by v0.2.
@@ -1908,7 +1932,12 @@ async function createServerInternal(
   app.post("/api/storage/quota", async (req) => {
     const { bytes } = z
       .object({
-        bytes: z.number().int().min(0).max(1024 ** 4).nullable(),
+        bytes: z
+          .number()
+          .int()
+          .min(0)
+          .max(1024 ** 4)
+          .nullable(),
       })
       .parse(req.body);
     const value = setStorageLimit(db, bytes && bytes > 0 ? bytes : null);

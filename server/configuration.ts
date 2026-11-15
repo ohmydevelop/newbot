@@ -191,6 +191,7 @@ export function configuration(
             privateFields: codex.privateFieldInfo?.("provider", id, config),
             editable: providerEditable(response, id),
             customModels: object((config as any).newbot_models)[id] || [],
+            ...(providerEditable(response, id) && typeof provider.tls_ca_certificate === "string" ? { caCertificate: provider.tls_ca_certificate } : {}),
             requiresAccountAuth: provider.requires_openai_auth === true,
             temporaryCredentialTest: !!privateProviderReceiver(provider),
             name: text(provider.name) || id,

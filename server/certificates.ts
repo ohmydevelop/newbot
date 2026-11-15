@@ -114,7 +114,7 @@ export async function inspectCertificate(
     });
     socket.once("secureConnect", () => {
       try {
-        const peer = socket.getPeerCertificate();
+        const peer = socket.getPeerCertificate(true);
         if (!peer.raw?.length || peer.raw.length > 65536)
           throw new PublicError("服务器证书为空或超过读取限制");
         const cert = new X509Certificate(peer.raw),
@@ -131,9 +131,43 @@ export async function inspectCertificate(
             usage.includes("1.3.6.1.5.5.7.3.1") ||
             usage.includes("2.5.29.37.0"));
         const hostnameMatches = !checkServerIdentity(host, peer);
+        // A CA-signed leaf is not a root for the native TLS client. Follow only
+        // cryptographically linked certificates returned by this handshake; never
+        // fetch issuer URLs. If no root was sent, keep observation useful but ask
+        // for the CA file instead of offering a trust setting that cannot work.
+        let root = cert,
+          chain = peer;
+        const seen = new Set<string>();
+        for (let depth = 0; depth < 8; depth++) {
+          if (root.checkIssued(root) && root.verify(root.publicKey)) break;
+          seen.add(root.fingerprint256);
+          const parent = chain.issuerCertificate;
+          if (!parent?.raw) break;
+          const issuer = new X509Certificate(parent.raw);
+          if (
+            seen.has(issuer.fingerprint256) ||
+            !issuer.ca ||
+            !root.checkIssued(issuer) ||
+            !root.verify(issuer.publicKey)
+          )
+            break;
+          root = issuer;
+          chain = parent;
+        }
+        const usableRoot =
+          root.checkIssued(root) &&
+          root.verify(root.publicKey) &&
+          Date.parse(root.validFrom) <= now &&
+          Date.parse(root.validTo) >= now &&
+          Buffer.byteLength(root.toString()) <= 32768;
         settled = true;
         resolve({
           origin: url.origin,
+          certificatePem: usableRoot ? root.toString() : undefined,
+          trustSubject: usableRoot ? root.subject.slice(0, 2000) : undefined,
+          trustFingerprint: usableRoot
+            ? root.fingerprint256.replaceAll(":", "").toLowerCase()
+            : undefined,
           subject: cert.subject.slice(0, 2000),
           issuer: cert.issuer.slice(0, 2000),
           validFrom,

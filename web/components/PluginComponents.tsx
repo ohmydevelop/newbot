@@ -1,3 +1,4 @@
+import ServerCertificateEditor from "./ServerCertificateEditor";
 import { FormActions, FormSubmit } from "./FormActions";
 import { useMcpOAuthCompletion, type OAuthAttempt } from "../use-mcp-oauth";
 import { connectionStateLabels } from "../connection-state";
@@ -23,6 +24,7 @@ import { loadDiscovery, request } from "../store";
 import SkillReader from "./SkillReader";
 import CertificatePicker from "./CertificatePicker";
 import {
+  pluginCertificateAddress,
   certificateSelectionValid,
   clearStaleCertificate,
   type CertificateSelection,
@@ -57,6 +59,9 @@ function ConnectionEditor({
         .map((f) => [f.id, f.value!]),
     ),
   );
+  const [caCertificate, setCaCertificate] = useState(c.caCertificate || "");
+  const [readingCertificate, setReadingCertificate] = useState(false);
+  const address = pluginCertificateAddress(c, values);
   const [enabled, setEnabled] = useState(c.enabled),
     [clear, setClear] = useState<string[]>([]),
     [busy, setBusy] = useState(false),
@@ -79,7 +84,7 @@ function ConnectionEditor({
   }
   async function submit(event: React.FormEvent) {
     event.preventDefault();
-    if (busy || unknown) return;
+    if (busy || unknown || readingCertificate) return;
     onDirty();
     setBusy(true);
     setError("");
@@ -101,6 +106,12 @@ function ConnectionEditor({
           values,
           enabled,
           clearSecrets: clear,
+          ...(c.transport === "http"
+            ? {
+                caCertificate: caCertificate || null,
+                certificateAddress: address,
+              }
+            : {}),
         },
         secrets,
       );
@@ -236,6 +247,19 @@ function ConnectionEditor({
             )}
           </div>
         ))}
+        {c.transport === "http" && (
+          <ServerCertificateEditor
+            address={address}
+            value={caCertificate}
+            disabled={busy || blocked || !!unknown}
+            onBusyChange={setReadingCertificate}
+            onChange={(value) => {
+              setCaCertificate(value);
+              setDirty(true);
+              onDirty();
+            }}
+          />
+        )}
         <CertificatePicker
           connection={c}
           values={values}
@@ -273,7 +297,11 @@ function ConnectionEditor({
             <Unplug size={16} />
             {checking ? "正在检查…" : dirty ? "保存后检查" : "检查连接"}
           </button>
-          <FormSubmit busy={busy} busyLabel="正在保存…">
+          <FormSubmit
+            busy={busy}
+            disabled={readingCertificate}
+            busyLabel="正在保存…"
+          >
             保存
           </FormSubmit>
         </FormActions>
@@ -412,7 +440,9 @@ export default function PluginComponents({
                               ] || (c.configured ? "已配置" : "待配置"))}
                   </small>
                 </span>
-                {c.fields.length || c.reviewRequired ? (
+                {c.transport === "http" ||
+                c.fields.length ||
+                c.reviewRequired ? (
                   <button
                     type="button"
                     className="secondary"

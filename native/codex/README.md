@@ -36,3 +36,17 @@ CODEX_BIN="$PWD/.data/native/managed/bin/codex" node --import tsx scripts/test-i
 通用模型配置仅声明文本与标准 function 能力，不复制其他模型的视觉、工具模式或最大上下文。已准入任务的 Guardian、node REPL 与审查策略继续保留，普通能力验证不能变更权限。新网关客户端仅作用于后续未开始的模型请求；历史工具不重放。能力结果由 Bridge 按真实有效凭证/端点/模型/推理参数绑定，SQLite 复用最长 24 小时。首次验证会产生额外模型请求，探针不包含用户对话或业务工具。
 
 验证脚本：`scripts/test-model-capabilities-native.mjs`。默认检查两个不在内置目录中的模型；`CAPABILITY_SAME_ID=1` 检查同名跨网关，`CAPABILITY_INITIAL_BUILTIN=1` 检查内置模型转自定义模型并保留原任务约束。均使用隔离目录、模拟网关和真实 App Server，不构成实际商业 Provider 的兼容承诺。
+
+### 模型网关局部证书（main-0004）
+
+`providerCustomCa` 能力与 Provider 的 `tls_ca_certificate` 配对。该 PEM 只用于指定 Provider 的 HTTPS 原点；独立客户端保留域名校验、代理策略，禁止重定向，不读取为全局根证书。配置证书的 Provider 使用 Responses HTTP 流；实时端点改到其他原点时不继承证书。模型目录、能力探测及追问由 Server 的同作用域 HTTPS 客户端执行。
+
+自动获取仅观察 TLS、展示身份与证书链，不发送业务请求或认证。自签名证书或服务返回的有效根 CA 可在确认后保存；缺失根 CA 时需选择 CA 文件，不能把 CA 签发的叶证书冒充可用根。测试覆盖两类实际 TLS 服务：
+
+```bash
+CODEX_BIN=/absolute/path/to/codex node --import tsx scripts/test-provider-certificate-native.mjs
+CERT_PRIVATE_ISSUER=1 CODEX_BIN=/absolute/path/to/codex node --import tsx scripts/test-provider-certificate-native.mjs
+CODEX_BIN=/absolute/path/to/codex node --import tsx scripts/test-connector-native.mjs
+```
+
+这些测试运行真实 Codex 内核与 TLS，但模型/OAuth 响应来自隔离测试服务，不代表实际商业服务或 Slack 账号授权验证。配置 schema 同步生成，包含此前固定插件目录与 MCP 局部 CA 字段。

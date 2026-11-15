@@ -1,3 +1,4 @@
+import ServerCertificateEditor from "./ServerCertificateEditor";
 import { FormActions, FormSubmit } from "./FormActions";
 import { useRef, useState, useEffect } from "react";
 import { RefreshCw } from "lucide-react";
@@ -44,6 +45,10 @@ export default function GatewayEditor({
     [customModels, setCustomModels] = useState(
       (provider?.customModels || []).join("\n"),
     );
+  const [caCertificate, setCaCertificate] = useState(
+    provider?.caCertificate || "",
+  );
+  const [readingCertificate, setReadingCertificate] = useState(false);
   const [busy, setBusy] = useState(false),
     [error, setError] = useState(""),
     [modelError, setModelError] = useState(""),
@@ -53,9 +58,9 @@ export default function GatewayEditor({
     (DefaultsSaveResult & { id: string }) | null
   >(null);
   useEffect(() => {
-    onBusyChange?.(busy);
+    onBusyChange?.(busy || readingCertificate);
     return () => onBusyChange?.(false);
-  }, [busy, onBusyChange]);
+  }, [busy, readingCertificate, onBusyChange]);
   const locked = busy || blocked;
   const readOnly = !!provider && !provider.editable;
   const [rebind, setRebind] = useState(false);
@@ -74,7 +79,14 @@ export default function GatewayEditor({
   }
   async function save(e: React.FormEvent) {
     e.preventDefault();
-    if (posting.current || locked || readOnly || unknown || unknownWrite)
+    if (
+      posting.current ||
+      locked ||
+      readingCertificate ||
+      readOnly ||
+      unknown ||
+      unknownWrite
+    )
       return;
     posting.current = true;
     setBusy(true);
@@ -100,6 +112,7 @@ export default function GatewayEditor({
             ? { baseUrl: url }
             : {}),
           customModels: manual.data,
+          caCertificate: caCertificate || null,
           ...(changedReceiver ? { rebindCredentials: rebind } : {}),
         },
         { operationId: requestId.current },
@@ -252,6 +265,13 @@ export default function GatewayEditor({
                   使用新地址，重新配置其凭证
                 </label>
               )}
+              <ServerCertificateEditor
+                address={url}
+                value={caCertificate}
+                disabled={locked || !!saved}
+                onChange={setCaCertificate}
+                onBusyChange={setReadingCertificate}
+              />
               <PrivateFieldEditor
                 ref={fields}
                 transport="http"
@@ -373,7 +393,7 @@ export default function GatewayEditor({
             <FormSubmit
               busy={locked}
               spinner
-              disabled={!!unknown || !!unknownWrite}
+              disabled={readingCertificate || !!unknown || !!unknownWrite}
             >
               保存
             </FormSubmit>

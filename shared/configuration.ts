@@ -30,6 +30,7 @@ export type ConfigurationView = {
     credentialEditable?: boolean;
     authentication?: import("./credentials.js").AuthenticationView;
     customModels?: string[];
+    caCertificate?: string;
     requiresAccountAuth: boolean;
     temporaryCredentialTest?: boolean;
     name: string;

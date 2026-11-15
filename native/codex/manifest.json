@@ -9,6 +9,7 @@
   "patches": [
     "patches/main-0001-newbot-runtime.patch",
     "patches/main-0002-verified-model-routes.patch",
-    "patches/main-0003-connector-local-ca.patch"
+    "patches/main-0003-connector-local-ca.patch",
+    "patches/main-0004-provider-local-ca.patch"
   ]
 }

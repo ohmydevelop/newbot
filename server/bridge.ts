@@ -88,7 +88,7 @@ export function bridge(
   const configStore = configuration(codex, cwd, codex.providerRuntime, vault);
   const mcpStore = mcpManager(codex, configStore, vault);
   const providerStore = providerManager(codex, db, configStore, vault);
-  const connections = pluginConnections(db, configStore.extensions, vault);
+  const connections = pluginConnections(db, configStore.extensions, vault, () => !!codex.runtimeCapabilities?.mcpCustomCa);
   const toolNames = toolDisplay(db, (threadId, server) => {
     const snapshot =
       threadId && db.owns(threadId)
@@ -1613,6 +1613,7 @@ export function bridge(
               expectedRevision: data.expectedRevision,
               patch: {
                 name: data.name,
+                ...(data.caCertificate !== undefined ? { caCertificate: data.caCertificate } : {}),
                 ...(data.customModels !== undefined
                   ? { customModels: data.customModels }
                   : {}),

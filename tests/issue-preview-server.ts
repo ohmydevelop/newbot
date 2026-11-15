@@ -524,6 +524,9 @@ if (process.env.ISSUE_ACTIVITY_UI)
       codex.finish(threadId, state);
     return {};
   });
+const closeCertificateFixture = process.env.ISSUE_CERTIFICATES === "1"
+  ? await (await import("./certificate-preview-fixture.js")).certificatePreview(ctx, codex, directory)
+  : undefined;
 await ctx.app.listen({ host: "127.0.0.1", port });
 console.log("Issue UI fixture ready");
 for (const signal of ["SIGTERM", "SIGINT"] as const)
@@ -531,6 +534,7 @@ for (const signal of ["SIGTERM", "SIGINT"] as const)
     signal,
     () =>
       void ctx.app.close().then(() => {
+        closeCertificateFixture?.();
         rmSync(directory, { recursive: true, force: true });
         process.exit(0);
       }),

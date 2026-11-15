@@ -1,0 +1,18 @@
+✔ certificate targets allow explicit private services but reject metadata, loopback, unsafe schemes and credentials (25.130658ms)
+✔ TLS observation pins checked DNS, sends no application data, reports trust and invalid certificates, and times out (98.854719ms)
+✔ certificate drafts never infer secret destinations or keep a generated pin for a changed address (0.660247ms)
+✔ certificate inspection enforces concurrency and per-minute limits including failures (0.362301ms)
+✔ real TLS rejects oversized certificates and never assumes a SAN-less certificate matches an IP (16.781117ms)
+✔ provider trust is scoped to one HTTPS operation, with domain/CA/redirect failures preserved (100.114681ms)
+✔ private CA supports upload; acquisition uses a linked root or explicitly requires the missing CA (151.17765ms)
+✔ gateway CA persists, reads back, rejects old kernels/private keys and clears on receiver change (241.780285ms)
+✔ plugin certificate address resolves only ordinary declared URL fields and invalidates unresolved targets (0.315555ms)
+✔ HTTP plugin trust is host-owned, address-bound, restored after reopen and removable without schema fields (94.733779ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 10
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 984.354494

@@ -1,3 +1,4 @@
+import { mcpCertificate } from "./mcp-certificate.js";
 import { randomUUID } from "node:crypto";
 import { z } from "zod";
 import type { ConfigReadResponse } from "../generated/codex/v2/ConfigReadResponse.js";
@@ -38,6 +39,7 @@ export function pluginConnections(
   db: Store,
   extensions: ExtensionRuntime | undefined,
   vault?: ReturnType<typeof credentialVault>,
+  supportsCustomCa: () => boolean = () => false,
 ) {
   const owners = new Map<
     string,
@@ -92,8 +94,20 @@ export function pluginConnections(
       }));
     }
   }
-  function configuration(d: PluginDescriptor, values: Record<string, unknown>) {
+  function configuration(
+    d: PluginDescriptor,
+    values: Record<string, unknown>,
+    trust?: { address: string; certificate: string },
+  ) {
     const resolved = resolvePluginConfiguration(d, values);
+    if (
+      trust &&
+      trust.address === resolved.definition.url &&
+      trust.address.startsWith("https://")
+    )
+      resolved.definition.tls_ca_certificate = mcpCertificate(
+        trust.certificate,
+      );
     return {
       ...resolved,
       config: {
@@ -191,7 +205,7 @@ export function pluginConnections(
     let configured = false;
     if (!d.reason) {
       try {
-        resolved = configuration(d, values);
+        resolved = configuration(d, values, saved.trust);
         stored = secrets(d, resolved.config);
         ordinary(d, values, true);
         configured =
@@ -234,11 +248,19 @@ export function pluginConnections(
         enabled: s.enabled,
         configured: s.configured,
         transport: d.definition.url ? "http" : "stdio",
+        ...(d.definition.url
+          ? {
+              endpointTemplate: d.definition.url,
+              caCertificate: s.resolved?.definition.tls_ca_certificate,
+            }
+          : {}),
         source: d.source,
         reviewRequired: s.changed && !d.reason,
         reason:
           d.reason ||
-          (s.changed ? "插件内容已更新，请复核后重新启用（接收方未变化的凭证会保留）" : undefined) ||
+          (s.changed
+            ? "插件内容已更新，请复核后重新启用（接收方未变化的凭证会保留）"
+            : undefined) ||
           (s.enabled && !s.configured
             ? missing.length
               ? `缺少${missing.map((f) => `“${f.title}”`).join("、")}`
@@ -349,7 +371,35 @@ export function pluginConnections(
     };
     const before = await locate();
     const values = ordinary(before, p.values, p.enabled);
-    const resolved = configuration(before, values);
+    const previousTrust = setting(before)
+      ? JSON.parse(setting(before)!.content).trust
+      : undefined;
+    const candidate = resolvePluginConfiguration(before, values);
+    let trust =
+      previousTrust?.address === candidate.definition.url
+        ? previousTrust
+        : undefined;
+    if (p.caCertificate !== undefined) {
+      trust = undefined;
+      if (p.caCertificate) {
+        if (!supportsCustomCa())
+          throw new PublicError(
+            "当前运行内核不支持连接器独立证书，请先更新服务",
+          );
+        if (
+          !String(candidate.definition.url).startsWith("https://") ||
+          p.certificateAddress !== candidate.definition.url
+        )
+          throw new PublicError(
+            "证书与当前 HTTPS 连接地址不匹配，请重新获取或选择",
+          );
+        trust = {
+          address: p.certificateAddress,
+          certificate: mcpCertificate(p.caCertificate),
+        };
+      }
+    }
+    const resolved = configuration(before, values, trust);
     if (resolved.secrets.length && !vault)
       throw new PublicError("插件私密配置不可用");
     if (
@@ -441,7 +491,11 @@ export function pluginConnections(
               randomUUID(),
               d.digest,
               d.schemaDigest,
-              JSON.stringify({ values, enabled: p.enabled }),
+              JSON.stringify({
+                values,
+                enabled: p.enabled,
+                ...(trust ? { trust } : {}),
+              }),
             );
           db.raw
             .prepare(

@@ -12,6 +12,8 @@ export const pluginConfigurationSave = z.strictObject({
     z.union([z.string().max(4096), z.number().finite(), z.boolean()]),
   ),
   enabled: z.boolean(),
+  caCertificate: z.string().max(43692).nullable().optional(),
+  certificateAddress: z.string().max(4096).optional(),
   clearSecrets: z.array(z.string().max(80)).max(32).default([]),
 });
 export type PluginConfigurationSave = z.infer<typeof pluginConfigurationSave>;
@@ -37,6 +39,8 @@ export type PluginConnection = {
   configured: boolean;
   transport: "stdio" | "http";
   fields: PluginConfigField[];
+  endpointTemplate?: string;
+  caCertificate?: string;
   reason?: string;
   reviewRequired?: boolean;
   source: "package";

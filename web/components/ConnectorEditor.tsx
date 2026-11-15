@@ -1,5 +1,6 @@
+import ServerCertificateEditor from "./ServerCertificateEditor";
 import { FormActions, FormSubmit } from "./FormActions";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { Plus, Trash2 } from "lucide-react";
 import type {
   ConfigurationView,
@@ -42,18 +43,7 @@ export default function ConnectorEditor({
   const [caCertificate, setCaCertificate] = useState(
     connector?.definition?.caCertificate || "",
   );
-  const [certificateName, setCertificateName] = useState(
-    connector?.definition?.caCertificate ? "已保存证书" : "",
-  );
-  const certificateInput = useRef<HTMLInputElement>(null);
-  const certificateRead = useRef(0);
   const [readingCertificate, setReadingCertificate] = useState(false);
-  useEffect(
-    () => () => {
-      certificateRead.current++;
-    },
-    [],
-  );
   const [command, setCommand] = useState(connector?.definition?.command || "");
   const [args, setArgs] = useState<string[]>(connector?.definition?.args || []);
   const [startup, setStartup] = useState(connector?.startupTimeout || 10);
@@ -213,17 +203,6 @@ export default function ConnectorEditor({
                   connector ? "留空保留现有地址" : "https://example.com/mcp"
                 }
                 onChange={(e) => {
-                  certificateRead.current++;
-                  setReadingCertificate(false);
-                  let sameOrigin = false;
-                  try {
-                    sameOrigin =
-                      new URL(url).origin === new URL(e.target.value).origin;
-                  } catch {}
-                  if (!sameOrigin) {
-                    setCaCertificate("");
-                    setCertificateName("");
-                  }
                   setUrl(e.target.value);
                 }}
               />
@@ -281,76 +260,13 @@ export default function ConnectorEditor({
             </>
           )}
           {transport === "http" && (
-            <details
-              className="catalog-advanced"
-              open={caCertificate ? true : undefined}
-            >
-              <summary>服务器证书{caCertificate ? " · 自定义" : ""}</summary>
-              <div className="connector-certificate">
-                <input
-                  ref={certificateInput}
-                  type="file"
-                  accept=".pem,.crt,.cer,.der"
-                  hidden
-                  aria-label="选择服务器 CA 证书"
-                  disabled={busy || !!saved}
-                  onChange={async (e) => {
-                    const file = e.target.files?.[0];
-                    e.target.value = "";
-                    if (!file) return;
-                    if (file.size > 32768) {
-                      setPrivateError("证书不能超过 32 KiB");
-                      return;
-                    }
-                    const generation = ++certificateRead.current;
-                    setReadingCertificate(true);
-                    try {
-                      const bytes = new Uint8Array(await file.arrayBuffer());
-                      if (generation !== certificateRead.current) return;
-                      setCaCertificate(btoa(String.fromCharCode(...bytes)));
-                      setCertificateName(file.name);
-                      setPrivateError("");
-                    } catch {
-                      if (generation === certificateRead.current)
-                        setPrivateError("证书读取失败，请重新选择");
-                    } finally {
-                      if (generation === certificateRead.current)
-                        setReadingCertificate(false);
-                    }
-                  }}
-                />
-                <span className="muted">{certificateName || "系统信任"}</span>
-                <div className="certificate-actions">
-                  <button
-                    type="button"
-                    className="secondary"
-                    disabled={busy || !!saved || !url.startsWith("https://")}
-                    onClick={() => certificateInput.current?.click()}
-                  >
-                    选择证书
-                  </button>
-                  {caCertificate && (
-                    <button
-                      type="button"
-                      className="secondary"
-                      disabled={busy || !!saved}
-                      onClick={() => {
-                        certificateRead.current++;
-                        setReadingCertificate(false);
-                        setCaCertificate("");
-                        setCertificateName("");
-                      }}
-                    >
-                      恢复系统信任
-                    </button>
-                  )}
-                </div>
-                <small className="muted">
-                  仅用于此服务地址。支持 PEM／DER 格式的 CA
-                  或自签名证书，仍校验域名和有效期。
-                </small>
-              </div>
-            </details>
+            <ServerCertificateEditor
+              address={url}
+              value={caCertificate}
+              disabled={busy || !!saved}
+              onChange={setCaCertificate}
+              onBusyChange={setReadingCertificate}
+            />
           )}
           <PrivateFieldEditor
             compact

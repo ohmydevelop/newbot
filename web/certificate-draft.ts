@@ -48,3 +48,35 @@ export function clearStaleCertificate(
   }
   return values;
 }
+
+/** Only plain declared fields can resolve the remote connector address. */
+export function pluginCertificateAddress(
+  c: PluginConnection,
+  values: Record<string, unknown>,
+) {
+  if (!c.endpointTemplate) return "";
+  const expanded = c.endpointTemplate.replace(
+    /\$\{user_config\.([^}]+)\}/g,
+    (_, id: string) => {
+      const field = c.fields.find(
+        (f) => f.id === id && !f.sensitive && f.type === "string",
+      );
+      return field && typeof values[id] === "string"
+        ? String(values[id])
+        : "${unresolved}";
+    },
+  );
+  if (expanded.includes("${")) return "";
+  try {
+    const u = new URL(expanded);
+    return ["https:", "http:"].includes(u.protocol) &&
+      !u.username &&
+      !u.password &&
+      !u.search &&
+      !u.hash
+      ? expanded
+      : "";
+  } catch {
+    return "";
+  }
+}

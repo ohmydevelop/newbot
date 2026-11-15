@@ -53,6 +53,7 @@ const definition = z.strictObject({
     .refine((v) => v.trim().length > 0),
   base_url: endpoint,
   wire_api: z.literal("responses"),
+  tls_ca_certificate: z.string().max(32768).optional(),
   requires_openai_auth: z.boolean().optional(),
   env_key: env.optional(),
   env_key_instructions: z.string().max(1000).optional(),
