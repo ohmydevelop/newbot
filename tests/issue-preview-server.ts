@@ -284,6 +284,43 @@ const codex = new IssueCodex(),
     password: "issue-fixture-login",
     origins: [origin],
   });
+// Opt-in local fault injection. Never registered by the production server.
+if (process.env.ISSUE_CATALOG_RACES === "1") {
+  type Rule = {
+    key: string;
+    delay?: number;
+    fail?: boolean;
+    remaining: number;
+  };
+  let rules: Rule[] = [];
+  let events: { key: string; status: number; delayed: boolean }[] = [];
+  ctx.app.post("/fixture/catalog-state", async (req) => {
+    rules = (req.body as { rules: Rule[] }).rules;
+    events = [];
+    return { ok: true };
+  });
+  ctx.app.get("/fixture/catalog-state", async () => ({ events }));
+  ctx.app.addHook("onSend", async (req, reply, payload) => {
+    if (!req.url.startsWith("/api/")) return payload;
+    const key =
+      (req.body as { action?: string } | undefined)?.action ||
+      `${req.method} ${req.url}`;
+    const rule = rules.find((r) => r.key === key && r.remaining > 0);
+    if (rule) rule.remaining--;
+    events.push({
+      key,
+      status: rule?.fail ? 503 : reply.statusCode,
+      delayed: !!rule?.delay,
+    });
+    if (rule?.delay)
+      await new Promise((resolve) => setTimeout(resolve, rule.delay));
+    if (rule?.fail) {
+      reply.code(503).type("application/json");
+      return JSON.stringify({ error: "测试：目录读取暂时失败" });
+    }
+    return payload;
+  });
+}
 for (const path of ["/fixture/provider-a/models", "/fixture/provider-b/models"])
   ctx.app.get(path, async () => ({
     data: [

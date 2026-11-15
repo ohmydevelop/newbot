@@ -1,3 +1,4 @@
+import { useOperationScope } from "../use-operation-scope";
 import { FormActions, FormSubmit } from "./FormActions";
 import { useEffect, useRef, useState } from "react";
 import { Plus, RefreshCw, Trash2 } from "lucide-react";
@@ -13,28 +14,38 @@ export default function MarketplaceSettings({
   const [view, setView] = useState<MarketplaceView | null>(null),
     [adding, setAdding] = useState(false),
     [source, setSource] = useState(""),
-    [busy, setBusy] = useState(""),
     [error, setError] = useState("");
   const operation = useRef<{ body: string; id: string } | null>(null);
-  const load = async () => setView(await request("marketplace/list"));
+  const scope = useOperationScope();
+  const busy = scope.busy;
+  async function load() {
+    const task = scope.start("read", "list");
+    if (!task) return;
+    setError("");
+    try {
+      const result = await request<MarketplaceView>(
+        "marketplace/list",
+        {},
+        { signal: task.signal },
+      );
+      if (task.isCurrent()) setView(result);
+    } catch (e) {
+      if (task.isCurrent())
+        setError(e instanceof Error ? e.message : "读取失败，请重试");
+    } finally {
+      task.finish();
+    }
+  }
   useEffect(() => {
-    let live = true;
-    request<MarketplaceView>("marketplace/list")
-      .then((v) => {
-        if (live) setView(v);
-      })
-      .catch((e) => {
-        if (live) setError(e.message);
-      });
-    return () => {
-      live = false;
-    };
+    void load();
   }, []);
   async function change(
     action: string,
     entry?: MarketplaceView["entries"][number],
   ) {
-    if (busy || !view) return;
+    if (!view) return;
+    const task = scope.start("write", entry?.id || "add");
+    if (!task) return;
     const body = {
       expectedRevision: view.revision,
       ...(entry ? { id: entry.id } : { source }),
@@ -42,19 +53,30 @@ export default function MarketplaceSettings({
     const signature = JSON.stringify({ action, ...body });
     if (operation.current?.body !== signature)
       operation.current = { body: signature, id: crypto.randomUUID() };
-    setBusy(entry?.id || "add");
     setError("");
+    let committed = false;
     try {
       await request(action, { ...body, operationId: operation.current.id });
+      committed = true;
       operation.current = null;
+      if (!task.isCurrent()) return;
       setAdding(false);
       setSource("");
       await loadSettings();
-      await load();
+      if (!task.isCurrent()) return;
+      const result = await request<MarketplaceView>("marketplace/list");
+      if (task.isCurrent()) setView(result);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "操作失败，请重试");
+      if (task.isCurrent())
+        setError(
+          committed
+            ? "操作已完成，商店目录读取失败。请刷新查看最新状态。"
+            : e instanceof Error
+              ? e.message
+              : "操作失败，请重试",
+        );
     } finally {
-      setBusy("");
+      task.finish();
     }
   }
   return (
@@ -64,7 +86,7 @@ export default function MarketplaceSettings({
       onOpenChange={(v) => {
         if (!v) onClose();
       }}
-      dismissible={!busy}
+      dismissible={!busy || busy === "list"}
       className="catalog-management"
     >
       {error && (
@@ -129,7 +151,7 @@ export default function MarketplaceSettings({
       <button
         className="text-button"
         disabled={!!busy}
-        onClick={() => void load().catch((e) => setError(e.message))}
+        onClick={() => void load()}
       >
         刷新商店
       </button>
@@ -143,7 +165,7 @@ export default function MarketplaceSettings({
               setError("");
             }
           }}
-          dismissible={!busy}
+          dismissible={!busy || busy === "list"}
           className="catalog-form-step"
         >
           <form

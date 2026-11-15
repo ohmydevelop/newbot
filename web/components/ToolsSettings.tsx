@@ -1,3 +1,4 @@
+import { useOperationScope } from "../use-operation-scope";
 import { CatalogRefreshButton } from "./CatalogRefreshButton";
 import MarketplaceSettings from "./MarketplaceSettings";
 import {
@@ -41,58 +42,70 @@ export default function ToolsSettings({
     [query, setQuery] = useState(""),
     [marketplace, setMarketplace] = useState(""),
     [managingMarkets, setManagingMarkets] = useState(false),
-    [busy, setBusy] = useState(false),
     [error, setError] = useState(""),
     [importing, setImporting] = useState(false),
     [updating, setUpdating] = useState<Json | null>(null),
     [marketUpdate, setMarketUpdate] = useState<Json | null>(null),
     [create, setCreate] = useState(0),
     [remove, setRemove] = useState<Json | null>(null);
-  const generation = useRef(0);
+  const operation = useOperationScope();
+  const busy = !!operation.busy;
   const detailOrigin = useRef<HTMLElement | null>(null);
-  async function read() {
-    const current = ++generation.current;
-    setBusy(true);
+  async function read(refresh = false) {
+    const task = operation.start("read", refresh ? "refresh" : "list");
+    if (!task) return;
     setError("");
     try {
-      const result = await request("plugin/list", { includeTools: true });
-      if (generation.current === current) setCatalog(result);
+      if (refresh) {
+        // Shared settings/discovery keep their own lifetime; only this page continuation expires.
+        await loadSettings();
+        if (!task.isCurrent()) return;
+        await loadDiscovery("mcp");
+        if (!task.isCurrent()) return;
+      }
+      const result = await request(
+        "plugin/list",
+        { includeTools: true },
+        { signal: task.signal },
+      );
+      if (task.isCurrent()) setCatalog(result);
     } catch {
-      if (generation.current === current)
-        setError("插件目录读取失败，请刷新重试。");
+      if (task.isCurrent()) setError("插件目录读取失败，请刷新重试。");
     } finally {
-      if (generation.current === current) setBusy(false);
+      task.finish();
     }
   }
   useEffect(() => {
     void read();
     void loadDiscovery("mcp");
-    return () => {
-      generation.current++;
-    };
   }, []);
   async function open(id: string) {
+    const task = operation.start("read", `detail:${id}`);
+    if (!task) return;
     detailOrigin.current =
       document.activeElement instanceof HTMLElement
         ? document.activeElement
         : null;
-    const current = ++generation.current;
-    setBusy(true);
     setError("");
     try {
-      const result = await request("plugin/read", { id });
-      if (generation.current === current) setDetail(result);
+      const result = await request(
+        "plugin/read",
+        { id },
+        { signal: task.signal },
+      );
+      if (task.isCurrent()) setDetail(result);
     } catch (error) {
-      if (generation.current === current)
+      if (task.isCurrent())
         setError(
           error instanceof Error ? error.message : "详情读取失败，请重试。",
         );
     } finally {
-      if (generation.current === current) setBusy(false);
+      task.finish();
     }
   }
   async function action(method: string, entry: Json, enabled?: boolean) {
-    setBusy(true);
+    const task = operation.start("write", method);
+    if (!task) return;
     setError("");
     let committed = false;
     try {
@@ -108,14 +121,23 @@ export default function ToolsSettings({
           : {}),
       });
       committed = true;
+      if (!task.isCurrent()) return;
       setRemove(null);
       setMarketUpdate(null);
       await loadSettings();
-      setCatalog(await request("plugin/list", { includeTools: true }));
-      if (method === "plugin/uninstall") setDetail(null);
-      else if (detail?.id === entry.id)
-        setDetail(await request("plugin/read", { id: entry.id }));
+      if (!task.isCurrent()) return;
+      const catalog = await request("plugin/list", { includeTools: true });
+      if (!task.isCurrent()) return;
+      setCatalog(catalog);
+      if (method === "plugin/uninstall")
+        setDetail((current) => (current?.id === entry.id ? null : current));
+      else if (detail?.id === entry.id) {
+        const result = await request("plugin/read", { id: entry.id });
+        if (task.isCurrent())
+          setDetail((current) => (current?.id === entry.id ? result : current));
+      }
     } catch (e) {
+      if (!task.isCurrent()) return;
       setError(
         committed
           ? "操作已完成，目录读取失败。请刷新查看最新状态。"
@@ -124,7 +146,7 @@ export default function ToolsSettings({
             : "操作未完成，请刷新确认。",
       );
     } finally {
-      setBusy(false);
+      task.finish();
     }
   }
   const entries: Json[] = catalog?.entries || [];
@@ -201,17 +223,7 @@ export default function ToolsSettings({
         <CatalogRefreshButton
           label={mode === "plugins" ? "刷新插件" : "刷新连接器"}
           busy={busy}
-          onClick={() =>
-            void (async () => {
-              try {
-                await loadSettings();
-                await loadDiscovery("mcp");
-                await read();
-              } catch {
-                setError("读取失败，请恢复连接后重试。");
-              }
-            })()
-          }
+          onClick={() => void read(true)}
         />
       </CatalogToolbar>
       {error && (
@@ -408,7 +420,13 @@ export default function ToolsSettings({
             <PluginComponents
               key={detail.id}
               detail={detail}
-              onUpdate={setDetail}
+              onUpdate={(result) =>
+                setDetail((current) =>
+                  current === detail && current?.id === result.id
+                    ? result
+                    : current,
+                )
+              }
             />
             {!!detail.tools?.filter(
               (name: string) =>

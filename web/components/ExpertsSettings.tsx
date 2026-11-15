@@ -1,3 +1,4 @@
+import { useOperationScope } from "../use-operation-scope";
 import { CatalogRefreshButton } from "./CatalogRefreshButton";
 import { FormActions, FormSubmit } from "./FormActions";
 import { MoreIcon as MoreHorizontal } from "./ReferenceIcons";
@@ -37,22 +38,30 @@ const empty = (): Draft => ({
 export default function ExpertsSettings() {
   const [data, setData] = useState<ExpertCatalog | null>(null),
     [error, setError] = useState(""),
-    [busy, setBusy] = useState(false),
     [query, setQuery] = useState("");
   const [draft, setDraft] = useState<Draft | null>(null),
     [memberQuery, setMemberQuery] = useState(""),
     [formError, setFormError] = useState(""),
     [detail, setDetail] = useState<ExpertReference | null>(null),
     [removing, setRemoving] = useState<Expert | null>(null);
+  const scope = useOperationScope();
+  const busy = !!scope.busy;
   async function read() {
-    setBusy(true);
+    const task = scope.start("read", "list");
+    if (!task) return;
     setError("");
     try {
-      setData(await request("expert/list"));
+      const result = await request<ExpertCatalog>(
+        "expert/list",
+        {},
+        { signal: task.signal },
+      );
+      if (task.isCurrent()) setData(result);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "读取失败，请重试");
+      if (task.isCurrent())
+        setError(e instanceof Error ? e.message : "读取失败，请重试");
     } finally {
-      setBusy(false);
+      task.finish();
     }
   }
   useEffect(() => {
@@ -65,8 +74,11 @@ export default function ExpertsSettings() {
   }
   async function save() {
     if (!draft) return;
-    setBusy(true);
+    const task = scope.start("write", "save");
+    if (!task) return;
     setFormError("");
+    setError("");
+    let committed = false;
     try {
       await request("expert/save", {
         id: draft.id,
@@ -78,12 +90,42 @@ export default function ExpertsSettings() {
         pluginIds: draft.pluginIds,
         connectorIds: draft.connectorIds,
       });
-      setData(await request("expert/list"));
+      committed = true;
+      if (!task.isCurrent()) return;
       setDraft(null);
+      const result = await request<ExpertCatalog>("expert/list");
+      if (task.isCurrent()) setData(result);
     } catch (e) {
-      setFormError(e instanceof Error ? e.message : "保存失败，请重试");
+      if (!task.isCurrent()) return;
+      if (committed) setError("专家已保存，目录读取失败。请刷新查看最新状态。");
+      else setFormError(e instanceof Error ? e.message : "保存失败，请重试");
     } finally {
-      setBusy(false);
+      task.finish();
+    }
+  }
+  async function removeExpert() {
+    if (!removing) return;
+    const task = scope.start("write", "delete");
+    if (!task) return;
+    setFormError("");
+    setError("");
+    let committed = false;
+    try {
+      await request("expert/delete", {
+        id: removing.id,
+        expectedRevision: removing.revision,
+      });
+      committed = true;
+      if (!task.isCurrent()) return;
+      setRemoving(null);
+      const result = await request<ExpertCatalog>("expert/list");
+      if (task.isCurrent()) setData(result);
+    } catch (e) {
+      if (!task.isCurrent()) return;
+      if (committed) setError("专家已删除，目录读取失败。请刷新查看最新状态。");
+      else setFormError(e instanceof Error ? e.message : "删除失败，请重试");
+    } finally {
+      task.finish();
     }
   }
   const matches =
@@ -375,19 +417,7 @@ export default function ExpertsSettings() {
             <button
               className="primary destructive"
               disabled={busy}
-              onClick={() => {
-                setBusy(true);
-                void request("expert/delete", {
-                  id: removing.id,
-                  expectedRevision: removing.revision,
-                })
-                  .then(async () => {
-                    setRemoving(null);
-                    await read();
-                  })
-                  .catch((e) => setFormError(e.message))
-                  .finally(() => setBusy(false));
-              }}
+              onClick={() => void removeExpert()}
             >
               删除
             </button>

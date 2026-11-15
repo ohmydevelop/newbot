@@ -1,0 +1,1 @@
+{"events":[{"key":"GET /api/config?view=saved","status":200,"delayed":true},{"key":"GET /api/config/discovery?section=mcp","status":200,"delayed":false},{"key":"plugin/list","status":200,"delayed":false},{"key":"expert/list","status":200,"delayed":false}]}
