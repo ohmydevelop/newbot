@@ -361,7 +361,7 @@ export default function McpSettings({
                   className="connection-detail-modal"
                   dismissible={!busy}
                 >
-                  <div className="provider-row mcp-row">
+                  <div className="connection-detail-body">
                     {!draft && !deleting && feedback}
                     {notice && (
                       <p className="configuration-notice" role="status">

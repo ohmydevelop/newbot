@@ -1,0 +1,35 @@
+[
+  {
+    "background": "rgb(19, 18, 17)",
+    "border": "rgb(45, 44, 42)",
+    "color": "rgb(252, 252, 252)",
+    "font": "\"Noto Sans\", \"Noto Sans CJK SC\", \"PingFang SC\", \"Microsoft YaHei\", \"Segoe UI\", \"Hiragino Sans GB\", \"Source Han Sans SC\", system-ui, sans-serif",
+    "label": "名称",
+    "labelClass": "sr-only",
+    "labelClip": "inset(50%)",
+    "labelRect": {
+      "h": 1,
+      "w": 1
+    },
+    "radius": "10px",
+    "size": "14px",
+    "weight": "400"
+  },
+  {
+    "background": "rgb(19, 18, 17)",
+    "border": "rgb(45, 44, 42)",
+    "color": "rgb(252, 252, 252)",
+    "font": "\"Noto Sans\", \"Noto Sans CJK SC\", \"PingFang SC\", \"Microsoft YaHei\", \"Segoe UI\", \"Hiragino Sans GB\", \"Source Han Sans SC\", system-ui, sans-serif",
+    "label": "连接地址",
+    "labelClass": "sr-only",
+    "labelClip": "inset(50%)",
+    "labelRect": {
+      "h": 1,
+      "w": 1
+    },
+    "radius": "10px",
+    "size": "14px",
+    "weight": "400"
+  },
+  null
+]

@@ -1,0 +1,28 @@
+{
+  "publicUrl": "https://integration-love-angela-heated.trycloudflare.com/release-manifest.json",
+  "public": {
+    "source": "9b29ddab3f1b4ca31e16749a44b70ce2d4dccad0",
+    "webHash": "03cd8dd2df882769f611a50a5a233c71353286ab72127accd8a26c448cf1f232",
+    "verifiedAt": "2026-11-16T08:49:46.740Z",
+    "checks": [
+      "types",
+      "unit",
+      "design",
+      "browser",
+      "motion"
+    ]
+  },
+  "productionDisk": {
+    "source": "9b29ddab3f1b4ca31e16749a44b70ce2d4dccad0",
+    "webHash": "03cd8dd2df882769f611a50a5a233c71353286ab72127accd8a26c448cf1f232",
+    "verifiedAt": "2026-11-16T08:49:46.740Z",
+    "checks": [
+      "types",
+      "unit",
+      "design",
+      "browser",
+      "motion"
+    ]
+  },
+  "matches": true
+}

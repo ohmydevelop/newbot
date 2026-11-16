@@ -89,7 +89,7 @@ export function experts(
     for (const id of expert.connectorIds) {
       const c = entries.connectors.find((c) => c.id === id);
       if (!c) errors.push(`连接器“${id}”已移除`);
-      else if (!c.enabled) errors.push(`连接器“${id}”已停用`);
+      else if (!c.enabled) errors.push(`连接器“${c.name || id}”已停用`);
     }
     return errors;
   }
@@ -122,7 +122,7 @@ export function experts(
           })),
         connectors: entries.connectors.map((c) => ({
           id: c.id,
-          name: c.id,
+          name: c.name || c.id,
           enabled: c.enabled,
         })),
       },

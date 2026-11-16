@@ -43,7 +43,7 @@
   align-items: center;
 }
 .settings-toolbar .catalog-query,
-.settings-toolbar .catalog-add,
+.settings-toolbar .catalog-create,
 .settings-toolbar .icon-button,
 .settings-dialog > .modal-header > .icon-button {
   height: 36px;
@@ -178,7 +178,7 @@
     font-size: 16px;
   }
   .settings-toolbar .catalog-query,
-  .settings-toolbar .catalog-add,
+  .settings-toolbar .catalog-create,
   .settings-toolbar .icon-button,
   .settings-dialog > .modal-header > .icon-button {
     height: 44px;

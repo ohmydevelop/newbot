@@ -86,6 +86,15 @@ export default function ExpertDetails({
         if (!open) onClose();
       }}
       className="expert-detail-modal"
+      headerActions={
+        expert && !error ? (
+          <CatalogUse
+            kind="@"
+            entry={{ ...expert, kind: "expert" }}
+            disabled={!expert.available}
+          />
+        ) : undefined
+      }
     >
       <div className="expert-detail-body">
         {error ? (
@@ -123,11 +132,6 @@ export default function ExpertDetails({
               <p className="muted">专家已更新，下一轮使用当前配置。</p>
             )}
             <ExpertMembersView expert={expert} catalog={data.catalog} />
-            <CatalogUse
-              kind="@"
-              entry={{ ...expert, kind: "expert" }}
-              disabled={!expert.available}
-            />
           </>
         )}
       </div>

@@ -176,7 +176,7 @@ export default function MarketplaceSettings({
             }}
           >
             <label className="field-label">
-              <span className="sr-only">商店链接</span>
+              <span className="field-caption">商店链接</span>
               <input
                 autoFocus
                 required

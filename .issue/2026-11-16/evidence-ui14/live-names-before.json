@@ -1,0 +1,14 @@
+{
+  "connectors": [
+    {
+      "id": "newbot_test",
+      "name": "newbot_test",
+      "enabled": true
+    },
+    {
+      "id": "connector_b0ed7a772c8e45e58edcde12cdc04a65",
+      "name": "connector_b0ed7a772c8e45e58edcde12cdc04a65",
+      "enabled": true
+    }
+  ]
+}

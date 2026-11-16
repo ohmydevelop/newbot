@@ -1,0 +1,122 @@
+[
+  {
+    "background": "rgba(0, 0, 0, 0)",
+    "border": "rgba(252, 252, 252, 0.06)",
+    "color": "color(srgb 0.901811 0.898074 0.890184)",
+    "font": "\"X-VF Display\", X-VF, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+    "label": "What's on the agendayour mind today?What's on",
+    "placeholder": null,
+    "radius": "0px",
+    "size": "28px",
+    "tag": "H1",
+    "weight": "525"
+  },
+  {
+    "background": "color(srgb 0.999867 1.00006 1 / 0.04)",
+    "border": "color(srgb 0.999867 1.00006 1 / 0.14)",
+    "color": "color(srgb 0.901811 0.898074 0.890184)",
+    "font": "X-VF, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+    "label": "",
+    "placeholder": null,
+    "radius": "10px",
+    "size": "15px",
+    "tag": "LABEL",
+    "weight": "425"
+  },
+  {
+    "background": "rgba(0, 0, 0, 0)",
+    "border": "rgba(252, 252, 252, 0.06)",
+    "color": "color(srgb 0.901811 0.898074 0.890184)",
+    "font": "X-VF, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+    "label": "",
+    "placeholder": "Search",
+    "radius": "0px",
+    "size": "14px",
+    "tag": "INPUT",
+    "weight": "425"
+  },
+  {
+    "background": "rgba(0, 0, 0, 0)",
+    "border": "rgba(252, 252, 252, 0.06)",
+    "color": "color(srgb 0.901811 0.898074 0.890184)",
+    "font": "X-VF, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+    "label": "Add MCP Server",
+    "placeholder": null,
+    "radius": "0px",
+    "size": "17px",
+    "tag": "H1",
+    "weight": "525"
+  },
+  {
+    "background": "rgba(0, 0, 0, 0)",
+    "border": "rgba(252, 252, 252, 0.06)",
+    "color": "color(srgb 0.901811 0.898074 0.890184 / 0.647)",
+    "font": "X-VF, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+    "label": "Name",
+    "placeholder": null,
+    "radius": "0px",
+    "size": "14px",
+    "tag": "LABEL",
+    "weight": "525"
+  },
+  {
+    "background": "rgb(25, 25, 25)",
+    "border": "color(srgb 0.0615042 0.517638 0.996113 / 0.8)",
+    "color": "color(srgb 0.901811 0.898074 0.890184)",
+    "font": "X-VF, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+    "label": "",
+    "placeholder": "my-mcp-server",
+    "radius": "10px",
+    "size": "14px",
+    "tag": "INPUT",
+    "weight": "425"
+  },
+  {
+    "background": "rgba(0, 0, 0, 0)",
+    "border": "rgba(252, 252, 252, 0.06)",
+    "color": "color(srgb 0.901811 0.898074 0.890184 / 0.647)",
+    "font": "X-VF, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+    "label": "Server URL",
+    "placeholder": null,
+    "radius": "0px",
+    "size": "14px",
+    "tag": "LABEL",
+    "weight": "525"
+  },
+  {
+    "background": "rgb(25, 25, 25)",
+    "border": "color(srgb 0.999867 1.00006 1 / 0.14)",
+    "color": "color(srgb 0.901811 0.898074 0.890184)",
+    "font": "X-VF, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+    "label": "",
+    "placeholder": "https://mcp.example.com/mcp",
+    "radius": "10px",
+    "size": "14px",
+    "tag": "INPUT",
+    "weight": "425"
+  },
+  {
+    "background": "rgb(25, 25, 25)",
+    "border": "color(srgb 0.999867 1.00006 1 / 0.14)",
+    "color": "color(srgb 0.901811 0.898074 0.890184)",
+    "font": "X-VF, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+    "label": "",
+    "placeholder": "Key",
+    "radius": "10px",
+    "size": "14px",
+    "tag": "INPUT",
+    "weight": "425"
+  },
+  {
+    "background": "rgb(25, 25, 25)",
+    "border": "color(srgb 0.999867 1.00006 1 / 0.14)",
+    "color": "color(srgb 0.901811 0.898074 0.890184)",
+    "font": "X-VF, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+    "label": "",
+    "placeholder": "Value",
+    "radius": "10px",
+    "size": "14px",
+    "tag": "INPUT",
+    "weight": "425"
+  }
+]

@@ -1,0 +1,56 @@
+Browser tab: 58, Title: "newbot", URL: "https://integration-love-angela-heated.trycloudflare.com/".
+0 AXWebArea newbot, URL: integration-love-angela-heated.trycloudflare.com/
+	1 container 模型, ID: radix-_r_2u_
+		2 container
+			3 heading 模型, Value: 2, ID: radix-_r_2v_
+				4 text 模型
+			16 container 模型操作
+				17 search text field (settable) Description: 搜索模型, Value: 不存在的验收项
+				18 button 添加模型连接
+				19 button 刷新模型
+			5 button 关闭
+		6 container 设置分类
+			7 button 外观
+			8 button 操作
+			9 button 连接器
+			10 button 技能
+			11 button 专家
+			12 button 模型
+			13 button 存储
+			14 button 安全
+		15 container 模型
+			20 container 模型管理
+				21 text 没有匹配的模型或连接
+
+The focused UI element is 17 search text field (settable) Description: 搜索模型, Value: 不存在的验收项
+RESTORED
+Browser tab: 58, Title: "newbot", URL: "https://integration-love-angela-heated.trycloudflare.com/".
+0 AXWebArea newbot, URL: integration-love-angela-heated.trycloudflare.com/
+	1 container 模型, ID: radix-_r_2u_
+		2 container
+			3 heading 模型, Value: 2, ID: radix-_r_2v_
+				4 text 模型
+			16 container 模型操作
+				17 search text field (settable) 搜索模型
+				18 button 添加模型连接
+				19 button 刷新模型
+			5 button 关闭
+		6 container 设置分类
+			7 button 外观
+			8 button 操作
+			9 button 连接器
+			10 button 技能
+			11 button 专家
+			12 button 模型
+			13 button 存储
+			14 button 安全
+		15 container 模型
+			20 container 模型管理
+				21 container 模型连接
+					22 button 查看模型连接 百智-MQ
+						23 text 百智-MQ
+						24 text 默认
+						25 text deepseek-flash · 25 个模型
+					26 pop up button (collapsed) Description: 百智-MQ 更多操作, ID: radix-_r_3t_, Secondary Actions: Expand
+
+The focused UI element is 17 search text field (settable) 搜索模型

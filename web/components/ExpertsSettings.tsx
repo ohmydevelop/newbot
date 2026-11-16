@@ -1,3 +1,4 @@
+import { CatalogAddButton } from "./CatalogAddButton";
 import { useCatalogField } from "../catalog-state";
 import { CatalogCopy } from "./CatalogCopy";
 import { useOperationScope } from "../use-operation-scope";
@@ -8,7 +9,7 @@ import { ExpertIcon as UsersRound } from "./AppIcons";
 import { CatalogToolbar } from "./CatalogToolbar";
 import { useEffect, useState } from "react";
 import * as Dropdown from "@radix-ui/react-dropdown-menu";
-import { Plus, Pencil, Trash2, Eye } from "lucide-react";
+import { Pencil, Trash2, Eye } from "lucide-react";
 import type {
   Expert,
   ExpertMembers,
@@ -139,16 +140,12 @@ export default function ExpertsSettings() {
   return (
     <section className="experts-settings" aria-label="专家管理">
       <CatalogToolbar label="专家" query={query} onQuery={setQuery}>
-        <button
+        <CatalogAddButton
           type="button"
-          className="primary catalog-add"
-          aria-label="添加专家"
-          title="添加专家"
+          label="添加专家"
           disabled={busy || !data}
           onClick={() => edit(empty())}
-        >
-          新专家
-        </button>
+        />
         <CatalogRefreshButton
           label="刷新专家"
           busy={busy}

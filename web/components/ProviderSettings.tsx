@@ -1,3 +1,4 @@
+import { CatalogAddButton } from "./CatalogAddButton";
 import { useOperationScope } from "../use-operation-scope";
 import { readCurrentConfiguration } from "../configuration-read";
 import type { Operation } from "../operation-scope";
@@ -283,15 +284,12 @@ export default function ProviderSettings() {
             <CloudDownload size={18} aria-hidden="true" />
           </button>
         )}
-        <button
+        <CatalogAddButton
           type="button"
-          className="primary catalog-add"
-          aria-label="添加模型连接"
+          label="添加模型连接"
           disabled={!!busy || recovery.blocked || !config?.writable}
           onClick={() => edit()}
-        >
-          添加连接
-        </button>
+        />
         <CatalogRefreshButton
           label="刷新模型"
           busy={!!busy}

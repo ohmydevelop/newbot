@@ -1,0 +1,26 @@
+[
+  {
+    "class": "catalog-step connection-detail-modal",
+    "cssHeight": "284px",
+    "height": 284,
+    "maxHeight": "none",
+    "overflowY": "visible",
+    "scrollHeight": 284
+  },
+  {
+    "class": "provider-row mcp-row",
+    "cssHeight": "224px",
+    "height": 224,
+    "maxHeight": "none",
+    "overflowY": "auto",
+    "scrollHeight": 5119
+  },
+  {
+    "class": "connection-tools",
+    "cssHeight": "4965px",
+    "height": 4965,
+    "maxHeight": "none",
+    "overflowY": "visible",
+    "scrollHeight": 4965
+  }
+]

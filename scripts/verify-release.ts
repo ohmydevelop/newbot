@@ -1,7 +1,11 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import { execFileSync } from "node:child_process";
 import { resolve } from "node:path";
-import { validateReceipt, webHash } from "./release-verification";
+import {
+  validateReceipt,
+  webHash,
+  directoryHash,
+} from "./release-verification";
 const directory = resolve(process.argv[2] || "dist/web");
 const receiptFile = process.argv[3];
 if (!receiptFile) throw new Error("必须提供与当前构建对应的验收凭据文件");
@@ -27,13 +31,17 @@ const dirty = execFileSync(
 if (dirty) throw new Error("产品源码尚未提交，禁止发布");
 const receipt = JSON.parse(readFileSync(receiptFile, "utf8"));
 const hash = webHash(directory);
-validateReceipt(receipt, source, hash);
+const serverHash = process.argv.includes("--include-server")
+  ? directoryHash(resolve(directory, "../server"))
+  : undefined;
+validateReceipt(receipt, source, hash, serverHash);
 writeFileSync(
   resolve(directory, "release-manifest.json"),
   JSON.stringify(
     {
       source,
       webHash: hash,
+      ...(serverHash ? { serverHash } : {}),
       verifiedAt: receipt.created,
       checks: Object.keys(receipt.checks),
     },

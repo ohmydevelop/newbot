@@ -31,3 +31,11 @@ test("发布门槛拒绝缺失、失败、不同源码及不同资产", () => {
     assert.throws(() => validateReceipt(evidence, "abc", "123"));
   }
 });
+
+test("前后端联合发布拒绝未验证或变更后的服务端构建", () => {
+  assert.throws(() => validateReceipt(good(), "abc", "123", "server"));
+  validateReceipt({ ...good(), serverHash: "server" }, "abc", "123", "server");
+  assert.throws(() =>
+    validateReceipt({ ...good(), serverHash: "before" }, "abc", "123", "after"),
+  );
+});

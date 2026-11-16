@@ -2744,8 +2744,7 @@ button.primary.destructive:hover:not(:disabled) {
   flex-wrap: wrap;
   gap: 10px;
   flex-shrink: 0;
-  padding-bottom: 14px;
-  border-bottom: 1px solid var(--line);
+  padding-bottom: 8px;
 }
 .skill-back {
   display: flex;
@@ -2851,7 +2850,7 @@ button.primary.destructive:hover:not(:disabled) {
   }
   .skill-reader-toolbar .icon-button,
   .skill-back,
-  .skill-reader-toolbar .artifact-modes button {
+  .skill-reader-toolbar .skill-view-modes button {
     min-width: 44px;
     min-height: 44px;
   }
@@ -3721,14 +3720,6 @@ button.primary.destructive:hover:not(:disabled) {
   margin: 5px 0;
   color: var(--muted);
 }
-.mcp-row {
-  min-height: 194px;
-}
-.mcp-row > p {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
 @media (max-width: 760px) {
   .skill-catalog {
     grid-template-columns: minmax(0, 1fr);
@@ -4068,27 +4059,6 @@ button.primary.destructive:hover:not(:disabled) {
 }
 .history-read-error button {
   margin-top: 12px;
-}
-.mcp-row {
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-}
-.mcp-row:not(:has(details[open])) {
-  height: 224px;
-}
-.mcp-row .provider-actions {
-  margin-top: auto;
-  padding-top: 8px;
-}
-.mcp-row .connection-details,
-.mcp-row .connection-tools {
-  margin: 2px 0;
-}
-@media (max-width: 760px) {
-  .mcp-row:not(:has(details[open])) {
-    height: 244px;
-  }
 }
 .skill-message-refs {
   display: flex;
@@ -4444,14 +4414,7 @@ button.primary.destructive:hover:not(:disabled) {
 .connection-detail-modal > .modal-header {
   flex-shrink: 0;
 }
-.connection-detail-modal .mcp-row {
-  overflow: auto;
-  padding: 24px;
-  height: auto;
-  margin: 0;
-  min-height: 0;
-  border: 0;
-}
+
 .editor-advanced {
   margin-top: 20px;
   border-top: 1px solid var(--line);
@@ -5337,7 +5300,7 @@ button[data-variant="destructive"]:hover:not(:disabled) {
 .import-skills {
   max-height: min(360px, 45dvh);
   overflow: auto;
-  overscroll-behavior: contain;
+  overscroll-behavior: auto;
 }
 .import-skill {
   display: flex;

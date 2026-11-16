@@ -102,6 +102,9 @@ export function CatalogDetail(
         <h2 ref={heading} tabIndex={-1}>
           {props.title}
         </h2>
+        {props.headerActions && (
+          <div className="catalog-heading-actions">{props.headerActions}</div>
+        )}
       </header>
       {props.description && <p className="muted">{props.description}</p>}
       {props.children}
@@ -128,7 +131,7 @@ export function CatalogUse({
   return (
     <div className="catalog-use">
       <button
-        className="primary catalog-add"
+        className="primary catalog-use-button"
         disabled={busy || disabled}
         onClick={async () => {
           if (pending.current) return;

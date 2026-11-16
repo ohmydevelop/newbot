@@ -1,3 +1,4 @@
+import { CatalogFilter } from "./CatalogFilter";
 import { forwardRef, useImperativeHandle, useRef, useState } from "react";
 import { Plus, Trash2 } from "lucide-react";
 import type {
@@ -114,23 +115,23 @@ export default forwardRef<
         {transport === "stdio" ? "环境变量" : "认证"}
       </legend>
       {transport === "http" && (
-        <label className="field-label">
-          <span className={compact ? "sr-only" : undefined}>认证方式</span>
-          <select
-            aria-label="认证方式"
+        <div className="field-label">
+          <span className="field-caption">认证方式</span>
+          <CatalogFilter
+            label="认证方式"
             value={auth}
-            onChange={(e) => setAuth(e.target.value)}
-          >
-            <option value="none">无需认证</option>
-            {auth === "external" && (
-              <option value="external">由服务端配置</option>
-            )}
-            {!provider && <option value="oauth">OAuth 登录</option>}
-            <option value="bearer">
-              {provider ? "API Key" : "Bearer Token"}
-            </option>
-          </select>
-        </label>
+            onValueChange={setAuth}
+            disabled={disabled || authentication?.source === "external"}
+            options={[
+              { value: "none", label: "无需认证" },
+              ...(auth === "external"
+                ? [{ value: "external", label: "由服务端配置" }]
+                : []),
+              ...(!provider ? [{ value: "oauth", label: "OAuth 登录" }] : []),
+              { value: "bearer", label: provider ? "API Key" : "Bearer Token" },
+            ]}
+          />
+        </div>
       )}
       {authentication?.state === "invalid" && (
         <p className="inline-error" role="status">
@@ -155,7 +156,7 @@ export default forwardRef<
       )}
       {transport === "http" && auth === "bearer" && !chat && (
         <label className="field-label">
-          <span className={compact ? "sr-only" : undefined}>
+          <span className="field-caption">
             {provider ? "API Key" : "Token"}
           </span>
           <input

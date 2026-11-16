@@ -83,7 +83,7 @@ for (const width of [1440, 1280, 768, 390, 320])
         ).toBeEnabled();
         const rectangles = await page
           .locator(
-            `.settings-dialog > .modal-header ${width > 700 ? ".icon-button," : ".catalog-toolbar .icon-button,"} .settings-toolbar .catalog-query, .settings-toolbar .catalog-add`,
+            `.settings-dialog > .modal-header ${width > 700 ? ".icon-button," : ".catalog-toolbar .icon-button,"} .settings-toolbar .catalog-query, .settings-toolbar .catalog-create`,
           )
           .evaluateAll((elements) =>
             elements.map((e) => {

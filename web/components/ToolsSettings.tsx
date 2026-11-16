@@ -1,3 +1,4 @@
+import { CatalogAddButton } from "./CatalogAddButton";
 import { useCatalogField } from "../catalog-state";
 import { CatalogFilter } from "./CatalogFilter";
 import { CatalogCopy } from "./CatalogCopy";
@@ -211,8 +212,8 @@ export default function ToolsSettings({
       )}
       <CatalogToolbar label="连接器" query={query} onQuery={setQuery}>
         <Dropdown.Root>
-          <Dropdown.Trigger className="primary catalog-add">
-            新连接器 <ChevronDown size={14} />
+          <Dropdown.Trigger asChild>
+            <CatalogAddButton label="添加连接器" />
           </Dropdown.Trigger>
           <Dropdown.Portal>
             <ActionMenuContent className="dropdown" align="end" sideOffset={6}>
@@ -386,13 +387,13 @@ export default function ToolsSettings({
                     onClick={() => void open(p.id)}
                   >
                     <CatalogIcon name={p.name} kind="plugin" />
-                    <span>
-                      <strong>{p.displayName}</strong>
-                      <small>{p.description}</small>
-                    </span>
+                    <CatalogCopy
+                      name={p.displayName}
+                      description={p.description}
+                    />
                   </button>
                   <button
-                    className="secondary catalog-add"
+                    className="secondary catalog-install"
                     disabled={busy || !p.available || !p.installable}
                     onClick={() => void action("plugin/install", p)}
                   >
@@ -412,6 +413,15 @@ export default function ToolsSettings({
           dismissible={!busy}
           wide
           className="catalog-detail-modal"
+          headerActions={
+            detail.installed ? (
+              <CatalogUse
+                kind="@"
+                entry={detail}
+                disabled={!detail.enabled || !detail.available || busy}
+              />
+            ) : undefined
+          }
           onOpenChange={(open) => {
             if (!open) setDetail(null);
           }}
@@ -421,13 +431,6 @@ export default function ToolsSettings({
               <CatalogIcon name={detail.name} kind="plugin" />
               <p>{detail.description}</p>
             </div>
-            {detail.installed && (
-              <CatalogUse
-                kind="@"
-                entry={detail}
-                disabled={!detail.enabled || !detail.available || busy}
-              />
-            )}
             <PluginComponents
               key={detail.id}
               detail={detail}

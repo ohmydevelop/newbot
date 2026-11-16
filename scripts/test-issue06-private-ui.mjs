@@ -93,15 +93,17 @@ try {
   await editor
     .getByRole("textbox", { name: "连接器名称", exact: true })
     .fill("MCP_A · 项目连接");
-  await editor
-    .getByRole("combobox", { name: "连接方式", exact: true })
-    .selectOption("http");
+  await editor.getByRole("button", { name: "连接方式", exact: true }).click();
+  await page
+    .getByRole("menuitemradio", { name: "远程服务", exact: true })
+    .click();
   await editor
     .getByRole("textbox", { name: "服务地址", exact: true })
     .fill("https://connector.example/mcp");
-  await editor
-    .getByRole("combobox", { name: "认证方式", exact: true })
-    .selectOption("bearer");
+  await editor.getByRole("button", { name: "认证方式", exact: true }).click();
+  await page
+    .getByRole("menuitemradio", { name: "Bearer Token", exact: true })
+    .click();
   await editor
     .getByLabel("Bearer Token", { exact: true })
     .fill("ui-private-synthetic-token");

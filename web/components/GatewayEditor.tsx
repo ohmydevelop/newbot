@@ -215,7 +215,7 @@ export default function GatewayEditor({
       >
         <div className="connection-editor-body">
           <label className="field-label">
-            <span className="sr-only">名称</span>
+            <span className="field-caption">名称</span>
             <input
               autoFocus
               placeholder="连接名称"
@@ -238,7 +238,7 @@ export default function GatewayEditor({
           {!readOnly && (
             <>
               <label className="field-label">
-                <span className="sr-only">连接地址</span>
+                <span className="field-caption">连接地址</span>
                 <input
                   type="url"
                   required={!provider || provider.missing}
@@ -321,7 +321,7 @@ export default function GatewayEditor({
           >
             <summary>自定义模型</summary>
             <label className="field-label">
-              <span className="sr-only">模型 ID</span>
+              <span className="field-caption">模型 ID</span>
               <textarea
                 aria-label="自定义模型"
                 value={customModels}

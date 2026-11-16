@@ -1,0 +1,13 @@
+[WebServer] (node:4007543) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 4 tests using 1 worker
+
+(node:4007567) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/browser/deep-catalog-contracts.spec.ts:14:1 › 目录主行状态和更多操作对齐，与有无说明无关 (2.0s)
+  ✓  2 tests/browser/deep-catalog-contracts.spec.ts:39:1 › 技能切换说明和源码不会移动主操作 (2.2s)
+  ✓  3 tests/browser/deep-catalog-contracts.spec.ts:60:1 › 持久表单字段填值后标签仍然可见 (2.0s)
+  ✓  4 tests/browser/deep-catalog-contracts.spec.ts:76:1 › 工具详情使用主滚动容器，长目录不受旧卡片高度限制 (1.9s)
+
+  4 passed (9.3s)

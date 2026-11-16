@@ -71,7 +71,9 @@ export default function SkillReader({
       controller.abort();
     };
   }, [skill.id, revision, pluginId]);
-  const current = document?.skill || skill;
+  const current = document
+    ? { ...document.skill, enabled: skill.enabled ?? document.skill.enabled }
+    : skill;
   const markdown = document ? skillMarkdown(document.content) : "";
   return (
     <div className="skill-reader">
@@ -80,7 +82,11 @@ export default function SkillReader({
           <ArrowLeft size={17} aria-hidden="true" />
           {backLabel}
         </button>
-        <div className="artifact-modes" role="group" aria-label="技能查看方式">
+        <div
+          className="skill-view-modes"
+          role="group"
+          aria-label="技能查看方式"
+        >
           <button
             aria-pressed={mode === "preview"}
             onClick={() => setMode("preview")}

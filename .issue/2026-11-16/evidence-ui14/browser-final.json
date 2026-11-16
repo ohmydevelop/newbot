@@ -1,0 +1,2430 @@
+{
+  "config": {
+    "argv": [
+      "/home/a/.local/share/mise/installs/node/26.12.0/bin/node",
+      "/home/a/Documents/ChatGPT/newbot-systematize/node_modules/.bin/playwright",
+      "test",
+      "--config=playwright.config.ts"
+    ],
+    "configFile": "/home/a/Documents/ChatGPT/newbot-systematize/playwright.config.ts",
+    "rootDir": "/home/a/Documents/ChatGPT/newbot-systematize/tests/browser",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/home/a/Documents/ChatGPT/newbot-systematize/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/home/a/Documents/ChatGPT/newbot-systematize/tests/browser",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/home/a/Documents/ChatGPT/newbot-systematize/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "",
+        "testDir": "/home/a/Documents/ChatGPT/newbot-systematize/tests/browser",
+        "snapshotDir": "/home/a/Documents/ChatGPT/newbot-systematize/tests/browser",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 30000,
+        "use": {
+          "baseURL": "http://127.0.0.1:3169",
+          "browserName": "chromium",
+          "viewport": {
+            "width": 1280,
+            "height": 720
+          },
+          "deviceScaleFactor": 1,
+          "locale": "zh-CN",
+          "timezoneId": "Asia/Shanghai",
+          "trace": "retain-on-failure",
+          "video": {
+            "mode": "on",
+            "size": {
+              "width": 1280,
+              "height": 844
+            }
+          },
+          "screenshot": "only-on-failure"
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": ""
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": ".data/ui-verification/results.json"
+        }
+      ],
+      [
+        "html",
+        {
+          "outputFolder": ".data/ui-verification/report",
+          "open": "never"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.65.1",
+    "workers": 1,
+    "webServer": {
+      "command": "ISSUE_TEST_PORT=3169 ISSUE_RICH_UI=1 ISSUE_MEMORY_PROVIDERS=1 ISSUE05_UI=1 ISSUE_CATALOG_RACES=1 node --import tsx tests/issue-preview-server.ts",
+      "url": "http://127.0.0.1:3169/api/ready",
+      "reuseExistingServer": false,
+      "timeout": 30000
+    }
+  },
+  "suites": [
+    {
+      "title": "deep-catalog-contracts.spec.ts",
+      "file": "deep-catalog-contracts.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "目录主行状态和更多操作对齐，与有无说明无关",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1986,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-16T09:46:24.901Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/test-results/deep-catalog-contracts-目录主行状态和更多操作对齐，与有无说明无关/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "3f14f6d34d482dac760b-ab6f88055f4d4c8f548f",
+          "file": "deep-catalog-contracts.spec.ts",
+          "line": 30,
+          "column": 1
+        },
+        {
+          "title": "技能切换说明和源码不会移动主操作",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2158,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-16T09:46:26.932Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/test-results/deep-catalog-contracts-技能切换说明和源码不会移动主操作/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "3f14f6d34d482dac760b-fe2063689de196d21464",
+          "file": "deep-catalog-contracts.spec.ts",
+          "line": 55,
+          "column": 1
+        },
+        {
+          "title": "持久表单字段填值后标签仍然可见",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1978,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-16T09:46:29.095Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/test-results/deep-catalog-contracts-持久表单字段填值后标签仍然可见/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "3f14f6d34d482dac760b-56b418eeb8ca39d0ed7a",
+          "file": "deep-catalog-contracts.spec.ts",
+          "line": 77,
+          "column": 1
+        },
+        {
+          "title": "工具详情使用主滚动容器，长目录不受旧卡片高度限制",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1973,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-16T09:46:31.078Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/test-results/deep-catalog-contracts-工具详情使用主滚动容器，长目录不受旧卡片高度限制/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "3f14f6d34d482dac760b-3fbf6a05d6290766ec9c",
+          "file": "deep-catalog-contracts.spec.ts",
+          "line": 93,
+          "column": 1
+        },
+        {
+          "title": "深层目录视觉 320 浅色",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4327,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-16T09:46:33.055Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "连接器-320-浅色",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/screenshots/深层目录视觉-320-浅色-连接器-320-浅色.png"
+                    },
+                    {
+                      "name": "技能-320-浅色",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/screenshots/深层目录视觉-320-浅色-技能-320-浅色.png"
+                    },
+                    {
+                      "name": "模型-320-浅色",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/screenshots/深层目录视觉-320-浅色-模型-320-浅色.png"
+                    },
+                    {
+                      "name": "skill-detail-320-浅色",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/screenshots/深层目录视觉-320-浅色-skill-detail-320-浅色.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/test-results/deep-catalog-contracts-深层目录视觉-320-浅色/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "3f14f6d34d482dac760b-0bf304af32badaa1e8f2",
+          "file": "deep-catalog-contracts.spec.ts",
+          "line": 140,
+          "column": 5
+        },
+        {
+          "title": "深层目录视觉 320 深色",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4277,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-16T09:46:37.390Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "连接器-320-深色",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/screenshots/深层目录视觉-320-深色-连接器-320-深色.png"
+                    },
+                    {
+                      "name": "技能-320-深色",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/screenshots/深层目录视觉-320-深色-技能-320-深色.png"
+                    },
+                    {
+                      "name": "模型-320-深色",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/screenshots/深层目录视觉-320-深色-模型-320-深色.png"
+                    },
+                    {
+                      "name": "skill-detail-320-深色",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/screenshots/深层目录视觉-320-深色-skill-detail-320-深色.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/test-results/deep-catalog-contracts-深层目录视觉-320-深色/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "3f14f6d34d482dac760b-0df0f345f7cae33dec2d",
+          "file": "deep-catalog-contracts.spec.ts",
+          "line": 140,
+          "column": 5
+        },
+        {
+          "title": "深层目录视觉 390 浅色",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4282,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-16T09:46:41.672Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "连接器-390-浅色",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/screenshots/深层目录视觉-390-浅色-连接器-390-浅色.png"
+                    },
+                    {
+                      "name": "技能-390-浅色",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/screenshots/深层目录视觉-390-浅色-技能-390-浅色.png"
+                    },
+                    {
+                      "name": "模型-390-浅色",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/screenshots/深层目录视觉-390-浅色-模型-390-浅色.png"
+                    },
+                    {
+                      "name": "skill-detail-390-浅色",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/screenshots/深层目录视觉-390-浅色-skill-detail-390-浅色.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/test-results/deep-catalog-contracts-深层目录视觉-390-浅色/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "3f14f6d34d482dac760b-ec2d50f67f75efa00f9e",
+          "file": "deep-catalog-contracts.spec.ts",
+          "line": 140,
+          "column": 5
+        },
+        {
+          "title": "深层目录视觉 390 深色",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4305,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-16T09:46:45.959Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "连接器-390-深色",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/screenshots/深层目录视觉-390-深色-连接器-390-深色.png"
+                    },
+                    {
+                      "name": "技能-390-深色",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/screenshots/深层目录视觉-390-深色-技能-390-深色.png"
+                    },
+                    {
+                      "name": "模型-390-深色",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/screenshots/深层目录视觉-390-深色-模型-390-深色.png"
+                    },
+                    {
+                      "name": "skill-detail-390-深色",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/screenshots/深层目录视觉-390-深色-skill-detail-390-深色.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/recordings/深层目录视觉-390-深色-video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "3f14f6d34d482dac760b-ef9171b305568eb1465e",
+          "file": "deep-catalog-contracts.spec.ts",
+          "line": 140,
+          "column": 5
+        },
+        {
+          "title": "深层目录视觉 768 浅色",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4079,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-16T09:46:50.268Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "连接器-768-浅色",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/screenshots/深层目录视觉-768-浅色-连接器-768-浅色.png"
+                    },
+                    {
+                      "name": "技能-768-浅色",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/screenshots/深层目录视觉-768-浅色-技能-768-浅色.png"
+                    },
+                    {
+                      "name": "模型-768-浅色",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/screenshots/深层目录视觉-768-浅色-模型-768-浅色.png"
+                    },
+                    {
+                      "name": "skill-detail-768-浅色",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/screenshots/深层目录视觉-768-浅色-skill-detail-768-浅色.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/test-results/deep-catalog-contracts-深层目录视觉-768-浅色/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "3f14f6d34d482dac760b-35d34e563906de2f86ae",
+          "file": "deep-catalog-contracts.spec.ts",
+          "line": 140,
+          "column": 5
+        },
+        {
+          "title": "深层目录视觉 768 深色",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4043,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-16T09:46:54.351Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "连接器-768-深色",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/screenshots/深层目录视觉-768-深色-连接器-768-深色.png"
+                    },
+                    {
+                      "name": "技能-768-深色",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/screenshots/深层目录视觉-768-深色-技能-768-深色.png"
+                    },
+                    {
+                      "name": "模型-768-深色",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/screenshots/深层目录视觉-768-深色-模型-768-深色.png"
+                    },
+                    {
+                      "name": "skill-detail-768-深色",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/screenshots/深层目录视觉-768-深色-skill-detail-768-深色.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/test-results/deep-catalog-contracts-深层目录视觉-768-深色/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "3f14f6d34d482dac760b-9a4015a316e25be52d6c",
+          "file": "deep-catalog-contracts.spec.ts",
+          "line": 140,
+          "column": 5
+        },
+        {
+          "title": "深层目录视觉 1280 浅色",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4115,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-16T09:46:58.403Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "连接器-1280-浅色",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/screenshots/深层目录视觉-1280-浅色-连接器-1280-浅色.png"
+                    },
+                    {
+                      "name": "技能-1280-浅色",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/screenshots/深层目录视觉-1280-浅色-技能-1280-浅色.png"
+                    },
+                    {
+                      "name": "模型-1280-浅色",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/screenshots/深层目录视觉-1280-浅色-模型-1280-浅色.png"
+                    },
+                    {
+                      "name": "skill-detail-1280-浅色",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/screenshots/深层目录视觉-1280-浅色-skill-detail-1280-浅色.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/test-results/deep-catalog-contracts-深层目录视觉-1280-浅色/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "3f14f6d34d482dac760b-85d29511a3bd39cf5b94",
+          "file": "deep-catalog-contracts.spec.ts",
+          "line": 140,
+          "column": 5
+        },
+        {
+          "title": "深层目录视觉 1280 深色",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4113,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-16T09:47:02.522Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "连接器-1280-深色",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/screenshots/深层目录视觉-1280-深色-连接器-1280-深色.png"
+                    },
+                    {
+                      "name": "技能-1280-深色",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/screenshots/深层目录视觉-1280-深色-技能-1280-深色.png"
+                    },
+                    {
+                      "name": "模型-1280-深色",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/screenshots/深层目录视觉-1280-深色-模型-1280-深色.png"
+                    },
+                    {
+                      "name": "skill-detail-1280-深色",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/screenshots/深层目录视觉-1280-深色-skill-detail-1280-深色.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/test-results/deep-catalog-contracts-深层目录视觉-1280-深色/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "3f14f6d34d482dac760b-40039ab11a206db8a3b9",
+          "file": "deep-catalog-contracts.spec.ts",
+          "line": 140,
+          "column": 5
+        },
+        {
+          "title": "专家选择器双向滚动链 390",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3049,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-16T09:47:06.639Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "expert-scroll",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/screenshots/专家选择器双向滚动链-390-expert-scroll.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/test-results/deep-catalog-contracts-专家选择器双向滚动链-390/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "3f14f6d34d482dac760b-36a7d5903d9be59cc0b5",
+          "file": "deep-catalog-contracts.spec.ts",
+          "line": 227,
+          "column": 3
+        },
+        {
+          "title": "专家选择器双向滚动链 1280",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2778,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-16T09:47:09.693Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "expert-scroll",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/screenshots/专家选择器双向滚动链-1280-expert-scroll.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/test-results/deep-catalog-contracts-专家选择器双向滚动链-1280/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "3f14f6d34d482dac760b-ade3a12ea894eef8d683",
+          "file": "deep-catalog-contracts.spec.ts",
+          "line": 227,
+          "column": 3
+        },
+        {
+          "title": "技能管理菜单启停、失败重试与卸载取消保持正确状态",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4805,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-16T09:47:12.475Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/test-results/deep-catalog-contracts-技能管理菜单启停、失败重试与卸载取消保持正确状态/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "3f14f6d34d482dac760b-afc48ac75b40fe225e08",
+          "file": "deep-catalog-contracts.spec.ts",
+          "line": 238,
+          "column": 1
+        },
+        {
+          "title": "共享表单认证菜单与证书入口保持可访问",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3322,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-16T09:47:17.284Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/test-results/deep-catalog-contracts-共享表单认证菜单与证书入口保持可访问/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "3f14f6d34d482dac760b-4764b4dc349a2b583744",
+          "file": "deep-catalog-contracts.spec.ts",
+          "line": 298,
+          "column": 1
+        },
+        {
+          "title": "导入技能选择窗允许边缘交接且不执行安装",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3359,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-16T09:47:20.610Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "scanner-mode",
+                      "contentType": "application/json",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/导入技能选择窗允许边缘交接且不执行安装-scanner-mode.json"
+                    },
+                    {
+                      "name": "import-scroll",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/screenshots/导入技能选择窗允许边缘交接且不执行安装-import-scroll.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/recordings/导入技能选择窗允许边缘交接且不执行安装-video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "3f14f6d34d482dac760b-0d957b4ed69aa3d2076e",
+          "file": "deep-catalog-contracts.spec.ts",
+          "line": 332,
+          "column": 1
+        },
+        {
+          "title": "插件嵌套工具详情使用同一主滚动，返回保留插件上下文",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2583,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-16T09:47:23.973Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "plugin-tools",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/screenshots/插件嵌套工具详情使用同一主滚动-返回保留插件上下文-plugin-tools.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/test-results/deep-catalog-contracts-插件嵌套工具详情使用同一主滚动，返回保留插件上下文/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "3f14f6d34d482dac760b-f5b90994f5006d1d71d1",
+          "file": "deep-catalog-contracts.spec.ts",
+          "line": 414,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "interaction-acceptance.spec.ts",
+      "file": "interaction-acceptance.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "左右拖拽跨越不透明 iframe，边界、点击恢复与宽度持久化",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3871,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-16T09:47:26.571Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "drag-frames.json",
+                      "contentType": "application/json",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/左右拖拽跨越不透明-iframe-边界-点击恢复与宽度持久化-drag-frames-json.json"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/recordings/左右拖拽跨越不透明-iframe-边界-点击恢复与宽度持久化-video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c0861cbf8a035ae85b3a-2f37cc9a05f164975777",
+          "file": "interaction-acceptance.spec.ts",
+          "line": 40,
+          "column": 1
+        },
+        {
+          "title": "拖拽只接受所属指针，失去捕获、取消、失焦和卸载均清理",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 824,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-16T09:47:30.447Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/test-results/interaction-acceptance-拖拽只接受所属指针，失去捕获、取消、失焦和卸载均清理/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c0861cbf8a035ae85b3a-0d354aa5dca13e9525da",
+          "file": "interaction-acceptance.spec.ts",
+          "line": 115,
+          "column": 1
+        },
+        {
+          "title": "动画真实帧连续且减弱模式即时稳定 false",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3496,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-16T09:47:31.276Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "navigation-frames.json",
+                      "contentType": "application/json",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/动画真实帧连续且减弱模式即时稳定-false-navigation-frames-json.json"
+                    },
+                    {
+                      "name": "detail-frames.json",
+                      "contentType": "application/json",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/动画真实帧连续且减弱模式即时稳定-false-detail-frames-json.json"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/recordings/动画真实帧连续且减弱模式即时稳定-false-video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c0861cbf8a035ae85b3a-8a6ef6808aac40243804",
+          "file": "interaction-acceptance.spec.ts",
+          "line": 159,
+          "column": 3
+        },
+        {
+          "title": "动画真实帧连续且减弱模式即时稳定 true",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3139,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-16T09:47:34.776Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "navigation-frames.json",
+                      "contentType": "application/json",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/动画真实帧连续且减弱模式即时稳定-true-navigation-frames-json.json"
+                    },
+                    {
+                      "name": "detail-frames.json",
+                      "contentType": "application/json",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/动画真实帧连续且减弱模式即时稳定-true-detail-frames-json.json"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/recordings/动画真实帧连续且减弱模式即时稳定-true-video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c0861cbf8a035ae85b3a-1571c78b9b6be0e94fde",
+          "file": "interaction-acceptance.spec.ts",
+          "line": 159,
+          "column": 3
+        },
+        {
+          "title": "工作流程默认折叠，内部滚动到两端后衔接聊天，重开保留位置",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6134,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-16T09:47:37.920Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/test-results/interaction-acceptance-工作流程默认折叠，内部滚动到两端后衔接聊天，重开保留位置/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c0861cbf8a035ae85b3a-0fbe725a0fd3bb7512d2",
+          "file": "interaction-acceptance.spec.ts",
+          "line": 255,
+          "column": 1
+        },
+        {
+          "title": "模型共享目录和配置详情 1280",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3725,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-16T09:47:44.058Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "models-1280",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/screenshots/模型共享目录和配置详情-1280-models-1280.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/test-results/interaction-acceptance-模型共享目录和配置详情-1280/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c0861cbf8a035ae85b3a-54c929d376145e8f6d36",
+          "file": "interaction-acceptance.spec.ts",
+          "line": 319,
+          "column": 3
+        },
+        {
+          "title": "模型共享目录和配置详情 320",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4011,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-16T09:47:47.788Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "models-320",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/screenshots/模型共享目录和配置详情-320-models-320.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/test-results/interaction-acceptance-模型共享目录和配置详情-320/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c0861cbf8a035ae85b3a-8a1d07b84c2b694d0c83",
+          "file": "interaction-acceptance.spec.ts",
+          "line": 319,
+          "column": 3
+        },
+        {
+          "title": "目录迟到响应不得覆盖用户新查询、滚动和焦点",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3395,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-16T09:47:51.803Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/test-results/interaction-acceptance-目录迟到响应不得覆盖用户新查询、滚动和焦点/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c0861cbf8a035ae85b3a-17febed88641dbc29cac",
+          "file": "interaction-acceptance.spec.ts",
+          "line": 391,
+          "column": 1
+        },
+        {
+          "title": "浏览器触摸取消释放拖拽捕获并保存最后宽度",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 453,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-16T09:47:55.202Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/test-results/interaction-acceptance-浏览器触摸取消释放拖拽捕获并保存最后宽度/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c0861cbf8a035ae85b3a-8eee4b8f656f8053a3a7",
+          "file": "interaction-acceptance.spec.ts",
+          "line": 431,
+          "column": 1
+        },
+        {
+          "title": "模型连接创建保存、重新读取、移除以及目录失败恢复",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3330,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-16T09:47:55.659Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "model-create",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/screenshots/模型连接创建保存-重新读取-移除以及目录失败恢复-model-create.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/test-results/interaction-acceptance-模型连接创建保存、重新读取、移除以及目录失败恢复/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c0861cbf8a035ae85b3a-6d492e9ebb47b81c3e31",
+          "file": "interaction-acceptance.spec.ts",
+          "line": 460,
+          "column": 1
+        },
+        {
+          "title": "设为默认需先选择有效模型，显式操作才切换连接",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2875,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-16T09:47:58.993Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/test-results/interaction-acceptance-设为默认需先选择有效模型，显式操作才切换连接/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c0861cbf8a035ae85b3a-cc94d3559ae5d8c4cb50",
+          "file": "interaction-acceptance.spec.ts",
+          "line": 513,
+          "column": 1
+        },
+        {
+          "title": "模型与MCP长配置共用外层滚动，不截断证书和保存入口",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4767,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-16T09:48:01.872Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "long-模型",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/screenshots/模型与MCP长配置共用外层滚动-不截断证书和保存入口-long-模型.png"
+                    },
+                    {
+                      "name": "long-连接器",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/screenshots/模型与MCP长配置共用外层滚动-不截断证书和保存入口-long-连接器.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/test-results/interaction-acceptance-模型与MCP长配置共用外层滚动，不截断证书和保存入口/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c0861cbf8a035ae85b3a-100dff3887b67a963bfd",
+          "file": "interaction-acceptance.spec.ts",
+          "line": 551,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "settings-contracts.spec.ts",
+      "file": "settings-contracts.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "分类真正卸载、关闭重开和详情返回保留目录状态",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3593,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-16T09:48:06.649Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/test-results/settings-contracts-分类真正卸载、关闭重开和详情返回保留目录状态/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8ecb1055d991e2ccb48c-4b9409ccbd4f67b5d659",
+          "file": "settings-contracts.spec.ts",
+          "line": 22,
+          "column": 1
+        },
+        {
+          "title": "设置布局 1440 light",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4738,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-16T09:48:10.246Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "1440-light-连接器",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/screenshots/设置布局-1440-light-1440-light-连接器.png"
+                    },
+                    {
+                      "name": "1440-light-技能",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/screenshots/设置布局-1440-light-1440-light-技能.png"
+                    },
+                    {
+                      "name": "1440-light-模型",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/screenshots/设置布局-1440-light-1440-light-模型.png"
+                    },
+                    {
+                      "name": "1440-light-专家",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/screenshots/设置布局-1440-light-1440-light-专家.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/test-results/settings-contracts-设置布局-1440-light/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8ecb1055d991e2ccb48c-8796ea4700c7df2dddb4",
+          "file": "settings-contracts.spec.ts",
+          "line": 66,
+          "column": 5
+        },
+        {
+          "title": "设置布局 1440 dark",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4750,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-16T09:48:14.988Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "1440-dark-连接器",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/screenshots/设置布局-1440-dark-1440-dark-连接器.png"
+                    },
+                    {
+                      "name": "1440-dark-技能",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/screenshots/设置布局-1440-dark-1440-dark-技能.png"
+                    },
+                    {
+                      "name": "1440-dark-模型",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/screenshots/设置布局-1440-dark-1440-dark-模型.png"
+                    },
+                    {
+                      "name": "1440-dark-专家",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/screenshots/设置布局-1440-dark-1440-dark-专家.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/test-results/settings-contracts-设置布局-1440-dark/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8ecb1055d991e2ccb48c-4dd06f8e8983af7c851d",
+          "file": "settings-contracts.spec.ts",
+          "line": 66,
+          "column": 5
+        },
+        {
+          "title": "设置布局 1280 light",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4692,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-16T09:48:19.743Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "1280-light-连接器",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/screenshots/设置布局-1280-light-1280-light-连接器.png"
+                    },
+                    {
+                      "name": "1280-light-技能",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/screenshots/设置布局-1280-light-1280-light-技能.png"
+                    },
+                    {
+                      "name": "1280-light-模型",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/screenshots/设置布局-1280-light-1280-light-模型.png"
+                    },
+                    {
+                      "name": "1280-light-专家",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/screenshots/设置布局-1280-light-1280-light-专家.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/test-results/settings-contracts-设置布局-1280-light/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8ecb1055d991e2ccb48c-0b0c4a12a29952b49b60",
+          "file": "settings-contracts.spec.ts",
+          "line": 66,
+          "column": 5
+        },
+        {
+          "title": "设置布局 1280 dark",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4713,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-16T09:48:24.440Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "1280-dark-连接器",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/screenshots/设置布局-1280-dark-1280-dark-连接器.png"
+                    },
+                    {
+                      "name": "1280-dark-技能",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/screenshots/设置布局-1280-dark-1280-dark-技能.png"
+                    },
+                    {
+                      "name": "1280-dark-模型",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/screenshots/设置布局-1280-dark-1280-dark-模型.png"
+                    },
+                    {
+                      "name": "1280-dark-专家",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/screenshots/设置布局-1280-dark-1280-dark-专家.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/test-results/settings-contracts-设置布局-1280-dark/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8ecb1055d991e2ccb48c-b1e1d43c74f91458096e",
+          "file": "settings-contracts.spec.ts",
+          "line": 66,
+          "column": 5
+        },
+        {
+          "title": "设置布局 768 light",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4672,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-16T09:48:29.157Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "768-light-连接器",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/screenshots/设置布局-768-light-768-light-连接器.png"
+                    },
+                    {
+                      "name": "768-light-技能",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/screenshots/设置布局-768-light-768-light-技能.png"
+                    },
+                    {
+                      "name": "768-light-模型",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/screenshots/设置布局-768-light-768-light-模型.png"
+                    },
+                    {
+                      "name": "768-light-专家",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/screenshots/设置布局-768-light-768-light-专家.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/test-results/settings-contracts-设置布局-768-light/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8ecb1055d991e2ccb48c-f00fa49e8cd68023e78d",
+          "file": "settings-contracts.spec.ts",
+          "line": 66,
+          "column": 5
+        },
+        {
+          "title": "设置布局 768 dark",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4662,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-16T09:48:33.834Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "768-dark-连接器",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/screenshots/设置布局-768-dark-768-dark-连接器.png"
+                    },
+                    {
+                      "name": "768-dark-技能",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/screenshots/设置布局-768-dark-768-dark-技能.png"
+                    },
+                    {
+                      "name": "768-dark-模型",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/screenshots/设置布局-768-dark-768-dark-模型.png"
+                    },
+                    {
+                      "name": "768-dark-专家",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/screenshots/设置布局-768-dark-768-dark-专家.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/test-results/settings-contracts-设置布局-768-dark/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8ecb1055d991e2ccb48c-24d84c1948a8549ab0f5",
+          "file": "settings-contracts.spec.ts",
+          "line": 66,
+          "column": 5
+        },
+        {
+          "title": "设置布局 390 light",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4851,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-16T09:48:38.499Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "390-light-连接器",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/screenshots/设置布局-390-light-390-light-连接器.png"
+                    },
+                    {
+                      "name": "390-light-技能",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/screenshots/设置布局-390-light-390-light-技能.png"
+                    },
+                    {
+                      "name": "390-light-模型",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/screenshots/设置布局-390-light-390-light-模型.png"
+                    },
+                    {
+                      "name": "390-light-专家",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/screenshots/设置布局-390-light-390-light-专家.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/test-results/settings-contracts-设置布局-390-light/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8ecb1055d991e2ccb48c-aafc9e4142e4ccdcb878",
+          "file": "settings-contracts.spec.ts",
+          "line": 66,
+          "column": 5
+        },
+        {
+          "title": "设置布局 390 dark",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4862,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-16T09:48:43.354Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "390-dark-连接器",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/screenshots/设置布局-390-dark-390-dark-连接器.png"
+                    },
+                    {
+                      "name": "390-dark-技能",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/screenshots/设置布局-390-dark-390-dark-技能.png"
+                    },
+                    {
+                      "name": "390-dark-模型",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/screenshots/设置布局-390-dark-390-dark-模型.png"
+                    },
+                    {
+                      "name": "390-dark-专家",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/screenshots/设置布局-390-dark-390-dark-专家.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/test-results/settings-contracts-设置布局-390-dark/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8ecb1055d991e2ccb48c-1fe04a5b9c31247a6073",
+          "file": "settings-contracts.spec.ts",
+          "line": 66,
+          "column": 5
+        },
+        {
+          "title": "设置布局 320 light",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4829,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-16T09:48:48.221Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "320-light-连接器",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/screenshots/设置布局-320-light-320-light-连接器.png"
+                    },
+                    {
+                      "name": "320-light-技能",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/screenshots/设置布局-320-light-320-light-技能.png"
+                    },
+                    {
+                      "name": "320-light-模型",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/screenshots/设置布局-320-light-320-light-模型.png"
+                    },
+                    {
+                      "name": "320-light-专家",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/screenshots/设置布局-320-light-320-light-专家.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/test-results/settings-contracts-设置布局-320-light/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8ecb1055d991e2ccb48c-49a656ad12b0f26d92ca",
+          "file": "settings-contracts.spec.ts",
+          "line": 66,
+          "column": 5
+        },
+        {
+          "title": "设置布局 320 dark",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4845,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-16T09:48:53.054Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "320-dark-连接器",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/screenshots/设置布局-320-dark-320-dark-连接器.png"
+                    },
+                    {
+                      "name": "320-dark-技能",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/screenshots/设置布局-320-dark-320-dark-技能.png"
+                    },
+                    {
+                      "name": "320-dark-模型",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/screenshots/设置布局-320-dark-320-dark-模型.png"
+                    },
+                    {
+                      "name": "320-dark-专家",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.issue/2026-11-16/evidence-ui14/screenshots/设置布局-320-dark-320-dark-专家.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/test-results/settings-contracts-设置布局-320-dark/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8ecb1055d991e2ccb48c-858d20ecbd184195c746",
+          "file": "settings-contracts.spec.ts",
+          "line": 66,
+          "column": 5
+        },
+        {
+          "title": "标题栏偏移与查询丢失注入会被同一验收器拒绝",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1909,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-16T09:48:57.904Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/test-results/settings-contracts-标题栏偏移与查询丢失注入会被同一验收器拒绝/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8ecb1055d991e2ccb48c-b85ee78ef69f0f47eb97",
+          "file": "settings-contracts.spec.ts",
+          "line": 134,
+          "column": 1
+        },
+        {
+          "title": "左栏键盘/拖拽与刷新持久化，折叠保留设置入口",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2178,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-16T09:48:59.817Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/test-results/settings-contracts-左栏键盘-拖拽与刷新持久化，折叠保留设置入口/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8ecb1055d991e2ccb48c-e4e1e7e5fa6dcac8214a",
+          "file": "settings-contracts.spec.ts",
+          "line": 163,
+          "column": 1
+        },
+        {
+          "title": "正常/减弱动画 false",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2024,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-16T09:49:01.999Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/test-results/settings-contracts-正常-减弱动画-false/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8ecb1055d991e2ccb48c-e93a115e5335e7338c55",
+          "file": "settings-contracts.spec.ts",
+          "line": 189,
+          "column": 3
+        },
+        {
+          "title": "正常/减弱动画 true",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2001,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-16T09:49:04.027Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/test-results/settings-contracts-正常-减弱动画-true/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8ecb1055d991e2ccb48c-0c37af6b99c0795e6d8b",
+          "file": "settings-contracts.spec.ts",
+          "line": 189,
+          "column": 3
+        },
+        {
+          "title": "桌面设置缩为手机时右栏不能抢焦点",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2087,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-16T09:49:06.032Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/test-results/settings-contracts-桌面设置缩为手机时右栏不能抢焦点/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8ecb1055d991e2ccb48c-30f04a70a75a00caa7e6",
+          "file": "settings-contracts.spec.ts",
+          "line": 208,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-16T09:46:23.786Z",
+    "duration": 164427.696,
+    "expected": 46,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

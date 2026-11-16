@@ -1,3 +1,4 @@
+import { CatalogFilter } from "./CatalogFilter";
 import ServerCertificateEditor from "./ServerCertificateEditor";
 import { FormActions, FormSubmit } from "./FormActions";
 import { useRef, useState } from "react";
@@ -166,7 +167,7 @@ export default function ConnectorEditor({
       <form className="connector-editor catalog-form" onSubmit={save}>
         <div className="connection-editor-body">
           <label className="field-label">
-            <span className="sr-only">名称</span>
+            <span className="field-caption">名称</span>
             <input
               aria-label="连接器名称"
               placeholder="连接器名称"
@@ -178,21 +179,24 @@ export default function ConnectorEditor({
               onChange={(e) => setName(e.target.value)}
             />
           </label>
-          <label className="field-label">
-            <span className="sr-only">连接方式</span>
-            <select
-              aria-label="连接方式"
+          <div className="field-label">
+            <span className="field-caption" id="connector-transport-label">
+              连接方式
+            </span>
+            <CatalogFilter
+              label="连接方式"
               value={transport}
               disabled={busy || !!connector}
-              onChange={(e) => setTransport(e.target.value)}
-            >
-              <option value="http">远程服务</option>
-              <option value="stdio">本地程序</option>
-            </select>
-          </label>
+              onValueChange={setTransport}
+              options={[
+                { value: "http", label: "远程服务" },
+                { value: "stdio", label: "本地程序" },
+              ]}
+            />
+          </div>
           {transport === "http" ? (
             <label className="field-label">
-              <span className="sr-only">服务地址</span>
+              <span className="field-caption">服务地址</span>
               <input
                 aria-label="服务地址"
                 type="url"
@@ -210,7 +214,7 @@ export default function ConnectorEditor({
           ) : (
             <>
               <label className="field-label">
-                <span className="sr-only">启动程序</span>
+                <span className="field-caption">启动程序</span>
                 <input
                   aria-label="启动程序"
                   required={!connector}

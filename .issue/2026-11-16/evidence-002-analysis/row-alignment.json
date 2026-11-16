@@ -1,0 +1,38 @@
+[
+  {
+    "delta": 10,
+    "menuCenter": 262.5,
+    "name": "Sentry",
+    "statusCenter": 252.5
+  },
+  {
+    "delta": 10,
+    "menuCenter": 262.5,
+    "name": "Slack",
+    "statusCenter": 252.5
+  },
+  {
+    "delta": 10,
+    "menuCenter": 335.5,
+    "name": "GitHub",
+    "statusCenter": 325.5
+  },
+  {
+    "delta": 10,
+    "menuCenter": 335.5,
+    "name": "cloudwalker",
+    "statusCenter": 325.5
+  },
+  {
+    "delta": 0,
+    "menuCenter": 404,
+    "name": "newbot_test",
+    "statusCenter": 404
+  },
+  {
+    "delta": 0,
+    "menuCenter": 404,
+    "name": "hids",
+    "statusCenter": 404
+  }
+]

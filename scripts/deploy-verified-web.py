@@ -10,26 +10,45 @@ import subprocess
 import time
 import urllib.request
 
-parser = argparse.ArgumentParser(description="Publish an already verified web build; retain backend, database and tunnel configuration.")
+parser = argparse.ArgumentParser(description="Publish verified web assets and optionally the server; retain database and tunnel configuration.")
 parser.add_argument("--target", required=True)
 parser.add_argument("--origin", required=True)
 parser.add_argument("--receipt", required=True)
 parser.add_argument("--service", required=True)
 parser.add_argument("--evidence", required=True)
+parser.add_argument("--include-server", action="store_true")
+parser.add_argument("--expected-server-hash")
 args = parser.parse_args()
 source = pathlib.Path(__file__).resolve().parents[1]
 target = pathlib.Path(args.target).resolve()
 receipt = pathlib.Path(args.receipt).resolve()
-subprocess.run(["node", "--import", "tsx", "scripts/verify-release.ts", "dist/web", str(receipt)], cwd=source, check=True)
+subprocess.run(["node", "--import", "tsx", "scripts/verify-release.ts", "dist/web", str(receipt), *(["--include-server"] if args.include_server else [])], cwd=source, check=True)
 manifest = json.loads((source / "dist/web/release-manifest.json").read_text())
 release = manifest["source"][:12]
 backup = target / ".data/backups" / (time.strftime("%Y-%m-%d-web-") + release)
+if args.include_server:
+    actual = hashlib.sha256((target / "dist/server/index.js").read_bytes()).hexdigest()
+    if not args.expected_server_hash or actual != args.expected_server_hash:
+        raise RuntimeError("Running backend differs from the reviewed deployment baseline")
 backup.mkdir(mode=0o700, parents=True)
 stage = target / ".data" / ("staged-web-" + release)
 old = target / ".data" / ("previous-web-" + release)
 if stage.exists() or old.exists():
     raise RuntimeError("Release staging already exists; inspect it before retrying")
 shutil.copytree(source / "dist/web", stage)
+server_stage = target / ".data" / ("staged-server-" + release)
+server_old = target / ".data" / ("previous-server-" + release)
+if args.include_server:
+    if server_stage.exists() or server_old.exists():
+        raise RuntimeError("Server staging already exists")
+    shutil.copytree(source / "dist/server", server_stage)
+def directory_hash(directory):
+    digest = hashlib.sha256()
+    for file in sorted(directory.rglob("*")):
+        if file.is_file():
+            digest.update(file.relative_to(directory).as_posix().encode())
+            digest.update(file.read_bytes())
+    return digest.hexdigest()
 retained = 0
 for asset in (target / "dist/web/assets").rglob("*"):
     if asset.is_file():
@@ -46,13 +65,14 @@ def request(path, body=None):
         return json.load(response)
 request("/api/login", {"password": (target / ".data/initial-password").read_text().strip()})
 request("/api/agent/action", {"action": "bridge/maintenance", "enabled": True})
-tables = ["threads", "session_runtime", "session_runtime_pending", "thread_workspaces", "plugin_connection_settings", "private_field_sets", "provider_configuration"]
+tables = ["threads", "session_runtime", "session_runtime_pending", "thread_workspaces", "plugin_connection_settings", "private_field_sets", "provider_configuration", "extension_configuration", "experts", "session_extensions"]
 def summaries(connection):
     return {table: {"count": connection.execute("select count(*) from " + table).fetchone()[0],
         "sha256": hashlib.sha256(json.dumps(connection.execute("select * from " + table + " order by 1").fetchall(), default=str).encode()).hexdigest()} for table in tables}
 def systemctl(action):
     subprocess.run(["systemctl", "--user", action, args.service], check=True)
 swapped = False
+server_swapped = False
 try:
     with sqlite3.connect(target / ".data/newbot.sqlite") as connection:
         with sqlite3.connect(backup / "database.sqlite") as saved:
@@ -61,6 +81,8 @@ try:
     (backup / "baseline.json").write_text(json.dumps(before))
     shutil.copytree(target / "dist/web", backup / "web")
     backend = hashlib.sha256((target / "dist/server/index.js").read_bytes()).hexdigest()
+    if args.include_server:
+        shutil.copytree(target / "dist/server", backup / "server")
     systemctl("stop")
     (target / "dist/web").rename(old)
     try:
@@ -70,6 +92,14 @@ try:
         systemctl("start")
         raise
     swapped = True
+    if args.include_server:
+        (target / "dist/server").rename(server_old)
+        try:
+            server_stage.rename(target / "dist/server")
+        except Exception:
+            server_old.rename(target / "dist/server")
+            raise
+        server_swapped = True
     systemctl("start")
     for attempt in range(40):
         try:
@@ -85,7 +115,10 @@ try:
         after = summaries(connection)
     if before != after:
         raise RuntimeError("Session or configuration state changed during deployment")
-    if backend != hashlib.sha256((target / "dist/server/index.js").read_bytes()).hexdigest():
+    if args.include_server:
+        if directory_hash(target / "dist/server") != manifest["serverHash"]:
+            raise RuntimeError("Published backend differs from verified build")
+    elif backend != hashlib.sha256((target / "dist/server/index.js").read_bytes()).hexdigest():
         raise RuntimeError("Backend unexpectedly changed")
     public = urllib.request.urlopen(args.origin + "/", timeout=30).read()
     if public != (source / "dist/web/index.html").read_bytes():
@@ -102,7 +135,7 @@ try:
             raise RuntimeError("Public asset mismatch: " + path)
         verified[path] = hashlib.sha256(payload).hexdigest()
     result = {"source": manifest["source"], "webHash": manifest["webHash"], "url": args.origin, "ready": ready,
-        "dataUnchanged": True, "tables": tables, "serverUnchanged": True, "backup": str(backup), "assets": verified, "retainedAssets": retained}
+        "dataUnchanged": True, "tables": tables, "serverUnchanged": not args.include_server, "serverHash": manifest.get("serverHash"), "previousServerIndexHash": backend, "backup": str(backup), "assets": verified, "retainedAssets": retained}
     pathlib.Path(args.evidence).write_text(json.dumps(result, indent=2) + "\n")
     print(json.dumps(result))
 except Exception:
@@ -110,6 +143,9 @@ except Exception:
         systemctl("stop")
         (target / "dist/web").rename(target / ".data" / ("failed-web-" + release))
         old.rename(target / "dist/web")
+        if server_swapped:
+            (target / "dist/server").rename(target / ".data" / ("failed-server-" + release))
+            server_old.rename(target / "dist/server")
         systemctl("start")
     raise
 finally:

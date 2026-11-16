@@ -1,0 +1,68 @@
+{
+  "chain": [
+    {
+      "bottom": 899.296875,
+      "class": "expert-member-picker",
+      "client": 245,
+      "left": 390.5,
+      "overflow": "auto",
+      "overscroll": "auto",
+      "scroll": 651,
+      "scrollTop": 0,
+      "top": 654.5,
+      "width": 660
+    },
+    {
+      "bottom": 665,
+      "class": "plugin-center-content",
+      "client": 541,
+      "left": 317,
+      "overflow": "auto",
+      "overscroll": "auto",
+      "scroll": 893,
+      "scrollTop": 0,
+      "top": 124,
+      "width": 822
+    },
+    {
+      "bottom": 665,
+      "class": "settings-content settings-catalog",
+      "client": 541,
+      "left": 317,
+      "overflow": "hidden",
+      "overscroll": "auto",
+      "scroll": 541,
+      "scrollTop": 0,
+      "top": 124,
+      "width": 822
+    },
+    {
+      "bottom": 666,
+      "class": "modal wide settings-dialog",
+      "client": 610,
+      "left": 140,
+      "overflow": "hidden",
+      "overscroll": "auto",
+      "scroll": 610,
+      "scrollTop": 0,
+      "top": 54,
+      "width": 1000
+    },
+    {
+      "bottom": 720,
+      "class": "",
+      "client": 720,
+      "left": 0,
+      "overflow": "hidden",
+      "overscroll": "contain",
+      "scroll": 720,
+      "scrollTop": 0,
+      "top": 0,
+      "width": 1280
+    }
+  ],
+  "viewport": {
+    "height": 720,
+    "width": 1280
+  }
+}

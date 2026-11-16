@@ -1,0 +1,26 @@
+[
+  {
+    "baseline": "tests/browser/__screenshots__/320-light-experts.png",
+    "before": "6331d3cc2a8012419f261ee77f0eb68d3a840ae4081d8b8b78855c6bdc923895",
+    "after": "014a0de0e7bc931c56e8acb5a8136c7636ad297a285b75ce25856785f4e0cabe",
+    "reason": "逐张人工查看差异图：仅顶部文字新增按钮改为共享加号入口；不修改阈值。"
+  },
+  {
+    "baseline": "tests/browser/__screenshots__/320-dark-experts.png",
+    "before": "b448caae33a0466af968fa3e8cff5d94ba9c7b20c0c88c6ec2aeee14931657f0",
+    "after": "6d706f66cb3e8b54ac6eb9daa0cdf6c05b31f88af62d56d4aba04926bfc79165",
+    "reason": "逐张人工查看差异图：仅顶部文字新增按钮改为共享加号入口；不修改阈值。"
+  },
+  {
+    "baseline": "tests/browser/__screenshots__/390-light-experts.png",
+    "before": "64b6061fee3b6c5ac37badd52ba3562b929df1b2151eb8f8c9cb8994276b34bd",
+    "after": "8100119077822f13519d0048c090fba0f645defef8c945f3ad36571b532eadc7",
+    "reason": "逐张人工查看差异图：仅顶部文字新增按钮改为共享加号入口；不修改阈值。"
+  },
+  {
+    "baseline": "tests/browser/__screenshots__/390-dark-experts.png",
+    "before": "5a08637dec579a8bcbcb802f894c0baf5daad2ee7e2aee8a5ed1e06bd107936b",
+    "after": "6d33dc6b25ac4044c872125ee3ae2d3bae5986a6a6a9a23e56f57bf07202f777",
+    "reason": "逐张人工查看差异图：仅顶部文字新增按钮改为共享加号入口；不修改阈值。"
+  }
+]

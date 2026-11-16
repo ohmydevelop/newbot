@@ -1,0 +1,42 @@
+✖ expert connector names follow configuration while stable references survive rename, duplicates and restart (4.848557ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 154.107593
+
+✖ failing tests:
+
+test at tests/expert-display-contract.test.ts:1:352
+✖ expert connector names follow configuration while stable references survive rename, duplicates and restart (4.848557ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+      {
+        enabled: true,
+        id: 'connector_opaque_a',
+  +     name: 'connector_opaque_a'
+  -     name: '牧云'
+      },
+      {
+        enabled: true,
+        id: 'connector_opaque_b',
+  +     name: 'connector_opaque_b'
+  -     name: '牧云'
+      }
+    ]
+  
+      at TestContext.<anonymous> (/home/a/Documents/ChatGPT/newbot-systematize/tests/expert-display-contract.test.ts:21:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ { id: 'connector_opaque_a', name: 'connector_opaque_a', enabled: true }, { id: 'connector_opaque_b', name: 'connector_opaque_b', enabled: true } ],
+    expected: [ { id: 'connector_opaque_a', name: '牧云', enabled: true }, { id: 'connector_opaque_b', name: '牧云', enabled: true } ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }

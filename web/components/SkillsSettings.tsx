@@ -1,4 +1,6 @@
+import { CatalogAddButton } from "./CatalogAddButton";
 import { useCatalogField } from "../catalog-state";
+import { MoreIcon } from "./ReferenceIcons";
 import { CatalogCopy } from "./CatalogCopy";
 import { CatalogRefreshButton } from "./CatalogRefreshButton";
 import SkillCreate from "./SkillCreate";
@@ -9,7 +11,7 @@ import { SkillIcon as BookOpen } from "./AppIcons";
 import SkillImport from "./SkillImport";
 import { CatalogToolbar } from "./CatalogToolbar";
 import { useRef, useState, useEffect } from "react";
-import { Trash2, Plus, Check, ChevronDown, Upload } from "lucide-react";
+import { Trash2, Check, Upload, Power, Eye } from "lucide-react";
 import type { Skill, SkillDocument } from "../../shared/types";
 import { loadSettings, loadDiscovery, request, useApp } from "../store";
 import {
@@ -34,6 +36,7 @@ export default function SkillsSettings({ scope = "" }: { scope?: string }) {
   const [selected, setSelected] = useState<Skill | null>(null);
   const [busy, setBusy] = useState("");
   const [error, setError] = useState("");
+  const pending = useRef(false);
   const entries = useRef(new Map<string, HTMLButtonElement>());
   const refresh = useRef<HTMLButtonElement>(null);
   const visibleSkills = visibleCatalogSkills(
@@ -45,6 +48,8 @@ export default function SkillsSettings({ scope = "" }: { scope?: string }) {
     (e: { section: string }) => e.section === "skills",
   );
   async function action(key: string, fn: () => Promise<unknown>) {
+    if (pending.current) return;
+    pending.current = true;
     setBusy(key);
     setError("");
     try {
@@ -54,50 +59,68 @@ export default function SkillsSettings({ scope = "" }: { scope?: string }) {
         reason instanceof Error ? reason.message : "技能操作失败，请重试",
       );
     } finally {
+      pending.current = false;
       setBusy("");
     }
   }
   function controls(skill: Skill) {
     return (
-      <div className="skill-detail-actions">
-        <button
-          className="secondary"
+      <Dropdown.Root>
+        <Dropdown.Trigger
+          className="icon-button catalog-more"
+          aria-label={`${displayName(skill)} 更多操作`}
+          title="更多操作"
           disabled={!!busy}
-          onClick={() =>
-            void action(skill.id, async () => {
-              await request("skills/config/write", {
-                path: skill.path,
-                enabled: !skill.enabled,
-              });
-              await loadSettings();
-              await loadDiscovery("skills");
-              setSelected((current) =>
-                current?.id === skill.id
-                  ? { ...current, enabled: !skill.enabled }
-                  : current,
-              );
-            })
-          }
         >
-          {skill.enabled ? "停用" : "启用"}
-        </button>
-        {skill.removable && (
-          <button
-            className="secondary danger-text"
-            disabled={!!busy || !readable}
-            onClick={() =>
-              void action(skill.id, async () => {
-                setRemoving(
-                  await readSkill(skill.id, new AbortController().signal),
-                );
-              })
-            }
-          >
-            <Trash2 size={16} />
-            卸载
-          </button>
-        )}
-      </div>
+          <MoreIcon size={18} aria-hidden="true" />
+        </Dropdown.Trigger>
+        <Dropdown.Portal>
+          <ActionMenuContent>
+            {readable && (
+              <ActionMenuItem icon={Eye} onSelect={() => setSelected(skill)}>
+                详情
+              </ActionMenuItem>
+            )}
+            <ActionMenuItem
+              icon={Power}
+              onSelect={() =>
+                void action(skill.id, async () => {
+                  await request("skills/config/write", {
+                    path: skill.path,
+                    enabled: !skill.enabled,
+                  });
+                  await loadSettings();
+                  await loadDiscovery("skills");
+                  setSelected((current) =>
+                    current?.id === skill.id
+                      ? { ...current, enabled: !skill.enabled }
+                      : current,
+                  );
+                })
+              }
+            >
+              {skill.enabled ? "停用" : "启用"}
+            </ActionMenuItem>
+            {skill.removable && (
+              <ActionMenuItem
+                icon={Trash2}
+                destructive
+                separated
+                disabled={!readable}
+                onSelect={() =>
+                  void action(skill.id, async () => {
+                    setRemoving(
+                      await readSkill(skill.id, new AbortController().signal),
+                    );
+                  })
+                }
+              >
+                卸载
+              </ActionMenuItem>
+            )}
+          </ActionMenuContent>
+        </Dropdown.Portal>
+      </Dropdown.Root>
     );
   }
   return (
@@ -108,17 +131,21 @@ export default function SkillsSettings({ scope = "" }: { scope?: string }) {
           open
           title={displayName(selected)}
           dismissible={!busy}
+          headerActions={
+            <>
+              <CatalogUse
+                kind="$"
+                entry={{ ...selected, displayName: displayName(selected) }}
+                disabled={!selected.enabled || !!busy}
+              />
+              {controls(selected)}
+            </>
+          }
           onOpenChange={(open) => {
             if (!open) setSelected(null);
           }}
         >
           <SkillReader skill={selected} onBack={() => setSelected(null)} />
-          <CatalogUse
-            kind="$"
-            entry={{ ...selected, displayName: displayName(selected) }}
-            disabled={!selected.enabled || !!busy}
-          />
-          {controls(selected)}
           {error && (
             <p className="inline-error" role="alert">
               {error}
@@ -128,11 +155,8 @@ export default function SkillsSettings({ scope = "" }: { scope?: string }) {
       )}
       <CatalogToolbar label="技能" query={query} onQuery={setQuery}>
         <Dropdown.Root>
-          <Dropdown.Trigger
-            className="primary catalog-add"
-            aria-label="添加技能"
-          >
-            新技能 <ChevronDown size={14} />
+          <Dropdown.Trigger asChild>
+            <CatalogAddButton label="添加技能" />
           </Dropdown.Trigger>
           <Dropdown.Portal>
             <ActionMenuContent className="dropdown" align="end" sideOffset={6}>
@@ -277,7 +301,7 @@ export default function SkillsSettings({ scope = "" }: { scope?: string }) {
                 />
               </div>
             )}
-            {!readable && controls(skill)}
+            {controls(skill)}
           </div>
         ))}
       </div>

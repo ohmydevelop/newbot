@@ -560,7 +560,9 @@ test("模型与MCP长配置共用外层滚动，不截断证书和保存入口",
         .getByRole("button", { name: "添加模型连接", exact: true })
         .click();
     else {
-      await page.getByRole("button", { name: "新连接器", exact: true }).click();
+      await page
+        .getByRole("button", { name: "添加连接器", exact: true })
+        .click();
       await page.getByRole("menuitem", { name: "连接器", exact: true }).click();
     }
     for (let i = 0; i < 8; i++)

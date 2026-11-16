@@ -1,0 +1,10 @@
+[WebServer] (node:4018003) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 1 test using 1 worker
+
+(node:4018018) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/browser/deep-catalog-contracts.spec.ts:332:1 › 导入技能选择窗允许边缘交接且不执行安装 (3.5s)
+
+  1 passed (4.6s)

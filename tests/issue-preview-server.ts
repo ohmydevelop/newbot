@@ -206,8 +206,17 @@ class IssueCodex extends SkillsCodex {
         );
     if (method === "mcpServerStatus/list")
       for (const server of result.data)
-        if (server.name === "test-server")
+        if (server.name === "test-server") {
           server.pluginId = "test-plugin@local";
+          if (process.env.ISSUE_RICH_UI)
+            for (let i = 0; i < 123; i++) {
+              server.tools[`catalog_tool_${i}`] = {
+                name: `catalog_tool_${i}`,
+                description: `只读工具说明 ${i}`,
+                inputSchema: { type: "object" },
+              };
+            }
+        }
     if (method === "thread/start") {
       result.thread.modelProvider = p.modelProvider || "fixture";
       result.modelProvider = result.thread.modelProvider;

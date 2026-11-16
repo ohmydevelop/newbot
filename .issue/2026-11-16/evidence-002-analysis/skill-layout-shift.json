@@ -1,0 +1,46 @@
+{
+  "preview": [
+    {
+      "class": "skill-reader-toolbar",
+      "height": 57,
+      "y": 192
+    },
+    {
+      "class": "skill-document-body",
+      "height": 156.078125,
+      "y": 249
+    },
+    {
+      "class": "catalog-use",
+      "height": 40,
+      "y": 425.078125
+    },
+    {
+      "class": "skill-detail-actions",
+      "height": 36,
+      "y": 485.078125
+    }
+  ],
+  "source": [
+    {
+      "class": "skill-reader-toolbar",
+      "height": 57,
+      "y": 192
+    },
+    {
+      "class": "skill-document-body",
+      "height": 270.53125,
+      "y": 249
+    },
+    {
+      "class": "catalog-use",
+      "height": 40,
+      "y": 539.53125
+    },
+    {
+      "class": "skill-detail-actions",
+      "height": 36,
+      "y": 599.53125
+    }
+  ]
+}
