@@ -1,0 +1,13 @@
+{
+  "commit": "8a3e0bf",
+  "url": "https://integration-love-angela-heated.trycloudflare.com",
+  "ready": {
+    "ready": true,
+    "runtime": "ready"
+  },
+  "dataUnchanged": true,
+  "serverSha256": "586867caeb36c442a71a2f0ec24c55017238ac595fc2db3da95ea2d2ac84bcde",
+  "backup": "/home/a/Documents/ChatGPT/newbot/.data/backups/2026-11-16-session-pending",
+  "nativeUnchanged": true,
+  "webUnchanged": true
+}

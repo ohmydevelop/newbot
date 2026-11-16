@@ -1,0 +1,65 @@
+{
+  "sessions": [
+    {
+      "threadId": "01a1de62-0fb0-7c22-bf30-1fcb76dd4ce4",
+      "oldTurnIdsPreserved": true,
+      "newTurns": [
+        {
+          "id": "01a1e2dc-4c52-7982-9943-916c408dcae9",
+          "status": "completed",
+          "toolCalls": 0,
+          "assistant": [
+            "旧会话设置已恢复，消息发送正常。"
+          ]
+        }
+      ],
+      "runtime": {
+        "revision": 1,
+        "provider": "gateway_a26181cc65e9408bbcacc4392aaadd66",
+        "model": "deepseek-flash",
+        "effort": "",
+        "approval": "full",
+        "version": 5,
+        "applied": {
+          "revision": 1,
+          "provider": "gateway_a26181cc65e9408bbcacc4392aaadd66",
+          "model": "deepseek-flash",
+          "effort": "",
+          "approval": "full"
+        }
+      }
+    },
+    {
+      "threadId": "01a1d452-56e3-7030-9d4c-1ef3f1b2e284",
+      "oldTurnIdsPreserved": true,
+      "newTurns": [
+        {
+          "id": "01a1e2dc-706a-7fb2-94fe-63620417eb6e",
+          "status": "completed",
+          "toolCalls": 0,
+          "assistant": [
+            "旧会话设置已恢复，消息发送正常。"
+          ]
+        }
+      ],
+      "runtime": {
+        "revision": 1,
+        "provider": "gateway_a26181cc65e9408bbcacc4392aaadd66",
+        "model": "deepseek-flash",
+        "effort": "",
+        "approval": "full",
+        "version": 3,
+        "applied": {
+          "revision": 1,
+          "provider": "gateway_a26181cc65e9408bbcacc4392aaadd66",
+          "model": "deepseek-flash",
+          "effort": "",
+          "approval": "full"
+        }
+      }
+    }
+  ],
+  "pendingCount": 0,
+  "replaySameTurn": true,
+  "requestRows": 1
+}
