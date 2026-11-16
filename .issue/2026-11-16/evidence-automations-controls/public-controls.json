@@ -1,0 +1,28 @@
+{
+  "origin": "https://integration-love-angela-heated.trycloudflare.com",
+  "passed": true,
+  "scope": "Actual public deployment, unsaved custom task and model picker; no production task/config changes",
+  "checks": [
+    {
+      "width": 320,
+      "sameAxis": true,
+      "equalHeight": 36,
+      "modelPopup": true,
+      "cancelledWithoutSaving": true
+    },
+    {
+      "width": 390,
+      "sameAxis": true,
+      "equalHeight": 36,
+      "modelPopup": true,
+      "cancelledWithoutSaving": true
+    },
+    {
+      "width": 1280,
+      "sameAxis": true,
+      "equalHeight": 36,
+      "modelPopup": true,
+      "cancelledWithoutSaving": true
+    }
+  ]
+}

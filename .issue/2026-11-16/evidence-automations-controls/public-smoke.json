@@ -1,0 +1,27 @@
+{
+  "origin": "https://integration-love-angela-heated.trycloudflare.com",
+  "checks": [
+    "public-login-sidebar-automation-entry",
+    "public-server-real-model-automation-completed",
+    "public-result-opens-real-conversation",
+    "only-created-test-task-deleted-and-chat-archived"
+  ],
+  "passed": true,
+  "run": {
+    "id": "f2b96507-6dcb-4b6c-9c26-e8b8b9b21bf6",
+    "threadId": "01a1e554-5584-7641-ad00-6a74be9711b7",
+    "state": "succeeded"
+  },
+  "release": {
+    "source": "6d2c08fc8525a62feeb568cda1d6e16304d8c5c7",
+    "webHash": "b24ed72095eb7e5f20a8367859b99a4ebc51bf6294697ba394636de395ec613b",
+    "verifiedAt": "2026-11-16T17:07:32.306Z",
+    "checks": [
+      "types",
+      "unit",
+      "design",
+      "browser",
+      "motion"
+    ]
+  }
+}

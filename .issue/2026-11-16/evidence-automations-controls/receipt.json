@@ -1,0 +1,28 @@
+{
+  "source": "6d2c08fc8525a62feeb568cda1d6e16304d8c5c7",
+  "webHash": "b24ed72095eb7e5f20a8367859b99a4ebc51bf6294697ba394636de395ec613b",
+  "serverHash": "8f3efb43adcc75e70084006f8d864aeaeffafd77df95c4b86da7834e5aebeda8",
+  "checks": {
+    "types": {
+      "passed": true,
+      "evidence": ".issue/2026-11-16/evidence-automations-controls/types.txt"
+    },
+    "unit": {
+      "passed": true,
+      "evidence": ".issue/2026-11-16/evidence-automations-controls/unit.txt"
+    },
+    "design": {
+      "passed": true,
+      "evidence": ".issue/2026-11-16/evidence-automations-controls/design.txt"
+    },
+    "browser": {
+      "passed": true,
+      "evidence": ".issue/2026-11-16/evidence-automations-controls/browser-summary.json"
+    },
+    "motion": {
+      "passed": true,
+      "evidence": ".issue/2026-11-16/evidence-automations-controls/mobile-results.json"
+    }
+  },
+  "created": "2026-11-16T17:07:32.306Z"
+}

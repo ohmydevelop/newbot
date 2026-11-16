@@ -22,3 +22,11 @@
 - 触摸整组12/12通过，覆盖自动任务固定操作、专家/技能/插件/工作流边缘滚动交接、抽屉动画与平板拖拽取消。证据mobile-results.json/mobile.txt；使用Chromium/CDP触摸模拟，不代表实体手机验证。
 - 类型、UI约束、生产构建通过；服务端hash与已发布版本一致（server-unchanged.json），本轮只发布Web，不迁移数据。
 - 当前准备提交与公网部署，线上验收结果另记。
+
+## 发布与公网验收（完成）
+- 产品提交6d2c08fc8525a62feeb568cda1d6e16304d8c5c7已推送codex/newbot-systematize。验证收据receipt.json绑定源码与Web hash b24ed72095eb7e5f20a8367859b99a4ebc51bf6294697ba394636de395ec613b。
+- 仅Web发布到https://integration-love-angela-heated.trycloudflare.com/；上线前备份，服务active/runtime ready，10类既有会话/配置表核对不变，DB v19，无后端变更。详见deployment.json。
+- 公网320/390/1280宽度实际打开新建任务，5个工具按钮36px同轴、不重叠，实际模型弹层/搜索/关闭正常；未保存任务。public-controls.json及public-toolbar-*.png留证。
+- 公网真实模型任务完成，运行结果打开真实会话；仅删除本次测试任务并归档本次测试会话。public-smoke.json/public-run.png留证。未发送邮件、未改用户已有任务。
+- 本轮C1/C1a/C2/C2a/C2b验收完成；C3已完成规划但未实施，C4后端/数据保持不变。新增共享约束测试和设计规则用于后续防回退。
+- 验证界限：86项浏览器为82项全量通过+修正夹具时序后4项复验通过；12项触摸为Chromium/CDP模拟，无实体手机。身份目录截图为测试数据，公网实测为真实部署；不以此声称第三方事件触发器/OAuth/邮件兼容性已验收。
