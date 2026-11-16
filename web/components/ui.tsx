@@ -1,6 +1,6 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import { X } from "lucide-react";
-import { useId, useRef, type ReactNode } from "react";
+import { createContext, useId, useRef, type ReactNode } from "react";
 
 export function dialogReturnTarget(): HTMLElement | null {
   const active =
@@ -18,6 +18,7 @@ export function dialogReturnTarget(): HTMLElement | null {
   return menu || active === document.body ? trigger || active : active;
 }
 
+export const ModalLayer = createContext(false);
 const modalClosers = new WeakMap<HTMLElement, () => void>();
 export function Modal({
   open,
@@ -132,7 +133,7 @@ export function Modal({
               {description}
             </Dialog.Description>
           )}
-          {children}
+          <ModalLayer.Provider value>{children}</ModalLayer.Provider>
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>

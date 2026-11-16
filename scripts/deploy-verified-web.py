@@ -19,7 +19,7 @@ parser.add_argument("--service", required=True)
 parser.add_argument("--evidence", required=True)
 parser.add_argument("--include-server", action="store_true")
 parser.add_argument("--expected-server-hash")
-parser.add_argument("--database-migration", choices=["session-modes-v18"])
+parser.add_argument("--database-migration", choices=["session-modes-v18", "automations-v19"])
 args = parser.parse_args()
 if args.database_migration and not args.include_server:
     parser.error("Database migrations require --include-server")
@@ -80,8 +80,8 @@ try:
     stopped = True
     with sqlite3.connect(target / ".data/newbot.sqlite") as connection:
         previous_version = connection.execute("PRAGMA user_version").fetchone()[0]
-        if args.database_migration and previous_version != 17:
-            raise RuntimeError("Migration baseline must be database v17")
+        if args.database_migration and previous_version != {"session-modes-v18":17,"automations-v19":18}[args.database_migration]:
+            raise RuntimeError("Database version does not match migration baseline")
         selected = columns(connection, tables)
         with sqlite3.connect(backup / "database.sqlite") as saved:
             connection.backup(saved)
@@ -145,7 +145,7 @@ try:
         verified[path] = hashlib.sha256(payload).hexdigest()
     result = {"source": manifest["source"], "webHash": manifest["webHash"], "url": args.origin, "ready": ready,
         "dataUnchanged": True, "databaseMigration": args.database_migration, "previousDatabaseVersion": previous_version,
-        "historicalModes": "work" if args.database_migration else "unchanged", "tables": tables, "serverUnchanged": not args.include_server, "serverHash": manifest.get("serverHash"), "previousServerIndexHash": backend, "backup": str(backup), "assets": verified, "retainedAssets": retained}
+        "historicalModes": "work" if args.database_migration == "session-modes-v18" else "unchanged", "tables": tables, "serverUnchanged": not args.include_server, "serverHash": manifest.get("serverHash"), "previousServerIndexHash": backend, "backup": str(backup), "assets": verified, "retainedAssets": retained}
     pathlib.Path(args.evidence).write_text(json.dumps(result, indent=2) + "\n")
     print(json.dumps(result))
 except Exception:

@@ -1,3 +1,5 @@
+import { automationMail } from "./automation-mail.js";
+import { automations } from "./automations.js";
 import { certificateInspectRequest } from "../shared/certificates.js";
 import { RunnerControl } from "./runner/control.js";
 import {
@@ -96,6 +98,8 @@ type ServerOptions = {
   sudoIdentity?: ReturnType<typeof sudoIdentity>;
   /** null is retained for native configuration adapter contract tests. */
   providerRuntime?: ProviderRuntime | null;
+  automationClock?: () => number;
+  automationTimer?: boolean;
 };
 
 export async function createServer(options: ServerOptions = {}) {
@@ -1410,7 +1414,10 @@ async function createServerInternal(
     if (turn) value.turn = { id: turn.id, status: turn.status };
     return value;
   });
-  app.post("/api/agent/run", { bodyLimit: 256 * 1024 }, async (req, reply) => {
+  const submitRun = async (
+    body: unknown,
+    reply: { code: (status: number) => { send: (body: any) => any } },
+  ) => {
     const p = z
       .object({
         threadId: z.string().max(200).optional(),
@@ -1433,7 +1440,7 @@ async function createServerInternal(
         (v) => v.text.length > 0 || v.attachments.length > 0,
         "请输入消息或添加附件",
       )
-      .parse(req.body);
+      .parse(body);
     if (!p.skills?.length) delete p.skills;
     // Preserve successful idempotency records created by v0.2.
     const legacy = db.get(`run:${p.requestId}`);
@@ -1672,7 +1679,161 @@ async function createServerInternal(
     } finally {
       if (!waitingRuns.has(p.requestId)) releaseProviderConfig?.();
     }
+  };
+  app.post("/api/agent/run", { bodyLimit: 256 * 1024 }, (req, reply) =>
+    submitRun(req.body, reply),
+  );
+  const mail = automationMail(db, vault);
+  const scheduled = automations(db, {
+    mail,
+    now: options.automationClock,
+    ready: () => runtime.state === "ready" && !service.busy,
+    validate: async (input) => {
+      if (["email", "both"].includes(input.notification) && !mail.configured())
+        throw new PublicError("请先配置邮件通知");
+      await files.inputs(input.attachments);
+      await service.skills.prepare(input.skills);
+      if (input.plugins.length) await service.plugins.inputs(input.plugins);
+      if (input.expertId) service.experts.read(input.expertId);
+      await service.runtimeSettings.capture(
+        { ...input },
+        runtime.providerRuntime?.revision,
+      );
+    },
+    submit: async (body) => {
+      let statusCode = 200;
+      const result = await submitRun(body, {
+        code: (status) => {
+          statusCode = status;
+          return { send: (value) => value };
+        },
+      });
+      return { statusCode, body: result };
+    },
+    probe: async (requestId, threadId, turnId) => {
+      const r = runs.get(requestId);
+      threadId ||= r?.thread_id || null;
+      turnId ||= r?.turn_id || null;
+      if (!r)
+        return {
+          state: "interrupted",
+          error: "服务重启前未确认派发，请手动重新运行",
+        };
+      if (r.state === "rejected" || r.state === "abandoned")
+        return {
+          state: "failed",
+          error: "任务未执行，请检查配置后重试",
+          threadId: threadId || undefined,
+        };
+      if (!threadId || !turnId)
+        return {
+          state: "unknown",
+          threadId: threadId || undefined,
+          error: "派发结果未确认，不会自动重复执行",
+        };
+      const thread = await service.read(threadId);
+      const turn = thread.turns.find((t) => t.id === turnId);
+      const refs = { threadId, turnId };
+      if (turn?.status === "completed") return { ...refs, state: "succeeded" };
+      if (turn?.status === "failed")
+        return {
+          ...refs,
+          state: "failed",
+          error: "任务执行失败，打开会话查看详情",
+        };
+      if (turn?.status === "interrupted")
+        return { ...refs, state: "cancelled" };
+      if (!runtime.active.has(threadId))
+        return {
+          ...refs,
+          state: "interrupted",
+          error: "执行已中断，不会自动重复运行",
+        };
+      const waiting =
+        [...runtime.approvals.values()].some(
+          (v) => (v.params as Json).threadId === threadId,
+        ) ||
+        [...runtime.toolRequests.values()].some(
+          (v) => (v.params as Json).threadId === threadId,
+        );
+      return { ...refs, state: waiting ? "waiting" : "running" };
+    },
+    cancel: async (requestId, threadId, turnId) => {
+      const held = waitingRuns.get(requestId);
+      if (held) {
+        waitingRuns.delete(requestId);
+        held.cancel();
+      }
+      if (threadId && turnId && runtime.active.has(threadId))
+        await service.handle("turn/interrupt", { threadId, turnId });
+    },
   });
+  app.get("/api/automations/mail", () => mail.settings());
+  app.post("/api/automations/mail/save", { bodyLimit: 96000 }, (req) =>
+    mail.save(req.body),
+  );
+  app.post("/api/automations/mail/test", (req) => mail.test(req.body));
+  app.post("/api/automations/mail/retry", (req) => {
+    mail.retry(z.object({ id: z.string().uuid() }).parse(req.body).id);
+    return { ok: true };
+  });
+  app.get("/api/automations/result/:id", (req) =>
+    scheduled.result(
+      z
+        .string()
+        .uuid()
+        .parse((req.params as Json).id),
+    ),
+  );
+  app.get("/api/automations", () => ({
+    tasks: scheduled.list(),
+    notices: scheduled.notices(),
+  }));
+  app.get("/api/automations/:id", (req) =>
+    scheduled.read(
+      z
+        .string()
+        .uuid()
+        .parse((req.params as Json).id),
+      z.object({ cursor: z.string().uuid().optional() }).parse(req.query)
+        .cursor,
+    ),
+  );
+  app.post("/api/automations/save", { bodyLimit: 256 * 1024 }, (req) =>
+    scheduled.save(req.body),
+  );
+  app.post("/api/automations/control", (req) => {
+    const p = z
+      .object({
+        id: z.string().uuid(),
+        revision: z.number().int(),
+        action: z.enum(["pause", "resume", "delete"]),
+      })
+      .parse(req.body);
+    return { task: scheduled.control(p.id, p.revision, p.action) };
+  });
+  app.post("/api/automations/run", (req) => {
+    const p = z
+      .object({
+        id: z.string().uuid(),
+        revision: z.number().int(),
+        requestId: z.string().uuid(),
+      })
+      .parse(req.body);
+    const run = scheduled.runNow(p.id, p.revision, p.requestId);
+    return { run };
+  });
+  app.post("/api/automations/stop", async (req) => {
+    await scheduled.stop(
+      z.object({ id: z.string().uuid() }).parse(req.body).id,
+    );
+    return { ok: true };
+  });
+  app.post("/api/automations/read", (req) => {
+    scheduled.markRead(z.object({ id: z.string().uuid() }).parse(req.body).id);
+    return { ok: true };
+  });
+  if (options.automationTimer !== false) scheduled.start();
   const actions = new Set([
     "configuration/recover",
     "gateway/catalog",
@@ -2103,6 +2264,7 @@ async function createServerInternal(
     );
   }
   app.addHook("preClose", async () => {
+    await scheduled.close();
     for (const res of streams.keys()) res.end();
   });
   app.addHook("onClose", async () => {
@@ -2138,6 +2300,7 @@ async function createServerInternal(
     vault,
     workspaces: workspaceStore,
     nodeControl,
+    automations: scheduled,
   };
 }
 if (

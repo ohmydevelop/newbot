@@ -20,3 +20,5 @@ createRoot(document.getElementById("root")!).render(
 if (new URL(location.href).searchParams.get("profile") === "1") {
   void import("./performance").then((m) => m.installPerformanceProbe());
 }
+
+import "./automations.css";

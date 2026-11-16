@@ -91,7 +91,7 @@ export function fileStore(directory: string, db: Store) {
     assertStorageDirectory(folder);
     const rows = db.raw
       .prepare(
-        "SELECT id FROM attachments WHERE legacy=0 AND created<? AND NOT EXISTS(SELECT 1 FROM run_attachments WHERE file_id=attachments.id)",
+        "SELECT id FROM attachments WHERE legacy=0 AND created<? AND NOT EXISTS(SELECT 1 FROM run_attachments WHERE file_id=attachments.id) AND NOT EXISTS(SELECT 1 FROM automation_attachment_refs WHERE file_id=attachments.id)",
       )
       .all(now - 86400000) as { id: string }[];
     for (const { id } of rows) {

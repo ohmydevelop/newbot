@@ -34,7 +34,8 @@ export function ProcessGroup({
   const viewport = useRef<HTMLDivElement>(null),
     content = useRef<HTMLDivElement>(null);
   const follow = useRef(running),
-    position = useRef(0);
+    position = useRef(0),
+    wasExpanded = useRef(false);
   const id = useId();
   const measure = () => {
     const el = viewport.current;
@@ -49,9 +50,14 @@ export function ProcessGroup({
   };
   useLayoutEffect(() => {
     const el = viewport.current;
-    if (!el || !expanded) return;
-    el.scrollTop =
-      follow.current && running ? el.scrollHeight : position.current;
+    if (!el || !expanded) {
+      wasExpanded.current = false;
+      return;
+    }
+    if (!wasExpanded.current)
+      el.scrollTop =
+        follow.current && running ? el.scrollHeight : position.current;
+    wasExpanded.current = true;
     measure();
   }, [expanded, items, running]);
   useEffect(() => {
@@ -104,6 +110,7 @@ export function ProcessGroup({
           role="region"
           aria-label="执行过程详情"
           onScroll={(e) => {
+            if (!expanded) return;
             position.current = e.currentTarget.scrollTop;
             follow.current =
               e.currentTarget.scrollHeight -

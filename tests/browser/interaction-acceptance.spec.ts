@@ -280,7 +280,11 @@ test("工作流程默认折叠，内部滚动到两端后衔接聊天，重开�
   await expect(inner).toBeVisible();
   await inner.evaluate((e) => {
     e.scrollTop = 180;
+    (
+      document.querySelector('[aria-label="收起侧栏"]') as HTMLButtonElement
+    )?.click();
   });
+  await expect.poll(() => inner.evaluate((e) => e.scrollTop)).toBe(180);
   await inner.hover();
   const before = await outer.evaluate((e) => e.scrollTop);
   await page.mouse.wheel(0, 100);

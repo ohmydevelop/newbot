@@ -1,0 +1,132 @@
+{
+  "stats": {
+    "startTime": "2026-11-16T15:18:53.041Z",
+    "duration": 79688.416,
+    "expected": 12,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "tests": [
+    {
+      "title": "自动任务触摸滚动与固定操作 reduce",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 1954
+        }
+      ]
+    },
+    {
+      "title": "自动任务触摸滚动与固定操作 no-preference",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 2176
+        }
+      ]
+    },
+    {
+      "title": "真实触摸事件：专家内外滚动交接 320",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 13035
+        }
+      ]
+    },
+    {
+      "title": "真实触摸事件：专家内外滚动交接 390",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 12890
+        }
+      ]
+    },
+    {
+      "title": "手机抽屉动画及关闭后触摸恢复 false",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 1020
+        }
+      ]
+    },
+    {
+      "title": "手机抽屉动画及关闭后触摸恢复 true",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 997
+        }
+      ]
+    },
+    {
+      "title": "触摸分类横滑不改变分类，竖向目录仍可滚动",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 3430
+        }
+      ]
+    },
+    {
+      "title": "平板触控调整宽度、取消释放与下一次操作",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 1843
+        }
+      ]
+    },
+    {
+      "title": "触摸工作流程边缘交接聊天且默认折叠",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 16403
+        }
+      ]
+    },
+    {
+      "title": "插件内技能可阅读源码并返回，读取页不混入管理操作",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 2919
+        }
+      ]
+    },
+    {
+      "title": "技能导入预览触摸两端交接，不执行安装",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 17543
+        }
+      ]
+    },
+    {
+      "title": "插件长工具目录触摸主滚动与返回",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 4230
+        }
+      ]
+    }
+  ]
+}

@@ -8,7 +8,12 @@ import {
 } from "./ReferenceIcons";
 import { NewChatIcon as SquarePen } from "./AppIcons";
 import * as Dropdown from "@radix-ui/react-dropdown-menu";
-import { Archive, Pencil, Settings as SettingsIcon } from "lucide-react";
+import {
+  Archive,
+  Pencil,
+  CalendarClock,
+  Settings as SettingsIcon,
+} from "lucide-react";
 import { useEffect, useId, useRef, useState } from "react";
 import { SidebarIcon } from "./SidebarIcon";
 import type { ThreadSummary } from "../../shared/types";
@@ -31,6 +36,9 @@ type NavigationProps = {
   archiving: string | null;
   appleKeys: boolean;
   onNewChat: () => void;
+  onAutomations: () => void;
+  automationsOpen: boolean;
+  automationUnread: number;
   onSearch: () => void;
   onReload: () => void;
   onSettings: (tab: string) => void;
@@ -51,6 +59,9 @@ export function ConversationNavigation({
   archiving,
   appleKeys,
   onNewChat,
+  onAutomations,
+  automationsOpen,
+  automationUnread,
   onSearch,
   onReload,
   onSettings,
@@ -107,6 +118,16 @@ export function ConversationNavigation({
           <button
             type="button"
             className="rail-icon"
+            aria-label="自动任务"
+            title="自动任务"
+            aria-current={automationsOpen ? "page" : undefined}
+            onClick={onAutomations}
+          >
+            <CalendarClock size={18} aria-hidden="true" />
+          </button>
+          <button
+            type="button"
+            className="rail-icon"
             aria-label="搜索聊天"
             title="搜索聊天"
             onClick={() => onSearch()}
@@ -149,6 +170,19 @@ export function ConversationNavigation({
             <SquarePen size={18} />
             <span>新建聊天</span>
             <kbd>{appleKeys ? "⇧ ⌘ O" : "Ctrl ⇧ O"}</kbd>
+          </button>
+          <button
+            onClick={onAutomations}
+            aria-current={automationsOpen ? "page" : undefined}
+          >
+            <CalendarClock size={18} aria-hidden="true" />
+            <span>自动任务</span>
+            {automationUnread > 0 && (
+              <span
+                className="automation-unread"
+                aria-label={`${automationUnread} 个未读结果`}
+              />
+            )}
           </button>
           <button onClick={onSearch}>
             <Search size={18} aria-hidden="true" />

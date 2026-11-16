@@ -26,6 +26,14 @@ def validate_migration(connection, migration, previous_version, selected):
         expected["session_runtime"] = selected["session_runtime"] + ["mode"]
         if connection.execute("SELECT count(*) FROM session_runtime WHERE mode != 'work'").fetchone()[0]:
             raise RuntimeError("Historical session mode was not preserved as work")
+    elif migration == "automations-v19":
+        if previous_version != 18 or version != 19:
+            raise RuntimeError("Expected database migration v18 to v19")
+        for table in ["automation_tasks", "automation_runs", "automation_attachment_refs", "automation_mail_config", "automation_deliveries"]:
+            if not connection.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name=?", (table,)).fetchone():
+                raise RuntimeError("Missing automation table: " + table)
+            if connection.execute('SELECT count(*) FROM "' + table + '"').fetchone()[0]:
+                raise RuntimeError("Automation tables must be empty at first deployment")
     elif version != previous_version:
         raise RuntimeError("Unexpected database version change")
     if actual != expected:

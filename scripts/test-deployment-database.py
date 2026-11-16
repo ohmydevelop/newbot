@@ -34,5 +34,26 @@ class MigrationTests(unittest.TestCase):
                 self.assertEqual(columns(db, selected), selected)
                 self.assertEqual(summaries(db, selected), before)
 
+    def test_automation_migration_and_rollback(self):
+        with tempfile.TemporaryDirectory() as root:
+            live=pathlib.Path(root)/"live.sqlite"
+            saved=pathlib.Path(root)/"saved.sqlite"
+            with sqlite3.connect(live) as db:
+                db.executescript("CREATE TABLE session_runtime(id TEXT,mode TEXT); INSERT INTO session_runtime VALUES('old','chat'); PRAGMA user_version=18;")
+                selected=columns(db,["session_runtime"])
+                before=summaries(db,selected)
+                with sqlite3.connect(saved) as backup: db.backup(backup)
+                tables=["automation_tasks","automation_runs","automation_attachment_refs","automation_mail_config","automation_deliveries"]
+                for table in tables: db.execute("CREATE TABLE "+table+"(id TEXT)")
+                db.execute("PRAGMA user_version=19")
+                validate_migration(db,"automations-v19",18,selected)
+                self.assertEqual(summaries(db,selected),before)
+                db.execute("INSERT INTO automation_tasks VALUES('unexpected')")
+                with self.assertRaises(RuntimeError): validate_migration(db,"automations-v19",18,selected)
+            restore_database(saved,live)
+            with sqlite3.connect(live) as db:
+                self.assertEqual(db.execute("PRAGMA user_version").fetchone()[0],18)
+                self.assertEqual(summaries(db,selected),before)
+                self.assertFalse(db.execute("SELECT 1 FROM sqlite_master WHERE name='automation_tasks'").fetchone())
 
 unittest.main()

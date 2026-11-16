@@ -1,0 +1,242 @@
+import { test, expect } from "@playwright/test";
+for (const width of [390, 1280])
+  for (const theme of ["light", "dark"] as const)
+    test(`自动任务完整流程 ${width} ${theme}`, async ({ page }, info) => {
+      test.setTimeout(75000);
+      await page.setViewportSize({ width, height: 844 });
+      await page.emulateMedia({ colorScheme: theme });
+      await page.goto("/");
+      await page.getByLabel("登录密码").fill("issue-fixture-login");
+      await page.getByRole("button", { name: "继续", exact: true }).click();
+      const composer = page.getByRole("textbox", { name: "消息", exact: true });
+      await composer.fill("保留我的聊天草稿");
+      if (width < 760)
+        await page
+          .getByRole("button", { name: "展开侧栏", exact: true })
+          .click();
+      const nav = page.getByRole("navigation", { name: "主导航" });
+      const positions = await Promise.all(
+        [/新建聊天/, /^自动任务/, /搜索聊天/].map(
+          async (name) =>
+            (await nav.getByRole("button", { name }).boundingBox())!.y,
+        ),
+      );
+      expect(positions[0]).toBeLessThan(positions[1]);
+      expect(positions[1]).toBeLessThan(positions[2]);
+      await nav.getByRole("button", { name: /^自动任务/ }).click();
+      await page
+        .getByRole("heading", { name: "自动任务", exact: true })
+        .waitFor();
+      await page.getByRole("button", { name: "新建任务", exact: true }).click();
+      const modal = page.getByRole("dialog", {
+        name: "新建自动任务",
+        exact: true,
+      });
+      const name = `自动验收 ${width} ${theme}`;
+      await modal
+        .getByRole("textbox", { name: "任务名称", exact: true })
+        .fill(name);
+      await modal
+        .getByRole("textbox", { name: "任务指令", exact: true })
+        .fill("只回答：自动任务验收成功");
+      await modal
+        .getByRole("button", { name: "重复频率 1", exact: true })
+        .click();
+      await page.getByRole("button", { name: "每周", exact: true }).click();
+      await modal.getByRole("button", { name: "星期五", exact: true }).click();
+      await modal
+        .getByRole("button", { name: "添加触发器", exact: true })
+        .click();
+      await modal
+        .getByRole("button", { name: "移除触发器 2", exact: true })
+        .click();
+      await modal
+        .locator(".automation-editor-body")
+        .evaluate((e) => (e.scrollTop = e.scrollHeight));
+      await expect(
+        modal.getByRole("button", { name: "保存", exact: true }),
+      ).toBeInViewport();
+      await expect(page.locator("html")).toHaveAttribute("data-theme", theme);
+      await page.screenshot({ path: info.outputPath("editor.png") });
+      await modal.getByRole("button", { name: "保存", exact: true }).click();
+      await expect(modal).not.toBeVisible();
+      await expect(
+        page.getByRole("heading", { name, exact: true }),
+      ).toBeVisible();
+      await page.getByRole("tab", { name: "概览", exact: true }).press("End");
+      await expect(
+        page.getByRole("tab", { name: "运行记录", exact: true }),
+      ).toBeFocused();
+      await expect(
+        page.getByRole("tabpanel", { name: "运行记录", exact: true }),
+      ).toBeVisible();
+      await page
+        .getByRole("tab", { name: "运行记录", exact: true })
+        .press("ArrowLeft");
+      await expect(
+        page.getByRole("tab", { name: "概览", exact: true }),
+      ).toHaveAttribute("aria-selected", "true");
+      await page.getByRole("button", { name: "立即运行", exact: true }).click();
+      await page
+        .getByRole("button", { name: "打开会话", exact: true })
+        .first()
+        .waitFor({ timeout: 30000 });
+      await expect(
+        page.getByRole("button", { name: "已完成", exact: true }),
+      ).toBeVisible({ timeout: 30000 });
+      await page.screenshot({ path: info.outputPath("runs.png") });
+      await page
+        .getByRole("button", { name: "打开会话", exact: true })
+        .first()
+        .click();
+      await expect(composer).toBeVisible();
+      await expect(
+        page.getByText("测试回复完成。", { exact: true }),
+      ).toBeVisible();
+      if (width < 760)
+        await page
+          .getByRole("button", { name: "展开侧栏", exact: true })
+          .click();
+      await page
+        .getByRole("navigation", { name: "主导航" })
+        .getByRole("button", { name: /^自动任务/ })
+        .click();
+      await page
+        .getByRole("button", { name: "返回自动任务", exact: true })
+        .click();
+      await page
+        .getByRole("button", { name: `更多操作：${name}`, exact: true })
+        .click();
+      await page.getByRole("menuitem", { name: "暂停", exact: true }).click();
+      await expect(
+        page.getByText("已暂停", { exact: true }).last(),
+      ).toBeVisible();
+      await page.reload();
+      await expect(
+        page.getByRole("heading", { name: "自动任务", exact: true }),
+      ).toBeVisible();
+      await page.getByRole("searchbox", { name: "搜索自动任务" }).fill(name);
+      await expect(page.locator(".automation-row")).toHaveCount(1);
+      await page.screenshot({ path: info.outputPath("list.png") });
+      const search = page.getByRole("searchbox", { name: "搜索自动任务" });
+      expect(
+        await search.evaluate((e) => getComputedStyle(e).borderTopWidth),
+      ).toBe("0px");
+      await page
+        .getByRole("heading", { name: "自动任务", exact: true })
+        .click();
+      await page.screenshot({
+        path: info.outputPath("list-filled-unfocused.png"),
+      });
+      await search.fill("");
+      await page.screenshot({
+        path: info.outputPath("list-empty-focused.png"),
+      });
+      await page
+        .getByRole("heading", { name: "自动任务", exact: true })
+        .click();
+      await page.screenshot({
+        path: info.outputPath("list-empty-unfocused.png"),
+      });
+      await search.fill(name);
+      expect(
+        await page.evaluate(() => document.documentElement.scrollWidth),
+      ).toBeLessThanOrEqual(width);
+      await page
+        .getByRole("button", { name: `更多操作：${name}`, exact: true })
+        .click();
+      await page.getByRole("menuitem", { name: "删除", exact: true }).click();
+      await page
+        .getByRole("dialog", { name: "删除自动任务" })
+        .getByRole("button", { name: "删除", exact: true })
+        .click();
+      await expect(
+        page.getByRole("dialog", { name: "删除自动任务" }),
+      ).not.toBeVisible();
+    });
+for (const width of [320, 390, 1280])
+  test(`自动任务弹层、邮件配置与焦点 ${width}`, async ({ page }, info) => {
+    await page.setViewportSize({ width, height: 740 });
+    await page.goto("/");
+    await page.getByLabel("登录密码").fill("issue-fixture-login");
+    await page.getByRole("button", { name: "继续", exact: true }).click();
+    const composer = page.getByRole("textbox", { name: "消息", exact: true });
+    await composer.fill("切换后保留草稿");
+    if (width < 760)
+      await page.getByRole("button", { name: "展开侧栏", exact: true }).click();
+    await page
+      .getByRole("navigation", { name: "主导航" })
+      .getByRole("button", { name: /^自动任务/ })
+      .click();
+    await page.getByRole("button", { name: "新建任务", exact: true }).click();
+    const modal = page.getByRole("dialog", {
+      name: "新建自动任务",
+      exact: true,
+    });
+    for (const label of [
+      "重复频率 1",
+      "时区 1",
+      "任务模型",
+      "交互模式：聊天",
+      "连接器",
+      "技能",
+    ]) {
+      await modal.getByRole("button", { name: label, exact: true }).click();
+      if (label.startsWith("交互模式")) {
+        await expect(
+          page.getByRole("menu", { name: "交互模式：聊天" }),
+        ).toBeVisible();
+      } else {
+        await expect(page.locator(".picker-panel:visible")).toHaveCount(1);
+        await expect(page.locator(".picker-panel:visible")).toHaveAttribute(
+          "data-modal-layer",
+          "true",
+        );
+      }
+      await page.keyboard.press("Escape");
+      await expect(page.locator(".picker-panel:visible")).toHaveCount(0);
+      await expect(modal).toBeVisible();
+    }
+    await modal.getByRole("button", { name: "任务通知", exact: true }).click();
+    await page.getByRole("button", { name: "站内与邮件", exact: true }).click();
+    await modal.getByRole("button", { name: "配置邮件", exact: true }).click();
+    const mail = page.getByRole("dialog", { name: "邮件通知", exact: true });
+    await mail.getByLabel("SMTP 服务器", { exact: true }).fill("127.0.0.1");
+    await mail.getByLabel("端口", { exact: true }).fill("1");
+    await mail.getByLabel("发件邮箱", { exact: true }).fill("bot@example.test");
+    await mail
+      .getByLabel("收件邮箱", { exact: true })
+      .fill("owner@example.test");
+    await mail.getByLabel("账号", { exact: true }).fill("fixture");
+    await mail.getByLabel("应用密码", { exact: true }).fill("local-test-only");
+    await mail
+      .getByLabel("newbot 地址", { exact: true })
+      .fill("https://newbot.example.test");
+    await mail
+      .locator(".automation-editor-body")
+      .evaluate((e) => (e.scrollTop = e.scrollHeight));
+    await expect(
+      mail.getByRole("button", { name: "保存", exact: true }),
+    ).toBeInViewport();
+    await mail.getByRole("button", { name: "保存", exact: true }).click();
+    await expect(
+      mail.getByText("已保存，可检查连接或发送测试邮件。", { exact: true }),
+    ).toBeVisible();
+    await mail.getByRole("button", { name: "检查连接", exact: true }).click();
+    await expect(mail.getByRole("alert")).toContainText("邮件服务器");
+    await page.screenshot({ path: info.outputPath("mail.png") });
+    await mail
+      .locator(".automation-editor-body")
+      .evaluate((e) => (e.scrollTop = 0));
+    await page.screenshot({ path: info.outputPath("mail-top.png") });
+    expect(
+      await page.evaluate(() => document.documentElement.scrollWidth),
+    ).toBeLessThanOrEqual(width);
+    await page.keyboard.press("Escape");
+    await expect(mail).not.toBeVisible();
+    await expect(modal).toBeVisible();
+    await modal.getByRole("button", { name: "取消", exact: true }).click();
+    await expect(
+      page.getByRole("button", { name: "新建任务", exact: true }),
+    ).toBeFocused();
+  });

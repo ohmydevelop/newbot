@@ -1,0 +1,12 @@
+✔ live events, approval recovery and forms share names without changing executable identity or approval parameters (4.293367ms)
+✔ display metadata stays bounded plain text and unknown operations are not renamed (0.211106ms)
+✔ 故障注入：5px中心偏移必须阻止验收 (2.347032ms)
+✔ 故障注入：查询/筛选/滚动丢失必须阻止验收 (0.686849ms)
+ℹ tests 590
+ℹ suites 0
+ℹ pass 589
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 1
+ℹ todo 0
+ℹ duration_ms 26362.985831

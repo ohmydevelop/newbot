@@ -1,5 +1,11 @@
 import * as Popover from "@radix-ui/react-popover";
-import type { ComponentProps, Dispatch, SetStateAction } from "react";
+import {
+  useContext,
+  type ComponentProps,
+  type Dispatch,
+  type SetStateAction,
+} from "react";
+import { ModalLayer } from "./ui";
 export type ComposerPanel =
   | "plugins"
   | "skills"
@@ -14,6 +20,7 @@ export function PickerContent({
   onCloseAutoFocus,
   ...props
 }: ComponentProps<typeof Popover.Content>) {
+  const inModal = useContext(ModalLayer);
   return (
     <Popover.Portal>
       <Popover.Content
@@ -35,6 +42,7 @@ export function PickerContent({
             event.preventDefault();
         }}
         className={`picker-panel ${className}`}
+        data-modal-layer={inModal || undefined}
       />
     </Popover.Portal>
   );

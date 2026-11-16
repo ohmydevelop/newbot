@@ -1,0 +1,722 @@
+{
+  "stats": {
+    "startTime": "2026-11-16T15:14:36.650Z",
+    "duration": 255915.429,
+    "expected": 71,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "tests": [
+    {
+      "title": "自动任务完整流程 390 light",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 7639
+        }
+      ]
+    },
+    {
+      "title": "自动任务完整流程 390 dark",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 7592
+        }
+      ]
+    },
+    {
+      "title": "自动任务完整流程 1280 light",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 6988
+        }
+      ]
+    },
+    {
+      "title": "自动任务完整流程 1280 dark",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 7013
+        }
+      ]
+    },
+    {
+      "title": "自动任务弹层、邮件配置与焦点 320",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 1543
+        }
+      ]
+    },
+    {
+      "title": "自动任务弹层、邮件配置与焦点 390",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 1551
+        }
+      ]
+    },
+    {
+      "title": "自动任务弹层、邮件配置与焦点 1280",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 1361
+        }
+      ]
+    },
+    {
+      "title": "侧栏同坐标连续折叠和导航顺序 390",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 2371
+        }
+      ]
+    },
+    {
+      "title": "侧栏同坐标连续折叠和导航顺序 1280",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 410
+        }
+      ]
+    },
+    {
+      "title": "已有会话的两个输入框入口就地搜索选择 390",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 3562
+        }
+      ]
+    },
+    {
+      "title": "已有会话的两个输入框入口就地搜索选择 1280",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 3199
+        }
+      ]
+    },
+    {
+      "title": "目录整体中心对齐、说明省略与图标添加 390",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 4775
+        }
+      ]
+    },
+    {
+      "title": "目录整体中心对齐、说明省略与图标添加 1280",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 4602
+        }
+      ]
+    },
+    {
+      "title": "删除后插件与独立连接器连续填满同一网格",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 2358
+        }
+      ]
+    },
+    {
+      "title": "长连接器详情底部仍可返回与管理 390",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 2681
+        }
+      ]
+    },
+    {
+      "title": "长连接器详情底部仍可返回与管理 1280",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 2508
+        }
+      ]
+    },
+    {
+      "title": "取消就地技能读取后切换聊天，迟到响应不能修改新聊天",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 2419
+        }
+      ]
+    },
+    {
+      "title": "目录状态和更多操作对齐，与有无说明无关",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 1918
+        }
+      ]
+    },
+    {
+      "title": "技能切换说明和源码不会移动主操作",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 2173
+        }
+      ]
+    },
+    {
+      "title": "持久表单字段填值后标签仍然可见",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 1994
+        }
+      ]
+    },
+    {
+      "title": "工具详情使用主滚动容器，长目录不受旧卡片高度限制",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 1985
+        }
+      ]
+    },
+    {
+      "title": "深层目录视觉 320 浅色",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 4330
+        }
+      ]
+    },
+    {
+      "title": "深层目录视觉 320 深色",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 4360
+        }
+      ]
+    },
+    {
+      "title": "深层目录视觉 390 浅色",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 4320
+        }
+      ]
+    },
+    {
+      "title": "深层目录视觉 390 深色",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 4359
+        }
+      ]
+    },
+    {
+      "title": "深层目录视觉 768 浅色",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 4130
+        }
+      ]
+    },
+    {
+      "title": "深层目录视觉 768 深色",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 4147
+        }
+      ]
+    },
+    {
+      "title": "深层目录视觉 1280 浅色",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 4140
+        }
+      ]
+    },
+    {
+      "title": "深层目录视觉 1280 深色",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 4152
+        }
+      ]
+    },
+    {
+      "title": "专家选择器双向滚动链 390",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 3053
+        }
+      ]
+    },
+    {
+      "title": "专家选择器双向滚动链 1280",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 2824
+        }
+      ]
+    },
+    {
+      "title": "技能管理菜单启停、失败重试与卸载取消保持正确状态",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 4859
+        }
+      ]
+    },
+    {
+      "title": "共享表单认证菜单与证书入口保持可访问",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 3322
+        }
+      ]
+    },
+    {
+      "title": "导入技能选择窗允许边缘交接且不执行安装",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 3417
+        }
+      ]
+    },
+    {
+      "title": "插件嵌套工具详情使用同一主滚动，返回保留插件上下文",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 2590
+        }
+      ]
+    },
+    {
+      "title": "左右拖拽跨越不透明 iframe，边界、点击恢复与宽度持久化",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 3924
+        }
+      ]
+    },
+    {
+      "title": "拖拽只接受所属指针，失去捕获、取消、失焦和卸载均清理",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 866
+        }
+      ]
+    },
+    {
+      "title": "动画真实帧连续且减弱模式即时稳定 false",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 3517
+        }
+      ]
+    },
+    {
+      "title": "动画真实帧连续且减弱模式即时稳定 true",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 3158
+        }
+      ]
+    },
+    {
+      "title": "工作流程默认折叠，内部滚动到两端后衔接聊天，重开保留位置",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 6659
+        }
+      ]
+    },
+    {
+      "title": "模型共享目录和配置详情 1280",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 3774
+        }
+      ]
+    },
+    {
+      "title": "模型共享目录和配置详情 320",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 4266
+        }
+      ]
+    },
+    {
+      "title": "目录迟到响应不得覆盖用户新查询、滚动和焦点",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 2934
+        }
+      ]
+    },
+    {
+      "title": "浏览器触摸取消释放拖拽捕获并保存最后宽度",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 923
+        }
+      ]
+    },
+    {
+      "title": "模型连接创建保存、重新读取、移除以及目录失败恢复",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 3268
+        }
+      ]
+    },
+    {
+      "title": "设为默认需先选择有效模型，显式操作才切换连接",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 2894
+        }
+      ]
+    },
+    {
+      "title": "模型与MCP长配置共用外层滚动，不截断证书和保存入口",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 4806
+        }
+      ]
+    },
+    {
+      "title": "交互模式保持紧凑布局和焦点 320 light",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 3330
+        }
+      ]
+    },
+    {
+      "title": "交互模式保持紧凑布局和焦点 320 dark",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 3342
+        }
+      ]
+    },
+    {
+      "title": "交互模式保持紧凑布局和焦点 390 light",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 3337
+        }
+      ]
+    },
+    {
+      "title": "交互模式保持紧凑布局和焦点 390 dark",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 3326
+        }
+      ]
+    },
+    {
+      "title": "交互模式保持紧凑布局和焦点 1280 light",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 2995
+        }
+      ]
+    },
+    {
+      "title": "交互模式保持紧凑布局和焦点 1280 dark",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 2979
+        }
+      ]
+    },
+    {
+      "title": "只读工具许可保存与刷新 390",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 3584
+        }
+      ]
+    },
+    {
+      "title": "只读工具许可保存与刷新 1280",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 3350
+        }
+      ]
+    },
+    {
+      "title": "分类真正卸载、关闭重开和详情返回保留目录状态",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 3642
+        }
+      ]
+    },
+    {
+      "title": "设置布局 1440 light",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 4823
+        }
+      ]
+    },
+    {
+      "title": "设置布局 1440 dark",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 4778
+        }
+      ]
+    },
+    {
+      "title": "设置布局 1280 light",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 4775
+        }
+      ]
+    },
+    {
+      "title": "设置布局 1280 dark",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 4813
+        }
+      ]
+    },
+    {
+      "title": "设置布局 768 light",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 4749
+        }
+      ]
+    },
+    {
+      "title": "设置布局 768 dark",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 4778
+        }
+      ]
+    },
+    {
+      "title": "设置布局 390 light",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 4887
+        }
+      ]
+    },
+    {
+      "title": "设置布局 390 dark",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 4879
+        }
+      ]
+    },
+    {
+      "title": "设置布局 320 light",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 4872
+        }
+      ]
+    },
+    {
+      "title": "设置布局 320 dark",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 4866
+        }
+      ]
+    },
+    {
+      "title": "标题栏偏移与查询丢失注入会被同一验收器拒绝",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 1981
+        }
+      ]
+    },
+    {
+      "title": "左栏键盘/拖拽与刷新持久化，折叠保留设置入口",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 2242
+        }
+      ]
+    },
+    {
+      "title": "正常/减弱动画 false",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 2042
+        }
+      ]
+    },
+    {
+      "title": "正常/减弱动画 true",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 2041
+        }
+      ]
+    },
+    {
+      "title": "桌面设置缩为手机时右栏不能抢焦点",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 2176
+        }
+      ]
+    }
+  ]
+}

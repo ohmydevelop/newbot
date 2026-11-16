@@ -130,7 +130,8 @@ export function credentialVault(db: Store, directory: string, cwd: string) {
     if (
       !existsSync(path) &&
       !persisted().length &&
-      !sql.prepare("SELECT 1 FROM private_field_sets LIMIT 1").get()
+      !sql.prepare("SELECT 1 FROM private_field_sets LIMIT 1").get() &&
+      !sql.prepare("SELECT 1 FROM automation_mail_config LIMIT 1").get()
     ) {
       const descriptor = openSync(
         path,

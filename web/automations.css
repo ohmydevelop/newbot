@@ -1,0 +1,578 @@
+.main[hidden] {
+  display: none;
+}
+.automation-page {
+  min-width: 0;
+}
+.automation-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior-y: auto;
+}
+.automation-content {
+  max-width: 848px;
+  margin: 0 auto;
+  padding: 36px 24px 64px;
+}
+.automation-heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.automation-heading h1 {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  font-size: 24px;
+  line-height: 1.4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.automation-heading > button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.automation-tabs {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+.automation-tabs > button {
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 14px;
+}
+.automation-tabs > button[aria-selected="true"],
+.automation-tabs > button[aria-pressed="true"] {
+  background: var(--surface);
+  color: var(--text);
+}
+.automation-list-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.automation-list-toolbar .catalog-query {
+  max-width: 220px;
+  min-width: 120px;
+}
+.automation-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 18px 12px;
+  border-bottom: 1px solid var(--line);
+}
+.automation-row > svg {
+  flex: 0 0 auto;
+  color: var(--muted);
+}
+.automation-row-copy {
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  text-align: left;
+}
+.automation-row-copy strong,
+.automation-row-copy small {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.automation-row-copy strong {
+  font-size: 15px;
+  font-weight: 550;
+}
+.automation-row-copy small,
+.automation-row-status {
+  margin-top: 4px;
+  font-size: 13px;
+  color: var(--muted);
+}
+.automation-row-status {
+  margin: 0;
+  flex-shrink: 0;
+}
+.automation-unread {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-left: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+.automation-empty {
+  text-align: center;
+  color: var(--muted);
+  padding: 48px 0 32px;
+}
+.automation-templates {
+  margin: 12px auto 32px;
+  max-width: 480px;
+}
+.automation-templates h2,
+.automation-overview h2 {
+  font-size: 14px;
+  font-weight: 550;
+  margin: 0 0 12px;
+}
+.automation-templates > button {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px;
+  background: transparent;
+  border: 0;
+  border-radius: 12px;
+  text-align: left;
+}
+.automation-templates > button span {
+  flex: 1;
+}
+.automation-templates > button:hover,
+.automation-row:hover {
+  background: var(--surface);
+}
+.automation-notification-setting {
+  display: flex;
+  align-items: center;
+  gap: 12px 24px;
+  flex-wrap: wrap;
+  margin-top: 24px;
+}
+.automation-notification-setting > button {
+  min-height: 40px;
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  color: var(--muted);
+}
+.automation-notification-setting p {
+  font-size: 12px;
+}
+.automation-overview {
+  margin-top: 24px;
+}
+.automation-overview > section {
+  padding: 24px 0;
+  border-bottom: 1px solid var(--line);
+}
+.automation-detail-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.automation-detail-actions > span {
+  flex: 1;
+}
+.automation-detail-actions button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.automation-trigger-summary {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 12px 0;
+}
+.automation-trigger-summary small {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+}
+.automation-instructions {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.automation-summary-line {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-size: 13px;
+  color: var(--muted);
+}
+.automation-run {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--line);
+}
+.automation-run-icon {
+  color: var(--muted);
+}
+.automation-run-copy {
+  flex: 1;
+  min-width: 0;
+}
+.automation-run-copy > button {
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+.automation-run-copy small {
+  display: block;
+  font-size: 12px;
+  color: var(--muted);
+}
+.automation-run-copy p {
+  font-size: 13px;
+  margin: 6px 0 0;
+  overflow-wrap: anywhere;
+}
+.automation-editor {
+  display: flex;
+  flex-direction: column;
+  width: min(620px, calc(100vw - 32px));
+  max-height: min(90dvh, 900px);
+  padding: 0;
+  overflow: hidden;
+}
+.automation-editor > .modal-header {
+  margin: 0;
+  padding: 16px 20px;
+  flex-shrink: 0;
+}
+.automation-editor > form {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.automation-editor-body {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+  padding: 4px 20px 20px;
+}
+.automation-editor input.automation-name {
+  font-size: 18px;
+  font-weight: 550;
+  border: 0;
+  padding: 10px 0;
+  border-radius: 0;
+  background: transparent;
+  width: 100%;
+}
+.automation-field {
+  margin-top: 24px;
+}
+.automation-field h3 {
+  font-size: 13px;
+  font-weight: 550;
+  margin: 0 0 8px;
+}
+.automation-schedule {
+  border-radius: 12px;
+  padding: 10px 12px;
+  background: var(--surface);
+  margin-bottom: 8px;
+}
+.automation-schedule-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.automation-schedule-line + .automation-schedule-line {
+  margin-top: 8px;
+}
+.automation-schedule-line > svg {
+  flex-shrink: 0;
+}
+.automation-schedule-line input {
+  width: auto;
+  min-width: 0;
+  max-width: 155px;
+  padding: 6px 8px;
+  background: transparent;
+}
+.automation-schedule-line .automation-choice {
+  flex: 1;
+  min-width: 0;
+}
+.automation-choice {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  max-width: 100%;
+  border: 0;
+  padding: 8px;
+  border-radius: 8px;
+  background: transparent;
+  text-align: left;
+  font-size: 13px;
+  overflow: hidden;
+}
+.automation-choice > svg {
+  flex: 0 0 auto;
+}
+.automation-options {
+  width: 300px;
+}
+.automation-options .picker-results > button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  min-height: 40px;
+}
+.automation-weekdays {
+  display: flex;
+  gap: 5px;
+  margin: 10px 0;
+}
+.automation-weekdays button {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+}
+.automation-weekdays button[aria-pressed="true"] {
+  background: var(--strong);
+  color: var(--on-strong);
+}
+.automation-add-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  border: 1px dashed var(--line);
+  border-radius: 999px;
+  padding: 10px;
+  background: transparent;
+  font-size: 13px;
+}
+.automation-prompt {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+}
+.automation-prompt textarea {
+  border: 0;
+  background: transparent;
+  min-height: 140px;
+  resize: vertical;
+  width: 100%;
+  padding: 12px;
+  font-size: 15px;
+}
+.automation-capabilities {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 4px 8px 8px;
+}
+.automation-capability {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 8px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  font-size: 12px;
+}
+.automation-capabilities .approval-trigger {
+  margin-left: auto;
+}
+.automation-chips {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+.automation-chips button {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  max-width: 190px;
+  padding: 4px 8px;
+  font-size: 12px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: transparent;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.automation-editor-footer {
+  flex-shrink: 0;
+  padding: 12px 20px;
+  border-top: 1px solid var(--line);
+}
+.automation-editor-footer .editor-actions {
+  margin: 0;
+}
+.automation-editor-footer .inline-error {
+  font-size: 13px;
+  margin: 0 0 8px;
+}
+@media (max-width: 700px) {
+  .automation-content {
+    padding: 24px 16px 48px;
+  }
+  .automation-heading {
+    margin-bottom: 20px;
+  }
+  .automation-heading h1 {
+    font-size: 22px;
+  }
+  .automation-heading .primary {
+    font-size: 13px;
+    padding: 8px 12px;
+  }
+  .automation-list-toolbar {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .automation-list-toolbar .catalog-query {
+    flex: 1;
+    max-width: 100%;
+  }
+  .automation-row {
+    gap: 10px;
+    padding: 16px 4px;
+  }
+  .automation-editor {
+    width: calc(100vw - 16px);
+    max-height: calc(100dvh - 32px);
+  }
+  .automation-editor > .modal-header {
+    padding: 14px 16px;
+  }
+  .automation-editor-body {
+    padding: 0 16px 16px;
+  }
+  .automation-editor-footer {
+    padding: 12px 16px max(12px, env(safe-area-inset-bottom));
+  }
+  .automation-schedule {
+    padding: 8px;
+  }
+  .automation-schedule-line input {
+    max-width: 135px;
+    font-size: 13px;
+  }
+  .automation-weekdays {
+    gap: 2px;
+    justify-content: space-between;
+  }
+  .automation-capability {
+    padding: 6px;
+  }
+}
+.automation-notices {
+  width: 340px;
+  max-height: 60dvh;
+  overflow-y: auto;
+}
+.automation-notices h3 {
+  margin: 12px;
+  font-size: 14px;
+}
+.automation-notice {
+  display: block;
+  text-align: left;
+  width: 100%;
+  padding: 12px;
+  border: 0;
+  background: transparent;
+  border-radius: 10px;
+}
+.automation-notice strong,
+.automation-notice small {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.automation-notice small {
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.main-nav > button[aria-current="page"],
+.rail-icon[aria-current="page"] {
+  background: var(--surface);
+}
+.automation-mail-fields label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 14px;
+}
+.automation-mail-fields input,
+.automation-mail-fields textarea {
+  min-width: 0;
+  width: 100%;
+}
+.automation-mail-row {
+  display: flex;
+  align-items: end;
+  gap: 12px;
+}
+.automation-mail-row label {
+  flex: 1;
+}
+.automation-delivery {
+  color: var(--muted);
+  font-size: 13px;
+}
+.automation-delivery button {
+  text-decoration: underline;
+  margin-left: 8px;
+}
+
+.automation-list-toolbar .catalog-query input.catalog-search {
+  width: 100%;
+  min-width: 0;
+  flex: 1;
+}
+.automation-mail-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.automation-certificate-select {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.automation-certificate-select button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.automation-certificate-select small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+@media (max-width: 700px) {
+  .automation-list-toolbar .catalog-query {
+    flex-basis: 100%;
+  }
+}

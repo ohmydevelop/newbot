@@ -1,0 +1,25 @@
+{
+  "scope": "Isolated production snapshot with real configured model; no browser, no external email, no production task changes",
+  "checks": [
+    "scheduled-without-browser-real-model",
+    "chat-mode-preserved",
+    "restart-preserves-task-and-result-without-replay",
+    "run-now-new-independent-conversation",
+    "paused-due-time-does-not-dispatch"
+  ],
+  "runs": [
+    {
+      "id": "25627376-0e6f-4481-b190-975f72e38863",
+      "threadId": "01a1e4dd-8806-7e33-a528-19593c46d031",
+      "requestId": "535501ac-541c-43d8-820d-4bd2f5109e60",
+      "state": "succeeded"
+    },
+    {
+      "id": "07fa3639-c59f-4433-bbbb-c8e30f64a56d",
+      "threadId": "01a1e4dd-99b5-7020-a9e3-9a56833043e0",
+      "requestId": "832a9f9b-05ef-4f8b-b3be-df26c800bf85",
+      "state": "succeeded"
+    }
+  ],
+  "passed": true
+}

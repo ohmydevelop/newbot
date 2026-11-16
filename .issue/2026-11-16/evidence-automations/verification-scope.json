@@ -1,0 +1,21 @@
+{
+  "unit": {
+    "passed": 589,
+    "skipped": 1,
+    "failed": 0
+  },
+  "browser": {
+    "passed": 71,
+    "flaky": 0
+  },
+  "mobileTouch": {
+    "passed": 12,
+    "physicalDevice": false
+  },
+  "migrationRollback": {
+    "passed": 2
+  },
+  "smtp": "local real TLS/STARTTLS protocol; external inbox not configured",
+  "native": "isolated real Codex and configured provider; injected clock advances due time",
+  "grok": "official public reference only; live UI collection blocked"
+}

@@ -1,3 +1,5 @@
+import Automations from "./components/Automations";
+import { useAutomations } from "./automations";
 import { usePanelLayout } from "./panels";
 import UserMessage from "./components/chat/UserMessage";
 import { SearchIcon as Search } from "./components/ReferenceIcons";
@@ -76,7 +78,10 @@ import { readSkill } from "./skills";
 import RuntimeSelector from "./components/RuntimeSelector";
 import type { ExpertReference, SessionExtensions } from "../shared/experts";
 const ExpertDetails = lazy(() => import("./components/ExpertDetails"));
-import type { ApprovalPreset, InteractionMode } from "../shared/runtime-settings";
+import type {
+  ApprovalPreset,
+  InteractionMode,
+} from "../shared/runtime-settings";
 import AttachmentPreview, {
   AttachmentImage,
   type AttachmentSource,
@@ -167,6 +172,18 @@ const WorkspaceFiles = lazy(() => import("./components/WorkspaceFiles"));
 const ArtifactPreview = lazy(() => import("./components/ArtifactPreview"));
 export default function App() {
   const s = useApp();
+  const [automationsOpen, setAutomationsOpen] = useState(
+    () =>
+      new URLSearchParams(location.search).has("automation") ||
+      localStorage.getItem("newbot:view") === "automations",
+  );
+  const automationsData = useAutomations(s.authenticated === true);
+  useEffect(() => {
+    localStorage.setItem(
+      "newbot:view",
+      automationsOpen ? "automations" : "chat",
+    );
+  }, [automationsOpen]);
   const composer = useComposerDrafts(s.selectedId, s.newDraftKey);
   const draft = composer.value.text,
     setDraft = composer.setText;
@@ -331,7 +348,10 @@ export default function App() {
   const [railOpen, setRailOpen] = useState(
     () => localStorage.getItem("newbot:rail") === "1",
   );
-  const panelLayout = usePanelLayout(s.sidebar, railOpen && !!s.selectedId);
+  const panelLayout = usePanelLayout(
+    s.sidebar,
+    !automationsOpen && railOpen && !!s.selectedId,
+  );
   const [settings, setSettings] = useState<string | null>(null);
   const [search, setSearch] = useState(false);
   useEffect(() => {
@@ -846,6 +866,7 @@ export default function App() {
     }
   }
   function chooseThread(id: string) {
+    setAutomationsOpen(false);
     navigation.current++;
     void loadThread(id);
     if (window.innerWidth <= 760) s.set({ sidebar: false });
@@ -873,6 +894,7 @@ export default function App() {
     }
   }
   function fresh() {
+    setAutomationsOpen(false);
     setComposerPanel(null);
     setNewApproval("ask");
     setNewMode("chat");
@@ -1061,30 +1083,44 @@ export default function App() {
       )}
       <a
         className="skip-link"
-        href="#message-input"
+        href={automationsOpen ? "#automations-heading" : "#message-input"}
         onClick={(event) => {
           event.preventDefault();
-          textarea.current?.focus();
+          if (automationsOpen)
+            document.getElementById("automations-heading")?.focus();
+          else textarea.current?.focus();
         }}
       >
-        跳到消息输入
+        {automationsOpen ? "跳到自动任务" : "跳到消息输入"}
       </a>
       <ConversationNavigation
         width={panelLayout.left}
         open={s.sidebar}
         onOpenChange={(sidebar) => s.set({ sidebar })}
         restoreFocus={() =>
-          (sidebarToggle.current || textarea.current)?.focus({
+          (automationsOpen
+            ? document.querySelector<HTMLElement>(
+                ".automation-page .expand-sidebar",
+              ) || document.getElementById("automations-heading")
+            : sidebarToggle.current || textarea.current
+          )?.focus({
             preventScroll: true,
           })
         }
         threads={s.threads}
-        selectedId={s.selectedId}
+        selectedId={automationsOpen ? null : s.selectedId}
         loading={s.threadsLoading}
         error={s.threadsError}
         archiving={archiving}
         appleKeys={appleKeys}
         onNewChat={fresh}
+        automationsOpen={automationsOpen}
+        automationUnread={automationsData.notices.length}
+        onAutomations={() => {
+          setAutomationsOpen(true);
+          setComposerPanel(null);
+          if (window.innerWidth <= 760) s.set({ sidebar: false });
+        }}
         onSearch={() => setSearch(true)}
         onReload={() => void loadThreads().catch(() => {})}
         onSettings={setSettings}
@@ -1092,7 +1128,39 @@ export default function App() {
         onRename={setRename}
         onArchive={(id) => void archive(id)}
       />
+      <Automations
+        open={automationsOpen}
+        data={automationsData}
+        onOpenChat={chooseThread}
+        sidebarOpen={s.sidebar}
+        onSidebar={() => s.set({ sidebar: true })}
+        chatDraft={{
+          name: threadTitle ? threadTitle.slice(0, 100) : "",
+          prompt:
+            draft ||
+            (
+              s.thread?.turns
+                .flatMap((t) => t.items)
+                .filter((i) => i.type === "userMessage")
+                .at(-1)?.content || []
+            )
+              .filter((v: Json) => v.type === "text")
+              .map((v: Json) => v.text)
+              .join("\n"),
+          plugins: selectedPlugins.map((v) => v.id),
+          skills: selectedSkills.map(({ id, sha256 }) => ({ id, sha256 })),
+          attachments: attachments.filter((v) => !v.state).map((v) => v.id),
+          expertId: composer.value.expert?.id || null,
+          mode: s.thread?.runtime?.mode || newMode,
+          approval: s.thread?.runtime?.approval || newApproval,
+          provider: s.provider,
+          model: s.model,
+          effort: s.effort,
+        }}
+      />
       <main
+        hidden={automationsOpen}
+        inert={automationsOpen}
         className={`main ${!s.thread && !s.selectedId && !s.loading && !pendingSubmission && !showSubmission ? "is-home" : ""}`}
         aria-label="聊天工作区"
         {...drop.handlers}
@@ -1883,7 +1951,8 @@ export default function App() {
           </form>
         </div>
       </main>
-      {railOpen &&
+      {!automationsOpen &&
+        railOpen &&
         s.selectedId &&
         !(
           panelLayout.overlay &&

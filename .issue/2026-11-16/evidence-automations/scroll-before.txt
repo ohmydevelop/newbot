@@ -1,0 +1,53 @@
+
+> newbot@0.2.0 test:ui-contracts
+> playwright test --config=playwright.config.ts tests/browser/interaction-acceptance.spec.ts --grep 工作流程默认折叠
+
+[WebServer] (node:380895) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 1 test using 1 worker
+
+(node:380934) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 tests/browser/interaction-acceptance.spec.ts:255:1 › 工作流程默认折叠，内部滚动到两端后衔接聊天，重开保留位置 (10.3s)
+
+
+  1) tests/browser/interaction-acceptance.spec.ts:255:1 › 工作流程默认折叠，内部滚动到两端后衔接聊天，重开保留位置 ─────────────
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: 180
+    Received: 0
+
+    Call Log:
+    - Timeout 5000ms exceeded while waiting on the predicate
+
+      283 |     (
+      284 |       document.querySelector('[aria-label="收起侧栏"]') as HTMLButtonElement
+    > 285 |     )?.click();
+          |                ^
+      286 |   });
+      287 |   await expect.poll(() => inner.evaluate((e) => e.scrollTop)).toBe(180);
+      288 |   await inner.hover();
+        at /home/a/Documents/ChatGPT/newbot-systematize/tests/browser/interaction-acceptance.spec.ts:285:57
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/interaction-acceptance-工作流程默认折叠，内部滚动到两端后衔接聊天，重开保留位置/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/interaction-acceptance-工作流程默认折叠，内部滚动到两端后衔接聊天，重开保留位置/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/interaction-acceptance-工作流程默认折叠，内部滚动到两端后衔接聊天，重开保留位置/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/interaction-acceptance-工作流程默认折叠，内部滚动到两端后衔接聊天，重开保留位置/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/interaction-acceptance-工作流程默认折叠，内部滚动到两端后衔接聊天，重开保留位置/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    tests/browser/interaction-acceptance.spec.ts:255:1 › 工作流程默认折叠，内部滚动到两端后衔接聊天，重开保留位置 ──────────────

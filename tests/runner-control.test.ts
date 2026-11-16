@@ -256,7 +256,7 @@ test("v16 metadata survives additive control-plane migration", async () => {
     db = database(dir);
     assert.equal(
       (db.raw.prepare("PRAGMA user_version").get() as any).user_version,
-      18,
+      19,
     );
     assert.equal(
       (

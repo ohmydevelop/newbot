@@ -455,3 +455,5 @@
 .readonly-tool-row strong, .readonly-tool-row small { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .readonly-tool-row strong { font-size: 14px; font-weight: 500; }
 .readonly-tool-row small { color: var(--muted); font-size: 12px; }
+
+.picker-panel[data-modal-layer="true"] { z-index: 140; }
