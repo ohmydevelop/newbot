@@ -27,4 +27,4 @@
 
 GitHub实际探测：私有仓库rulesets返回套餐403，main和systematize均未保护。不改套餐/公开性。CI+标准发布入口fail-closed，不声称有主机权限的人无法绕过。
 
-完成状态：待实施。进度和逐项证据追加到002-implementation-progress.md，未验证项不标完成。
+完成状态：产品实现、570项单元、30组本地浏览器布局、状态连续性、两侧拖动、正常/reduce动效、前台性能、原公网部署及真实模型聊天已完成。CI脚本与像素基线已提交，但GitHub计费限制阻止实际执行；完整录屏与系统级指针取消/真实iframe交叉场景尚未验证。详见002-implementation-progress.md，不将这些未验证项标完成。

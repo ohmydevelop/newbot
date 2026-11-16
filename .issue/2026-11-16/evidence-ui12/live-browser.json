@@ -1,0 +1,22 @@
+{
+  "url": "https://integration-love-angela-heated.trycloudflare.com/",
+  "queryRetained": "cloudwalker",
+  "configuredPlugins": [
+    "Sentry",
+    "Slack",
+    "GitHub",
+    "cloudwalker"
+  ],
+  "certificateControl": "获取服务器证书",
+  "chat": {
+    "answer": "设置与聊天连接正常",
+    "followups": [
+      "UI12 还需验收哪些功能项？",
+      "怎样确认全程未触发工具调用？",
+      "UI12 验收通过的标准是什么？"
+    ],
+    "scripts": [
+      "https://integration-love-angela-heated.trycloudflare.com/assets/index-DmQFs9r3.js"
+    ]
+  }
+}
