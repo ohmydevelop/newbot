@@ -1,0 +1,58 @@
+{
+  "origin": "https://integration-love-angela-heated.trycloudflare.com",
+  "checks": {
+    "displayNames": {
+      "stableIds": true,
+      "connectors": [
+        {
+          "id": "newbot_test",
+          "name": "newbot_test",
+          "enabled": true
+        },
+        {
+          "id": "connector_b0ed7a772c8e45e58edcde12cdc04a65",
+          "name": "hids",
+          "enabled": true
+        }
+      ],
+      "expertCount": 4
+    },
+    "pluginCount": 4,
+    "rowAlignment": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "tools": {
+      "count": 125,
+      "bodyClass": "connection-detail-body"
+    },
+    "connectorForm": {
+      "visibleLabels": [
+        "名称",
+        "连接方式",
+        "服务地址",
+        "认证方式"
+      ],
+      "certificateControls": true,
+      "oauthChoice": true,
+      "saved": false
+    },
+    "skillActionDelta": 0,
+    "modelForm": {
+      "labels": [
+        "名称",
+        "连接地址",
+        "认证方式",
+        "模型 ID"
+      ],
+      "saved": false
+    },
+    "expertReadableName": true
+  },
+  "pageErrors": [],
+  "passed": true
+}

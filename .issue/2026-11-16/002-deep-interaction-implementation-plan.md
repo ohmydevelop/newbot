@@ -21,4 +21,4 @@
 - 持久字段标签填值后仍可见；证书、私密字段、插件MCP配置原能力可访问。
 - 四宽度320/390/768/1280及明暗布局，键盘、reduce motion、拖拽和聊天流程已有回归不退化；真机和Safari未测需明示。
 
-进度与证据：002-deep-interaction-implementation-progress.md、evidence-ui14/。当前状态：实施及本地验收完成；573单元、46浏览器通过，正在提交与部署。详细通过项与验证边界见进度记录。
+进度与证据：002-deep-interaction-implementation-progress.md、evidence-ui14/。当前状态：实施、本地验收、提交推送、原实例部署及公网复核完成。573单元、46浏览器通过；CI因账户付款/额度未启动。详细证据与未验证边界见进度记录。

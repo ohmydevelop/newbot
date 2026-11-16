@@ -1,0 +1,28 @@
+{
+  "source": "46c96722cab46fd8765a6b4cc2ed6ddbcc13ebb7",
+  "webHash": "479af7f48e4039d9d8d29f40c1a1027ae253eee860b0d1aa7472e24b96aaf2f4",
+  "serverHash": "57ec2a96bd5a773b345410a83712fefb91e690724610b08143cca1233bf8ae92",
+  "created": "2026-11-16T09:51:52.840Z",
+  "checks": {
+    "types": {
+      "passed": true,
+      "evidence": ".issue/2026-11-16/evidence-ui14/types.txt"
+    },
+    "unit": {
+      "passed": true,
+      "evidence": ".issue/2026-11-16/evidence-ui14/unit.txt"
+    },
+    "design": {
+      "passed": true,
+      "evidence": ".issue/2026-11-16/evidence-ui14/design.txt"
+    },
+    "browser": {
+      "passed": true,
+      "evidence": ".issue/2026-11-16/evidence-ui14/browser-final.json"
+    },
+    "motion": {
+      "passed": true,
+      "evidence": ".issue/2026-11-16/evidence-ui14/左右拖拽跨越不透明-iframe-边界-点击恢复与宽度持久化-drag-frames-json.json"
+    }
+  }
+}
