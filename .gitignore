@@ -5,6 +5,8 @@ playwright-report/
 test-results/
 coverage/
 *.tsbuildinfo
+__pycache__/
+*.pyc
 
 # Local environment and deployment secrets; templates remain versioned.
 .env
