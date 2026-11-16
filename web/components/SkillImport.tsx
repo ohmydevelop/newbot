@@ -438,6 +438,9 @@ export default function SkillImport({
                     ) : session.entries.length > 1 ? (
                       <strong>{e.name}</strong>
                     ) : null}
+                    {e.compatibility && (
+                      <p className="muted">{e.compatibility.notice}</p>
+                    )}
                     {e.kind === "plugin" && (
                       <p className="muted">
                         {e.previousDigest

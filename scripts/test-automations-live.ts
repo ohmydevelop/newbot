@@ -219,8 +219,8 @@ try {
   ctx.automations.runNow(task.id, task.revision, randomUUID());
   await ctx.automations.tick();
   const manual = await complete();
-  assert.notEqual(scheduled.threadId, manual.threadId);
-  evidence.checks.push("run-now-new-independent-conversation");
+  assert.equal(scheduled.threadId, manual.threadId);
+  evidence.checks.push("run-now-same-task-conversation-new-run");
   ctx.automations.control(task.id, task.revision, "pause");
   clock += 86400000;
   await ctx.automations.tick();

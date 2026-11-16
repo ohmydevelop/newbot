@@ -47,43 +47,71 @@ export const scheduleSchema = z
     (v) => v.frequency !== "hourly" || (!!v.until && v.until >= v.time),
     "每小时执行的结束时间不能早于开始时间",
   );
-export const automationSchema = z.object({
-  name: z.string().trim().min(1).max(100),
-  color: z.enum(["default", "blue", "orange", "green", "red"]).optional(),
-  icon: z
-    .enum([
-      "clock",
-      "sun",
-      "news",
-      "chart",
-      "calendar",
-      "research",
-      "shield",
-      "health",
-      "language",
-    ])
-    .optional(),
-  prompt: z.string().trim().min(1).max(20000),
-  triggers: z.array(scheduleSchema).min(1).max(8),
-  provider: z.string().max(200).default(""),
-  model: z.string().max(200).default(""),
-  effort: z.string().max(40).default(""),
-  mode: z.enum(["chat", "plan", "work"]).default("chat"),
-  approval: z.enum(["ask", "review", "full"]).default("ask"),
-  attachments: z.array(z.string().uuid()).max(8).default([]),
-  plugins: z.array(z.string().min(1).max(200)).max(8).default([]),
-  skills: z
-    .array(
-      z.object({
-        id: z.string().regex(/^[a-f0-9]{64}$/),
-        sha256: z.string().regex(/^[a-f0-9]{64}$/),
-      }),
-    )
-    .max(8)
-    .default([]),
-  expertId: z.string().uuid().nullable().default(null),
-  notification: z.enum(["app", "email", "both", "none"]).default("app"),
+export const eventSourceLabels = {
+  webhook: "Webhook",
+  github: "GitHub",
+  hermes: "Hermes",
+  openclaw: "OpenClaw",
+} as const;
+export const eventTriggerSchema = z.object({
+  id: z.string().uuid(),
+  source: z.enum(["webhook", "github", "hermes", "openclaw"]),
+  events: z.array(z.string().trim().min(1).max(100)).max(16).default([]),
+  repository: z.string().trim().max(200).default(""),
+  actions: z.array(z.string().trim().min(1).max(100)).max(16).default([]),
 });
+export type AutomationEventTrigger = z.infer<typeof eventTriggerSchema>;
+export const automationSchema = z
+  .object({
+    name: z.string().trim().min(1).max(100),
+    color: z.enum(["default", "blue", "orange", "green", "red"]).optional(),
+    icon: z
+      .enum([
+        "clock",
+        "sun",
+        "news",
+        "chart",
+        "calendar",
+        "research",
+        "shield",
+        "health",
+        "language",
+      ])
+      .optional(),
+    prompt: z.string().trim().min(1).max(20000),
+    triggers: z.array(scheduleSchema).max(8),
+    eventTriggers: z.array(eventTriggerSchema).max(8).default([]),
+    provider: z.string().max(200).default(""),
+    model: z.string().max(200).default(""),
+    effort: z.string().max(40).default(""),
+    mode: z.enum(["chat", "plan", "work"]).default("chat"),
+    approval: z.enum(["ask", "review", "full"]).default("ask"),
+    attachments: z.array(z.string().uuid()).max(8).default([]),
+    plugins: z.array(z.string().min(1).max(200)).max(8).default([]),
+    skills: z
+      .array(
+        z.object({
+          id: z.string().regex(/^[a-f0-9]{64}$/),
+          sha256: z.string().regex(/^[a-f0-9]{64}$/),
+        }),
+      )
+      .max(8)
+      .default([]),
+    expertId: z.string().uuid().nullable().default(null),
+    notification: z.enum(["app", "email", "both", "none"]).default("app"),
+  })
+  .refine(
+    (v) =>
+      v.triggers.length + v.eventTriggers.length > 0 &&
+      v.triggers.length + v.eventTriggers.length <= 8,
+    "请选择 1–8 个触发器",
+  )
+  .refine(
+    (v) =>
+      new Set([...v.triggers, ...v.eventTriggers].map((t) => t.id)).size ===
+      v.triggers.length + v.eventTriggers.length,
+    "触发器标识不能重复",
+  );
 export type AutomationInput = z.infer<typeof automationSchema>;
 export type AutomationSchedule = z.infer<typeof scheduleSchema>;
 export type Automation = AutomationInput & {
@@ -93,6 +121,7 @@ export type Automation = AutomationInput & {
   nextRun: number | null;
   created: number;
   updated: number;
+  threadId?: string | null;
   activeRuns: number;
   unread: number;
 };
@@ -111,6 +140,7 @@ export type AutomationRun = {
   read: boolean;
   name: string;
   notification: "app" | "email" | "both" | "none";
+  event?: { source: keyof typeof eventSourceLabels; type: string };
   delivery?: { state: string; error: string | null; sent: number | null };
 };
 export const frequencyLabels = {

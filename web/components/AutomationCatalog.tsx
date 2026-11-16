@@ -8,6 +8,7 @@ import {
   automationTemplates,
 } from "../automation-templates";
 import {
+  eventSourceLabels,
   scheduleLabel,
   type Automation,
   type AutomationInput,
@@ -120,10 +121,22 @@ export function AutomationCatalog({
                       />
                     )}
                   </strong>
-                  <small title={t.triggers.map(scheduleLabel).join(" · ")}>
+                  <small
+                    title={[
+                      ...t.triggers.map(scheduleLabel),
+                      ...(t.eventTriggers || []).map(
+                        (e) => eventSourceLabels[e.source],
+                      ),
+                    ].join(" · ")}
+                  >
                     {t.activeRuns
                       ? "正在运行或等待处理"
-                      : t.triggers.map(scheduleLabel).join(" · ")}
+                      : [
+                          ...t.triggers.map(scheduleLabel),
+                          ...(t.eventTriggers || []).map(
+                            (e) => eventSourceLabels[e.source],
+                          ),
+                        ].join(" · ")}
                   </small>
                 </button>
                 {!t.enabled && (

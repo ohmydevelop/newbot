@@ -1,3 +1,4 @@
+import { ecosystemPackages } from "./ecosystem-imports.js";
 import { mkdir, writeFile, rm } from "node:fs/promises";
 import { basename, dirname, join, relative, resolve } from "node:path";
 import { Codex } from "./codex.js";
@@ -47,6 +48,7 @@ export async function scanNativeImport(
 ): Promise<ScannedEntry[]> {
   const tree = await importTree(root),
     pluginRoots = new Map<string, any>();
+  let ecosystems = ecosystemPackages(tree.files);
   for (const file of tree.files)
     if (file.path.endsWith("plugin.json")) {
       let json: any;
@@ -106,6 +108,15 @@ export async function scanNativeImport(
       }
     }
   const allPluginRoots = [...pluginRoots.keys()];
+  ecosystems = ecosystems.filter(
+    (pack) =>
+      !allPluginRoots.some((root) => inside(join(root), join(pack.root))),
+  );
+  if (
+    new Set(ecosystems.map((p) => p.ecosystem + ":" + p.name)).size !==
+    ecosystems.length
+  )
+    throw new PublicError("包内存在同名生态插件，请分开导入");
   if (marketEntries.size)
     for (const folder of pluginRoots.keys())
       if (!marketEntries.has(folder)) pluginRoots.delete(folder);
@@ -216,7 +227,7 @@ export async function scanNativeImport(
       throw new PublicError(
         `原生扫描发现 ${errors.length} 个无效技能，请修正 SKILL.md 后重试`,
       );
-    const skills = listed.data
+    const allSkills = listed.data
       .flatMap((d) => d.skills)
       .filter(
         (s) =>
@@ -229,6 +240,43 @@ export async function scanNativeImport(
         name: s.name,
         description: s.description,
       }));
+    const belongs = (path: string, folder: string) =>
+      folder === "." || path.startsWith(folder + "/");
+    for (const pack of ecosystems) {
+      const nested = ecosystems
+        .filter((p) => p !== pack && belongs(p.root, pack.root))
+        .map((p) => p.root);
+      const foreignSkills = allSkills.filter(
+        (s) =>
+          belongs(s.path, pack.root) &&
+          !nested.some((p) => belongs(s.path, p)) &&
+          pack.skillRoots.some((root) => belongs(s.path, root)),
+      );
+      entries.push({
+        id: fileDigest("ecosystem:" + pack.ecosystem + ":" + pack.name),
+        kind: "skills",
+        name: pack.name,
+        description: "",
+        root: pack.root,
+        digest: "",
+        skills: foreignSkills,
+        mcp: [],
+        hooks: [],
+        excludedRoots: [...allPluginRoots, ...nested],
+        manifest: {},
+        state: "available",
+        compatibility: { ecosystem: pack.ecosystem, notice: pack.notice },
+        ...(!foreignSkills.length
+          ? {
+              blocked:
+                "此插件没有可移植的 SKILL.md；原生运行代码需要适配为 MCP 后接入。",
+            }
+          : {}),
+      });
+    }
+    const skills = allSkills.filter(
+      (s) => !ecosystems.some((pack) => belongs(s.path, pack.root)),
+    );
     if (skills.length)
       entries.unshift({
         id: fileDigest("skills:" + name),
@@ -243,7 +291,7 @@ export async function scanNativeImport(
         skills,
         mcp: [],
         hooks: [],
-        excludedRoots: allPluginRoots,
+        excludedRoots: [...allPluginRoots, ...ecosystems.map((p) => p.root)],
         manifest: {},
         state: "available",
       });

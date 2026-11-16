@@ -12,6 +12,7 @@ export const runnerMethods = [
   "thread/items/list",
   "thread/name/set",
   "thread/archive",
+  "thread/unarchive",
   "thread/unsubscribe",
   "turn/start",
   "turn/interrupt",

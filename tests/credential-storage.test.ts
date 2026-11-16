@@ -143,6 +143,20 @@ test("receiver changes, cross-provider reuse and forwarding to stdio prevent nat
     c.close();
   }
 });
+test("event-only credentials prevent master key regeneration after key loss", () => {
+  const c = setup();
+  let locked: ReturnType<typeof credentialVault> | undefined;
+  try {
+    const packet = c.vault.sealPrivate(Buffer.from("event-only-secret"), "event-test");
+    c.db.raw.prepare("INSERT INTO automation_tasks VALUES(?,1,'{}',1,NULL,0,0,0)").run("task");
+    c.db.raw.prepare("INSERT INTO automation_event_routes VALUES(?,?,?,?,?)").run("task","trigger","webhook","version",JSON.stringify(packet));
+    c.vault.close();
+    unlinkSync(join(c.directory, "private-credentials.key"));
+    locked = credentialVault(c.db, c.directory, c.cwd);
+    assert.equal(locked.encryptionAvailable, false);
+    assert.throws(() => locked!.sealPrivate(Buffer.from("replacement"), "event-test"));
+  } finally { locked?.close(); c.close(); }
+});
 test("lost or symlinked master key locks encrypted credentials without silently regenerating a key", () => {
   const c = setup();
   let locked: ReturnType<typeof credentialVault> | undefined;

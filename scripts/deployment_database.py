@@ -34,6 +34,12 @@ def validate_migration(connection, migration, previous_version, selected):
                 raise RuntimeError("Missing automation table: " + table)
             if connection.execute('SELECT count(*) FROM "' + table + '"').fetchone()[0]:
                 raise RuntimeError("Automation tables must be empty at first deployment")
+    elif migration == "automation-events-v20":
+        if previous_version != 19 or version != 20:
+            raise RuntimeError("Expected database migration v19 to v20")
+        for table in ["automation_threads", "automation_event_routes", "automation_event_inbox"]:
+            if not connection.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name=?", (table,)).fetchone():
+                raise RuntimeError("Missing automation event table: " + table)
     elif version != previous_version:
         raise RuntimeError("Unexpected database version change")
     if actual != expected:

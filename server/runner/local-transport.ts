@@ -41,6 +41,7 @@ export const RUNNER_METHODS = new Set([
   "thread/settings/update",
   "thread/name/set",
   "thread/archive",
+  "thread/unarchive",
   "thread/unsubscribe",
   "turn/start",
   "turn/interrupt",

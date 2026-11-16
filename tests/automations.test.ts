@@ -102,7 +102,10 @@ async function fixture(fn: (f: any) => Promise<void>) {
       calls.push(p);
       return {
         statusCode: 200,
-        body: { threadId: randomUUID(), turn: { id: randomUUID() } },
+        body: {
+          threadId: p.threadId || randomUUID(),
+          turn: { id: randomUUID() },
+        },
       };
     },
     probe: async () => ({ state }),
@@ -127,7 +130,7 @@ async function fixture(fn: (f: any) => Promise<void>) {
     rmSync(path, { recursive: true, force: true });
   }
 }
-test("durable schedule, concurrent ticks, isolated runs, snapshot and no overlap", () =>
+test("durable schedule, concurrent ticks, shared task thread, snapshot and no overlap", () =>
   fixture(async ({ a, calls, setClock, setState }: any) => {
     const t = await a.save({
       id: randomUUID(),
@@ -152,6 +155,7 @@ test("durable schedule, concurrent ticks, isolated runs, snapshot and no overlap
     assert.equal(a.runNow(t.id, t.revision, r.requestId).id, r.id);
     await a.tick();
     assert.equal(calls.length, 2);
+    assert.equal(calls[1].threadId, a.read(t.id).task.threadId);
     assert.notEqual(calls[0].requestId, calls[1].requestId);
     const changed = await a.save({
       id: t.id,
@@ -167,6 +171,107 @@ test("durable schedule, concurrent ticks, isolated runs, snapshot and no overlap
       a.save({ id: t.id, expectedRevision: 1, content: input() }),
     );
   }));
+test("historical tasks adopt latest available conversation once without rewriting old run links", () =>
+  fixture(async ({ a, db }: any) => {
+    const task = await a.save({
+      id: randomUUID(),
+      expectedRevision: 0,
+      content: input(),
+    });
+    const threadIds = [randomUUID(), randomUUID(), randomUUID()];
+    for (let i = 0; i < threadIds.length; i++) {
+      db.raw
+        .prepare("INSERT INTO threads VALUES(?,?,?,0,?)")
+        .run(threadIds[i], "historical", "", i === 2 ? 1 : 0);
+      const run = a.runNow(task.id, 1, randomUUID());
+      db.raw
+        .prepare(
+          "UPDATE automation_runs SET state='succeeded',thread_id=?,scheduled_at=? WHERE id=?",
+        )
+        .run(threadIds[i], i, run.id);
+    }
+    const before = JSON.stringify(
+      db.raw.prepare("SELECT * FROM automation_runs ORDER BY rowid").all(),
+    );
+    assert.equal(a.read(task.id).task.threadId, threadIds[1]);
+    db.raw
+      .prepare("UPDATE threads SET archived=0 WHERE id=?")
+      .run(threadIds[2]);
+    assert.equal(a.read(task.id).task.threadId, threadIds[1]);
+    assert.equal(
+      JSON.stringify(
+        db.raw.prepare("SELECT * FROM automation_runs ORDER BY rowid").all(),
+      ),
+      before,
+    );
+  }));
+test("failed restore keeps task paused; stale native restore cannot re-enable a changed task", () =>
+  fixture(async ({ a, db, dependencies }: any) => {
+    const task = await a.save({
+      id: randomUUID(),
+      expectedRevision: 0,
+      content: input(),
+    });
+    const threadId = randomUUID();
+    db.raw
+      .prepare("INSERT INTO threads VALUES(?,?,?,0,1)")
+      .run(threadId, "archived", "");
+    db.raw
+      .prepare("INSERT INTO automation_threads VALUES(?,?)")
+      .run(task.id, threadId);
+    const paused = a.control(task.id, 1, "pause");
+    dependencies.restore = async () => {
+      throw Error("native offline");
+    };
+    await assert.rejects(a.resume(task.id, paused.revision), /native offline/);
+    assert.equal(a.read(task.id).task.enabled, false);
+    assert.equal(
+      db.raw.prepare("SELECT archived FROM threads WHERE id=?").get(threadId)
+        .archived,
+      1,
+    );
+    let release!: () => void;
+    dependencies.restore = () =>
+      new Promise<void>((resolve) => {
+        release = resolve;
+      });
+    const restoring = a.resume(task.id, paused.revision);
+    a.control(task.id, paused.revision, "delete");
+    release();
+    await assert.rejects(restoring);
+    assert.equal(a.list().length, 0);
+  }));
+test("pause during asynchronous conversation preparation prevents late dispatch", () =>
+  fixture(async ({ a, calls, setState, dependencies }: any) => {
+    const task = await a.save({
+      id: randomUUID(),
+      expectedRevision: 0,
+      content: input(),
+    });
+    a.runNow(task.id, 1, randomUUID());
+    await a.tick();
+    setState("succeeded");
+    await a.tick();
+    let release!: (v: boolean) => void;
+    let entered!: () => void;
+    const preparing = new Promise<void>((resolve) => {
+      entered = resolve;
+    });
+    dependencies.prepare = () => {
+      entered();
+      return new Promise<boolean>((resolve) => {
+        release = resolve;
+      });
+    };
+    const run = a.runNow(task.id, 1, randomUUID());
+    const tick = a.tick();
+    await preparing;
+    a.control(task.id, 1, "pause");
+    release(true);
+    await tick;
+    assert.equal(a.result(run.id).state, "cancelled");
+    assert.equal(calls.length, 1);
+  }));
 test("pause/delete cancel queued work; stale actions fail; started work is not silently cancelled", () =>
   fixture(async ({ a, calls }: any) => {
     const t = await a.save({
@@ -178,7 +283,7 @@ test("pause/delete cancel queued work; stale actions fail; started work is not s
     const paused = a.control(t.id, 1, "pause");
     await a.tick();
     assert.equal(calls.length, 0);
-    assert.throws(() => a.control(t.id, 1, "resume"));
+    await assert.rejects(a.resume(t.id, 1));
     a.runNow(t.id, paused.revision, randomUUID());
     await a.tick();
     assert.equal(calls.length, 1);
@@ -271,7 +376,8 @@ test("automatic HTTP execution shares ordinary validation, modes, cancellation a
     const r2 = ctx.automations
       .read(task.id)
       .runs.find((x) => x.id === second.id)!;
-    assert.notEqual(r2.threadId, r.threadId);
+    assert.equal(r2.threadId, r.threadId);
+    assert.notEqual(r2.turnId, r.turnId);
     await ctx.automations.stop(second.id);
     assert.equal(
       ctx.automations.read(task.id).runs.find((x) => x.id === second.id)!.state,

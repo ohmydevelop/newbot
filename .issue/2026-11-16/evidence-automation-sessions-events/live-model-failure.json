@@ -1,0 +1,22 @@
+{
+  "error": "Error: Codex 操作未完成，请检查该操作的配置与权限。",
+  "checks": [
+    "real-http-standard-webhook-real-model-once",
+    "restart-restores-binding-key-queued-event-and-durable-deduplication",
+    "same-task-thread-retains-prior-event-context"
+  ],
+  "records": [
+    {
+      "runId": "b98a350c-265b-4ee0-aace-9b3d64ece73d",
+      "threadId": "01a1e697-4980-7e50-be7e-271be24c8969",
+      "turnId": "01a1e697-49b6-7c12-91b8-993e64f3f663",
+      "text": "本次词语：松柏。\n\n此前未收到其他词语。"
+    },
+    {
+      "runId": "6af6d89d-cac2-420d-92af-ccf23c54588d",
+      "threadId": "01a1e697-4980-7e50-be7e-271be24c8969",
+      "turnId": "01a1e697-54da-7e72-9e9b-75ec837b92bc",
+      "text": "本次词语：银杏。\n以前收到的词语：松柏。"
+    }
+  ]
+}

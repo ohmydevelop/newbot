@@ -1,3 +1,4 @@
+import { EventConnection } from "./AutomationEventFields";
 import * as Popover from "@radix-ui/react-popover";
 import { PickerContent } from "./Picker";
 import { useEffect, useId, useRef, useState } from "react";
@@ -11,6 +12,8 @@ import {
   Bell,
   Check,
   Clock3,
+  Webhook,
+  MessageSquare,
   Square,
 } from "lucide-react";
 import * as Dropdown from "@radix-ui/react-dropdown-menu";
@@ -23,6 +26,7 @@ import AutomationEditor from "./AutomationEditor";
 import { AutomationCatalog } from "./AutomationCatalog";
 import { automationRequest, useAutomations } from "../automations";
 import {
+  eventSourceLabels,
   scheduleLabel,
   notificationLabels,
   deliveryLabels,
@@ -431,6 +435,16 @@ export default function Automations({
                     <span className="muted">
                       {task.enabled ? "已启用" : "已暂停"}
                     </span>
+                    {task.threadId && (
+                      <button
+                        type="button"
+                        className="secondary"
+                        onClick={() => onOpenChat(task.threadId!)}
+                      >
+                        <MessageSquare size={16} />
+                        任务会话
+                      </button>
+                    )}
                     <button
                       type="button"
                       className="secondary"
@@ -461,11 +475,25 @@ export default function Automations({
                         </span>
                       </div>
                     ))}
+                    {(task.eventTriggers || []).map((t) => (
+                      <div className="automation-trigger-summary" key={t.id}>
+                        <Webhook size={18} />
+                        <span>
+                          {eventSourceLabels[t.source]}
+                          <small>
+                            {t.repository || t.events.join(", ") || "所有事件"}
+                          </small>
+                        </span>
+                        <EventConnection task={task} trigger={t} />
+                      </div>
+                    ))}
                     <p className="muted">
                       {task.nextRun
                         ? `下次运行 ${absoluteTime(task.nextRun)}`
                         : task.enabled
-                          ? "计划已执行完毕"
+                          ? task.eventTriggers?.length
+                            ? "等待事件触发"
+                            : "计划已执行完毕"
                           : "计划已暂停"}
                     </p>
                   </section>

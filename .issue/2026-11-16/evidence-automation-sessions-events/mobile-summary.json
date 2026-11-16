@@ -1,0 +1,11 @@
+{
+  "stats": {
+    "startTime": "2026-11-16T23:01:03.200Z",
+    "duration": 84604.41100000001,
+    "expected": 12,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "scope": "Chromium touch input, not physical phone"
+}

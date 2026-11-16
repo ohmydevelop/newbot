@@ -1,0 +1,9 @@
+{"at":"2026-11-16T23:02:29.053Z","event":"runtime.status","status":"ready"}
+{"at":"2026-11-16T23:02:29.330Z","event":"http.request","status":200,"requestId":"req-1","route":"/api/automations/event-settings","method":"POST","durationMs":3}
+{"at":"2026-11-16T23:02:29.335Z","event":"http.request","status":202,"requestId":"req-2","route":"/api/automation-hooks/:task/:trigger","method":"POST","durationMs":1}
+{"at":"2026-11-16T23:02:31.775Z","event":"http.request","status":200,"requestId":"req-3","route":"/api/automation-hooks/:task/:trigger","method":"POST","durationMs":1}
+{"at":"2026-11-16T23:02:31.777Z","event":"http.request","status":202,"requestId":"req-4","route":"/api/automation-hooks/:task/:trigger","method":"POST","durationMs":1}
+{"at":"2026-11-16T23:02:31.951Z","event":"runtime.status","status":"ready"}
+{"at":"2026-11-16T23:02:32.118Z","event":"http.request","status":200,"requestId":"req-1","route":"/api/automation-hooks/:task/:trigger","method":"POST","durationMs":1}
+{"at":"2026-11-16T23:02:33.696Z","event":"http.request","status":200,"requestId":"req-2","route":"/api/agent/action","method":"POST","durationMs":16}
+{"passed":true,"checks":["real-http-standard-webhook-real-model-once","restart-restores-binding-key-queued-event-and-durable-deduplication","same-task-thread-retains-prior-event-context","native-restore-reconciles-already-restored-conversation-after-lost-receipt","native-chat-archive-pauses-task-and-explicit-resume-restores-binding","manual-run-after-task-mode-edit-same-native-thread","one-native-conversation-for-three-independent-runs"]}

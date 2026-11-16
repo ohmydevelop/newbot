@@ -1,3 +1,4 @@
+import { EventTriggerFields } from "./AutomationEventFields";
 import { useRef, useState, useEffect, type ReactNode } from "react";
 import { Plus, X, ArrowLeft, Bell } from "lucide-react";
 import { dialogReturnTarget } from "./ui";
@@ -38,6 +39,7 @@ export function newAutomation(
     name: "",
     prompt: "",
     triggers: [],
+    eventTriggers: [],
     provider: "",
     model: "",
     effort: "",
@@ -263,8 +265,47 @@ export default function AutomationEditor({
                 }
               />
             ))}
+            {(draft.eventTriggers || []).map((t, index) => (
+              <EventTriggerFields
+                key={t.id}
+                value={t}
+                index={index + 1}
+                disabled={busy}
+                onChange={(patch) =>
+                  update({
+                    eventTriggers: draft.eventTriggers.map((v) =>
+                      v.id === t.id ? { ...v, ...patch } : v,
+                    ),
+                  })
+                }
+                onRemove={() =>
+                  update({
+                    eventTriggers: draft.eventTriggers.filter(
+                      (v) => v.id !== t.id,
+                    ),
+                  })
+                }
+              />
+            ))}
             <AddSchedule
-              disabled={busy || draft.triggers.length >= 8}
+              disabled={
+                busy ||
+                draft.triggers.length + (draft.eventTriggers?.length || 0) >= 8
+              }
+              onEvent={(source) =>
+                update({
+                  eventTriggers: [
+                    ...(draft.eventTriggers || []),
+                    {
+                      id: crypto.randomUUID(),
+                      source,
+                      events: [],
+                      repository: "",
+                      actions: [],
+                    },
+                  ],
+                })
+              }
               onAdd={(frequency) =>
                 update({
                   triggers: [
@@ -475,7 +516,10 @@ export default function AutomationEditor({
             </button>
             <FormSubmit
               busy={busy}
-              disabled={uploading || !draft.triggers.length}
+              disabled={
+                uploading ||
+                !(draft.triggers.length + (draft.eventTriggers?.length || 0))
+              }
               busyLabel="正在保存…"
             >
               保存

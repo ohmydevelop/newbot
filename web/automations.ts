@@ -43,6 +43,7 @@ export function useAutomations(active: boolean) {
             return (
               v.id === n.id &&
               v.revision === n.revision &&
+              v.threadId === n.threadId &&
               v.nextRun === n.nextRun &&
               v.activeRuns === n.activeRuns &&
               v.unread === n.unread

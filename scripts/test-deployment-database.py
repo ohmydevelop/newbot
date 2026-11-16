@@ -56,4 +56,27 @@ class MigrationTests(unittest.TestCase):
                 self.assertEqual(summaries(db,selected),before)
                 self.assertFalse(db.execute("SELECT 1 FROM sqlite_master WHERE name='automation_tasks'").fetchone())
 
+    def test_event_migration_preserves_old_tasks_and_rollback(self):
+        with tempfile.TemporaryDirectory() as root:
+            live=pathlib.Path(root)/"live.sqlite"
+            saved=pathlib.Path(root)/"saved.sqlite"
+            with sqlite3.connect(live) as db:
+                db.executescript("CREATE TABLE automation_tasks(id TEXT,content TEXT); INSERT INTO automation_tasks VALUES('old','{\"triggers\":[]}'); CREATE TABLE automation_runs(id TEXT,thread_id TEXT); INSERT INTO automation_runs VALUES('old-run','historical-thread'); PRAGMA user_version=19;")
+                selected=columns(db,["automation_tasks","automation_runs"])
+                before=summaries(db,selected)
+                with sqlite3.connect(saved) as backup: db.backup(backup)
+                for table in ["automation_threads","automation_event_routes","automation_event_inbox"]:
+                    db.execute("CREATE TABLE "+table+"(id TEXT)")
+                db.execute("PRAGMA user_version=20")
+                validate_migration(db,"automation-events-v20",19,selected)
+                self.assertEqual(summaries(db,selected),before)
+                with self.assertRaises(RuntimeError): validate_migration(db,None,19,selected)
+                db.execute("DROP TABLE automation_event_routes")
+                with self.assertRaises(RuntimeError): validate_migration(db,"automation-events-v20",19,selected)
+            restore_database(saved,live)
+            with sqlite3.connect(live) as db:
+                self.assertEqual(db.execute("PRAGMA user_version").fetchone()[0],19)
+                self.assertEqual(summaries(db,selected),before)
+                self.assertFalse(db.execute("SELECT 1 FROM sqlite_master WHERE name='automation_threads'").fetchone())
+
 unittest.main()

@@ -25,7 +25,9 @@ for (const reducedMotion of ["reduce", "no-preference"] as const)
       await modal
         .getByRole("button", { name: "添加触发器", exact: true })
         .tap();
-      await page.getByRole("button", { name: "每周", exact: true }).tap();
+      await page
+        .getByRole("button", { name: i < 3 ? "每周" : "GitHub", exact: true })
+        .tap();
     }
     const cdp = await context.newCDPSession(page);
     await swipe(cdp, 200, 560, 0, -350);
@@ -38,6 +40,19 @@ for (const reducedMotion of ["reduce", "no-preference"] as const)
     await expect(
       modal.getByRole("button", { name: "关闭", exact: true }),
     ).toBeInViewport();
+    await modal.getByRole("button", { name: "事件条件 3", exact: true }).tap();
+    await page
+      .getByLabel("仓库 owner/repo", { exact: true })
+      .fill("example/repository");
+    await expect(page.getByText("事件动作", { exact: true })).toBeInViewport();
+    await info.attach("automation-event-touch", {
+      body: await page.screenshot(),
+      contentType: "image/png",
+    });
+    await page.keyboard.press("Escape");
+    await expect(
+      modal.getByRole("button", { name: "事件条件 3", exact: true }),
+    ).toBeFocused();
     await body.evaluate((e) => (e.scrollTop = e.scrollHeight));
     await page.getByRole("button", { name: "任务通知", exact: true }).tap();
     await page.getByRole("button", { name: "邮件", exact: true }).tap();

@@ -4,6 +4,8 @@ import { AutomationChoice } from "./AutomationChoice";
 import { PickerContent } from "./Picker";
 import {
   frequencyLabels,
+  eventSourceLabels,
+  type AutomationEventTrigger,
   type AutomationSchedule,
 } from "../../shared/automations";
 export function ScheduleFields({
@@ -186,10 +188,12 @@ export function ScheduleFields({
   );
 }
 export function AddSchedule({
+  onEvent,
   disabled,
   onAdd,
 }: {
   disabled: boolean;
+  onEvent?: (source: AutomationEventTrigger["source"]) => void;
   onAdd: (frequency: AutomationSchedule["frequency"]) => void;
 }) {
   return (
@@ -203,12 +207,24 @@ export function AddSchedule({
         </>
       }
       search
-      options={Object.entries(frequencyLabels).map(([id, label]) => ({
-        id,
-        label,
-      }))}
+      options={[
+        ...Object.entries(frequencyLabels).map(([id, label]) => ({
+          id,
+          label,
+        })),
+        ...(onEvent
+          ? Object.entries(eventSourceLabels).map(([id, label]) => ({
+              id: "event:" + id,
+              label,
+            }))
+          : []),
+      ]}
       disabled={disabled}
-      onChange={(v) => onAdd(v as AutomationSchedule["frequency"])}
+      onChange={(v) =>
+        v.startsWith("event:")
+          ? onEvent?.(v.slice(6) as AutomationEventTrigger["source"])
+          : onAdd(v as AutomationSchedule["frequency"])
+      }
     />
   );
 }

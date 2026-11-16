@@ -30,6 +30,7 @@ export type ImportEntry = {
   skills: ImportSkill[];
   mcp: string[];
   hooks: string[];
+  compatibility?: { ecosystem: "openclaw" | "hermes"; notice: string };
   blocked?: string;
   selectedSkills?: string[];
   conflict?: {

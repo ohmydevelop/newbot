@@ -4,7 +4,7 @@ import { mkdtemp, rm, readFile, readdir } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { randomUUID } from "node:crypto";
-import { database } from "../server/db.js";
+import { database, DATABASE_VERSION } from "../server/db.js";
 import { RunnerControl } from "../server/runner/control.js";
 import { RunnerLedger } from "../server/runner/ledger.js";
 const fingerprint = "a".repeat(64);
@@ -256,7 +256,7 @@ test("v16 metadata survives additive control-plane migration", async () => {
     db = database(dir);
     assert.equal(
       (db.raw.prepare("PRAGMA user_version").get() as any).user_version,
-      19,
+      DATABASE_VERSION,
     );
     assert.equal(
       (

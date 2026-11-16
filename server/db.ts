@@ -3,7 +3,7 @@ import { DatabaseSync } from "node:sqlite";
 import { mkdirSync, chmodSync } from "node:fs";
 import { resolve } from "node:path";
 import { randomBytes, createHash } from "node:crypto";
-export const DATABASE_VERSION = 19;
+export const DATABASE_VERSION = 20;
 export function database(directory: string) {
   mkdirSync(directory, { recursive: true, mode: 0o700 });
   const path = resolve(directory, "newbot.sqlite");
@@ -96,6 +96,9 @@ export function database(directory: string) {
     CREATE TABLE IF NOT EXISTS thread_waits(thread_id TEXT PRIMARY KEY REFERENCES threads(id),summary TEXT NOT NULL);
     CREATE TABLE IF NOT EXISTS automation_tasks(id TEXT PRIMARY KEY,revision INTEGER NOT NULL,content TEXT NOT NULL,enabled INTEGER NOT NULL,next_run INTEGER,created INTEGER NOT NULL,updated INTEGER NOT NULL,deleted INTEGER NOT NULL DEFAULT 0);
     CREATE TABLE IF NOT EXISTS automation_runs(id TEXT PRIMARY KEY,task_id TEXT NOT NULL REFERENCES automation_tasks(id),task_revision INTEGER NOT NULL,trigger_key TEXT NOT NULL,scheduled_at INTEGER NOT NULL,state TEXT NOT NULL,request_id TEXT NOT NULL UNIQUE,thread_id TEXT,turn_id TEXT,snapshot TEXT NOT NULL,started INTEGER,completed INTEGER,error TEXT,is_read INTEGER NOT NULL DEFAULT 0,UNIQUE(task_id,trigger_key));
+    CREATE TABLE IF NOT EXISTS automation_threads(task_id TEXT PRIMARY KEY REFERENCES automation_tasks(id),thread_id TEXT NOT NULL UNIQUE);
+    CREATE TABLE IF NOT EXISTS automation_event_routes(task_id TEXT NOT NULL REFERENCES automation_tasks(id),trigger_id TEXT NOT NULL,source TEXT NOT NULL,version TEXT NOT NULL,packet TEXT NOT NULL,PRIMARY KEY(task_id,trigger_id));
+    CREATE TABLE IF NOT EXISTS automation_event_inbox(task_id TEXT NOT NULL REFERENCES automation_tasks(id),trigger_id TEXT NOT NULL,event_id TEXT NOT NULL,digest TEXT NOT NULL,run_id TEXT NOT NULL REFERENCES automation_runs(id),received INTEGER NOT NULL,PRIMARY KEY(task_id,trigger_id,event_id));
     CREATE TABLE IF NOT EXISTS automation_mail_config(id INTEGER PRIMARY KEY CHECK(id=1),revision INTEGER NOT NULL,content TEXT NOT NULL,packet TEXT NOT NULL);
     CREATE TABLE IF NOT EXISTS automation_deliveries(run_id TEXT PRIMARY KEY REFERENCES automation_runs(id),config_revision INTEGER NOT NULL,recipient TEXT NOT NULL,state TEXT NOT NULL,attempt INTEGER NOT NULL DEFAULT 0,sent INTEGER,error TEXT);
     CREATE TABLE IF NOT EXISTS automation_attachment_refs(task_id TEXT NOT NULL REFERENCES automation_tasks(id),file_id TEXT NOT NULL REFERENCES attachments(id),PRIMARY KEY(task_id,file_id));

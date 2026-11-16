@@ -1,3 +1,4 @@
+import { automationEvents, automationHookPath } from "./automation-events.js";
 import { automationMail } from "./automation-mail.js";
 import { automations } from "./automations.js";
 import { certificateInspectRequest } from "../shared/certificates.js";
@@ -570,6 +571,7 @@ async function createServerInternal(
       return runnerAuthentication(req, reply, nodeControl);
     if (req.headers.origin && !origins.has(req.headers.origin))
       return reply.code(403).send({ error: "来源验证失败" });
+    if (req.method === "POST" && automationHookPath.test(req.url)) return;
     if (
       !["GET", "HEAD"].includes(req.method) &&
       !origins.has(req.headers.origin || "")
@@ -1684,8 +1686,62 @@ async function createServerInternal(
     submitRun(req.body, reply),
   );
   const mail = automationMail(db, vault);
+  const eventRoutes = automationEvents(db, vault, options.automationClock);
   const scheduled = automations(db, {
     mail,
+    events: eventRoutes,
+    restore: async (threadId) => {
+      try {
+        await runtime.call("thread/unarchive", { threadId });
+      } catch (error) {
+        let cursor: string | undefined;
+        const seen = new Set<string>();
+        for (let page = 0; page < 100; page++) {
+          const result = await runtime.call("thread/list", {
+            archived: false, limit: 100, cursor, modelProviders: [],
+            sourceKinds: ["cli", "vscode", "exec", "appServer", "subAgent", "subAgentReview", "subAgentCompact", "subAgentThreadSpawn", "subAgentOther", "unknown"],
+          });
+          if (result.data.some(thread => thread.id === threadId)) return;
+          if (!result.nextCursor || seen.has(result.nextCursor)) break;
+          cursor = result.nextCursor;
+          seen.add(cursor);
+        }
+        throw error;
+      }
+    },
+    prepare: async (threadId, input) => {
+      if (
+        runtime.active.has(threadId) ||
+        db.raw
+          .prepare(
+            "SELECT 1 FROM runs WHERE thread_id=? AND state IN ('reserved','dispatching','awaiting_credentials','unknown')",
+          )
+          .get(threadId)
+      )
+        return false;
+      const desired = await service.runtimeSettings.capture(
+        { ...input },
+        runtime.providerRuntime?.revision,
+      );
+      const current = service.runtimeSettings.get(threadId);
+      if (
+        ["provider", "model", "effort", "mode", "approval"].some(
+          (key) => (current as Json)[key] !== ((desired as Json)[key] || ""),
+        )
+      )
+        await service.runtimeSettings.update(
+          { threadId, expectedRevision: current.revision, ...desired },
+          true,
+        );
+      const expert = service.experts.session(threadId);
+      if (expert.expertId !== input.expertId)
+        await service.experts.update({
+          threadId,
+          expectedRevision: expert.revision,
+          expertId: input.expertId,
+        });
+      return !runtime.active.has(threadId);
+    },
     now: options.automationClock,
     ready: () => runtime.state === "ready" && !service.busy,
     validate: async (input) => {
@@ -1768,6 +1824,50 @@ async function createServerInternal(
         await service.handle("turn/interrupt", { threadId, turnId });
     },
   });
+  app.register(async (hooks) => {
+    hooks.removeContentTypeParser("application/json");
+    hooks.addContentTypeParser(
+      "application/json",
+      { parseAs: "buffer" },
+      (_req, body, done) => done(null, body),
+    );
+    hooks.post(
+      "/api/automation-hooks/:task/:trigger",
+      { bodyLimit: 64000 },
+      (req, reply) => {
+        const p = z
+          .object({ task: z.string().uuid(), trigger: z.string().uuid() })
+          .parse(req.params);
+        const result = eventRoutes.receive(
+          p.task,
+          p.trigger,
+          req.body as Buffer,
+          req.headers,
+        );
+        if (result.ignored)
+          return { ok: true, ignored: true, reason: result.reason };
+        const accepted = scheduled.receiveEvent(
+          p.task,
+          result.revision,
+          p.trigger,
+          result.event,
+        );
+        return reply.code(accepted.duplicate ? 200 : 202).send(accepted);
+      },
+    );
+  });
+  app.post("/api/automations/event-settings", (req) => {
+    const p = z
+      .object({
+        taskId: z.string().uuid(),
+        triggerId: z.string().uuid(),
+        revision: z.number().int().positive(),
+        rotate: z.boolean().default(false),
+        expectedVersion: z.string().uuid().optional(),
+      })
+      .parse(req.body);
+    return eventRoutes.settings(p.taskId, p.triggerId, p.revision, p.rotate, p.expectedVersion);
+  });
   app.get("/api/automations/mail", () => mail.settings());
   app.post("/api/automations/mail/save", { bodyLimit: 96000 }, (req) =>
     mail.save(req.body),
@@ -1802,7 +1902,7 @@ async function createServerInternal(
   app.post("/api/automations/save", { bodyLimit: 256 * 1024 }, (req) =>
     scheduled.save(req.body),
   );
-  app.post("/api/automations/control", (req) => {
+  app.post("/api/automations/control", async (req) => {
     const p = z
       .object({
         id: z.string().uuid(),
@@ -1810,7 +1910,7 @@ async function createServerInternal(
         action: z.enum(["pause", "resume", "delete"]),
       })
       .parse(req.body);
-    return { task: scheduled.control(p.id, p.revision, p.action) };
+    return { task: p.action === "resume" ? await scheduled.resume(p.id, p.revision) : scheduled.control(p.id, p.revision, p.action) };
   });
   app.post("/api/automations/run", (req) => {
     const p = z
@@ -1897,6 +1997,7 @@ async function createServerInternal(
     );
     if (p.action === "thread/archive") {
       const id = z.string().parse(p.threadId);
+      scheduled.archiveThread(id);
       privateFieldStore.revoke(id);
       for (const [runId, held] of waitingRuns)
         if (runs.get(runId)?.thread_id === id) {

@@ -1,0 +1,28 @@
+✔ webhook: authenticated raw bytes, durable duplicate receipt, single task thread and independent turns (164.207911ms)
+✔ github: authenticated raw bytes, durable duplicate receipt, single task thread and independent turns (82.261971ms)
+✔ hermes: authenticated raw bytes, durable duplicate receipt, single task thread and independent turns (80.271791ms)
+✔ openclaw: authenticated raw bytes, durable duplicate receipt, single task thread and independent turns (73.444048ms)
+✔ signature family and timestamp cannot be swapped; changed duplicate id rejects; queue bound and FIFO; pause fences queued events (89.341098ms)
+✔ GitHub filters and ping; key rotation revokes old key; deletion and removed trigger revoke ingress (72.599976ms)
+✔ OpenClaw ingress cannot choose a thread, model, permission or outgoing channel (65.831096ms)
+✔ real HTTP accepts signed JSON without cookie and rejects oversized bodies (76.604564ms)
+✔ task edits apply mode and expert to the same thread; manual conversation holds its queue; archive pauses (77.742223ms)
+✔ timezone, DST, month-end and leap dates preserve wall-time and skip nonexistent dates (25.329308ms)
+✔ durable schedule, concurrent ticks, shared task thread, snapshot and no overlap (12.876211ms)
+✔ historical tasks adopt latest available conversation once without rewriting old run links (4.193112ms)
+✔ pause during asynchronous conversation preparation prevents late dispatch (4.506823ms)
+✔ pause/delete cancel queued work; stale actions fail; started work is not silently cancelled (4.099163ms)
+✔ restart reconciles dispatched work without replay, retry is a new explicit request (4.057564ms)
+✔ automatic HTTP execution shares ordinary validation, modes, cancellation and authentication (162.069816ms)
+✔ capacity retries preserve request; private authorization blocks instead of granting itself (4.163857ms)
+✔ pagination retains unread counts and pinned attachments survive cleanup until task deletion (20.719148ms)
+✔ hourly windows include endpoints, respect weekdays and skip duplicate or missing DST wall times (4.558547ms)
+✔ hourly catch-up coalesces and persists icon/window through restart without replay (6.039314ms)
+ℹ tests 20
+ℹ suites 0
+ℹ pass 20
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1293.835305

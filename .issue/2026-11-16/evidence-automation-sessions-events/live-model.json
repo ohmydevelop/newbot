@@ -1,0 +1,33 @@
+{
+  "passed": true,
+  "scope": "Isolated copy of model configuration and provider credentials only; actual configured model and native Codex; local real HTTP sender, not GitHub/OpenClaw/Hermes service runtimes; no production tasks or email",
+  "checks": [
+    "real-http-standard-webhook-real-model-once",
+    "restart-restores-binding-key-queued-event-and-durable-deduplication",
+    "same-task-thread-retains-prior-event-context",
+    "native-restore-reconciles-already-restored-conversation-after-lost-receipt",
+    "native-chat-archive-pauses-task-and-explicit-resume-restores-binding",
+    "manual-run-after-task-mode-edit-same-native-thread",
+    "one-native-conversation-for-three-independent-runs"
+  ],
+  "records": [
+    {
+      "runId": "61177ba6-927c-498d-97da-a85f4fe72dd6",
+      "threadId": "01a1e699-022b-7df3-9f92-ce9507e2a37a",
+      "turnId": "01a1e699-0261-7ed3-bb39-746ad9c70c45",
+      "text": "本次事件词语：松柏。此前未收到其他词语。"
+    },
+    {
+      "runId": "0631af0b-91b1-484f-9ffa-5a4fd7df40e1",
+      "threadId": "01a1e699-022b-7df3-9f92-ce9507e2a37a",
+      "turnId": "01a1e699-0db8-7ad1-ae6b-5f03fdaf3218",
+      "text": "本次词语：银杏。以前收到的词语：松柏。"
+    },
+    {
+      "runId": "6159873b-2f72-4e41-870a-d9feb33645ea",
+      "threadId": "01a1e699-022b-7df3-9f92-ce9507e2a37a",
+      "turnId": "01a1e699-13b5-7b81-8640-d5975004b8d1",
+      "text": "模式切换验收通过。"
+    }
+  ]
+}
