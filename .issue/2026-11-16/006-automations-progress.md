@@ -34,3 +34,11 @@
 - 设计 reviewer 二次 disposition=ship，四项材料修改全部 resolved；结论仅覆盖列出的四项，不扩大为逐像素 Grok 认证。DESIGN.md / PRODUCT.md 保持不变，截图保存在 `.impeccable/review/automations/`。
 - 外部限制保持：Craft 登录态采集未许可、未配置外部 SMTP 收件验收、无真机。时间任务与 SMTP 功能已实现；邮件收件触发/自然语言自动创建/Web Push未实现，用户指南已明确。
 - 最终触摸复验12/12，包含修复后的共享工作流程滚动、原拖拽/滚动/减弱动效。结果与帧采样已归档 `evidence-automations/{browser-results,mobile-results,verification-scope}.json`。准备发布，生产当前仍 b261549、数据库v18。
+
+## 已上线
+- 发布源码 `c85ccafed3f448fe1312bc2b2d209fa2152822be`，分支 `codex/newbot-systematize` 已推送。
+- 公网 https://integration-love-angela-heated.trycloudflare.com/ 对应 webHash `a15465b93e3648481111edaf41cd19e1542747e5fa0586fa0db2f3753007ce72`，serverHash `e7aadd3df339ba8eb45cf10390351d5ff3fca67689c1155f91df0879cab82a3f`；数据库18→19。服务就绪，公开JS/CSS逐文件散列匹配。
+- 备份 `/home/a/Documents/ChatGPT/newbot/.data/backups/2026-11-16-web-c85ccafed3f4`。10张历史会话/模型/扩展/权限相关表原有列和值发布前后完全相同。生产旧源码分支未重置；运行发布新dist，新增运行依赖包含在server产物内。
+- 公网实际密码登录、自动任务入口、暂停后的手动运行、真实模型完成、运行记录打开完整聊天均通过，见 `public-smoke.json`、`public-run.png`。首轮验收脚本误点击同名侧栏新聊天（范围未限定），后台运行已成功；已限定到任务列表后复验通过。该首轮脚本失败保留 `public-smoke-attempt1.json`，不是产品 Tabs 故障。
+- 两轮验证仅创建测试任务与测试聊天；测试任务已软删除、测试聊天已归档，当前无遗留测试周期任务。历史运行记录按产品保留策略保留，没有删除用户数据。
+- 最终验收记录、用户指南及设计复核均已落盘。实现/本地验证/上线完成；外部 SMTP 收件待用户配置账号后验证，Craft实时Grok采集仍被项目策略阻断，未实现的收件触发/自然语言创建/Web Push保持明确标注，不宣称全部Grok功能或1:1像素已经通过。

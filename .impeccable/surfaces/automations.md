@@ -11,3 +11,6 @@ STORY: 新建聊天下进入任务，选择现有任务或创建，先设何时�
 FIRST VIEWPORT: 原导航保持原宽度和折叠位置；主区域居中最多800px，标题“自动任务”与新建在同一行，下方轻量任务行，空态提供三项可编辑模板。编辑器在共享保护焦点的Modal中，触发器→说明/扩展→通知，操作固定底部、正文单一滚动区。
 FORM: seed: none (pinned)。用户指定“尽可能1:1还原它的设计理念”和“侧边栏的新建聊天下面添加自动任务”。依据官方Automations页面演示层级，登录产品现场尚因工具许可无法采集，不能称已实测1:1像素。桌面/手机交互复用原实现。
 FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance
+
+## Finish outcome
+Verdict pass: ship, all four listed material fixes resolved. Existing DESIGN.md and PRODUCT.md retained. Evidence: .issue/2026-11-16/006-automations-design-review.md and .impeccable/review/automations/. This is an official-reference-based extension, not a live Grok pixel-fidelity certification.

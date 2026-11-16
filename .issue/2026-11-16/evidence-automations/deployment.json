@@ -1,0 +1,34 @@
+{
+  "source": "c85ccafed3f448fe1312bc2b2d209fa2152822be",
+  "webHash": "a15465b93e3648481111edaf41cd19e1542747e5fa0586fa0db2f3753007ce72",
+  "url": "https://integration-love-angela-heated.trycloudflare.com",
+  "ready": {
+    "ready": true,
+    "runtime": "ready"
+  },
+  "dataUnchanged": true,
+  "databaseMigration": "automations-v19",
+  "previousDatabaseVersion": 18,
+  "historicalModes": "unchanged",
+  "tables": [
+    "threads",
+    "session_runtime",
+    "session_runtime_pending",
+    "thread_workspaces",
+    "plugin_connection_settings",
+    "private_field_sets",
+    "provider_configuration",
+    "extension_configuration",
+    "experts",
+    "session_extensions"
+  ],
+  "serverUnchanged": false,
+  "serverHash": "e7aadd3df339ba8eb45cf10390351d5ff3fca67689c1155f91df0879cab82a3f",
+  "previousServerIndexHash": "45c0e37c0948917d8941b51afcffeb52cfc2cf2d1c1d28a122077d91856460dd",
+  "backup": "/home/a/Documents/ChatGPT/newbot/.data/backups/2026-11-16-web-c85ccafed3f4",
+  "assets": {
+    "assets/index-BmdMbO2c.js": "6b6a223dc50bf028c0e2443a8690c3d4df2ff8c807d19d7934e25c382504eaf4",
+    "assets/index-DHj3Ms5q.css": "ff410d3ce33f20b7069200b1a0c9e4739fd2c85a0222e63dfc6b4d64a6ec3aac"
+  },
+  "retainedAssets": 4860
+}

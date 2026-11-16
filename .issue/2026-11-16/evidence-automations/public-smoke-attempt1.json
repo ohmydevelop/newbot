@@ -1,0 +1,13 @@
+{
+  "origin": "https://integration-love-angela-heated.trycloudflare.com",
+  "checks": [
+    "public-login-sidebar-automation-entry",
+    "public-server-real-model-automation-completed"
+  ],
+  "passed": false,
+  "run": {
+    "id": "8a265fbe-8ace-4459-aecc-caaa8c02bb68",
+    "threadId": "01a1e4f3-dc5b-7800-b8ab-711bc233765e",
+    "state": "succeeded"
+  }
+}

@@ -90,7 +90,8 @@ try {
   evidence.checks.push("public-server-real-model-automation-completed");
   await page.getByRole("button", { name: "刷新自动任务", exact: true }).click();
   await page
-    .getByRole("button", { name: task.name, exact: false })
+    .locator(".automation-row-copy")
+    .filter({ hasText: task.name })
     .first()
     .click();
   await page.getByRole("tab", { name: "运行记录", exact: true }).click();
