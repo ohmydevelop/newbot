@@ -26,4 +26,4 @@
 4. 执行与变更匹配的类型/自动任务测试和浏览器邮件入口验收；记录、提交推送、备份上线并核对公网版本。
 
 ## 验收与状态
-M1已确定性复现并修复；M2–M5通过，证据详见进度。待提交与部署；M6仍受外部条件限制，不承诺外部邮箱到达。进度与证据保存在006-automations-mail-race-progress.md及evidence-automations-mail-race/。不改全局UI、调度语义、账号授权或生产邮件配置。
+M1已确定性复现并修复；M2–M5通过，证据详见进度。已提交推送、备份上线并通过公网真实模型验收（1fc3d3c）；M6仍受外部条件限制，不承诺外部邮箱到达。进度与证据保存在006-automations-mail-race-progress.md及evidence-automations-mail-race/。不改全局UI、调度语义、账号授权或生产邮件配置。

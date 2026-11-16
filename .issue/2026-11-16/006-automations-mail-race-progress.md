@@ -12,3 +12,9 @@
 - 全量单元591通过、1既有跳过；最终邮件/自动任务11/11；320/390/1280邮件配置、弹层、焦点浏览器3/3；类型、lint与构建通过。
 - 前端webHash与0a89fd1逐字节一致（web-unchanged.json），沿用上一轮12项触摸/动画证据，补测本轮真实邮件结果路径；没有重写视觉基线或改变页面布局。
 - 状态：M1–M5完成，待提交推送和备份部署。M6外部邮件/实体手机/第三方事件仍未验证。
+
+## 上线完成
+- 产品提交 `1fc3d3c5c832c8dcc802562e56273510fab76164` 已推送。生产已备份至 `/home/a/Documents/ChatGPT/newbot/.data/backups/2026-11-17-web-1fc3d3c5c832` 并部署，数据库仍v19无迁移；既有10张配置/会话表摘要一致，额外核对automation_mail_config散列一致（smtp-config-preserved.json）。
+- 公网 https://integration-love-angela-heated.trycloudflare.com 登录/自动任务入口、真实模型执行、运行记录打开结果会话均通过；验收任务删除、会话归档。release manifest对应本次产品源码，public-smoke.json与deployment.json留证。
+- 仅修复服务端派发边界；webHash仍 `7d96b692a07641c226a7c333f0fd026a436edb453ba254be660fec282322a147`，保持AUTO-2原UI和动画产物。测试脚本支持AUTOMATION_LOCAL_SMTP=1选择本地完整链路，默认保留原有无邮件模式。
+- 隔离数据库、Codex目录及复制的模型凭据已删除。M1–M5完成；外部邮箱投递、实体手机、第三方事件触发没有新增通过声明。
