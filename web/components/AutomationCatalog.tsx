@@ -172,7 +172,7 @@ export function AutomationCatalog({
               <div className="automation-grid">
                 {custom && (
                   <div className="automation-row">
-                    <span className="automation-identity">
+                    <span className="automation-identity catalog-mark">
                       <Plus size={18} />
                     </span>
                     <button

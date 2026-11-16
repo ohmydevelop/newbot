@@ -297,39 +297,58 @@ export default function AutomationEditor({
                 disabled={busy}
               />
               <div className="automation-capabilities">
-                <button
-                  type="button"
-                  className="icon-button"
-                  aria-label="添加任务附件"
-                  disabled={busy || uploading}
-                  onClick={() => fileInput.current?.click()}
+                <div
+                  className="automation-tools"
+                  role="group"
+                  aria-label="任务工具"
                 >
-                  <Plus size={18} />
-                </button>
-                <button
-                  type="button"
-                  className="automation-capability"
-                  disabled={busy}
-                  onClick={(e) => mentions.open("plugins", e.currentTarget)}
+                  <button
+                    type="button"
+                    className="icon-button"
+                    aria-label="添加任务附件"
+                    disabled={busy || uploading}
+                    onClick={() => fileInput.current?.click()}
+                  >
+                    <Plus size={18} />
+                  </button>
+                  <button
+                    type="button"
+                    className="automation-capability"
+                    aria-label={`连接器${draft.plugins.length || draft.expertId ? ` ${draft.plugins.length + (draft.expertId ? 1 : 0)}` : ""}`}
+                    title="选择连接器或专家"
+                    disabled={busy}
+                    onClick={(e) => mentions.open("plugins", e.currentTarget)}
+                  >
+                    <PluginIcon size={18} />
+                    <span className="automation-capability-label">
+                      连接器
+                      {draft.plugins.length || draft.expertId
+                        ? ` ${draft.plugins.length + (draft.expertId ? 1 : 0)}`
+                        : ""}
+                    </span>
+                  </button>
+                  <button
+                    type="button"
+                    className="automation-capability"
+                    aria-label={`技能${draft.skills.length ? ` ${draft.skills.length}` : ""}`}
+                    title="选择技能"
+                    disabled={busy}
+                    onClick={(e) => mentions.open("skills", e.currentTarget)}
+                  >
+                    <SkillIcon size={18} />
+                    <span className="automation-capability-label">
+                      技能{draft.skills.length ? ` ${draft.skills.length}` : ""}
+                    </span>
+                  </button>
+                </div>
+                <div
+                  className="automation-runtime"
+                  role="group"
+                  aria-label="任务模型与模式"
                 >
-                  <PluginIcon size={18} />
-                  连接器
-                  {draft.plugins.length || draft.expertId
-                    ? ` ${draft.plugins.length + (draft.expertId ? 1 : 0)}`
-                    : ""}
-                </button>
-                <button
-                  type="button"
-                  className="automation-capability"
-                  disabled={busy}
-                  onClick={(e) => mentions.open("skills", e.currentTarget)}
-                >
-                  <SkillIcon size={18} />
-                  技能{draft.skills.length ? ` ${draft.skills.length}` : ""}
-                </button>
-                <div className="automation-runtime">
                   <AutomationChoice
                     label="任务模型"
+                    displayValue={draft.model || "默认"}
                     value={
                       draft.provider && draft.model
                         ? `${draft.provider}::${draft.model}`

@@ -23,6 +23,17 @@ export const automationIcons = {
   health: { icon: HeartPulse, label: "生活" },
   language: { icon: Languages, label: "语言" },
 };
+const iconTones = {
+  clock: "default",
+  sun: "blue",
+  news: "blue",
+  chart: "orange",
+  calendar: "orange",
+  research: "blue",
+  shield: "green",
+  health: "green",
+  language: "blue",
+};
 export function AutomationIdentity({
   icon = "clock",
   color,
@@ -32,7 +43,13 @@ export function AutomationIdentity({
 }) {
   const Icon = (automationIcons[icon] || automationIcons.clock).icon;
   return (
-    <span className="automation-identity" data-icon={icon} data-color={color}>
+    <span
+      className="automation-identity catalog-mark"
+      data-icon={icon}
+      data-color={color}
+      data-identity-tone={color ?? iconTones[icon]}
+      aria-hidden="true"
+    >
       <Icon size={18} />
     </span>
   );

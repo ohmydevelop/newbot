@@ -127,13 +127,13 @@
   white-space: nowrap;
 }
 .automation-row-copy strong {
-  font-size: 14px;
+  font-size: var(--catalog-title-size);
   font-weight: 550;
   line-height: 1.5;
 }
 .automation-row-copy small {
   margin-top: 2px;
-  font-size: 12px;
+  font-size: var(--catalog-description-size);
   color: var(--muted);
   line-height: 1.5;
 }
@@ -144,31 +144,13 @@
   color: var(--muted);
 }
 .automation-identity {
-  width: 32px;
-  height: 32px;
-  flex: 0 0 32px;
+  width: var(--catalog-mark-size);
+  height: var(--catalog-mark-size);
+  flex: 0 0 var(--catalog-mark-size);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid var(--line);
-  border-radius: 9px;
-  color: var(--muted);
-}
-.automation-identity[data-icon="sun"],
-.automation-identity[data-icon="news"],
-.automation-identity[data-icon="research"],
-.automation-identity[data-icon="language"] {
-  background: var(--accent-soft);
-  color: var(--accent);
-  border-color: transparent;
-}
-.automation-identity[data-icon="chart"],
-.automation-identity[data-icon="calendar"] {
-  color: var(--entity);
-}
-.automation-identity[data-icon="shield"],
-.automation-identity[data-icon="health"] {
-  color: var(--success);
+  border-radius: var(--catalog-mark-radius);
 }
 .automation-template-add {
   width: 32px;
@@ -502,6 +484,7 @@
   font-size: 13px;
 }
 .automation-prompt {
+  container: automation-prompt / inline-size;
   background: transparent;
   border: 1px solid var(--line);
   border-radius: 16px;
@@ -520,30 +503,70 @@
   font-size: 14px;
 }
 .automation-capabilities {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+  padding: 4px 8px 8px;
+}
+.automation-tools,
+.automation-runtime {
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
   gap: 4px;
-  padding: 4px 8px 8px;
+  min-width: 0;
+}
+.automation-runtime {
+  justify-self: end;
+  width: 100%;
+  max-width: 240px;
+}
+.automation-capabilities
+  :is(
+    .icon-button,
+    .automation-capability,
+    .automation-choice,
+    .approval-trigger
+  ) {
+  height: 36px;
+  min-height: 36px;
+  border-radius: 9px;
+  font-size: 12px;
+}
+.automation-tools > .icon-button {
+  width: 36px;
+  min-width: 36px;
+  flex: none;
 }
 .automation-capability {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 4px;
   padding: 4px 6px;
   border: 1px solid var(--line);
-  border-radius: 9px;
   background: transparent;
-  font-size: 12px;
-  min-height: 28px;
+  white-space: nowrap;
+}
+.automation-capability > svg {
+  flex: none;
 }
 .automation-runtime > .automation-choice {
-  max-width: 160px;
+  flex: 1;
+  min-width: 0;
 }
-.automation-capabilities .approval-trigger {
-  font-size: 12px;
-  min-height: 28px;
+.automation-runtime > .approval-trigger {
+  flex: none;
   padding: 4px 6px;
+}
+@container automation-prompt (max-width: 480px) {
+  .automation-capability-label {
+    display: none;
+  }
+  .automation-capability {
+    width: 36px;
+    padding: 0;
+  }
 }
 .automation-chips {
   display: flex;
@@ -797,31 +820,6 @@
 .automation-color-options button[aria-pressed="true"] {
   border-color: var(--focus);
 }
-.automation-identity[data-color="default"] {
-  color: var(--muted);
-  background: transparent;
-  border-color: var(--line);
-}
-.automation-identity[data-color="blue"] {
-  color: var(--accent);
-  background: var(--accent-soft);
-  border-color: transparent;
-}
-.automation-identity[data-color="orange"] {
-  color: var(--entity);
-  background: transparent;
-  border-color: var(--line);
-}
-.automation-identity[data-color="green"] {
-  color: var(--success);
-  background: transparent;
-  border-color: var(--line);
-}
-.automation-identity[data-color="red"] {
-  color: var(--danger);
-  background: transparent;
-  border-color: var(--line);
-}
 .automation-icon-options {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
@@ -859,13 +857,4 @@
   .automation-editor-inline {
     animation: none;
   }
-}
-
-.automation-runtime {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  margin-left: auto;
-  max-width: 100%;
-  min-width: 0;
 }

@@ -126,32 +126,25 @@
   align-items: center;
 }
 .plugin-center-list .catalog-entry-main strong {
-  font-size: 14px;
+  font-size: var(--catalog-title-size);
   font-weight: 550;
   line-height: 1.5;
 }
 .plugin-center-list .catalog-entry-main small {
-  font-size: 12px;
+  font-size: var(--catalog-description-size);
   line-height: 1.5;
   margin-top: 2px;
   color: var(--muted);
 }
-.plugin-center-list .catalog-icon,
-.plugin-center-list .expert-icon {
-  width: 32px;
-  height: 32px;
-  flex: 0 0 32px;
-  border: 1px solid var(--line);
-  border-radius: 9px;
-  background: transparent;
-  color: var(--text);
-  display: grid;
-  place-items: center;
+.plugin-center-list .catalog-icon {
+  width: var(--catalog-mark-size);
+  height: var(--catalog-mark-size);
+  flex: 0 0 var(--catalog-mark-size);
+  border-radius: var(--catalog-mark-radius);
 }
-.plugin-center-list .catalog-icon svg,
-.plugin-center-list .expert-icon svg {
-  width: 18px;
-  height: 18px;
+.plugin-center-list .catalog-icon svg {
+  width: var(--catalog-mark-glyph);
+  height: var(--catalog-mark-glyph);
 }
 .catalog-status {
   display: flex;
@@ -1012,6 +1005,16 @@
   width: var(--catalog-row-control);
   height: var(--catalog-row-control);
   margin-right: 4px;
+  border: 1px solid var(--line);
+  border-radius: var(--catalog-mark-radius);
+  background: transparent;
+}
+.plugin-center-list .catalog-entry > .catalog-create:hover {
+  background: var(--hover);
+}
+.plugin-center-list .catalog-entry > .catalog-create svg {
+  width: 16px;
+  height: 16px;
 }
 .market-filter-trigger {
   display: inline-flex;

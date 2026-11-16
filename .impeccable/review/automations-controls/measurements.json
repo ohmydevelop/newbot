@@ -1,0 +1,736 @@
+[
+  {
+    "width": 320,
+    "theme": "light",
+    "section": "连接器",
+    "icons": [
+      {
+        "tone": "blue",
+        "color": "rgb(11, 124, 224)",
+        "background": "rgb(232, 243, 254)",
+        "width": 32
+      },
+      {
+        "tone": "blue",
+        "color": "rgb(11, 124, 224)",
+        "background": "rgb(232, 243, 254)",
+        "width": 32
+      },
+      {
+        "tone": "blue",
+        "color": "rgb(11, 124, 224)",
+        "background": "rgb(232, 243, 254)",
+        "width": 32
+      }
+    ]
+  },
+  {
+    "width": 320,
+    "theme": "light",
+    "section": "技能",
+    "icons": [
+      {
+        "tone": "orange",
+        "color": "rgb(168, 100, 18)",
+        "background": "rgba(0, 0, 0, 0)",
+        "width": 32
+      },
+      {
+        "tone": "orange",
+        "color": "rgb(168, 100, 18)",
+        "background": "rgba(0, 0, 0, 0)",
+        "width": 32
+      },
+      {
+        "tone": "orange",
+        "color": "rgb(168, 100, 18)",
+        "background": "rgba(0, 0, 0, 0)",
+        "width": 32
+      }
+    ]
+  },
+  {
+    "width": 320,
+    "theme": "light",
+    "section": "专家",
+    "icons": [
+      {
+        "tone": "green",
+        "color": "rgb(37, 105, 77)",
+        "background": "rgba(0, 0, 0, 0)",
+        "width": 32
+      }
+    ]
+  },
+  {
+    "width": 320,
+    "theme": "light",
+    "section": "模型",
+    "icons": [
+      {
+        "tone": "orange",
+        "color": "rgb(168, 100, 18)",
+        "background": "rgba(0, 0, 0, 0)",
+        "width": 32
+      },
+      {
+        "tone": "orange",
+        "color": "rgb(168, 100, 18)",
+        "background": "rgba(0, 0, 0, 0)",
+        "width": 32
+      }
+    ]
+  },
+  {
+    "width": 320,
+    "theme": "dark",
+    "section": "连接器",
+    "icons": [
+      {
+        "tone": "blue",
+        "color": "rgb(41, 159, 255)",
+        "background": "rgb(20, 41, 59)",
+        "width": 32
+      },
+      {
+        "tone": "blue",
+        "color": "rgb(41, 159, 255)",
+        "background": "rgb(20, 41, 59)",
+        "width": 32
+      },
+      {
+        "tone": "blue",
+        "color": "rgb(41, 159, 255)",
+        "background": "rgb(20, 41, 59)",
+        "width": 32
+      }
+    ]
+  },
+  {
+    "width": 320,
+    "theme": "dark",
+    "section": "技能",
+    "icons": [
+      {
+        "tone": "orange",
+        "color": "rgb(245, 167, 66)",
+        "background": "rgba(0, 0, 0, 0)",
+        "width": 32
+      },
+      {
+        "tone": "orange",
+        "color": "rgb(245, 167, 66)",
+        "background": "rgba(0, 0, 0, 0)",
+        "width": 32
+      },
+      {
+        "tone": "orange",
+        "color": "rgb(245, 167, 66)",
+        "background": "rgba(0, 0, 0, 0)",
+        "width": 32
+      }
+    ]
+  },
+  {
+    "width": 320,
+    "theme": "dark",
+    "section": "专家",
+    "icons": [
+      {
+        "tone": "green",
+        "color": "rgb(143, 211, 179)",
+        "background": "rgba(0, 0, 0, 0)",
+        "width": 32
+      },
+      {
+        "tone": "green",
+        "color": "rgb(143, 211, 179)",
+        "background": "rgba(0, 0, 0, 0)",
+        "width": 32
+      }
+    ]
+  },
+  {
+    "width": 320,
+    "theme": "dark",
+    "section": "模型",
+    "icons": [
+      {
+        "tone": "orange",
+        "color": "rgb(245, 167, 66)",
+        "background": "rgba(0, 0, 0, 0)",
+        "width": 32
+      },
+      {
+        "tone": "orange",
+        "color": "rgb(245, 167, 66)",
+        "background": "rgba(0, 0, 0, 0)",
+        "width": 32
+      }
+    ]
+  },
+  {
+    "width": 390,
+    "theme": "light",
+    "section": "连接器",
+    "icons": [
+      {
+        "tone": "blue",
+        "color": "rgb(11, 124, 224)",
+        "background": "rgb(232, 243, 254)",
+        "width": 32
+      },
+      {
+        "tone": "blue",
+        "color": "rgb(11, 124, 224)",
+        "background": "rgb(232, 243, 254)",
+        "width": 32
+      },
+      {
+        "tone": "blue",
+        "color": "rgb(11, 124, 224)",
+        "background": "rgb(232, 243, 254)",
+        "width": 32
+      }
+    ]
+  },
+  {
+    "width": 390,
+    "theme": "light",
+    "section": "技能",
+    "icons": [
+      {
+        "tone": "orange",
+        "color": "rgb(168, 100, 18)",
+        "background": "rgba(0, 0, 0, 0)",
+        "width": 32
+      },
+      {
+        "tone": "orange",
+        "color": "rgb(168, 100, 18)",
+        "background": "rgba(0, 0, 0, 0)",
+        "width": 32
+      },
+      {
+        "tone": "orange",
+        "color": "rgb(168, 100, 18)",
+        "background": "rgba(0, 0, 0, 0)",
+        "width": 32
+      }
+    ]
+  },
+  {
+    "width": 390,
+    "theme": "light",
+    "section": "专家",
+    "icons": [
+      {
+        "tone": "green",
+        "color": "rgb(37, 105, 77)",
+        "background": "rgba(0, 0, 0, 0)",
+        "width": 32
+      },
+      {
+        "tone": "green",
+        "color": "rgb(37, 105, 77)",
+        "background": "rgba(0, 0, 0, 0)",
+        "width": 32
+      },
+      {
+        "tone": "green",
+        "color": "rgb(37, 105, 77)",
+        "background": "rgba(0, 0, 0, 0)",
+        "width": 32
+      }
+    ]
+  },
+  {
+    "width": 390,
+    "theme": "light",
+    "section": "模型",
+    "icons": [
+      {
+        "tone": "orange",
+        "color": "rgb(168, 100, 18)",
+        "background": "rgba(0, 0, 0, 0)",
+        "width": 32
+      },
+      {
+        "tone": "orange",
+        "color": "rgb(168, 100, 18)",
+        "background": "rgba(0, 0, 0, 0)",
+        "width": 32
+      }
+    ]
+  },
+  {
+    "width": 390,
+    "theme": "dark",
+    "section": "连接器",
+    "icons": [
+      {
+        "tone": "blue",
+        "color": "rgb(41, 159, 255)",
+        "background": "rgb(20, 41, 59)",
+        "width": 32
+      },
+      {
+        "tone": "blue",
+        "color": "rgb(41, 159, 255)",
+        "background": "rgb(20, 41, 59)",
+        "width": 32
+      },
+      {
+        "tone": "blue",
+        "color": "rgb(41, 159, 255)",
+        "background": "rgb(20, 41, 59)",
+        "width": 32
+      }
+    ]
+  },
+  {
+    "width": 390,
+    "theme": "dark",
+    "section": "技能",
+    "icons": [
+      {
+        "tone": "orange",
+        "color": "rgb(245, 167, 66)",
+        "background": "rgba(0, 0, 0, 0)",
+        "width": 32
+      },
+      {
+        "tone": "orange",
+        "color": "rgb(245, 167, 66)",
+        "background": "rgba(0, 0, 0, 0)",
+        "width": 32
+      },
+      {
+        "tone": "orange",
+        "color": "rgb(245, 167, 66)",
+        "background": "rgba(0, 0, 0, 0)",
+        "width": 32
+      }
+    ]
+  },
+  {
+    "width": 390,
+    "theme": "dark",
+    "section": "专家",
+    "icons": [
+      {
+        "tone": "green",
+        "color": "rgb(143, 211, 179)",
+        "background": "rgba(0, 0, 0, 0)",
+        "width": 32
+      },
+      {
+        "tone": "green",
+        "color": "rgb(143, 211, 179)",
+        "background": "rgba(0, 0, 0, 0)",
+        "width": 32
+      },
+      {
+        "tone": "green",
+        "color": "rgb(143, 211, 179)",
+        "background": "rgba(0, 0, 0, 0)",
+        "width": 32
+      }
+    ]
+  },
+  {
+    "width": 390,
+    "theme": "dark",
+    "section": "模型",
+    "icons": [
+      {
+        "tone": "orange",
+        "color": "rgb(245, 167, 66)",
+        "background": "rgba(0, 0, 0, 0)",
+        "width": 32
+      },
+      {
+        "tone": "orange",
+        "color": "rgb(245, 167, 66)",
+        "background": "rgba(0, 0, 0, 0)",
+        "width": 32
+      }
+    ]
+  },
+  {
+    "width": 768,
+    "theme": "light",
+    "section": "连接器",
+    "icons": [
+      {
+        "tone": "blue",
+        "color": "rgb(11, 124, 224)",
+        "background": "rgb(232, 243, 254)",
+        "width": 32
+      },
+      {
+        "tone": "blue",
+        "color": "rgb(11, 124, 224)",
+        "background": "rgb(232, 243, 254)",
+        "width": 32
+      },
+      {
+        "tone": "blue",
+        "color": "rgb(11, 124, 224)",
+        "background": "rgb(232, 243, 254)",
+        "width": 32
+      }
+    ]
+  },
+  {
+    "width": 768,
+    "theme": "light",
+    "section": "技能",
+    "icons": [
+      {
+        "tone": "orange",
+        "color": "rgb(168, 100, 18)",
+        "background": "rgba(0, 0, 0, 0)",
+        "width": 32
+      },
+      {
+        "tone": "orange",
+        "color": "rgb(168, 100, 18)",
+        "background": "rgba(0, 0, 0, 0)",
+        "width": 32
+      },
+      {
+        "tone": "orange",
+        "color": "rgb(168, 100, 18)",
+        "background": "rgba(0, 0, 0, 0)",
+        "width": 32
+      }
+    ]
+  },
+  {
+    "width": 768,
+    "theme": "light",
+    "section": "专家",
+    "icons": [
+      {
+        "tone": "green",
+        "color": "rgb(37, 105, 77)",
+        "background": "rgba(0, 0, 0, 0)",
+        "width": 32
+      },
+      {
+        "tone": "green",
+        "color": "rgb(37, 105, 77)",
+        "background": "rgba(0, 0, 0, 0)",
+        "width": 32
+      },
+      {
+        "tone": "green",
+        "color": "rgb(37, 105, 77)",
+        "background": "rgba(0, 0, 0, 0)",
+        "width": 32
+      }
+    ]
+  },
+  {
+    "width": 768,
+    "theme": "light",
+    "section": "模型",
+    "icons": [
+      {
+        "tone": "orange",
+        "color": "rgb(168, 100, 18)",
+        "background": "rgba(0, 0, 0, 0)",
+        "width": 32
+      },
+      {
+        "tone": "orange",
+        "color": "rgb(168, 100, 18)",
+        "background": "rgba(0, 0, 0, 0)",
+        "width": 32
+      }
+    ]
+  },
+  {
+    "width": 768,
+    "theme": "dark",
+    "section": "连接器",
+    "icons": [
+      {
+        "tone": "blue",
+        "color": "rgb(41, 159, 255)",
+        "background": "rgb(20, 41, 59)",
+        "width": 32
+      },
+      {
+        "tone": "blue",
+        "color": "rgb(41, 159, 255)",
+        "background": "rgb(20, 41, 59)",
+        "width": 32
+      },
+      {
+        "tone": "blue",
+        "color": "rgb(41, 159, 255)",
+        "background": "rgb(20, 41, 59)",
+        "width": 32
+      }
+    ]
+  },
+  {
+    "width": 768,
+    "theme": "dark",
+    "section": "技能",
+    "icons": [
+      {
+        "tone": "orange",
+        "color": "rgb(245, 167, 66)",
+        "background": "rgba(0, 0, 0, 0)",
+        "width": 32
+      },
+      {
+        "tone": "orange",
+        "color": "rgb(245, 167, 66)",
+        "background": "rgba(0, 0, 0, 0)",
+        "width": 32
+      },
+      {
+        "tone": "orange",
+        "color": "rgb(245, 167, 66)",
+        "background": "rgba(0, 0, 0, 0)",
+        "width": 32
+      }
+    ]
+  },
+  {
+    "width": 768,
+    "theme": "dark",
+    "section": "专家",
+    "icons": [
+      {
+        "tone": "green",
+        "color": "rgb(143, 211, 179)",
+        "background": "rgba(0, 0, 0, 0)",
+        "width": 32
+      },
+      {
+        "tone": "green",
+        "color": "rgb(143, 211, 179)",
+        "background": "rgba(0, 0, 0, 0)",
+        "width": 32
+      },
+      {
+        "tone": "green",
+        "color": "rgb(143, 211, 179)",
+        "background": "rgba(0, 0, 0, 0)",
+        "width": 32
+      }
+    ]
+  },
+  {
+    "width": 768,
+    "theme": "dark",
+    "section": "模型",
+    "icons": [
+      {
+        "tone": "orange",
+        "color": "rgb(245, 167, 66)",
+        "background": "rgba(0, 0, 0, 0)",
+        "width": 32
+      },
+      {
+        "tone": "orange",
+        "color": "rgb(245, 167, 66)",
+        "background": "rgba(0, 0, 0, 0)",
+        "width": 32
+      }
+    ]
+  },
+  {
+    "width": 1280,
+    "theme": "light",
+    "section": "连接器",
+    "icons": [
+      {
+        "tone": "blue",
+        "color": "rgb(11, 124, 224)",
+        "background": "rgb(232, 243, 254)",
+        "width": 32
+      },
+      {
+        "tone": "blue",
+        "color": "rgb(11, 124, 224)",
+        "background": "rgb(232, 243, 254)",
+        "width": 32
+      },
+      {
+        "tone": "blue",
+        "color": "rgb(11, 124, 224)",
+        "background": "rgb(232, 243, 254)",
+        "width": 32
+      }
+    ]
+  },
+  {
+    "width": 1280,
+    "theme": "light",
+    "section": "技能",
+    "icons": [
+      {
+        "tone": "orange",
+        "color": "rgb(168, 100, 18)",
+        "background": "rgba(0, 0, 0, 0)",
+        "width": 32
+      },
+      {
+        "tone": "orange",
+        "color": "rgb(168, 100, 18)",
+        "background": "rgba(0, 0, 0, 0)",
+        "width": 32
+      },
+      {
+        "tone": "orange",
+        "color": "rgb(168, 100, 18)",
+        "background": "rgba(0, 0, 0, 0)",
+        "width": 32
+      }
+    ]
+  },
+  {
+    "width": 1280,
+    "theme": "light",
+    "section": "专家",
+    "icons": [
+      {
+        "tone": "green",
+        "color": "rgb(37, 105, 77)",
+        "background": "rgba(0, 0, 0, 0)",
+        "width": 32
+      },
+      {
+        "tone": "green",
+        "color": "rgb(37, 105, 77)",
+        "background": "rgba(0, 0, 0, 0)",
+        "width": 32
+      },
+      {
+        "tone": "green",
+        "color": "rgb(37, 105, 77)",
+        "background": "rgba(0, 0, 0, 0)",
+        "width": 32
+      }
+    ]
+  },
+  {
+    "width": 1280,
+    "theme": "light",
+    "section": "模型",
+    "icons": [
+      {
+        "tone": "orange",
+        "color": "rgb(168, 100, 18)",
+        "background": "rgba(0, 0, 0, 0)",
+        "width": 32
+      },
+      {
+        "tone": "orange",
+        "color": "rgb(168, 100, 18)",
+        "background": "rgba(0, 0, 0, 0)",
+        "width": 32
+      }
+    ]
+  },
+  {
+    "width": 1280,
+    "theme": "dark",
+    "section": "连接器",
+    "icons": [
+      {
+        "tone": "blue",
+        "color": "rgb(41, 159, 255)",
+        "background": "rgb(20, 41, 59)",
+        "width": 32
+      },
+      {
+        "tone": "blue",
+        "color": "rgb(41, 159, 255)",
+        "background": "rgb(20, 41, 59)",
+        "width": 32
+      },
+      {
+        "tone": "blue",
+        "color": "rgb(41, 159, 255)",
+        "background": "rgb(20, 41, 59)",
+        "width": 32
+      }
+    ]
+  },
+  {
+    "width": 1280,
+    "theme": "dark",
+    "section": "技能",
+    "icons": [
+      {
+        "tone": "orange",
+        "color": "rgb(245, 167, 66)",
+        "background": "rgba(0, 0, 0, 0)",
+        "width": 32
+      },
+      {
+        "tone": "orange",
+        "color": "rgb(245, 167, 66)",
+        "background": "rgba(0, 0, 0, 0)",
+        "width": 32
+      },
+      {
+        "tone": "orange",
+        "color": "rgb(245, 167, 66)",
+        "background": "rgba(0, 0, 0, 0)",
+        "width": 32
+      }
+    ]
+  },
+  {
+    "width": 1280,
+    "theme": "dark",
+    "section": "专家",
+    "icons": [
+      {
+        "tone": "green",
+        "color": "rgb(143, 211, 179)",
+        "background": "rgba(0, 0, 0, 0)",
+        "width": 32
+      },
+      {
+        "tone": "green",
+        "color": "rgb(143, 211, 179)",
+        "background": "rgba(0, 0, 0, 0)",
+        "width": 32
+      },
+      {
+        "tone": "green",
+        "color": "rgb(143, 211, 179)",
+        "background": "rgba(0, 0, 0, 0)",
+        "width": 32
+      }
+    ]
+  },
+  {
+    "width": 1280,
+    "theme": "dark",
+    "section": "模型",
+    "icons": [
+      {
+        "tone": "orange",
+        "color": "rgb(245, 167, 66)",
+        "background": "rgba(0, 0, 0, 0)",
+        "width": 32
+      },
+      {
+        "tone": "orange",
+        "color": "rgb(245, 167, 66)",
+        "background": "rgba(0, 0, 0, 0)",
+        "width": 32
+      }
+    ]
+  }
+]

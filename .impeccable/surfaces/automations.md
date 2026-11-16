@@ -14,3 +14,6 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
 
 ## Finish outcome
 Verdict: ship for the live-reference alignment round. Independent review found one material issue (768px catalog density with retained sidebar); intrinsic column sizing fixed it and all six catalog captures were reviewed again. Evidence: .issue/2026-11-16/006-automations-live-design-review.md and .impeccable/review/automations-live/. DESIGN.md and PRODUCT.md retained; no shipping raster assets added. This covers observed catalog/editor design and the requested Newbot adaptations, not an exact certification of unobserved Grok saved-task history or external event integrations.
+
+## AUTO-4 refinement
+User feedback overrides the previous toolbar acceptance: at 320/390 the 44/36/28px mixed controls and free wrapping felt disorderly. Use one 36px axis, two semantic groups, container-aware icon-only auxiliary tools, a short model label with full accessible title/menu, and preserve mode text and selection summaries. Adjacent catalog surfaces reuse the existing automation identity palette and 32/18px mark, 14/12px copy, and square-round row add action. No new global palette or typography; state colors and header navigation remain intact. Evidence and final disposition: 006-automations-controls-catalog-progress.md.

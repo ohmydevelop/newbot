@@ -1,0 +1,5 @@
+
+> newbot@0.2.0 lint:ui
+> eslint web && stylelint web/settings.css && node scripts/check-design-ownership.mjs
+
+设置布局单一所有者、旧版关键尺寸与动效基线通过

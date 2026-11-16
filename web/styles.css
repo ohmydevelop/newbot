@@ -4656,11 +4656,7 @@ button.primary.destructive:hover:not(:disabled) {
 }
 
 /* Shared settings shell, catalog and gateway form. Independent of selected tab. */
-.catalog-icon {
-  color: var(--muted);
-  background: var(--surface);
-  border: 1px solid var(--line);
-}
+
 .suggestion-icon {
   color: var(--text);
 }
@@ -4937,16 +4933,7 @@ textarea:focus-visible,
   text-align: center;
   color: var(--muted);
 }
-.expert-icon {
-  width: 44px;
-  height: 44px;
-  flex: 0 0 44px;
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  display: grid;
-  place-items: center;
-  color: var(--muted);
-}
+
 .expert-editor {
   width: min(560px, calc(100vw - 24px));
 }

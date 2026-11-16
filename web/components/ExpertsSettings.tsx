@@ -1,3 +1,4 @@
+import CatalogIcon from "./CatalogIcon";
 import { CatalogAddButton } from "./CatalogAddButton";
 import { useCatalogField } from "../catalog-state";
 import { CatalogCopy } from "./CatalogCopy";
@@ -186,9 +187,7 @@ export default function ExpertsSettings() {
               onClick={() => setDetail(e)}
               aria-label={`查看专家 ${e.name}`}
             >
-              <span className="expert-icon">
-                <UsersRound size={22} aria-hidden="true" />
-              </span>
+              <CatalogIcon kind="expert" name={e.name} />
               <CatalogCopy
                 name={e.name}
                 description={

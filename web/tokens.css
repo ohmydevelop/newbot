@@ -6,6 +6,11 @@
   font-synthesis: none;
   font-weight: 500;
   color-scheme: light;
+  --catalog-mark-size: 32px;
+  --catalog-mark-glyph: 18px;
+  --catalog-mark-radius: 9px;
+  --catalog-title-size: 14px;
+  --catalog-description-size: 12px;
   --content-width: 752px;
   --navigation-width: 256px;
   --navigation-rail-width: 57px;

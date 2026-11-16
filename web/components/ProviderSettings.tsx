@@ -1,3 +1,4 @@
+import CatalogIcon from "./CatalogIcon";
 import { CatalogAddButton } from "./CatalogAddButton";
 import { useOperationScope } from "../use-operation-scope";
 import { readCurrentConfiguration } from "../configuration-read";
@@ -328,9 +329,7 @@ export default function ProviderSettings() {
                 disabled={!!busy}
                 onClick={() => edit(p.id)}
               >
-                <span className="expert-icon">
-                  <GatewayIcon size={22} aria-hidden="true" />
-                </span>
+                <CatalogIcon kind="gateway" name={name} />
                 <CatalogCopy
                   name={name}
                   description={

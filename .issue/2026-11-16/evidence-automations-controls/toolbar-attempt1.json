@@ -1,0 +1,772 @@
+{
+  "config": {
+    "argv": [
+      "/home/a/.local/share/mise/installs/node/26.12.0/bin/node",
+      "/home/a/Documents/ChatGPT/newbot-systematize/node_modules/.bin/playwright",
+      "test",
+      "--config=playwright.config.ts",
+      "tests/browser/automation-toolbar.spec.ts"
+    ],
+    "configFile": "/home/a/Documents/ChatGPT/newbot-systematize/playwright.config.ts",
+    "rootDir": "/home/a/Documents/ChatGPT/newbot-systematize/tests/browser",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/home/a/Documents/ChatGPT/newbot-systematize/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/home/a/Documents/ChatGPT/newbot-systematize/tests/browser",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/home/a/Documents/ChatGPT/newbot-systematize/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "",
+        "testDir": "/home/a/Documents/ChatGPT/newbot-systematize/tests/browser",
+        "snapshotDir": "/home/a/Documents/ChatGPT/newbot-systematize/tests/browser",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 30000,
+        "use": {
+          "baseURL": "http://127.0.0.1:3169",
+          "browserName": "chromium",
+          "viewport": {
+            "width": 1280,
+            "height": 720
+          },
+          "deviceScaleFactor": 1,
+          "locale": "zh-CN",
+          "timezoneId": "Asia/Shanghai",
+          "trace": "retain-on-failure",
+          "video": {
+            "mode": "on",
+            "size": {
+              "width": 1280,
+              "height": 844
+            }
+          },
+          "screenshot": "only-on-failure"
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": ""
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": ".data/ui-verification/results.json"
+        }
+      ],
+      [
+        "html",
+        {
+          "outputFolder": ".data/ui-verification/report",
+          "open": "never"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.65.1",
+    "workers": 1,
+    "webServer": {
+      "command": "ISSUE_TEST_PORT=3169 ISSUE_RICH_UI=1 ISSUE_MEMORY_PROVIDERS=1 ISSUE05_UI=1 ISSUE_CATALOG_RACES=1 node --import tsx tests/issue-preview-server.ts",
+      "url": "http://127.0.0.1:3169/api/ready",
+      "reuseExistingServer": false,
+      "timeout": 30000
+    }
+  },
+  "suites": [
+    {
+      "title": "automation-toolbar.spec.ts",
+      "file": "automation-toolbar.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "自定义任务工具栏同高与长名称 320 light",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 6478,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeFocused\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: '连接器', exact: true })\nExpected: focused\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeFocused\" getByRole('button', { name: '连接器', exact: true }) with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: '连接器', exact: true })\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeFocused\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: '连接器', exact: true })\nExpected: focused\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeFocused\" getByRole('button', { name: '连接器', exact: true }) with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: '连接器', exact: true })\u001b[22m\n\n    at /home/a/Documents/ChatGPT/newbot-systematize/tests/browser/automation-toolbar.spec.ts:95:31",
+                    "location": {
+                      "file": "/home/a/Documents/ChatGPT/newbot-systematize/tests/browser/automation-toolbar.spec.ts",
+                      "column": 31,
+                      "line": 95
+                    },
+                    "snippet": " \u001b[90m 93 |\u001b[39m         \u001b[36mawait\u001b[39m expect(option)\u001b[33m.\u001b[39mtoHaveAttribute(\u001b[32m\"aria-selected\"\u001b[39m\u001b[33m,\u001b[39m \u001b[32m\"true\"\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 94 |\u001b[39m         \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mkeyboard\u001b[33m.\u001b[39mpress(\u001b[32m\"Escape\"\u001b[39m)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 95 |\u001b[39m         \u001b[36mawait\u001b[39m expect(trigger)\u001b[33m.\u001b[39mtoBeFocused()\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                               \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 96 |\u001b[39m       }\n \u001b[90m 97 |\u001b[39m       \u001b[36mawait\u001b[39m geometry(page)\u001b[33m;\u001b[39m\n \u001b[90m 98 |\u001b[39m       \u001b[36mawait\u001b[39m info\u001b[33m.\u001b[39mattach(\u001b[32m\"toolbar\"\u001b[39m\u001b[33m,\u001b[39m {"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/home/a/Documents/ChatGPT/newbot-systematize/tests/browser/automation-toolbar.spec.ts",
+                        "column": 31,
+                        "line": 95
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeFocused\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: '连接器', exact: true })\nExpected: focused\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeFocused\" getByRole('button', { name: '连接器', exact: true }) with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: '连接器', exact: true })\u001b[22m\n\n\n  93 |         await expect(option).toHaveAttribute(\"aria-selected\", \"true\");\n  94 |         await page.keyboard.press(\"Escape\");\n> 95 |         await expect(trigger).toBeFocused();\n     |                               ^\n  96 |       }\n  97 |       await geometry(page);\n  98 |       await info.attach(\"toolbar\", {\n    at /home/a/Documents/ChatGPT/newbot-systematize/tests/browser/automation-toolbar.spec.ts:95:31"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-16T16:51:15.090Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/test-results/automation-toolbar-自定义任务工具栏同高与长名称-320-light/test-failed-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/test-results/automation-toolbar-自定义任务工具栏同高与长名称-320-light/video.webm"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/test-results/automation-toolbar-自定义任务工具栏同高与长名称-320-light/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/test-results/automation-toolbar-自定义任务工具栏同高与长名称-320-light/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/home/a/Documents/ChatGPT/newbot-systematize/tests/browser/automation-toolbar.spec.ts",
+                    "column": 31,
+                    "line": 95
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "a37bf5b1dfb12fdc78b7-0424ec6e241bdc279fa6",
+          "file": "automation-toolbar.spec.ts",
+          "line": 34,
+          "column": 5
+        },
+        {
+          "title": "自定义任务工具栏同高与长名称 320 dark",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 6471,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeFocused\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: '连接器', exact: true })\nExpected: focused\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeFocused\" getByRole('button', { name: '连接器', exact: true }) with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: '连接器', exact: true })\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeFocused\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: '连接器', exact: true })\nExpected: focused\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeFocused\" getByRole('button', { name: '连接器', exact: true }) with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: '连接器', exact: true })\u001b[22m\n\n    at /home/a/Documents/ChatGPT/newbot-systematize/tests/browser/automation-toolbar.spec.ts:95:31",
+                    "location": {
+                      "file": "/home/a/Documents/ChatGPT/newbot-systematize/tests/browser/automation-toolbar.spec.ts",
+                      "column": 31,
+                      "line": 95
+                    },
+                    "snippet": " \u001b[90m 93 |\u001b[39m         \u001b[36mawait\u001b[39m expect(option)\u001b[33m.\u001b[39mtoHaveAttribute(\u001b[32m\"aria-selected\"\u001b[39m\u001b[33m,\u001b[39m \u001b[32m\"true\"\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 94 |\u001b[39m         \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mkeyboard\u001b[33m.\u001b[39mpress(\u001b[32m\"Escape\"\u001b[39m)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 95 |\u001b[39m         \u001b[36mawait\u001b[39m expect(trigger)\u001b[33m.\u001b[39mtoBeFocused()\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                               \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 96 |\u001b[39m       }\n \u001b[90m 97 |\u001b[39m       \u001b[36mawait\u001b[39m geometry(page)\u001b[33m;\u001b[39m\n \u001b[90m 98 |\u001b[39m       \u001b[36mawait\u001b[39m info\u001b[33m.\u001b[39mattach(\u001b[32m\"toolbar\"\u001b[39m\u001b[33m,\u001b[39m {"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/home/a/Documents/ChatGPT/newbot-systematize/tests/browser/automation-toolbar.spec.ts",
+                        "column": 31,
+                        "line": 95
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeFocused\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: '连接器', exact: true })\nExpected: focused\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeFocused\" getByRole('button', { name: '连接器', exact: true }) with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: '连接器', exact: true })\u001b[22m\n\n\n  93 |         await expect(option).toHaveAttribute(\"aria-selected\", \"true\");\n  94 |         await page.keyboard.press(\"Escape\");\n> 95 |         await expect(trigger).toBeFocused();\n     |                               ^\n  96 |       }\n  97 |       await geometry(page);\n  98 |       await info.attach(\"toolbar\", {\n    at /home/a/Documents/ChatGPT/newbot-systematize/tests/browser/automation-toolbar.spec.ts:95:31"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-16T16:51:21.900Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/test-results/automation-toolbar-自定义任务工具栏同高与长名称-320-dark/test-failed-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/test-results/automation-toolbar-自定义任务工具栏同高与长名称-320-dark/video.webm"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/test-results/automation-toolbar-自定义任务工具栏同高与长名称-320-dark/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/test-results/automation-toolbar-自定义任务工具栏同高与长名称-320-dark/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/home/a/Documents/ChatGPT/newbot-systematize/tests/browser/automation-toolbar.spec.ts",
+                    "column": 31,
+                    "line": 95
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "a37bf5b1dfb12fdc78b7-3ad524cae75f56f3101f",
+          "file": "automation-toolbar.spec.ts",
+          "line": 34,
+          "column": 5
+        },
+        {
+          "title": "自定义任务工具栏同高与长名称 390 light",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 6486,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeFocused\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: '连接器', exact: true })\nExpected: focused\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeFocused\" getByRole('button', { name: '连接器', exact: true }) with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: '连接器', exact: true })\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeFocused\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: '连接器', exact: true })\nExpected: focused\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeFocused\" getByRole('button', { name: '连接器', exact: true }) with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: '连接器', exact: true })\u001b[22m\n\n    at /home/a/Documents/ChatGPT/newbot-systematize/tests/browser/automation-toolbar.spec.ts:95:31",
+                    "location": {
+                      "file": "/home/a/Documents/ChatGPT/newbot-systematize/tests/browser/automation-toolbar.spec.ts",
+                      "column": 31,
+                      "line": 95
+                    },
+                    "snippet": " \u001b[90m 93 |\u001b[39m         \u001b[36mawait\u001b[39m expect(option)\u001b[33m.\u001b[39mtoHaveAttribute(\u001b[32m\"aria-selected\"\u001b[39m\u001b[33m,\u001b[39m \u001b[32m\"true\"\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 94 |\u001b[39m         \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mkeyboard\u001b[33m.\u001b[39mpress(\u001b[32m\"Escape\"\u001b[39m)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 95 |\u001b[39m         \u001b[36mawait\u001b[39m expect(trigger)\u001b[33m.\u001b[39mtoBeFocused()\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                               \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 96 |\u001b[39m       }\n \u001b[90m 97 |\u001b[39m       \u001b[36mawait\u001b[39m geometry(page)\u001b[33m;\u001b[39m\n \u001b[90m 98 |\u001b[39m       \u001b[36mawait\u001b[39m info\u001b[33m.\u001b[39mattach(\u001b[32m\"toolbar\"\u001b[39m\u001b[33m,\u001b[39m {"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/home/a/Documents/ChatGPT/newbot-systematize/tests/browser/automation-toolbar.spec.ts",
+                        "column": 31,
+                        "line": 95
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeFocused\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: '连接器', exact: true })\nExpected: focused\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeFocused\" getByRole('button', { name: '连接器', exact: true }) with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: '连接器', exact: true })\u001b[22m\n\n\n  93 |         await expect(option).toHaveAttribute(\"aria-selected\", \"true\");\n  94 |         await page.keyboard.press(\"Escape\");\n> 95 |         await expect(trigger).toBeFocused();\n     |                               ^\n  96 |       }\n  97 |       await geometry(page);\n  98 |       await info.attach(\"toolbar\", {\n    at /home/a/Documents/ChatGPT/newbot-systematize/tests/browser/automation-toolbar.spec.ts:95:31"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-16T16:51:28.697Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/test-results/automation-toolbar-自定义任务工具栏同高与长名称-390-light/test-failed-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/test-results/automation-toolbar-自定义任务工具栏同高与长名称-390-light/video.webm"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/test-results/automation-toolbar-自定义任务工具栏同高与长名称-390-light/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/test-results/automation-toolbar-自定义任务工具栏同高与长名称-390-light/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/home/a/Documents/ChatGPT/newbot-systematize/tests/browser/automation-toolbar.spec.ts",
+                    "column": 31,
+                    "line": 95
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "a37bf5b1dfb12fdc78b7-17d368e3e596ebc5e3a7",
+          "file": "automation-toolbar.spec.ts",
+          "line": 34,
+          "column": 5
+        },
+        {
+          "title": "自定义任务工具栏同高与长名称 390 dark",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 6444,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeFocused\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: '连接器', exact: true })\nExpected: focused\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeFocused\" getByRole('button', { name: '连接器', exact: true }) with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: '连接器', exact: true })\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeFocused\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: '连接器', exact: true })\nExpected: focused\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeFocused\" getByRole('button', { name: '连接器', exact: true }) with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: '连接器', exact: true })\u001b[22m\n\n    at /home/a/Documents/ChatGPT/newbot-systematize/tests/browser/automation-toolbar.spec.ts:95:31",
+                    "location": {
+                      "file": "/home/a/Documents/ChatGPT/newbot-systematize/tests/browser/automation-toolbar.spec.ts",
+                      "column": 31,
+                      "line": 95
+                    },
+                    "snippet": " \u001b[90m 93 |\u001b[39m         \u001b[36mawait\u001b[39m expect(option)\u001b[33m.\u001b[39mtoHaveAttribute(\u001b[32m\"aria-selected\"\u001b[39m\u001b[33m,\u001b[39m \u001b[32m\"true\"\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 94 |\u001b[39m         \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mkeyboard\u001b[33m.\u001b[39mpress(\u001b[32m\"Escape\"\u001b[39m)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 95 |\u001b[39m         \u001b[36mawait\u001b[39m expect(trigger)\u001b[33m.\u001b[39mtoBeFocused()\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                               \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 96 |\u001b[39m       }\n \u001b[90m 97 |\u001b[39m       \u001b[36mawait\u001b[39m geometry(page)\u001b[33m;\u001b[39m\n \u001b[90m 98 |\u001b[39m       \u001b[36mawait\u001b[39m info\u001b[33m.\u001b[39mattach(\u001b[32m\"toolbar\"\u001b[39m\u001b[33m,\u001b[39m {"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/home/a/Documents/ChatGPT/newbot-systematize/tests/browser/automation-toolbar.spec.ts",
+                        "column": 31,
+                        "line": 95
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeFocused\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: '连接器', exact: true })\nExpected: focused\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeFocused\" getByRole('button', { name: '连接器', exact: true }) with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: '连接器', exact: true })\u001b[22m\n\n\n  93 |         await expect(option).toHaveAttribute(\"aria-selected\", \"true\");\n  94 |         await page.keyboard.press(\"Escape\");\n> 95 |         await expect(trigger).toBeFocused();\n     |                               ^\n  96 |       }\n  97 |       await geometry(page);\n  98 |       await info.attach(\"toolbar\", {\n    at /home/a/Documents/ChatGPT/newbot-systematize/tests/browser/automation-toolbar.spec.ts:95:31"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-16T16:51:35.472Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/test-results/automation-toolbar-自定义任务工具栏同高与长名称-390-dark/test-failed-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/test-results/automation-toolbar-自定义任务工具栏同高与长名称-390-dark/video.webm"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/test-results/automation-toolbar-自定义任务工具栏同高与长名称-390-dark/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/test-results/automation-toolbar-自定义任务工具栏同高与长名称-390-dark/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/home/a/Documents/ChatGPT/newbot-systematize/tests/browser/automation-toolbar.spec.ts",
+                    "column": 31,
+                    "line": 95
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "a37bf5b1dfb12fdc78b7-51b5ea82bb7612a362d8",
+          "file": "automation-toolbar.spec.ts",
+          "line": 34,
+          "column": 5
+        },
+        {
+          "title": "自定义任务工具栏同高与长名称 768 light",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 6249,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeFocused\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: '连接器', exact: true })\nExpected: focused\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeFocused\" getByRole('button', { name: '连接器', exact: true }) with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: '连接器', exact: true })\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeFocused\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: '连接器', exact: true })\nExpected: focused\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeFocused\" getByRole('button', { name: '连接器', exact: true }) with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: '连接器', exact: true })\u001b[22m\n\n    at /home/a/Documents/ChatGPT/newbot-systematize/tests/browser/automation-toolbar.spec.ts:95:31",
+                    "location": {
+                      "file": "/home/a/Documents/ChatGPT/newbot-systematize/tests/browser/automation-toolbar.spec.ts",
+                      "column": 31,
+                      "line": 95
+                    },
+                    "snippet": " \u001b[90m 93 |\u001b[39m         \u001b[36mawait\u001b[39m expect(option)\u001b[33m.\u001b[39mtoHaveAttribute(\u001b[32m\"aria-selected\"\u001b[39m\u001b[33m,\u001b[39m \u001b[32m\"true\"\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 94 |\u001b[39m         \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mkeyboard\u001b[33m.\u001b[39mpress(\u001b[32m\"Escape\"\u001b[39m)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 95 |\u001b[39m         \u001b[36mawait\u001b[39m expect(trigger)\u001b[33m.\u001b[39mtoBeFocused()\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                               \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 96 |\u001b[39m       }\n \u001b[90m 97 |\u001b[39m       \u001b[36mawait\u001b[39m geometry(page)\u001b[33m;\u001b[39m\n \u001b[90m 98 |\u001b[39m       \u001b[36mawait\u001b[39m info\u001b[33m.\u001b[39mattach(\u001b[32m\"toolbar\"\u001b[39m\u001b[33m,\u001b[39m {"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/home/a/Documents/ChatGPT/newbot-systematize/tests/browser/automation-toolbar.spec.ts",
+                        "column": 31,
+                        "line": 95
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeFocused\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: '连接器', exact: true })\nExpected: focused\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeFocused\" getByRole('button', { name: '连接器', exact: true }) with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: '连接器', exact: true })\u001b[22m\n\n\n  93 |         await expect(option).toHaveAttribute(\"aria-selected\", \"true\");\n  94 |         await page.keyboard.press(\"Escape\");\n> 95 |         await expect(trigger).toBeFocused();\n     |                               ^\n  96 |       }\n  97 |       await geometry(page);\n  98 |       await info.attach(\"toolbar\", {\n    at /home/a/Documents/ChatGPT/newbot-systematize/tests/browser/automation-toolbar.spec.ts:95:31"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-16T16:51:42.243Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/test-results/automation-toolbar-自定义任务工具栏同高与长名称-768-light/test-failed-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/test-results/automation-toolbar-自定义任务工具栏同高与长名称-768-light/video.webm"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/test-results/automation-toolbar-自定义任务工具栏同高与长名称-768-light/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/test-results/automation-toolbar-自定义任务工具栏同高与长名称-768-light/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/home/a/Documents/ChatGPT/newbot-systematize/tests/browser/automation-toolbar.spec.ts",
+                    "column": 31,
+                    "line": 95
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "a37bf5b1dfb12fdc78b7-c76d2157f3ecb98b1894",
+          "file": "automation-toolbar.spec.ts",
+          "line": 34,
+          "column": 5
+        },
+        {
+          "title": "自定义任务工具栏同高与长名称 768 dark",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 5,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 6195,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeFocused\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: '连接器', exact: true })\nExpected: focused\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeFocused\" getByRole('button', { name: '连接器', exact: true }) with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: '连接器', exact: true })\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeFocused\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: '连接器', exact: true })\nExpected: focused\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeFocused\" getByRole('button', { name: '连接器', exact: true }) with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: '连接器', exact: true })\u001b[22m\n\n    at /home/a/Documents/ChatGPT/newbot-systematize/tests/browser/automation-toolbar.spec.ts:95:31",
+                    "location": {
+                      "file": "/home/a/Documents/ChatGPT/newbot-systematize/tests/browser/automation-toolbar.spec.ts",
+                      "column": 31,
+                      "line": 95
+                    },
+                    "snippet": " \u001b[90m 93 |\u001b[39m         \u001b[36mawait\u001b[39m expect(option)\u001b[33m.\u001b[39mtoHaveAttribute(\u001b[32m\"aria-selected\"\u001b[39m\u001b[33m,\u001b[39m \u001b[32m\"true\"\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 94 |\u001b[39m         \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mkeyboard\u001b[33m.\u001b[39mpress(\u001b[32m\"Escape\"\u001b[39m)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 95 |\u001b[39m         \u001b[36mawait\u001b[39m expect(trigger)\u001b[33m.\u001b[39mtoBeFocused()\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                               \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 96 |\u001b[39m       }\n \u001b[90m 97 |\u001b[39m       \u001b[36mawait\u001b[39m geometry(page)\u001b[33m;\u001b[39m\n \u001b[90m 98 |\u001b[39m       \u001b[36mawait\u001b[39m info\u001b[33m.\u001b[39mattach(\u001b[32m\"toolbar\"\u001b[39m\u001b[33m,\u001b[39m {"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/home/a/Documents/ChatGPT/newbot-systematize/tests/browser/automation-toolbar.spec.ts",
+                        "column": 31,
+                        "line": 95
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeFocused\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: '连接器', exact: true })\nExpected: focused\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeFocused\" getByRole('button', { name: '连接器', exact: true }) with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: '连接器', exact: true })\u001b[22m\n\n\n  93 |         await expect(option).toHaveAttribute(\"aria-selected\", \"true\");\n  94 |         await page.keyboard.press(\"Escape\");\n> 95 |         await expect(trigger).toBeFocused();\n     |                               ^\n  96 |       }\n  97 |       await geometry(page);\n  98 |       await info.attach(\"toolbar\", {\n    at /home/a/Documents/ChatGPT/newbot-systematize/tests/browser/automation-toolbar.spec.ts:95:31"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-16T16:51:48.805Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/test-results/automation-toolbar-自定义任务工具栏同高与长名称-768-dark/test-failed-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/test-results/automation-toolbar-自定义任务工具栏同高与长名称-768-dark/video.webm"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/test-results/automation-toolbar-自定义任务工具栏同高与长名称-768-dark/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/test-results/automation-toolbar-自定义任务工具栏同高与长名称-768-dark/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/home/a/Documents/ChatGPT/newbot-systematize/tests/browser/automation-toolbar.spec.ts",
+                    "column": 31,
+                    "line": 95
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "a37bf5b1dfb12fdc78b7-ae847af0a36e91bca7f4",
+          "file": "automation-toolbar.spec.ts",
+          "line": 34,
+          "column": 5
+        },
+        {
+          "title": "自定义任务工具栏同高与长名称 1280 light",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 6,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 6238,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeFocused\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: '连接器', exact: true })\nExpected: focused\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeFocused\" getByRole('button', { name: '连接器', exact: true }) with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: '连接器', exact: true })\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeFocused\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: '连接器', exact: true })\nExpected: focused\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeFocused\" getByRole('button', { name: '连接器', exact: true }) with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: '连接器', exact: true })\u001b[22m\n\n    at /home/a/Documents/ChatGPT/newbot-systematize/tests/browser/automation-toolbar.spec.ts:95:31",
+                    "location": {
+                      "file": "/home/a/Documents/ChatGPT/newbot-systematize/tests/browser/automation-toolbar.spec.ts",
+                      "column": 31,
+                      "line": 95
+                    },
+                    "snippet": " \u001b[90m 93 |\u001b[39m         \u001b[36mawait\u001b[39m expect(option)\u001b[33m.\u001b[39mtoHaveAttribute(\u001b[32m\"aria-selected\"\u001b[39m\u001b[33m,\u001b[39m \u001b[32m\"true\"\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 94 |\u001b[39m         \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mkeyboard\u001b[33m.\u001b[39mpress(\u001b[32m\"Escape\"\u001b[39m)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 95 |\u001b[39m         \u001b[36mawait\u001b[39m expect(trigger)\u001b[33m.\u001b[39mtoBeFocused()\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                               \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 96 |\u001b[39m       }\n \u001b[90m 97 |\u001b[39m       \u001b[36mawait\u001b[39m geometry(page)\u001b[33m;\u001b[39m\n \u001b[90m 98 |\u001b[39m       \u001b[36mawait\u001b[39m info\u001b[33m.\u001b[39mattach(\u001b[32m\"toolbar\"\u001b[39m\u001b[33m,\u001b[39m {"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/home/a/Documents/ChatGPT/newbot-systematize/tests/browser/automation-toolbar.spec.ts",
+                        "column": 31,
+                        "line": 95
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeFocused\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: '连接器', exact: true })\nExpected: focused\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeFocused\" getByRole('button', { name: '连接器', exact: true }) with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: '连接器', exact: true })\u001b[22m\n\n\n  93 |         await expect(option).toHaveAttribute(\"aria-selected\", \"true\");\n  94 |         await page.keyboard.press(\"Escape\");\n> 95 |         await expect(trigger).toBeFocused();\n     |                               ^\n  96 |       }\n  97 |       await geometry(page);\n  98 |       await info.attach(\"toolbar\", {\n    at /home/a/Documents/ChatGPT/newbot-systematize/tests/browser/automation-toolbar.spec.ts:95:31"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-16T16:51:55.296Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/test-results/automation-toolbar-自定义任务工具栏同高与长名称-1280-light/test-failed-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/test-results/automation-toolbar-自定义任务工具栏同高与长名称-1280-light/video.webm"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/test-results/automation-toolbar-自定义任务工具栏同高与长名称-1280-light/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/test-results/automation-toolbar-自定义任务工具栏同高与长名称-1280-light/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/home/a/Documents/ChatGPT/newbot-systematize/tests/browser/automation-toolbar.spec.ts",
+                    "column": 31,
+                    "line": 95
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "a37bf5b1dfb12fdc78b7-a04faac1876041c2be29",
+          "file": "automation-toolbar.spec.ts",
+          "line": 34,
+          "column": 5
+        },
+        {
+          "title": "自定义任务工具栏同高与长名称 1280 dark",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 7,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 6203,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeFocused\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: '连接器', exact: true })\nExpected: focused\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeFocused\" getByRole('button', { name: '连接器', exact: true }) with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: '连接器', exact: true })\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeFocused\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: '连接器', exact: true })\nExpected: focused\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeFocused\" getByRole('button', { name: '连接器', exact: true }) with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: '连接器', exact: true })\u001b[22m\n\n    at /home/a/Documents/ChatGPT/newbot-systematize/tests/browser/automation-toolbar.spec.ts:95:31",
+                    "location": {
+                      "file": "/home/a/Documents/ChatGPT/newbot-systematize/tests/browser/automation-toolbar.spec.ts",
+                      "column": 31,
+                      "line": 95
+                    },
+                    "snippet": " \u001b[90m 93 |\u001b[39m         \u001b[36mawait\u001b[39m expect(option)\u001b[33m.\u001b[39mtoHaveAttribute(\u001b[32m\"aria-selected\"\u001b[39m\u001b[33m,\u001b[39m \u001b[32m\"true\"\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 94 |\u001b[39m         \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mkeyboard\u001b[33m.\u001b[39mpress(\u001b[32m\"Escape\"\u001b[39m)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 95 |\u001b[39m         \u001b[36mawait\u001b[39m expect(trigger)\u001b[33m.\u001b[39mtoBeFocused()\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                               \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 96 |\u001b[39m       }\n \u001b[90m 97 |\u001b[39m       \u001b[36mawait\u001b[39m geometry(page)\u001b[33m;\u001b[39m\n \u001b[90m 98 |\u001b[39m       \u001b[36mawait\u001b[39m info\u001b[33m.\u001b[39mattach(\u001b[32m\"toolbar\"\u001b[39m\u001b[33m,\u001b[39m {"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/home/a/Documents/ChatGPT/newbot-systematize/tests/browser/automation-toolbar.spec.ts",
+                        "column": 31,
+                        "line": 95
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeFocused\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: '连接器', exact: true })\nExpected: focused\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeFocused\" getByRole('button', { name: '连接器', exact: true }) with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: '连接器', exact: true })\u001b[22m\n\n\n  93 |         await expect(option).toHaveAttribute(\"aria-selected\", \"true\");\n  94 |         await page.keyboard.press(\"Escape\");\n> 95 |         await expect(trigger).toBeFocused();\n     |                               ^\n  96 |       }\n  97 |       await geometry(page);\n  98 |       await info.attach(\"toolbar\", {\n    at /home/a/Documents/ChatGPT/newbot-systematize/tests/browser/automation-toolbar.spec.ts:95:31"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-16T16:52:01.870Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/test-results/automation-toolbar-自定义任务工具栏同高与长名称-1280-dark/test-failed-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/test-results/automation-toolbar-自定义任务工具栏同高与长名称-1280-dark/video.webm"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/test-results/automation-toolbar-自定义任务工具栏同高与长名称-1280-dark/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/test-results/automation-toolbar-自定义任务工具栏同高与长名称-1280-dark/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/home/a/Documents/ChatGPT/newbot-systematize/tests/browser/automation-toolbar.spec.ts",
+                    "column": 31,
+                    "line": 95
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "a37bf5b1dfb12fdc78b7-65e4f951480a931e88dc",
+          "file": "automation-toolbar.spec.ts",
+          "line": 34,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-16T16:51:13.943Z",
+    "duration": 54265.763,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 8,
+    "flaky": 0
+  }
+}

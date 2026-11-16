@@ -11,6 +11,7 @@ export function AutomationChoice({
   search = false,
   disabled = false,
   trigger,
+  displayValue,
 }: {
   label: string;
   value: string;
@@ -19,6 +20,7 @@ export function AutomationChoice({
   search?: boolean;
   disabled?: boolean;
   trigger?: ReactNode;
+  displayValue?: string;
 }) {
   const [open, setOpen] = useState(false),
     [query, setQuery] = useState("");
@@ -37,12 +39,16 @@ export function AutomationChoice({
         type="button"
         className="automation-choice"
         aria-label={label}
+        title={options.find((v) => v.id === value)?.label || value || label}
         disabled={disabled}
       >
         {trigger || (
           <>
             <span>
-              {options.find((v) => v.id === value)?.label || value || label}
+              {displayValue ||
+                options.find((v) => v.id === value)?.label ||
+                value ||
+                label}
             </span>
             <ChevronDown size={15} />
           </>

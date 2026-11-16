@@ -1,0 +1,245 @@
+[WebServer] (node:653738) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 86 tests using 1 worker
+
+(node:653816) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 tests/browser/automation-toolbar.spec.ts:34:5 › 自定义任务工具栏同高与长名称 320 light (1.5s)
+  ✓   2 tests/browser/automation-toolbar.spec.ts:34:5 › 自定义任务工具栏同高与长名称 320 dark (1.5s)
+  ✓   3 tests/browser/automation-toolbar.spec.ts:34:5 › 自定义任务工具栏同高与长名称 390 light (1.4s)
+  ✓   4 tests/browser/automation-toolbar.spec.ts:34:5 › 自定义任务工具栏同高与长名称 390 dark (1.4s)
+  ✓   5 tests/browser/automation-toolbar.spec.ts:34:5 › 自定义任务工具栏同高与长名称 768 light (1.2s)
+  ✓   6 tests/browser/automation-toolbar.spec.ts:34:5 › 自定义任务工具栏同高与长名称 768 dark (1.2s)
+  ✓   7 tests/browser/automation-toolbar.spec.ts:34:5 › 自定义任务工具栏同高与长名称 1280 light (1.2s)
+  ✓   8 tests/browser/automation-toolbar.spec.ts:34:5 › 自定义任务工具栏同高与长名称 1280 dark (1.2s)
+  ✓   9 tests/browser/automations.spec.ts:4:5 › 自动任务完整流程 390 light (7.8s)
+  ✓  10 tests/browser/automations.spec.ts:4:5 › 自动任务完整流程 390 dark (7.8s)
+  ✓  11 tests/browser/automations.spec.ts:4:5 › 自动任务完整流程 1280 light (7.5s)
+  ✓  12 tests/browser/automations.spec.ts:4:5 › 自动任务完整流程 1280 dark (7.4s)
+  ✓  13 tests/browser/automations.spec.ts:163:3 › 自动任务弹层、邮件配置与焦点 320 (1.9s)
+  ✓  14 tests/browser/automations.spec.ts:163:3 › 自动任务弹层、邮件配置与焦点 390 (1.9s)
+  ✓  15 tests/browser/automations.spec.ts:163:3 › 自动任务弹层、邮件配置与焦点 1280 (1.7s)
+  ✓  16 tests/browser/automations.spec.ts:262:3 › 自动任务目录连续性、日历与小时窗口 320 (1.6s)
+  ✓  17 tests/browser/automations.spec.ts:262:3 › 自动任务目录连续性、日历与小时窗口 768 (1.4s)
+  ✓  18 tests/browser/automations.spec.ts:262:3 › 自动任务目录连续性、日历与小时窗口 1280 (1.5s)
+  ✓  19 tests/browser/catalog-continuity.spec.ts:17:3 › 侧栏同坐标连续折叠和导航顺序 390 (2.4s)
+  ✓  20 tests/browser/catalog-continuity.spec.ts:17:3 › 侧栏同坐标连续折叠和导航顺序 1280 (424ms)
+  ✓  21 tests/browser/catalog-continuity.spec.ts:52:3 › 已有会话的两个输入框入口就地搜索选择 390 (3.6s)
+  ✓  22 tests/browser/catalog-continuity.spec.ts:52:3 › 已有会话的两个输入框入口就地搜索选择 1280 (3.2s)
+  ✓  23 tests/browser/catalog-continuity.spec.ts:113:3 › 目录整体中心对齐、说明省略与图标添加 390 (4.8s)
+  ✓  24 tests/browser/catalog-continuity.spec.ts:113:3 › 目录整体中心对齐、说明省略与图标添加 1280 (4.6s)
+  ✓  25 tests/browser/catalog-continuity.spec.ts:184:1 › 删除后插件与独立连接器连续填满同一网格 (2.4s)
+  ✓  26 tests/browser/catalog-continuity.spec.ts:216:3 › 长连接器详情底部仍可返回与管理 390 (2.8s)
+  ✓  27 tests/browser/catalog-continuity.spec.ts:216:3 › 长连接器详情底部仍可返回与管理 1280 (2.5s)
+  ✓  28 tests/browser/catalog-continuity.spec.ts:269:1 › 取消就地技能读取后切换聊天，迟到响应不能修改新聊天 (2.4s)
+  ✘  29 tests/browser/catalog-identity.spec.ts:4:5 › 目录身份色与比例 390 light (237ms)
+(node:655610) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  30 tests/browser/catalog-identity.spec.ts:4:5 › 目录身份色与比例 390 dark (283ms)
+(node:655708) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  31 tests/browser/catalog-identity.spec.ts:4:5 › 目录身份色与比例 1280 light (336ms)
+(node:655802) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  32 tests/browser/catalog-identity.spec.ts:4:5 › 目录身份色与比例 1280 dark (325ms)
+(node:655903) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  33 tests/browser/deep-catalog-contracts.spec.ts:30:1 › 目录状态和更多操作对齐，与有无说明无关 (2.0s)
+  ✓  34 tests/browser/deep-catalog-contracts.spec.ts:55:1 › 技能切换说明和源码不会移动主操作 (2.2s)
+  ✓  35 tests/browser/deep-catalog-contracts.spec.ts:77:1 › 持久表单字段填值后标签仍然可见 (2.0s)
+  ✓  36 tests/browser/deep-catalog-contracts.spec.ts:93:1 › 工具详情使用主滚动容器，长目录不受旧卡片高度限制 (2.0s)
+  ✓  37 tests/browser/deep-catalog-contracts.spec.ts:140:5 › 深层目录视觉 320 浅色 (4.4s)
+  ✓  38 tests/browser/deep-catalog-contracts.spec.ts:140:5 › 深层目录视觉 320 深色 (4.4s)
+  ✓  39 tests/browser/deep-catalog-contracts.spec.ts:140:5 › 深层目录视觉 390 浅色 (4.4s)
+  ✓  40 tests/browser/deep-catalog-contracts.spec.ts:140:5 › 深层目录视觉 390 深色 (4.4s)
+  ✓  41 tests/browser/deep-catalog-contracts.spec.ts:140:5 › 深层目录视觉 768 浅色 (4.1s)
+  ✓  42 tests/browser/deep-catalog-contracts.spec.ts:140:5 › 深层目录视觉 768 深色 (4.2s)
+  ✓  43 tests/browser/deep-catalog-contracts.spec.ts:140:5 › 深层目录视觉 1280 浅色 (4.2s)
+  ✓  44 tests/browser/deep-catalog-contracts.spec.ts:140:5 › 深层目录视觉 1280 深色 (4.2s)
+  ✓  45 tests/browser/deep-catalog-contracts.spec.ts:227:3 › 专家选择器双向滚动链 390 (3.1s)
+  ✓  46 tests/browser/deep-catalog-contracts.spec.ts:227:3 › 专家选择器双向滚动链 1280 (2.8s)
+  ✓  47 tests/browser/deep-catalog-contracts.spec.ts:238:1 › 技能管理菜单启停、失败重试与卸载取消保持正确状态 (4.9s)
+  ✓  48 tests/browser/deep-catalog-contracts.spec.ts:298:1 › 共享表单认证菜单与证书入口保持可访问 (3.4s)
+  ✓  49 tests/browser/deep-catalog-contracts.spec.ts:332:1 › 导入技能选择窗允许边缘交接且不执行安装 (3.5s)
+  ✓  50 tests/browser/deep-catalog-contracts.spec.ts:414:1 › 插件嵌套工具详情使用同一主滚动，返回保留插件上下文 (2.6s)
+  ✓  51 tests/browser/interaction-acceptance.spec.ts:40:1 › 左右拖拽跨越不透明 iframe，边界、点击恢复与宽度持久化 (4.0s)
+  ✓  52 tests/browser/interaction-acceptance.spec.ts:115:1 › 拖拽只接受所属指针，失去捕获、取消、失焦和卸载均清理 (900ms)
+  ✓  53 tests/browser/interaction-acceptance.spec.ts:159:3 › 动画真实帧连续且减弱模式即时稳定 false (3.5s)
+  ✓  54 tests/browser/interaction-acceptance.spec.ts:159:3 › 动画真实帧连续且减弱模式即时稳定 true (3.2s)
+  ✓  55 tests/browser/interaction-acceptance.spec.ts:255:1 › 工作流程默认折叠，内部滚动到两端后衔接聊天，重开保留位置 (6.7s)
+  ✓  56 tests/browser/interaction-acceptance.spec.ts:323:3 › 模型共享目录和配置详情 1280 (3.8s)
+  ✓  57 tests/browser/interaction-acceptance.spec.ts:323:3 › 模型共享目录和配置详情 320 (4.1s)
+  ✓  58 tests/browser/interaction-acceptance.spec.ts:395:1 › 目录迟到响应不得覆盖用户新查询、滚动和焦点 (3.4s)
+  ✓  59 tests/browser/interaction-acceptance.spec.ts:435:1 › 浏览器触摸取消释放拖拽捕获并保存最后宽度 (483ms)
+  ✓  60 tests/browser/interaction-acceptance.spec.ts:464:1 › 模型连接创建保存、重新读取、移除以及目录失败恢复 (3.3s)
+  ✓  61 tests/browser/interaction-acceptance.spec.ts:517:1 › 设为默认需先选择有效模型，显式操作才切换连接 (2.9s)
+  ✓  62 tests/browser/interaction-acceptance.spec.ts:555:1 › 模型与MCP长配置共用外层滚动，不截断证书和保存入口 (4.8s)
+  ✓  63 tests/browser/session-modes.spec.ts:4:5 › 交互模式保持紧凑布局和焦点 320 light (3.4s)
+  ✓  64 tests/browser/session-modes.spec.ts:4:5 › 交互模式保持紧凑布局和焦点 320 dark (3.4s)
+  ✓  65 tests/browser/session-modes.spec.ts:4:5 › 交互模式保持紧凑布局和焦点 390 light (3.4s)
+  ✓  66 tests/browser/session-modes.spec.ts:4:5 › 交互模式保持紧凑布局和焦点 390 dark (3.4s)
+  ✓  67 tests/browser/session-modes.spec.ts:4:5 › 交互模式保持紧凑布局和焦点 1280 light (3.0s)
+  ✓  68 tests/browser/session-modes.spec.ts:4:5 › 交互模式保持紧凑布局和焦点 1280 dark (3.0s)
+  ✓  69 tests/browser/session-modes.spec.ts:62:3 › 只读工具许可保存与刷新 390 (3.6s)
+  ✓  70 tests/browser/session-modes.spec.ts:62:3 › 只读工具许可保存与刷新 1280 (3.3s)
+  ✓  71 tests/browser/settings-contracts.spec.ts:22:1 › 分类真正卸载、关闭重开和详情返回保留目录状态 (3.7s)
+  ✓  72 tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 1440 light (4.8s)
+  ✓  73 tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 1440 dark (4.9s)
+  ✓  74 tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 1280 light (4.8s)
+  ✓  75 tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 1280 dark (4.9s)
+  ✓  76 tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 768 light (4.8s)
+  ✓  77 tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 768 dark (4.8s)
+  ✓  78 tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 390 light (5.0s)
+  ✓  79 tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 390 dark (5.0s)
+  ✓  80 tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 320 light (5.0s)
+  ✓  81 tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 320 dark (5.0s)
+  ✓  82 tests/browser/settings-contracts.spec.ts:134:1 › 标题栏偏移与查询丢失注入会被同一验收器拒绝 (2.0s)
+  ✓  83 tests/browser/settings-contracts.spec.ts:163:1 › 左栏键盘/拖拽与刷新持久化，折叠保留设置入口 (2.3s)
+  ✓  84 tests/browser/settings-contracts.spec.ts:189:3 › 正常/减弱动画 false (2.1s)
+  ✓  85 tests/browser/settings-contracts.spec.ts:189:3 › 正常/减弱动画 true (2.0s)
+  ✓  86 tests/browser/settings-contracts.spec.ts:208:1 › 桌面设置缩为手机时右栏不能抢焦点 (2.3s)
+
+
+  1) tests/browser/catalog-identity.spec.ts:4:5 › 目录身份色与比例 390 light ───────────────────────────────
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: true
+    Received: false
+
+      20 |         },
+      21 |       });
+    > 22 |       expect(result.ok()).toBe(true);
+         |                           ^
+      23 |       if (width < 760)
+      24 |         await page
+      25 |           .getByRole("button", { name: "展开侧栏", exact: true })
+        at /home/a/Documents/ChatGPT/newbot-systematize/tests/browser/catalog-identity.spec.ts:22:27
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/catalog-identity-目录身份色与比例-390-light/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/catalog-identity-目录身份色与比例-390-light/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/catalog-identity-目录身份色与比例-390-light/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/catalog-identity-目录身份色与比例-390-light/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/catalog-identity-目录身份色与比例-390-light/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) tests/browser/catalog-identity.spec.ts:4:5 › 目录身份色与比例 390 dark ────────────────────────────────
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: true
+    Received: false
+
+      20 |         },
+      21 |       });
+    > 22 |       expect(result.ok()).toBe(true);
+         |                           ^
+      23 |       if (width < 760)
+      24 |         await page
+      25 |           .getByRole("button", { name: "展开侧栏", exact: true })
+        at /home/a/Documents/ChatGPT/newbot-systematize/tests/browser/catalog-identity.spec.ts:22:27
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/catalog-identity-目录身份色与比例-390-dark/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/catalog-identity-目录身份色与比例-390-dark/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/catalog-identity-目录身份色与比例-390-dark/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/catalog-identity-目录身份色与比例-390-dark/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/catalog-identity-目录身份色与比例-390-dark/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3) tests/browser/catalog-identity.spec.ts:4:5 › 目录身份色与比例 1280 light ──────────────────────────────
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: true
+    Received: false
+
+      20 |         },
+      21 |       });
+    > 22 |       expect(result.ok()).toBe(true);
+         |                           ^
+      23 |       if (width < 760)
+      24 |         await page
+      25 |           .getByRole("button", { name: "展开侧栏", exact: true })
+        at /home/a/Documents/ChatGPT/newbot-systematize/tests/browser/catalog-identity.spec.ts:22:27
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/catalog-identity-目录身份色与比例-1280-light/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/catalog-identity-目录身份色与比例-1280-light/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/catalog-identity-目录身份色与比例-1280-light/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/catalog-identity-目录身份色与比例-1280-light/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/catalog-identity-目录身份色与比例-1280-light/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  4) tests/browser/catalog-identity.spec.ts:4:5 › 目录身份色与比例 1280 dark ───────────────────────────────
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: true
+    Received: false
+
+      20 |         },
+      21 |       });
+    > 22 |       expect(result.ok()).toBe(true);
+         |                           ^
+      23 |       if (width < 760)
+      24 |         await page
+      25 |           .getByRole("button", { name: "展开侧栏", exact: true })
+        at /home/a/Documents/ChatGPT/newbot-systematize/tests/browser/catalog-identity.spec.ts:22:27
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/catalog-identity-目录身份色与比例-1280-dark/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/catalog-identity-目录身份色与比例-1280-dark/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/catalog-identity-目录身份色与比例-1280-dark/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/catalog-identity-目录身份色与比例-1280-dark/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/catalog-identity-目录身份色与比例-1280-dark/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  4 failed
+    tests/browser/catalog-identity.spec.ts:4:5 › 目录身份色与比例 390 light ────────────────────────────────
+    tests/browser/catalog-identity.spec.ts:4:5 › 目录身份色与比例 390 dark ─────────────────────────────────
+    tests/browser/catalog-identity.spec.ts:4:5 › 目录身份色与比例 1280 light ───────────────────────────────
+    tests/browser/catalog-identity.spec.ts:4:5 › 目录身份色与比例 1280 dark ────────────────────────────────
+  82 passed (4.6m)

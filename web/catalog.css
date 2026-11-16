@@ -1,0 +1,19 @@
+.catalog-mark {
+  color: var(--identity-ink, var(--muted));
+  background: var(--identity-fill, transparent);
+  border: 1px solid var(--identity-line, var(--line));
+}
+.catalog-mark[data-identity-tone="blue"] {
+  --identity-ink: var(--accent);
+  --identity-fill: var(--accent-soft);
+  --identity-line: transparent;
+}
+.catalog-mark[data-identity-tone="orange"] {
+  --identity-ink: var(--entity);
+}
+.catalog-mark[data-identity-tone="green"] {
+  --identity-ink: var(--success);
+}
+.catalog-mark[data-identity-tone="red"] {
+  --identity-ink: var(--danger);
+}

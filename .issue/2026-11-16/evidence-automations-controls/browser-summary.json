@@ -1,0 +1,17 @@
+{
+  "passed": true,
+  "totalCases": 86,
+  "sameProductBuild": true,
+  "initialFullRun": {
+    "passed": 82,
+    "failed": 4,
+    "evidence": "browser-full-attempt1.json",
+    "failure": "New catalog identity fixture seeded expert before runtime ready; no UI assertions reached"
+  },
+  "correctedCases": {
+    "passed": 4,
+    "evidence": "browser-identity-final.json",
+    "fix": "Wait for existing model selector enabled before expert fixture API"
+  },
+  "originalVisualBaselinesModified": false
+}

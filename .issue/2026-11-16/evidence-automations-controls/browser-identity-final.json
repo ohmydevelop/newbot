@@ -1,0 +1,300 @@
+{
+  "config": {
+    "argv": [
+      "/home/a/.local/share/mise/installs/node/26.12.0/bin/node",
+      "/home/a/Documents/ChatGPT/newbot-systematize/node_modules/.bin/playwright",
+      "test",
+      "--config=playwright.config.ts",
+      "tests/browser/catalog-identity.spec.ts"
+    ],
+    "configFile": "/home/a/Documents/ChatGPT/newbot-systematize/playwright.config.ts",
+    "rootDir": "/home/a/Documents/ChatGPT/newbot-systematize/tests/browser",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/home/a/Documents/ChatGPT/newbot-systematize/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/home/a/Documents/ChatGPT/newbot-systematize/tests/browser",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/home/a/Documents/ChatGPT/newbot-systematize/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "",
+        "testDir": "/home/a/Documents/ChatGPT/newbot-systematize/tests/browser",
+        "snapshotDir": "/home/a/Documents/ChatGPT/newbot-systematize/tests/browser",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 30000,
+        "use": {
+          "baseURL": "http://127.0.0.1:3169",
+          "browserName": "chromium",
+          "viewport": {
+            "width": 1280,
+            "height": 720
+          },
+          "deviceScaleFactor": 1,
+          "locale": "zh-CN",
+          "timezoneId": "Asia/Shanghai",
+          "trace": "retain-on-failure",
+          "video": {
+            "mode": "on",
+            "size": {
+              "width": 1280,
+              "height": 844
+            }
+          },
+          "screenshot": "only-on-failure"
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": ""
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": ".data/ui-verification/results.json"
+        }
+      ],
+      [
+        "html",
+        {
+          "outputFolder": ".data/ui-verification/report",
+          "open": "never"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.65.1",
+    "workers": 1,
+    "webServer": {
+      "command": "ISSUE_TEST_PORT=3169 ISSUE_RICH_UI=1 ISSUE_MEMORY_PROVIDERS=1 ISSUE05_UI=1 ISSUE_CATALOG_RACES=1 node --import tsx tests/issue-preview-server.ts",
+      "url": "http://127.0.0.1:3169/api/ready",
+      "reuseExistingServer": false,
+      "timeout": 30000
+    }
+  },
+  "suites": [
+    {
+      "title": "catalog-identity.spec.ts",
+      "file": "catalog-identity.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "目录身份色与比例 390 light",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4739,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-16T17:02:13.945Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/test-results/catalog-identity-目录身份色与比例-390-light/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "44d2e9f5d34cb07bec24-e029223dc5ef5cfcbaf6",
+          "file": "catalog-identity.spec.ts",
+          "line": 4,
+          "column": 5
+        },
+        {
+          "title": "目录身份色与比例 390 dark",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4648,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-16T17:02:18.723Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/test-results/catalog-identity-目录身份色与比例-390-dark/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "44d2e9f5d34cb07bec24-a90dac0e5f567e114359",
+          "file": "catalog-identity.spec.ts",
+          "line": 4,
+          "column": 5
+        },
+        {
+          "title": "目录身份色与比例 1280 light",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4392,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-16T17:02:23.375Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/test-results/catalog-identity-目录身份色与比例-1280-light/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "44d2e9f5d34cb07bec24-a447d8703b0b735144d8",
+          "file": "catalog-identity.spec.ts",
+          "line": 4,
+          "column": 5
+        },
+        {
+          "title": "目录身份色与比例 1280 dark",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4405,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-16T17:02:27.773Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/test-results/catalog-identity-目录身份色与比例-1280-dark/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "44d2e9f5d34cb07bec24-28eee492b4d052f70e5d",
+          "file": "catalog-identity.spec.ts",
+          "line": 4,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-16T17:02:12.847Z",
+    "duration": 19380.235,
+    "expected": 4,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

@@ -258,7 +258,7 @@ components:
 
 ## Plugin center and settings
 
-来源：web/plugins.css、CatalogNavigation.tsx、ExtensionsSettings.tsx、Settings.tsx；GCF-7 参考位于 .issue/2026-11-13/evidence-grok-plugin-system。插件中心桌面1000px宽/85dvh高、24px圆角；连接器/技能主分类与搜索、新建固定在顶部。目录为双列平行列表、32px中性图标底座、18px功能轮廓、14px名称/12px简介。技能采用实测文档轮廓，更多操作沿用ReferenceIcons，功能身份不由名称猜测。技能来源与专家组合共用一条紧凑分类选择，保留newbot产品能力。
+来源：web/plugins.css、CatalogNavigation.tsx、ExtensionsSettings.tsx、Settings.tsx；GCF-7 参考位于 .issue/2026-11-13/evidence-grok-plugin-system。插件中心桌面1000px宽/85dvh高、24px圆角；连接器/技能主分类与搜索、新建固定在顶部。目录为双列平行列表、32px身份图标底座、18px功能轮廓、14px名称/12px简介；身份配色及自动任务工具栏的现行规则见下方2026-11-17补充。技能采用实测文档轮廓，更多操作沿用ReferenceIcons，功能身份不由名称猜测。技能来源与专家组合共用一条紧凑分类选择，保留newbot产品能力。
 
 详情、导入与编辑在同一个对话框中逐级导航。Escape返回当前步骤；列表挂载保留搜索与位置，返回恢复触发焦点；保存中阻止关闭与分类切换。卸载/删除仍使用确认对话框。配置来源、revision冲突、保存结果未知和私密字段保护由原业务组件维护。
 
@@ -269,3 +269,14 @@ components:
 本批保留上述全部视觉值与交互。`web/components/FormActions.tsx`集中表单操作区与提交状态：FormActions的editor/catalog/modal分别沿用原editor-actions/catalog-form-actions/modal-actions类，调用方保留动作顺序与取消/检查按钮；FormSubmit只呈现busy、disabled及原忙碌文案或16px旋转图标，不发请求、不拥有业务状态。连接器、模型服务、插件配置、专家、技能创建和商店添加共用此实现。领域回执、脏值、权限和保存策略仍由原业务组件维护。
 
 `CatalogRefreshButton.tsx`统一连接器/技能/专家目录的刷新按钮，显式type=button、可访问名称和忙碌状态；保留技能17px及其ref，其余18px。新表单不得复制提交状态模板；需要特殊行为时先区分领域机制，不把删除/安装/OAuth强行变成表单提交。
+
+
+## 自动任务与目录共用规则（2026-11-17）
+
+用户认可自动任务的身份色与名称/说明/添加动作比例，并明确要求推广到其他业务。沿用原浅深色与语义token，不另建调色板：连接器/插件使用`accent`与`accent-soft`；技能/模型使用`entity`；专家使用`success`。这些颜色只识别目录实体，不能替代连接/启停/权限的文字与状态图标。任务自选颜色仍由已保存配置决定；名称使用`text`，说明使用`muted`。
+
+`CatalogIcon`统一设置目录的身份图标，显式kind选择颜色；`web/catalog.css`是身份色规则的共同所有者，自动任务也复用它。`web/tokens.css`的`--catalog-mark-size`/`--catalog-mark-glyph`/`--catalog-mark-radius`分别为32px/18px/9px；`--catalog-title-size`与`--catalog-description-size`为14px/12px。名称550字重、说明单行省略；行尾加号32px方圆、手机保留44px触摸目标，顶部操作按钮及详情尺寸保持各自既有约定。
+
+自动任务指令框底部以“附件/连接器/技能”和“模型/交互模式”两组组成同一36px中心轴，控件不得自由换行、重叠或混用高度。输入框使用命名容器`automation-prompt`：可用宽度≤480px时，连接器/技能省略可见文字但保留图标、可访问名称与title，选中内容的完整名称留在下方摘要。模型触发器显示短模型名称或“默认”，长值单行省略，完整显示名称和连接可在title及可搜索菜单中读取。所有调整只作用于自动任务工具栏，不覆盖聊天ApprovalChoice或其他日期/通知选择器。
+
+证据：`.issue/2026-11-16/006-automations-controls-catalog-plan.md`、同目录进度和独立设计审查，以及`.impeccable/review/automations-controls/`浅深色320/390/768/1280截图。合成数据用于视觉/交互验收，不构成真实账号或实体手机证明。

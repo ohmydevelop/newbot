@@ -4,6 +4,7 @@ import App from "./App";
 import { LoadBoundary } from "./components/LoadBoundary";
 import "./styles.css";
 import "./shell.css";
+import "./catalog.css";
 import "./plugins.css";
 import "./settings.css";
 import { installFormValidation } from "./form-validation";
