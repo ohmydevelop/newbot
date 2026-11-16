@@ -10,6 +10,7 @@ import subprocess
 import time
 import urllib.request
 from deployment_database import columns, summaries, validate_migration, restore_database
+from release_integrity import directory_hash
 
 parser = argparse.ArgumentParser(description="Publish verified web assets and optionally the server; retain database and tunnel configuration.")
 parser.add_argument("--target", required=True)
@@ -46,13 +47,6 @@ if args.include_server:
     if server_stage.exists() or server_old.exists():
         raise RuntimeError("Server staging already exists")
     shutil.copytree(source / "dist/server", server_stage)
-def directory_hash(directory):
-    digest = hashlib.sha256()
-    for file in sorted(directory.rglob("*")):
-        if file.is_file():
-            digest.update(file.relative_to(directory).as_posix().encode())
-            digest.update(file.read_bytes())
-    return digest.hexdigest()
 retained = 0
 for asset in (target / "dist/web/assets").rglob("*"):
     if asset.is_file():

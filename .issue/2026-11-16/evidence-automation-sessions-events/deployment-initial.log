@@ -1,0 +1,5 @@
+{"source":"3e6749b895e966fb9cc25365de3c2d915af1aff9","webHash":"022adf84197f68d309a2eedeeea97638f6f23c11f04f0bf4c28af45006f793a4","verified":true}
+Traceback (most recent call last):
+  File "/home/a/Documents/ChatGPT/newbot-systematize/scripts/deploy-verified-web.py", line 131, in <module>
+    raise RuntimeError("Published backend differs from verified build")
+RuntimeError: Published backend differs from verified build

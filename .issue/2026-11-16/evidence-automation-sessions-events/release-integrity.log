@@ -1,0 +1,11 @@
+✔ JS receipt and Python deployment hash identically order shared-prefix files and directories (20.45985ms)
+✔ 发布门槛拒绝缺失、失败、不同源码及不同资产 (2.196449ms)
+✔ 前后端联合发布拒绝未验证或变更后的服务端构建 (0.173619ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 111.363313

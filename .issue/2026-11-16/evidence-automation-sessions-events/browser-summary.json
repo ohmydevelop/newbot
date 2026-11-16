@@ -1,0 +1,11 @@
+{
+  "stats": {
+    "startTime": "2026-11-16T23:02:52.967Z",
+    "duration": 335426.846,
+    "expected": 92,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "scope": "92 Chromium browser contracts; existing golden snapshots unchanged"
+}

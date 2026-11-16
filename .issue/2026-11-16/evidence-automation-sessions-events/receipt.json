@@ -1,0 +1,28 @@
+{
+  "source": "3e6749b895e966fb9cc25365de3c2d915af1aff9",
+  "webHash": "022adf84197f68d309a2eedeeea97638f6f23c11f04f0bf4c28af45006f793a4",
+  "serverHash": "96c92b2080099ecb8cbbe51998a2b36c18f8507c65be6c8571917aa0f868e6eb",
+  "checks": {
+    "types": {
+      "passed": true,
+      "evidence": ".issue/2026-11-16/evidence-automation-sessions-events/build.log"
+    },
+    "unit": {
+      "passed": true,
+      "evidence": ".issue/2026-11-16/evidence-automation-sessions-events/unit-all.log"
+    },
+    "design": {
+      "passed": true,
+      "evidence": ".issue/2026-11-16/evidence-automation-sessions-events/design.log"
+    },
+    "browser": {
+      "passed": true,
+      "evidence": ".issue/2026-11-16/evidence-automation-sessions-events/browser.log"
+    },
+    "motion": {
+      "passed": true,
+      "evidence": ".issue/2026-11-16/evidence-automation-sessions-events/mobile.log"
+    }
+  },
+  "created": "2026-11-16T23:09:32.239Z"
+}

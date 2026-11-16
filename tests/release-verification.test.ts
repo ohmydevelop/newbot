@@ -1,8 +1,13 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { mkdtempSync, mkdirSync, writeFileSync, rmSync } from "node:fs";
+import { execFileSync } from "node:child_process";
+import { tmpdir } from "node:os";
+import { join, resolve } from "node:path";
 import {
   validateReceipt,
   requiredChecks,
+  directoryHash,
 } from "../scripts/release-verification";
 const good = () => ({
   source: "abc",
@@ -14,6 +19,28 @@ const good = () => ({
       { passed: true, evidence: import.meta.filename },
     ]),
   ),
+});
+test("JS receipt and Python deployment hash identically order shared-prefix files and directories", () => {
+  const root = mkdtempSync(join(tmpdir(), "release-hash-"));
+  try {
+    mkdirSync(join(root, "package"));
+    writeFileSync(join(root, "package.js"), "entry");
+    writeFileSync(join(root, "package", "index.js"), "nested");
+    const actual = execFileSync(
+      "python3",
+      [
+        "-c",
+        "from pathlib import Path; import sys; from release_integrity import directory_hash; print(directory_hash(Path(sys.argv[1])))",
+        root,
+      ],
+      { cwd: resolve("scripts"), encoding: "utf8" },
+    ).trim();
+    assert.equal(actual, directoryHash(root));
+    writeFileSync(join(root, "package.js"), "tampered");
+    assert.notEqual(actual, directoryHash(root));
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
 });
 test("发布门槛拒绝缺失、失败、不同源码及不同资产", () => {
   validateReceipt(good(), "abc", "123");
