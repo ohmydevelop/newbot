@@ -15,6 +15,8 @@ import {
 import type { Json } from "../../shared/types";
 import {
   type ApprovalPreset,
+  type InteractionMode,
+  interactionMode,
   type SessionRuntime,
   runtimeIsNewer,
 } from "../../shared/runtime-settings";
@@ -28,6 +30,8 @@ import {
 const orderedEfforts = Object.keys(efforts);
 export default function RuntimeSelector({
   disabled,
+  newMode,
+  onMode,
   newApproval,
   onApproval,
   panel,
@@ -35,6 +39,8 @@ export default function RuntimeSelector({
   onBusy,
 }: {
   disabled: boolean;
+  newMode: InteractionMode;
+  onMode: (value: InteractionMode) => void;
   newApproval: ApprovalPreset;
   onApproval: (value: ApprovalPreset) => void;
   panel: ComposerPanel;
@@ -165,11 +171,12 @@ export default function RuntimeSelector({
       } else if (!useApp.getState().selectedId) {
         s.set(patch);
         if (patch.approval) onApproval(patch.approval);
+        if (patch.mode) onMode(patch.mode);
       }
     } catch (e) {
       if (useApp.getState().selectedId === threadId) {
         const message = e instanceof Error ? e.message : "设置未保存，请重试";
-        if (patch.approval) {
+        if (patch.approval || patch.mode) {
           setPresetError(message);
           s.notify(e);
         } else setSelectionError(message);
@@ -557,6 +564,11 @@ export default function RuntimeSelector({
         </PickerContent>
       </Popover.Root>
       <ApprovalChoice
+        mode={s.thread ? interactionMode(s.thread.runtime?.mode) : newMode}
+        currentMode={s.thread ? interactionMode(s.thread.runtime?.applied?.mode ?? s.thread.runtime?.mode) : newMode}
+        pending={!!s.thread?.runtime?.pending}
+        pendingError={s.thread?.runtime?.pending?.error}
+        onMode={(mode) => void update({mode})}
         value={approval}
         open={panel === "approval" && !disabled}
         onOpenChange={(open) =>

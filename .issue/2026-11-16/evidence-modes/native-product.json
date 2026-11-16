@@ -1,0 +1,23 @@
+{
+  "scope": "Product HTTP -> real isolated Codex -> synthetic loopback model/MCP; no production credentials",
+  "checks": [
+    "new sessions default to chat and cannot dispatch shell commands",
+    "unreviewed and mislabelled MCP writes are denied",
+    "reviewed read-only MCP is usable through the model",
+    "plan preserves history and blocks file writes",
+    "restart reapplies the persisted mode and tool policy",
+    "changed tool definitions require renewed review",
+    "work uses saved approval and keeps the same thread",
+    "busy mode change applies next turn, never relabels the running work",
+    "a forged MCP write cannot bypass the model tool allowlist",
+    "work in another thread remains independently authorized",
+    "new chat policy binds the receiver before credential hydration"
+  ],
+  "completed": true,
+  "calls": {
+    "read": 3,
+    "write": 1,
+    "mislabelled_read": 0
+  },
+  "modelRequests": 17
+}

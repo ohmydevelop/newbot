@@ -9,6 +9,7 @@ import sqlite3
 import subprocess
 import time
 import urllib.request
+from deployment_database import columns, summaries, validate_migration, restore_database
 
 parser = argparse.ArgumentParser(description="Publish verified web assets and optionally the server; retain database and tunnel configuration.")
 parser.add_argument("--target", required=True)
@@ -18,7 +19,10 @@ parser.add_argument("--service", required=True)
 parser.add_argument("--evidence", required=True)
 parser.add_argument("--include-server", action="store_true")
 parser.add_argument("--expected-server-hash")
+parser.add_argument("--database-migration", choices=["session-modes-v18"])
 args = parser.parse_args()
+if args.database_migration and not args.include_server:
+    parser.error("Database migrations require --include-server")
 source = pathlib.Path(__file__).resolve().parents[1]
 target = pathlib.Path(args.target).resolve()
 receipt = pathlib.Path(args.receipt).resolve()
@@ -66,24 +70,27 @@ def request(path, body=None):
 request("/api/login", {"password": (target / ".data/initial-password").read_text().strip()})
 request("/api/agent/action", {"action": "bridge/maintenance", "enabled": True})
 tables = ["threads", "session_runtime", "session_runtime_pending", "thread_workspaces", "plugin_connection_settings", "private_field_sets", "provider_configuration", "extension_configuration", "experts", "session_extensions"]
-def summaries(connection):
-    return {table: {"count": connection.execute("select count(*) from " + table).fetchone()[0],
-        "sha256": hashlib.sha256(json.dumps(connection.execute("select * from " + table + " order by 1").fetchall(), default=str).encode()).hexdigest()} for table in tables}
 def systemctl(action):
     subprocess.run(["systemctl", "--user", action, args.service], check=True)
 swapped = False
 server_swapped = False
+stopped = False
 try:
+    systemctl("stop")
+    stopped = True
     with sqlite3.connect(target / ".data/newbot.sqlite") as connection:
+        previous_version = connection.execute("PRAGMA user_version").fetchone()[0]
+        if args.database_migration and previous_version != 17:
+            raise RuntimeError("Migration baseline must be database v17")
+        selected = columns(connection, tables)
         with sqlite3.connect(backup / "database.sqlite") as saved:
             connection.backup(saved)
-        before = summaries(connection)
+        before = summaries(connection, selected)
     (backup / "baseline.json").write_text(json.dumps(before))
     shutil.copytree(target / "dist/web", backup / "web")
     backend = hashlib.sha256((target / "dist/server/index.js").read_bytes()).hexdigest()
     if args.include_server:
         shutil.copytree(target / "dist/server", backup / "server")
-    systemctl("stop")
     (target / "dist/web").rename(old)
     try:
         stage.rename(target / "dist/web")
@@ -111,8 +118,10 @@ try:
         time.sleep(0.5)
     else:
         raise RuntimeError("Published service did not become ready")
+    request("/api/agent/action", {"action": "bridge/maintenance", "enabled": True})
     with sqlite3.connect("file:" + str(target / ".data/newbot.sqlite") + "?mode=ro", uri=True) as connection:
-        after = summaries(connection)
+        validate_migration(connection, args.database_migration, previous_version, selected)
+        after = summaries(connection, selected)
     if before != after:
         raise RuntimeError("Session or configuration state changed during deployment")
     if args.include_server:
@@ -135,7 +144,8 @@ try:
             raise RuntimeError("Public asset mismatch: " + path)
         verified[path] = hashlib.sha256(payload).hexdigest()
     result = {"source": manifest["source"], "webHash": manifest["webHash"], "url": args.origin, "ready": ready,
-        "dataUnchanged": True, "tables": tables, "serverUnchanged": not args.include_server, "serverHash": manifest.get("serverHash"), "previousServerIndexHash": backend, "backup": str(backup), "assets": verified, "retainedAssets": retained}
+        "dataUnchanged": True, "databaseMigration": args.database_migration, "previousDatabaseVersion": previous_version,
+        "historicalModes": "work" if args.database_migration else "unchanged", "tables": tables, "serverUnchanged": not args.include_server, "serverHash": manifest.get("serverHash"), "previousServerIndexHash": backend, "backup": str(backup), "assets": verified, "retainedAssets": retained}
     pathlib.Path(args.evidence).write_text(json.dumps(result, indent=2) + "\n")
     print(json.dumps(result))
 except Exception:
@@ -146,6 +156,9 @@ except Exception:
         if server_swapped:
             (target / "dist/server").rename(target / ".data" / ("failed-server-" + release))
             server_old.rename(target / "dist/server")
+        if args.database_migration:
+            restore_database(backup / "database.sqlite", target / ".data/newbot.sqlite")
+    if stopped:
         systemctl("start")
     raise
 finally:

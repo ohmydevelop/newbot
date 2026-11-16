@@ -1,0 +1,89 @@
+{
+  "scope": "Real production Codex; synthetic loopback model and MCP, temporary files only. Tests enforcement, not model quality or production latency.",
+  "cases": {
+    "default_readonly_shell": {
+      "status": "completed",
+      "writeBlocked": true
+    },
+    "plan_fullaccess_shell": {
+      "status": "completed",
+      "writeExecuted": true
+    },
+    "plan_readonly_explicit_skill": {
+      "status": "completed",
+      "writeBlocked": true,
+      "skillInModelContext": true
+    },
+    "plan_readonly_model_mcp_write": {
+      "status": "completed",
+      "writeExecuted": false
+    },
+    "mislabelled_readonly_hint": {
+      "status": "completed",
+      "sideEffectExecuted": true
+    },
+    "model_forged_disabled_tool": {
+      "status": "completed",
+      "writeBlocked": true
+    },
+    "allowlist_denies_mislabelled_tool": {
+      "status": "completed",
+      "blocked": true
+    },
+    "empty_allowlist_denies_all": {
+      "blocked": true,
+      "error": {
+        "code": -32603,
+        "message": "tool 'read' is disabled for MCP server 'probe'"
+      }
+    },
+    "resume_reapplies_allowlist": {
+      "blocked": true
+    },
+    "settings_update_does_not_restrict_running_turn": {
+      "status": "completed",
+      "oldTurnStillWrote": true
+    },
+    "next_turn_uses_new_readonly": {
+      "status": "completed",
+      "writeBlocked": true
+    },
+    "interrupt_blocks_late_model_tool": {
+      "status": "interrupted",
+      "writeBlocked": true
+    },
+    "chat_disables_shell_dispatch": {
+      "writeBlocked": true,
+      "unsupportedToolReported": true
+    },
+    "chat_readonly_mcp_still_works": {
+      "status": "completed",
+      "readExecuted": true
+    },
+    "hooks_readonly_and_feature_gate": {
+      "positiveControlExecuted": true,
+      "disabledDidNotExecute": true
+    },
+    "legacy_notify_separate_gate": {
+      "notifyStillRunsWithHooksDisabled": true,
+      "clearedNotifyDidNotExecute": true
+    },
+    "restart_without_policy_reapply": {
+      "writeExecuted": true,
+      "error": null
+    },
+    "restart_reapply_and_history": {
+      "writeBlocked": true,
+      "readWorks": true,
+      "sameThread": true,
+      "sameTurnIds": true
+    }
+  },
+  "completed": true,
+  "modelRequests": 31,
+  "mcpCalls": {
+    "read": 2,
+    "write": 1,
+    "mislabelled_read": 1
+  }
+}

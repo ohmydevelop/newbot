@@ -1,3 +1,4 @@
+import ReadOnlyToolAccess from "./ReadOnlyToolAccess";
 import { CatalogCopy } from "./CatalogCopy";
 import { useMcpOAuthCompletion, type OAuthAttempt } from "../use-mcp-oauth";
 import { connectionStateLabels as stateLabel } from "../connection-state";
@@ -510,6 +511,7 @@ export default function McpSettings({
                         {native.toolsError}
                       </p>
                     )}
+                    <ReadOnlyToolAccess key={detailId} server={detailId!} />
                     <section className="connection-tools" aria-label="工具目录">
                       <h3>
                         工具 <span>{native?.toolCount ?? 0}</span>

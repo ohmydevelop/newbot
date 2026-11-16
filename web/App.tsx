@@ -76,7 +76,7 @@ import { readSkill } from "./skills";
 import RuntimeSelector from "./components/RuntimeSelector";
 import type { ExpertReference, SessionExtensions } from "../shared/experts";
 const ExpertDetails = lazy(() => import("./components/ExpertDetails"));
-import type { ApprovalPreset } from "../shared/runtime-settings";
+import type { ApprovalPreset, InteractionMode } from "../shared/runtime-settings";
 import AttachmentPreview, {
   AttachmentImage,
   type AttachmentSource,
@@ -360,6 +360,7 @@ export default function App() {
     setAttachmentPreview(null);
     setWorkspacePicker(false);
   }, [s.selectedId, s.authenticated]);
+  const [newMode, setNewMode] = useState<InteractionMode>("chat");
   const [newApproval, setNewApproval] = useState<ApprovalPreset>("ask");
   const [attachmentPreview, setAttachmentPreview] =
     useState<AttachmentSource | null>(null);
@@ -691,7 +692,7 @@ export default function App() {
           provider: s.provider || undefined,
           ...(s.selectedId
             ? { runtimeRevision: s.thread?.runtime?.revision || 0 }
-            : { approval: newApproval }),
+            : { approval: newApproval, mode: newMode }),
           ...(s.model ? { model: s.model, effort: s.effort || undefined } : {}),
         },
         (id) => {
@@ -874,6 +875,7 @@ export default function App() {
   function fresh() {
     setComposerPanel(null);
     setNewApproval("ask");
+    setNewMode("chat");
     navigation.current++;
     composer.refresh();
     newChat();
@@ -1813,6 +1815,8 @@ export default function App() {
                 panel={composerPanel}
                 setPanel={setComposerPanel}
                 disabled={selectionDisabled}
+                newMode={newMode}
+                onMode={setNewMode}
                 newApproval={newApproval}
                 onApproval={setNewApproval}
               />

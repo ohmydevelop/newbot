@@ -36,6 +36,7 @@ async function fixture(fn: (f: any) => Promise<void>) {
     });
   try {
     const thread: any = await ctx.service.handle("thread/start", {
+      mode: "work",
       model: "fixture-model",
       provider: "fixture",
     });
@@ -778,3 +779,14 @@ test("App lifecycle controls enforce Origin and the independent App host cannot 
     { code: "expired" },
   );
 });
+
+
+test("an explicit once-only App grant cannot survive a mode change",async()=>fixture(async f=>{
+ const opened=await nativeOpen(f);
+ const grant=await f.service.handle("app/call/request",{token:opened.token,tool:"metrics",arguments:{}});
+ const changed=await f.service.handle("session/update",{threadId:f.threadId,expectedRevision:0,mode:"chat"});
+ assert.equal(changed.mode,"chat");
+ const n=f.codex.calls.filter((c:any)=>c.method==="mcpServer/tool/call").length;
+ await assert.rejects(f.service.handle("app/call/approve",{grant:grant.grant,allow:true}),/变化|未提供|未获|失效/);
+ assert.equal(f.codex.calls.filter((c:any)=>c.method==="mcpServer/tool/call").length,n);
+}));

@@ -3,7 +3,7 @@ import { DatabaseSync } from "node:sqlite";
 import { mkdirSync, chmodSync } from "node:fs";
 import { resolve } from "node:path";
 import { randomBytes, createHash } from "node:crypto";
-export const DATABASE_VERSION = 17;
+export const DATABASE_VERSION = 18;
 export function database(directory: string) {
   mkdirSync(directory, { recursive: true, mode: 0o700 });
   const path = resolve(directory, "newbot.sqlite");
@@ -94,8 +94,10 @@ export function database(directory: string) {
     CREATE TABLE IF NOT EXISTS session_extensions(thread_id TEXT PRIMARY KEY REFERENCES threads(id),revision INTEGER NOT NULL,expert_id TEXT);
     CREATE TABLE IF NOT EXISTS run_experts(request_id TEXT PRIMARY KEY REFERENCES runs(request_id),expert_id TEXT NOT NULL,name TEXT NOT NULL,revision INTEGER NOT NULL);
     CREATE TABLE IF NOT EXISTS thread_waits(thread_id TEXT PRIMARY KEY REFERENCES threads(id),summary TEXT NOT NULL);
-    PRAGMA user_version=${DATABASE_VERSION};
-    CREATE TABLE IF NOT EXISTS audit(id INTEGER PRIMARY KEY,at INTEGER NOT NULL,action TEXT NOT NULL,subject TEXT NOT NULL,decision TEXT NOT NULL); COMMIT;`);
+    CREATE TABLE IF NOT EXISTS audit(id INTEGER PRIMARY KEY,at INTEGER NOT NULL,action TEXT NOT NULL,subject TEXT NOT NULL,decision TEXT NOT NULL);`);
+  if (!(db.prepare("PRAGMA table_info(session_runtime)").all() as {name: string}[]).some(c => c.name === "mode"))
+    db.exec("ALTER TABLE session_runtime ADD COLUMN mode TEXT NOT NULL DEFAULT 'work' CHECK(mode IN ('chat','plan','work'))");
+  db.exec(`PRAGMA user_version=${DATABASE_VERSION}; COMMIT;`);
   db.exec(
     "UPDATE thread_activity SET state='unknown',revision=revision+1 WHERE state IN ('preparing','running','waiting')",
   );

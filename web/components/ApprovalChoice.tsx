@@ -5,9 +5,16 @@ import {
   ShieldCheck,
   ShieldAlert,
   LoaderCircle,
+  MessageCircle,
+  ListChecks,
+  Play,
+  LockKeyhole,
 } from "lucide-react";
 import {
   approvalLabels,
+  modeLabels,
+  modeDescriptions,
+  type InteractionMode,
   type ApprovalPreset,
 } from "../../shared/runtime-settings";
 import { ActionMenuContent, ActionMenuItem } from "./ActionMenu";
@@ -31,6 +38,11 @@ const choices = {
 };
 export function ApprovalChoice({
   value,
+  mode = "work",
+  currentMode = mode,
+  pending,
+  pendingError,
+  onMode,
   open,
   onOpenChange,
   disabled,
@@ -42,6 +54,11 @@ export function ApprovalChoice({
   onChange,
 }: {
   value: ApprovalPreset;
+  mode?: InteractionMode;
+  currentMode?: InteractionMode;
+  pending?: boolean;
+  pendingError?: string;
+  onMode?: (mode: InteractionMode) => void;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   disabled: boolean;
@@ -52,25 +69,36 @@ export function ApprovalChoice({
   onRetry: () => void;
   onChange: (value: ApprovalPreset) => void;
 }) {
-  const Icon = choices[value].icon;
+  const Icon = currentMode === "work" ? choices[value].icon : LockKeyhole;
+  const icons = {chat: MessageCircle, plan: ListChecks, work: Play};
   return (
     <Dropdown.Root open={open} onOpenChange={onOpenChange}>
       <Dropdown.Trigger
         type="button"
-        className={`approval-trigger ${value === "full" ? "approval-full" : ""}`}
+        className={`approval-trigger ${currentMode === "work" && value === "full" ? "approval-full" : ""}`}
         disabled={disabled || busy}
-        aria-label={`会话审批：${approvalLabels[value]}`}
-        title={approvalLabels[value]}
+        aria-label={`交互模式：${modeLabels[currentMode]}`}
+        title={`${modeLabels[currentMode]} · ${currentMode === "work" ? approvalLabels[value] : "只读"}${pending ? `；下一轮：${modeLabels[mode]}` : ""}`}
       >
         {busy ? (
           <LoaderCircle size={18} className="spin" aria-hidden="true" />
         ) : (
           <Icon size={18} aria-hidden="true" />
         )}
-        <span>{choices[value].short}</span>
+        <span>{modeLabels[currentMode]}{pending && mode !== currentMode ? ` → ${modeLabels[mode]}` : ""}</span>
       </Dropdown.Trigger>
       <Dropdown.Portal>
         <ActionMenuContent className="approval-menu" side="top">
+          {onMode && (Object.keys(modeLabels) as InteractionMode[]).map(id => (
+            <ActionMenuItem key={id} role="menuitemradio" aria-checked={mode === id}
+              aria-label={modeLabels[id]} icon={icons[id]} description={modeDescriptions[id]}
+              disabled={busy} trailing={mode === id ? <Check size={18} /> : undefined}
+              onSelect={() => onMode(id)}>{modeLabels[id]}</ActionMenuItem>
+          ))}
+          {pending && <p className="picker-note" role="status">{pendingError || `当前${modeLabels[currentMode]}，下一轮使用${modeLabels[mode]}`}</p>}
+          {mode !== "work" && <p className="picker-note">只读 · 工作权限保持原设置</p>}
+          {mode === "work" && <>
+          <Dropdown.Separator className="action-menu-separator" />
           <div className="approval-menu-heading">
             <Dropdown.Label>执行权限</Dropdown.Label>
             <span className="approval-reading" role="status">
@@ -110,6 +138,7 @@ export function ApprovalChoice({
               </ActionMenuItem>
             );
           })}
+          </>}
           {error && (
             <div className="menu-empty" role="alert">
               {error}

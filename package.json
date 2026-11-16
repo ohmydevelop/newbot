@@ -84,7 +84,9 @@
     "test:ui-contracts": "playwright test --config=playwright.config.ts",
     "verify:release": "node --import tsx scripts/verify-release.ts",
     "test:mobile-contracts": "playwright test --config=playwright.mobile.config.ts",
-    "test:oauth-local": "node --import tsx scripts/test-local-oauth.ts"
+    "test:oauth-local": "node --import tsx scripts/test-local-oauth.ts",
+    "test:modes-native": "node --import tsx scripts/test-session-modes-native.ts",
+    "test:modes-baseline": "python3 scripts/test-mode-native-baseline.py"
   },
   "dependencies": {
     "@a2ui/web_core": "0.14.0",

@@ -1,3 +1,4 @@
+import { executionPolicy, modeInstructions } from "./execution-policy.js";
 import { followupService } from "./followups.js";
 import { restoreFailures } from "./failure-store.js";
 import { presentationInstructions } from "./presentation.js";
@@ -21,6 +22,8 @@ import { sessionRuntime } from "./session-runtime.js";
 import { sessionInputs } from "./session-inputs.js";
 import {
   approvalParameters,
+  executionParameters,
+  interactionMode,
   compatibleDefaultEffort,
 } from "../shared/runtime-settings.js";
 import { PublicError } from "./public-error.js";
@@ -126,9 +129,15 @@ export function bridge(
   const extensions = workspaces
     ? sessionExtensions(codex, workspaces, configStore, library, plugins)
     : undefined;
+  const modePolicy = executionPolicy(db);
+  const effectiveRuntime = (threadId: string) => {
+    const runtime = runtimeSettings.get(threadId);
+    return runtime.pending?.state === "applying" && !codex.active.has(threadId) ? runtime : runtimeSettings.applied(threadId);
+  };
   const extensionContext = codex.executionContext!;
   codex.executionContext = (threadId) => ({
     ...extensionContext(threadId),
+    revision: JSON.stringify([extensionContext(threadId).revision, interactionMode(effectiveRuntime(threadId).mode), modePolicy.revision()]),
     developerInstructions:
       presentationInstructions(
         db.get(`thread-ui:${threadId}`) === "v2",
@@ -154,6 +163,50 @@ export function bridge(
       await extensions?.refresh(threadId, before, providerRevision);
     },
   );
+  const policyConfiguration = async (threadId: string) => {
+    const captured = extensionContext(threadId).config;
+    return captured.mcp_servers ? captured : (await configStore.read()).response.config as Json;
+  };
+  codex.executionPolicy = async (method, params, unhydrated) => {
+    if (!params || !["thread/start", "thread/resume", "turn/start", "mcpServer/tool/call"].includes(method)) return params;
+    const {newbotMode, ...p} = params;
+    const owned = typeof p.threadId === "string" && db.owns(p.threadId);
+    if (!owned && newbotMode === undefined) return p;
+    const runtime = owned ? effectiveRuntime(p.threadId) : {approval: "ask" as const, model: p.model || "", effort: "", mode: newbotMode};
+    const mode = interactionMode(newbotMode ?? runtime.mode);
+    const stamp = () => JSON.stringify([owned ? runtimeSettings.get(p.threadId).version : null, modePolicy.revision()]);
+    const capturedStamp = stamp();
+    const checkPolicy = () => { if (stamp() !== capturedStamp) throw new PublicError("会话权限或工具许可已变化，请重试"); };
+    const raw = owned ? await policyConfiguration(p.threadId) : unhydrated || p.config || {};
+    if (method === "mcpServer/tool/call") {
+      const definition = mode === "work" ? undefined : (await apps.refresh(p.threadId)).find(s => s.name === p.server)?.tools?.[p.tool];
+      checkPolicy();
+      if (mode !== "work" && !definition) throw new PublicError("工具未获只读许可或已变化，请切换工作模式或重新确认");
+      modePolicy.assertTool(mode, raw, p.server, p.tool, definition);
+      return p;
+    }
+    const native = modePolicy.native(mode, { ...runtime, model: p.model || runtime.model, effort: p.effort || runtime.effort }, p.cwd || (owned ? threadCwd(p.threadId) : cwd));
+    if (method === "turn/start") {
+      const {sandbox, ...turnPolicy} = native;
+      checkPolicy();
+      return {...p, ...turnPolicy};
+    }
+    const {sandboxPolicy, collaborationMode, ...threadPolicy} = native;
+    if (mode === "work") { checkPolicy(); return p; }
+    const base = await codex.call("config/read", {cwd: p.cwd || cwd, includeLayers: true});
+    const identityConfig = {...base.config, ...raw};
+    const restricted = modePolicy.config(mode, identityConfig);
+    const hydrated = p.config || {};
+    checkPolicy();
+    return {...p, ...threadPolicy,
+      developerInstructions: [p.developerInstructions, modeInstructions[mode]].filter(Boolean).join("\n"),
+      config: {...Object.fromEntries(Object.entries(hydrated).filter(([k]) => !k.startsWith("features.") && !k.startsWith("mcp_servers.") && k !== "permissions")),
+        features: {...hydrated.features, ...restricted.features}, notify: [], approval_policy: "never", sandbox_mode: "read-only",
+        sandbox_workspace_write: {network_access: false},
+        mcp_servers: Object.fromEntries(Object.entries(restricted.mcp_servers).map(([name, def]: [string, any]) => [name, {...hydrated.mcp_servers?.[name], enabled: def.enabled && hydrated.mcp_servers?.[name]?.enabled !== false, enabled_tools: def.enabled_tools, tools: def.tools}])),
+      },
+    };
+  };
   const experts = expertLibrary(db, library, plugins, configStore);
   const inputs = sessionInputs(db, library, plugins, (threadId, nextInput) =>
     events.publish({
@@ -267,11 +320,11 @@ export function bridge(
   let skills: Json[] = [];
   const grants = new Map<
     string,
-    { recordToken: string; tool: string; args: Json; expires: number; automatic?: { version: number; privateRevision?: string } }
+    { recordToken: string; tool: string; args: Json; expires: number; receiverRevision: string; automatic?: { version: number; privateRevision?: string } }
   >();
   async function appAutomaticPolicy(threadId: string) {
     const selected = runtimeSettings.get(threadId);
-    if (selected.approval !== "full" || selected.applied?.approval !== "full") return undefined;
+    if (interactionMode(selected.mode) !== "work" || interactionMode(selected.applied?.mode) !== "work" || selected.approval !== "full" || selected.applied?.approval !== "full") return undefined;
     if (!(await runtimeSettings.presets(selected.model)).some((preset) => preset.id === "full" && preset.allowed)) return undefined;
     const current = runtimeSettings.get(threadId);
     if (current.version !== selected.version || current.approval !== "full" || current.applied?.approval !== "full") return undefined;
@@ -288,7 +341,7 @@ export function bridge(
       appFail("permission", "此会话未启用该插件，请在对话中引用后再操作", 403);
   }
   const appConfigurationRevision = (threadId: string) => JSON.stringify([
-    configStore.extensions?.revision, connections.version(), codex.privateVersion?.(threadId),
+    configStore.extensions?.revision, connections.version(), codex.privateVersion?.(threadId), runtimeSettings.get(threadId).version, modePolicy.revision(),
   ]);
   apps.onRevoke((token) => {
     for (const [id, grant] of grants)
@@ -1574,6 +1627,19 @@ export function bridge(
               });
             return result;
           }
+          case "mode/tools/read":
+          case "mode/tools/update": {
+            const server = id.parse(p.server);
+            const owner = connections.owner(server);
+            const catalog = await discoverMcp(owner?.pluginId || "");
+            const entry = catalog.find(v => v.name === server);
+            if (!entry || entry.toolsError) throw new PublicError("工具目录暂不可用，请先检查连接");
+            const raw = (await configStore.read()).response.config as Json;
+            if (method === "mode/tools/read") return modePolicy.catalog(raw, server, entry.tools || {});
+            const data = z.object({expectedRevision: z.string(), tools: z.array(id).max(1000)}).parse(p);
+            requireIdle();
+            return modePolicy.update(raw, server, entry.tools || {}, data.expectedRevision, data.tools);
+          }
           case "session/update": {
             const threadId = id.parse(p.threadId);
             own(threadId);
@@ -1686,12 +1752,13 @@ export function bridge(
               gateway?.defaultModel ||
               (selectedProvider === currentProvider ? currentModel : "") ||
               discovered[0]?.model;
+            const selectedMode = z.enum(["chat", "plan", "work"]).default("chat").parse(p.mode);
             const selectedApproval = z
               .enum(["ask", "review", "full"])
               .default("ask")
               .parse(p.approval);
             if (
-              !(await runtimeSettings.presets(requestedModel)).some(
+              !(await runtimeSettings.presets(requestedModel, selectedMode)).some(
                 (v) => v.id === selectedApproval && v.allowed,
               )
             )
@@ -1734,6 +1801,7 @@ export function bridge(
                 ...(configStore.runtime
                   ? { providerConfigRevision: p.providerConfigRevision }
                   : {}),
+                newbotMode: selectedMode,
                 dynamicTools: [a2uiTool],
                 developerInstructions:
                   presentationInstructions(true) +
@@ -1750,12 +1818,12 @@ export function bridge(
                     : {}),
                 },
                 modelProvider: data.provider || undefined,
-                approvalPolicy: approvalParameters(selectedApproval, runCwd)
+                approvalPolicy: executionParameters(selectedMode, selectedApproval, runCwd)
                   .approvalPolicy,
-                approvalsReviewer: approvalParameters(selectedApproval, runCwd)
+                approvalsReviewer: executionParameters(selectedMode, selectedApproval, runCwd)
                   .approvalsReviewer,
-                sandbox: approvalParameters(selectedApproval, runCwd).sandbox,
-              });
+                sandbox: executionParameters(selectedMode, selectedApproval, runCwd).sandbox,
+              } as any);
             } catch (error) {
               await preparedExtensions?.rollback();
               throw error;
@@ -1779,7 +1847,7 @@ export function bridge(
             );
             db.raw
               .prepare(
-                "INSERT OR REPLACE INTO session_runtime VALUES(?,0,?,?,?,?)",
+                "INSERT OR REPLACE INTO session_runtime(thread_id,revision,provider,model,effort,approval,mode) VALUES(?,0,?,?,?,?,?)",
               )
               .run(
                 r.thread.id,
@@ -1787,7 +1855,9 @@ export function bridge(
                 selected?.model || "",
                 requestedEffort || "",
                 selectedApproval,
+                selectedMode,
               );
+            codex.threadExecutionRevisions.set(r.thread.id, codex.executionContext!(r.thread.id).revision);
             codex.loaded.add(r.thread.id);
             const view = publicThread(r.thread, [], null);
             events.seed(view);
@@ -1877,7 +1947,7 @@ export function bridge(
                 throw new PublicError("会话网关已变化，请重新读取后发送");
               if (
                 !(
-                  await runtimeSettings.presets(data.model || session.model)
+                  await runtimeSettings.presets(data.model || session.model, interactionMode(session.mode))
                 ).some((p) => p.id === session.approval && p.allowed)
               )
                 throw new PublicError(
@@ -1936,12 +2006,14 @@ export function bridge(
                   extensionSnapshot?.config.mcp_servers?.[name]?.enabled !==
                     false,
               );
-              if (extensionSnapshot || p.connectorIds?.length) {
+              if (interactionMode(session.mode) !== "work" || extensionSnapshot || p.connectorIds?.length) {
                 const available = await apps.refresh(data.threadId);
+                modePolicy.assertCatalog(interactionMode(session.mode), await policyConfiguration(data.threadId), available);
                 for (const name of new Set([
                   ...(p.connectorIds || []),
                   ...pluginConnectors.map(([name]) => name),
                 ])) {
+                  if (interactionMode(session.mode) !== "work" && !(modePolicy.allowed(await policyConfiguration(data.threadId), name) as string[]).length) continue;
                   const server = available.find((s) => s.name === name);
                   if (
                     !server ||
@@ -2011,19 +2083,20 @@ export function bridge(
                 ...(extensionSnapshot
                   ? { disabledPluginIds: extensionSnapshot.disabledPluginIds }
                   : {}),
+                collaborationMode: modePolicy.native(interactionMode(session.mode), {...session, model: data.model || session.model, effort: data.effort || session.effort}, threadCwd(data.threadId)).collaborationMode,
                 model: data.model,
                 effort:
                   data.effort || model?.defaultReasoningEffort || undefined,
-                approvalPolicy: approvalParameters(
-                  session.approval,
+                approvalPolicy: executionParameters(
+                  interactionMode(session.mode), session.approval,
                   threadCwd(data.threadId),
                 ).approvalPolicy,
-                approvalsReviewer: approvalParameters(
-                  session.approval,
+                approvalsReviewer: executionParameters(
+                  interactionMode(session.mode), session.approval,
                   threadCwd(data.threadId),
                 ).approvalsReviewer,
-                sandboxPolicy: approvalParameters(
-                  session.approval,
+                sandboxPolicy: executionParameters(
+                  interactionMode(session.mode), session.approval,
                   threadCwd(data.threadId),
                 ).sandboxPolicy,
               });
@@ -2369,6 +2442,11 @@ export function bridge(
             own(record.threadId);
             const receiverRevision = appConfigurationRevision(record.threadId);
             await checkAppConfiguration(record.threadId, record.server);
+            const toolCatalog = await apps.refresh(record.threadId);
+            const definition = toolCatalog.find(v => v.name === record.server)?.tools?.[data.tool];
+            const mode = interactionMode(runtimeSettings.applied(record.threadId).mode);
+            if (mode !== "work" && !definition) throw new PublicError("工具已变化，请重新打开应用");
+            modePolicy.assertTool(mode, await policyConfiguration(record.threadId), record.server, data.tool, definition);
             const automatic = await appAutomaticPolicy(record.threadId);
             if (receiverRevision !== appConfigurationRevision(record.threadId))
               appFail("permission", "连接器配置已变化，请重新发起操作", 403);
@@ -2383,6 +2461,7 @@ export function bridge(
               args: data.arguments,
               expires: Math.min(Date.now() + 120000, record.expires),
               automatic,
+              receiverRevision,
             });
             return {
               grant,
@@ -2422,7 +2501,13 @@ export function bridge(
             );
             own(record.threadId);
             const receiverRevision = appConfigurationRevision(record.threadId);
+            if (grant.receiverRevision !== receiverRevision) appFail("permission", "会话权限或凭证已变化，请重新发起操作", 403);
             await checkAppConfiguration(record.threadId, record.server);
+            const toolCatalog = await apps.refresh(record.threadId);
+            const definition = toolCatalog.find(v => v.name === record.server)?.tools?.[grant.tool];
+            const mode = interactionMode(runtimeSettings.applied(record.threadId).mode);
+            if (mode !== "work" && !definition) throw new PublicError("工具已变化，请重新打开应用");
+            modePolicy.assertTool(mode, await policyConfiguration(record.threadId), record.server, grant.tool, definition);
             if (data.authorization === "session-policy") {
               const policy = await appAutomaticPolicy(record.threadId);
               if (!grant.automatic || !policy || policy.version !== grant.automatic.version || policy.privateRevision !== grant.automatic.privateRevision)

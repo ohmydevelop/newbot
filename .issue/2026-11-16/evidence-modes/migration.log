@@ -1,0 +1,18 @@
+✔ a tool's read-only claim cannot authorize it; reviews bind receiver, schema and plugin version (5.453911ms)
+✔ restriction overlay closes hooks, notify and executors; unknown connectors are disabled, work config unchanged (2.921025ms)
+✔ review removal is persistent and fail-closed across manager recreation (2.398172ms)
+✔ v17 six-column sessions migrate to work without changing their saved settings (2.59984ms)
+✔ lost command response and lost event ack do not repeat execution; terminal result cannot be overwritten (18.18051ms)
+✔ event gaps, conflicting duplicates and foreign scope cannot advance acknowledgements (7.533974ms)
+✔ revocation and lease expiry require stopped confirmation before another node can own a workspace (5.869193ms)
+✔ restart preserves encrypted ordinary commands but expires undelivered private bodies and never replays sent uncertainty (5.736616ms)
+✔ native fingerprint and grant revision checks reject incompatible or stale work (5.32241ms)
+✔ v16 metadata survives additive control-plane migration (2.808459ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 10
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 185.273201

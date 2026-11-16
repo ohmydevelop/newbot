@@ -53,6 +53,7 @@ export class Codex extends EventEmitter {
   ) => Promise<
     import("../generated/codex/v2/ConfigReadResponse.js").ConfigReadResponse
   >;
+  executionPolicy?: (method: string, params: Json, unhydrated?: Json) => Promise<Json>;
   executionContext?: (threadId: string) => {
     developerInstructions?: string;
     cwd: string;
@@ -444,6 +445,7 @@ export class Codex extends EventEmitter {
       } as Params<M>;
       runtimeRevision = snapshot.revision;
     }
+    const unhydrated = ["thread/start", "thread/resume"].includes(method) ? structuredClone((params as Json)?.config || {}) : undefined;
     const privateRevision = this.privateVersion?.((params as Json)?.threadId);
     if (
       this.privateConfiguration &&
@@ -456,6 +458,7 @@ export class Codex extends EventEmitter {
         privateRevision !== this.privateVersion?.((params as Json)?.threadId))
     )
       throw new PublicError("运行配置已变化，请重试");
+    if (this.executionPolicy) params = await this.executionPolicy(method, params as Json, unhydrated) as Params<M>;
     if (
       this.home &&
       this.userHome &&

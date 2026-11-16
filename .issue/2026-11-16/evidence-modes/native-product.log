@@ -1,0 +1,40 @@
+
+> newbot@0.2.0 test:modes-native
+> node --import tsx scripts/test-session-modes-native.ts
+
+{"at":"2026-11-16T13:51:58.985Z","event":"runtime.status","status":"ready"}
+{"at":"2026-11-16T13:51:59.019Z","event":"http.request","status":200,"requestId":"req-1","route":"/api/login","method":"POST","durationMs":29}
+{"at":"2026-11-16T13:51:59.222Z","event":"http.request","status":200,"requestId":"req-2","route":"/api/agent/run","method":"POST","durationMs":202}
+PASS new sessions default to chat and cannot dispatch shell commands
+NATIVE mcpServer/tool/call Error: 工具未获只读许可或已变化，请切换工作模式或重新确认
+PASS unreviewed and mislabelled MCP writes are denied
+{"at":"2026-11-16T13:51:59.429Z","event":"http.request","status":200,"requestId":"req-3","route":"/api/agent/action","method":"POST","durationMs":39}
+{"at":"2026-11-16T13:51:59.466Z","event":"http.request","status":200,"requestId":"req-4","route":"/api/agent/action","method":"POST","durationMs":36}
+{"at":"2026-11-16T13:52:00.680Z","event":"http.request","status":200,"requestId":"req-5","route":"/api/agent/run","method":"POST","durationMs":1214}
+PASS reviewed read-only MCP is usable through the model
+{"at":"2026-11-16T13:52:01.979Z","event":"http.request","status":200,"requestId":"req-6","route":"/api/agent/action","method":"POST","durationMs":1147}
+{"at":"2026-11-16T13:52:02.081Z","event":"http.request","status":200,"requestId":"req-7","route":"/api/agent/run","method":"POST","durationMs":102}
+PASS plan preserves history and blocks file writes
+{"at":"2026-11-16T13:52:02.348Z","event":"runtime.status","status":"offline"}
+{"at":"2026-11-16T13:52:02.498Z","event":"runtime.status","status":"ready"}
+{"at":"2026-11-16T13:52:02.525Z","event":"http.request","status":200,"requestId":"req-1","route":"/api/login","method":"POST","durationMs":26}
+NATIVE mcpServer/tool/call Error: 工具未获只读许可或已变化，请切换工作模式或重新确认
+PASS restart reapplies the persisted mode and tool policy
+{"at":"2026-11-16T13:52:03.988Z","event":"http.request","status":400,"requestId":"req-2","route":"/api/agent/run","method":"POST","durationMs":99}
+PASS changed tool definitions require renewed review
+{"at":"2026-11-16T13:52:05.129Z","event":"http.request","status":200,"requestId":"req-3","route":"/api/agent/action","method":"POST","durationMs":1141}
+{"at":"2026-11-16T13:52:05.194Z","event":"http.request","status":200,"requestId":"req-4","route":"/api/agent/run","method":"POST","durationMs":65}
+PASS work uses saved approval and keeps the same thread
+{"at":"2026-11-16T13:52:05.480Z","event":"http.request","status":200,"requestId":"req-5","route":"/api/agent/action","method":"POST","durationMs":35}
+{"at":"2026-11-16T13:52:05.514Z","event":"http.request","status":200,"requestId":"req-6","route":"/api/agent/action","method":"POST","durationMs":33}
+{"at":"2026-11-16T13:52:06.693Z","event":"http.request","status":200,"requestId":"req-7","route":"/api/agent/run","method":"POST","durationMs":1178}
+{"at":"2026-11-16T13:52:06.808Z","event":"http.request","status":200,"requestId":"req-8","route":"/api/agent/action","method":"POST","durationMs":14}
+{"at":"2026-11-16T13:52:08.207Z","event":"http.request","status":200,"requestId":"req-9","route":"/api/agent/run","method":"POST","durationMs":1249}
+PASS busy mode change applies next turn, never relabels the running work
+{"at":"2026-11-16T13:52:08.469Z","event":"http.request","status":200,"requestId":"req-a","route":"/api/agent/run","method":"POST","durationMs":112}
+PASS a forged MCP write cannot bypass the model tool allowlist
+{"at":"2026-11-16T13:52:08.739Z","event":"http.request","status":200,"requestId":"req-b","route":"/api/agent/run","method":"POST","durationMs":119}
+PASS work in another thread remains independently authorized
+{"at":"2026-11-16T13:52:09.070Z","event":"http.request","status":200,"requestId":"req-c","route":"/api/agent/run","method":"POST","durationMs":163}
+PASS new chat policy binds the receiver before credential hydration
+{"at":"2026-11-16T13:52:09.345Z","event":"runtime.status","status":"offline"}

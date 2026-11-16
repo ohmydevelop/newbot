@@ -1,0 +1,42 @@
+✔ non-chat purposes excluded; explicit chat metadata takes priority over ambiguous identifiers (0.960519ms)
+✔ synthetic probe verifies tool continuation, preserves selected effort and records observed bounded capacity (13.666565ms)
+✔ no capability success for invalid tool, ignored result, missing usage or non-streaming response (1.955114ms)
+✔ capability records cannot be reused across provider, endpoint, credentials or reasoning effort (0.252332ms)
+✔ streaming verification preserves actionable billing errors without forwarding upstream secrets (0.685794ms)
+✔ the default product path uses SQLite snapshots and ignores native Provider file defaults (99.298605ms)
+✔ memory Provider editing remains writable without a native user layer and cannot bypass native MCP write restrictions (3.637125ms)
+✔ native diagnostics use a private tmpfs directory, clean up, and fail closed for an invalid log root (1.357134ms)
+✔ Provider snapshots are detached, leased revisions survive edits, and unleased old revisions expire (0.420011ms)
+✔ configuration mutations use RAM CAS and never call native config writes, including defaults and credential references (1.830632ms)
+✔ non-Provider configuration remains native, and mixed storage mutations are rejected before writing (1.010359ms)
+✔ source payloads cannot carry keys, executable configuration, duplicate IDs or unsafe URLs (0.448793ms)
+✔ authenticated source publication and gateway CRUD update RAM without restart or config files (89.23838ms)
+✔ updates preserve running turns, retry IDs and drafts; new run metadata contains only selection and revision (363.810513ms)
+✔ an empty runtime rejects old Provider selection while retaining its session binding and native history (165.198833ms)
+✔ encrypted credentials rebind only to an identical explicitly supplied receiver, never a changed endpoint (2.805015ms)
+✔ Web can restore a missing historical gateway under its original ID and reconnect its uniquely bound encrypted credential (267.902237ms)
+✔ configuration source failures retain an existing snapshot; cold boot remains available with an explicit unavailable state (15.424168ms)
+✔ personal Codex login tokens are not inherited from the launching coding client (0.562084ms)
+✔ host personal skill references are read-only even if native discovery advertises them as user skills (4.22524ms)
+✔ private runtime keeps state, HOME and XDG inside the instance without touching host defaults (3.863774ms)
+✔ host homes and symlink aliases are refused before creating state (3.33709ms)
+✔ a personal home symlink cannot bypass isolation by naming its physical target (0.840495ms)
+✔ redirected config, SQLite, and XDG state cannot escape the instance (2.285323ms)
+✔ cross-provider session changes preserve native identity and another running task; revisions reject stale updates (163.501038ms)
+✔ active choices are saved without altering pending approval; failed application preserves intent and confirmed binding (82.148092ms)
+✔ session settings survive restart and model catalog discovery is not reported as verified compatibility (71.927196ms)
+✔ independent Codex does not inherit the launching agent's tool pipe, identity or Bridge secrets (0.222773ms)
+✔ a managed policy change blocks a previously saved full-access session before dispatch (68.206374ms)
+✔ legacy sessions recover the native saved model instead of adopting a changed global default (57.344004ms)
+✔ reading legacy history uses saved native metadata without restoring the execution environment (56.751172ms)
+✔ latest candidate survives restart and changes only the next native turn (96.372965ms)
+✔ competing saves use CAS after asynchronous validation (64.763633ms)
+✔ an edit arriving during native application is retained for the following turn (76.330516ms)
+ℹ tests 34
+ℹ suites 0
+ℹ pass 34
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1433.866843

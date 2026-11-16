@@ -14,9 +14,11 @@ import type { configuration } from "./configuration.js";
 import type { providerManager } from "./providers.js";
 import type { Json } from "../shared/types.js";
 import {
-  approvalParameters,
+  executionParameters,
+  interactionMode,
   compatibleDefaultEffort,
   type ApprovalPreset,
+  type InteractionMode,
   type SessionRuntime,
   type RuntimeConfiguration,
 } from "../shared/runtime-settings.js";
@@ -265,7 +267,7 @@ export function sessionRuntime(
   function applied(threadId: string): RuntimeConfiguration {
     const row = db.raw
       .prepare(
-        "SELECT revision,provider,model,effort,approval FROM session_runtime WHERE thread_id=?",
+        "SELECT revision,provider,model,effort,approval,mode FROM session_runtime WHERE thread_id=?",
       )
       .get(threadId) as SessionRuntime | undefined;
     return (
@@ -275,6 +277,7 @@ export function sessionRuntime(
         model: "",
         effort: "",
         approval: "ask",
+        mode: "work",
       }
     );
   }
@@ -292,7 +295,7 @@ export function sessionRuntime(
         }
       | undefined;
     return row
-      ? { ...row, value: JSON.parse(row.candidate) as RuntimeConfiguration }
+      ? { ...row, value: { ...JSON.parse(row.candidate), mode: interactionMode(JSON.parse(row.candidate).mode) } as RuntimeConfiguration }
       : undefined;
   }
   function get(threadId: string): SessionRuntime {
@@ -339,7 +342,7 @@ export function sessionRuntime(
     if (response?.model && response.modelProvider) {
       db.raw
         .prepare(
-          `INSERT INTO session_runtime VALUES(?,0,?,?,?,?)
+          `INSERT INTO session_runtime(thread_id,revision,provider,model,effort,approval) VALUES(?,0,?,?,?,?)
             ON CONFLICT(thread_id) DO UPDATE SET provider=excluded.provider, model=excluded.model, effort=excluded.effort
             WHERE session_runtime.model=''`,
         )
@@ -353,12 +356,12 @@ export function sessionRuntime(
       cache = undefined;
     }
   }
-  async function presets(model?: string) {
+  async function presets(model?: string, mode: InteractionMode = "work") {
     try {
       const response = await codex.call("configRequirements/read", undefined);
       const r = response.requirements as Json | undefined;
       return (["ask", "review", "full"] as ApprovalPreset[]).map((id) => {
-        const p = approvalParameters(id, cwd);
+        const p = executionParameters(mode, id, cwd);
         const requiredAuto =
           !!model && !!r?.autoReview?.requiredOnModels?.includes(model);
         const allowed =
@@ -415,7 +418,7 @@ export function sessionRuntime(
       next.effort || undefined,
     );
     if (
-      !(await presets(next.model)).some(
+      !(await presets(next.model, interactionMode(next.mode))).some(
         (v) => v.id === next.approval && v.allowed,
       )
     )
@@ -431,6 +434,7 @@ export function sessionRuntime(
         model: z.string().optional(),
         effort: z.string().optional(),
         approval: z.enum(["ask", "review", "full"]).optional(),
+        mode: z.enum(["chat", "plan", "work"]).optional(),
         cancel: z.boolean().optional(),
       })
       .parse(p);
@@ -456,6 +460,7 @@ export function sessionRuntime(
       model: data.model ?? base.model,
       effort: data.effort ?? base.effort,
       approval: data.approval ?? base.approval,
+      mode: data.mode ?? interactionMode(base.mode),
     };
     if (
       !data.cancel &&
@@ -479,7 +484,9 @@ export function sessionRuntime(
     if (
       liveTurn &&
       codex.runtimeCapabilities?.liveModelRoutes &&
-      next.approval === applied(data.threadId).approval
+      next.approval === applied(data.threadId).approval &&
+      next.mode === interactionMode(applied(data.threadId).mode) &&
+      next.mode === "work"
     ) {
       await applyLive(data.threadId, liveTurn, next, priorCandidate);
       return get(data.threadId);
@@ -500,16 +507,18 @@ export function sessionRuntime(
     providerRevision?: string,
     force = false,
   ) {
-    const policy = approvalParameters(next.approval, threadCwd(threadId));
+    const policy = executionParameters(interactionMode(next.mode), next.approval, threadCwd(threadId));
     const model = await check(next);
     const reload =
       force ||
       next.provider !== before.provider ||
+      interactionMode(next.mode) !== interactionMode(before.mode) ||
       (!next.effort && !!before.effort);
     if (reload) {
       await codex.unload(threadId);
       const r = await codex.call("thread/resume", {
         threadId,
+        newbotMode: interactionMode(next.mode),
         cwd: threadCwd(threadId),
         modelProvider: next.provider,
         model: next.model || undefined,
@@ -544,6 +553,7 @@ export function sessionRuntime(
       approvalPolicy: policy.approvalPolicy,
       approvalsReviewer: policy.approvalsReviewer,
       sandboxPolicy: policy.sandboxPolicy,
+      ...(next.model ? {collaborationMode: {mode: next.mode === "plan" ? "plan" as const : "default" as const, settings: {model: next.model, reasoning_effort: (next.effort || null) as any, developer_instructions: null}}} : {}),
     });
   }
   const liveQueues = new Map<string, Promise<void>>();
@@ -564,7 +574,7 @@ export function sessionRuntime(
     )
       return;
     db.raw
-      .prepare("INSERT OR REPLACE INTO session_runtime VALUES(?,?,?,?,?,?)")
+      .prepare("INSERT OR REPLACE INTO session_runtime(thread_id,revision,provider,model,effort,approval,mode) VALUES(?,?,?,?,?,?,?)")
       .run(
         threadId,
         value.revision,
@@ -572,6 +582,7 @@ export function sessionRuntime(
         value.model,
         value.effort,
         value.approval,
+        interactionMode(value.mode),
       );
     db.raw
       .prepare("UPDATE threads SET provider=? WHERE id=?")
@@ -822,7 +833,7 @@ export function sessionRuntime(
         next.pending.state === "failed",
       );
       db.raw
-        .prepare("INSERT OR REPLACE INTO session_runtime VALUES(?,?,?,?,?,?)")
+        .prepare("INSERT OR REPLACE INTO session_runtime(thread_id,revision,provider,model,effort,approval,mode) VALUES(?,?,?,?,?,?,?)")
         .run(
           threadId,
           next.revision,
@@ -830,6 +841,7 @@ export function sessionRuntime(
           next.model,
           next.effort,
           next.approval,
+          interactionMode(next.mode),
         );
       db.raw
         .prepare("UPDATE threads SET provider=? WHERE id=?")
@@ -1032,6 +1044,7 @@ export function sessionRuntime(
         model: p.model || session.model || undefined,
         effort: p.effort || session.effort || undefined,
         approval: session.approval,
+        mode: interactionMode(session.mode),
         runtimeRevision: p.runtimeRevision ?? session.revision,
         ...(config.runtime
           ? {
@@ -1066,6 +1079,7 @@ export function sessionRuntime(
               : undefined,
           )),
         approval: p.approval || "ask",
+        mode: z.enum(["chat", "plan", "work"]).default("chat").parse(p.mode),
         providerConfigRevision: snapshot.revision,
       };
     }
@@ -1099,6 +1113,7 @@ export function sessionRuntime(
             : undefined,
         )),
       approval: p.approval || "ask",
+        mode: z.enum(["chat", "plan", "work"]).default("chat").parse(p.mode),
     };
   }
   return {

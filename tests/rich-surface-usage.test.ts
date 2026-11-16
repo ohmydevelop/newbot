@@ -93,6 +93,7 @@ test("a new thread warms the catalog and resumes with the app tools named", asyn
   });
   try {
     const thread: any = await ctx.service.handle("thread/start", {
+      mode: "work",
       model: "fixture-model",
       provider: "fixture",
     });

@@ -1,3 +1,19 @@
+export type InteractionMode = "chat" | "plan" | "work";
+export const modeLabels: Record<InteractionMode, string> = {
+  chat: "聊天",
+  plan: "规划",
+  work: "工作",
+};
+export const modeDescriptions: Record<InteractionMode, string> = {
+  chat: "回答问题，查询已允许的只读资料",
+  plan: "只读调查，制定方案",
+  work: "按执行权限完成任务",
+};
+export function interactionMode(value: unknown): InteractionMode {
+  if (value === undefined) return "work";
+  if (value === "chat" || value === "plan" || value === "work") return value;
+  throw new Error("无效的会话模式");
+}
 export type ApprovalPreset = "ask" | "review" | "full";
 export type RuntimeConfiguration = {
   revision: number;
@@ -5,6 +21,7 @@ export type RuntimeConfiguration = {
   model: string;
   effort: string;
   approval: ApprovalPreset;
+  mode?: InteractionMode;
 };
 export type SessionRuntime = RuntimeConfiguration & {
   version?: number;
@@ -60,5 +77,19 @@ export function approvalParameters(preset: ApprovalPreset, cwd: string) {
             excludeTmpdirEnvVar: true,
             excludeSlashTmp: true,
           },
+  };
+}
+
+export function executionParameters(
+  mode: InteractionMode,
+  preset: ApprovalPreset,
+  cwd: string,
+) {
+  if (mode === "work") return approvalParameters(preset, cwd);
+  return {
+    approvalPolicy: "never" as const,
+    approvalsReviewer: "user" as const,
+    sandbox: "read-only" as const,
+    sandboxPolicy: { type: "readOnly" as const, networkAccess: false },
   };
 }

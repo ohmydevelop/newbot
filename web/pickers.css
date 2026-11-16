@@ -448,3 +448,10 @@
 .model-step .picker-search {
   padding-left: 44px;
 }
+
+.readonly-tools { margin-block: 16px; }
+.readonly-tool-row { display: flex; align-items: center; gap: 12px; padding-block: 8px; }
+.readonly-tool-row > span { min-width: 0; }
+.readonly-tool-row strong, .readonly-tool-row small { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.readonly-tool-row strong { font-size: 14px; font-weight: 500; }
+.readonly-tool-row small { color: var(--muted); font-size: 12px; }

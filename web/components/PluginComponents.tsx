@@ -1,3 +1,4 @@
+import ReadOnlyToolAccess from "./ReadOnlyToolAccess";
 import ServerCertificateEditor from "./ServerCertificateEditor";
 import { FormActions, FormSubmit } from "./FormActions";
 import { useMcpOAuthCompletion, type OAuthAttempt } from "../use-mcp-oauth";
@@ -550,6 +551,7 @@ export default function PluginComponents({
                   {notice[c.id]}
                 </p>
               )}
+              <ReadOnlyToolAccess key={c.id} server={c.id} />
               {!!statuses[c.id]?.toolCount && (
                 <details>
                   <summary>工具目录</summary>

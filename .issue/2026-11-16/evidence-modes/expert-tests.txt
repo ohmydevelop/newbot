@@ -1,0 +1,11 @@
+✔ expert bundles become native inputs, persist per chat, deduplicate references and respect disabled/deleted dependencies and revisions (264.404935ms)
+✔ expert draft changes survive delayed acknowledgement; session events and older reads cannot replace newer bindings (0.353725ms)
+✔ only explicitly selected plugins contribute skills, MCP and native hook activation (1.18041ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 670.802683

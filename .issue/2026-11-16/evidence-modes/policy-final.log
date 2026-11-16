@@ -1,0 +1,46 @@
+✔ a tool's read-only claim cannot authorize it; reviews bind receiver, schema and plugin version (5.248643ms)
+✔ restriction overlay closes hooks, notify and executors; unknown connectors are disabled, work config unchanged (3.286999ms)
+✔ review removal is persistent and fail-closed across manager recreation (2.626999ms)
+✔ v17 six-column sessions migrate to work without changing their saved settings (2.94737ms)
+✔ full-access App grants are scoped, one-use, and revoked by downgrade before dispatch (117.617765ms)
+✔ App open, history and tool consent share native display titles without altering dispatch (46.712292ms)
+✔ App data tools use same-connection visibility independently of their UI resource (53.14407ms)
+✔ data-tool grants recheck visibility, removal and server availability at approval (132.224911ms)
+✔ history descriptors carry no live permissions; each explicit view gets an independent lease (0.505937ms)
+✔ incidental history reads cannot extend or revive expired App permissions (0.294458ms)
+✔ view limits fail explicitly without silently evicting active views (0.253657ms)
+✔ opening paginates the requested Turn and uses its original result rather than another matching item (33.074852ms)
+✔ metadata-only App discovery adds a safe view hint and is restored from history without tool execution (31.248725ms)
+✔ resource and tool failures clean up permissions and never forward raw MCP diagnostics (39.828093ms)
+✔ malformed resources and oversized results fail before an active UI is exposed (34.622459ms)
+✔ closing during resource loading discards the late result and prevents a capability leak (36.181036ms)
+✔ cancel arriving before an open request prevents late creation (34.606968ms)
+✔ closing revokes pending grants immediately and is allowed while maintenance is active (36.46044ms)
+✔ permission changes are rechecked at approval and invalidate the former resource association (36.105835ms)
+✔ denial and cancellation consume a grant without another MCP request (37.918121ms)
+✔ a call already approved may finish after closing, while future calls and replay remain denied (43.031481ms)
+✔ App HTML, controls and grants are bound to the opening Web session and logout revokes its resources (99.449964ms)
+✔ expired or closed leases remove their sandbox document and cannot be revived by reopening history (67.671164ms)
+✔ App lifecycle controls enforce Origin and the independent App host cannot invoke them (58.392614ms)
+✔ an explicit once-only App grant cannot survive a mode change (20042.695192ms)
+✔ cross-provider session changes preserve native identity and another running task; revisions reject stale updates (188.421137ms)
+✔ active choices are saved without altering pending approval; failed application preserves intent and confirmed binding (100.187334ms)
+✔ session settings survive restart and model catalog discovery is not reported as verified compatibility (81.209545ms)
+✔ independent Codex does not inherit the launching agent's tool pipe, identity or Bridge secrets (0.246718ms)
+✔ a managed policy change blocks a previously saved full-access session before dispatch (77.66955ms)
+✔ legacy sessions recover the native saved model instead of adopting a changed global default (73.630164ms)
+✔ reading legacy history uses saved native metadata without restoring the execution environment (72.81517ms)
+✔ latest candidate survives restart and changes only the next native turn (112.828632ms)
+✔ competing saves use CAS after asynchronous validation (71.135723ms)
+✔ an edit arriving during native application is retained for the following turn (82.697606ms)
+✔ chat is the new-session default; work preference survives mode switches and restart (102.682752ms)
+✔ running work keeps its mode; next-turn chat cannot be applied by a live model update (72.464033ms)
+✔ failed mode application blocks sending and keeps the confirmed mode (68.149384ms)
+ℹ tests 38
+ℹ suites 0
+ℹ pass 38
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 21469.608036

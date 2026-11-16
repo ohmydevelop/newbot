@@ -1,0 +1,65 @@
+{
+  "scope": "Isolated snapshot, real configured model and existing read-only MCP; no production session/config modifications",
+  "checks": [
+    "historical-sessions-preserve-work",
+    "real-model-chat",
+    "real-model-reviewed-read-only-mcp"
+  ],
+  "historicalSessionCount": 37,
+  "run": {
+    "state": "accepted",
+    "threadId": "01a1e4a1-0dff-7212-9808-889864f3f1ac",
+    "turnId": "01a1e4a1-0e5a-7fe3-a9b2-691fbe045939"
+  },
+  "turns": [
+    {
+      "id": "01a1e4a1-0e5a-7fe3-a9b2-691fbe045939",
+      "status": "completed",
+      "error": null
+    }
+  ],
+  "elapsedMs": 3503,
+  "firstTextMs": 3444,
+  "mode": "chat",
+  "availableConnectors": [
+    {
+      "name": "connector_b0ed7a772c8e45e58edcde12cdc04a65",
+      "toolCount": 125
+    },
+    {
+      "name": "plugin_0f66dd06d0be4688571febe5ba97a7be",
+      "toolCount": 0
+    },
+    {
+      "name": "plugin_5a8241ac9627165c377782c19e4f7ce0",
+      "toolCount": 0
+    },
+    {
+      "name": "plugin_653b596318a40bf8c2ef1541b10f9c87",
+      "toolCount": 0
+    },
+    {
+      "name": "plugin_c1141ca384fa7d6b1f580875dae8658e",
+      "toolCount": 0
+    }
+  ],
+  "executed": [
+    {
+      "tool": "list_realtime_events",
+      "status": "completed",
+      "error": false,
+      "isError": false
+    }
+  ],
+  "itemTypes": [
+    "userMessage",
+    "reasoning",
+    "mcpToolCall",
+    "agentMessage"
+  ],
+  "tool": "list_realtime_events",
+  "toolCalls": 1,
+  "provider": "gateway_a26181cc65e9408bbcacc4392aaadd66",
+  "model": "deepseek-flash",
+  "completed": true
+}

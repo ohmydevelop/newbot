@@ -223,6 +223,7 @@ test("pending native approval persists without clients and cannot be replayed", 
   const ctx = await setup();
   try {
     const thread: any = await ctx.service.handle("thread/start", {
+      mode: "work",
       model: "fixture-model",
       provider: "fixture",
     });
@@ -257,6 +258,7 @@ test("MCP App tool grants bind server/tool/arguments, deny bypass and replay", a
   const ctx = await setup();
   try {
     const thread: any = await ctx.service.handle("thread/start", {
+      mode: "work",
       model: "fixture-model",
       provider: "fixture",
     });
@@ -371,6 +373,7 @@ test("MCP HTML uses separate origin and its own CSP, without main-session access
   const ctx = await setup();
   try {
     const thread: any = await ctx.service.handle("thread/start", {
+      mode: "work",
       model: "fixture-model",
       provider: "fixture",
     });
@@ -451,6 +454,7 @@ test("failed and interrupted runs have valid terminal events and recoverable sta
       events.push(event);
     });
     const thread: any = await ctx.service.handle("thread/start", {
+      mode: "work",
       model: "fixture-model",
       provider: "fixture",
     });
@@ -504,6 +508,7 @@ test("polling is authenticated and returns the same AG-UI events with reconnect 
     assert.equal(first.reset, true);
     for (const event of first.events) EventSchema.parse(event);
     const thread: any = await ctx.service.handle("thread/start", {
+      mode: "work",
       model: "fixture-model",
       provider: "fixture",
     });

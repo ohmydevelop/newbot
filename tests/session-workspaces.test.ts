@@ -51,7 +51,7 @@ test("new conversations isolate cwd, sandbox roots, live browsing and captured f
         method: "POST",
         url: "/api/agent/run",
         headers,
-        payload: { text, requestId: randomUUID() },
+        payload: { mode: "work", text, requestId: randomUUID() },
       });
       assert.equal(r.statusCode, 200, r.body);
       return r.json();
@@ -212,6 +212,7 @@ test("SQLite extension edits defer to the next turn, project skills are copied, 
     const run = async (payload: object) => {
       const r = await action("/api/agent/run", {
         requestId: randomUUID(),
+        mode: "work",
         text: "use skills",
         ...payload,
       });

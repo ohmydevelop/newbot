@@ -4,6 +4,7 @@ import type { Json } from "../shared/types.js";
 import { randomUUID } from "node:crypto";
 export class FakeCodex extends Codex {
   threads = new Map<string, Json>();
+  modeConfigs = new Map<string, Json>();
   calls: { method: string; params: any }[] = [];
   constructor() {
     super("/tmp");
@@ -25,6 +26,7 @@ export class FakeCodex extends Codex {
     method: M,
     params: Params<M>,
   ): Promise<Result<M>> {
+    if (this.executionPolicy) params = await this.executionPolicy(method, params as Json) as Params<M>;
     this.calls.push({ method, params });
     const p = params as Json;
     let result: any = {};
@@ -108,7 +110,13 @@ export class FakeCodex extends Codex {
         updatedAt: Date.now() / 1000,
       };
       this.threads.set(id, thread);
+      this.modeConfigs.set(id, p.config || {});
       result = { thread };
+    }
+    if (method === "thread/resume" && p.config) this.modeConfigs.set(p.threadId, p.config);
+    if (method === "mcpServerStatus/list" && p.threadId && this.modeConfigs.get(p.threadId)?.sandbox_mode === "read-only") {
+      const defs = this.modeConfigs.get(p.threadId)!.mcp_servers || {};
+      result.data = result.data.map((s: Json) => ({...s, runtimeStatus: defs[s.name]?.enabled ? s.runtimeStatus : "disabled", tools: Object.fromEntries(Object.entries(s.tools).filter(([name]) => defs[s.name]?.enabled && defs[s.name]?.enabled_tools?.includes(name)))}));
     }
     if (method === "thread/read" || method === "thread/resume")
       result = { thread: this.threads.get(p.threadId) };

@@ -524,6 +524,11 @@ summary:focus-visible {
     display: inline-flex;
   }
   .composer .approval-trigger > span {
+    display: inline;
+    max-width: 2em;
+    overflow: hidden;
+  }
+  .composer .approval-trigger > svg {
     display: none;
   }
   .composer .runtime-picker-trigger {

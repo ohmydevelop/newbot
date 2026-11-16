@@ -1,0 +1,32 @@
+{
+  "scope": "Real production Codex with loopback synthetic MCP; toy counter only, no production tool/account/model requests",
+  "cases": {
+    "readonly_read": {
+      "success": true,
+      "error": null,
+      "count": 1
+    },
+    "readonly_write": {
+      "success": true,
+      "error": null,
+      "count": 1
+    },
+    "allowlist_read": {
+      "success": true,
+      "error": null,
+      "executed": true
+    },
+    "allowlist_write": {
+      "success": false,
+      "error": {
+        "code": -32603,
+        "message": "tool 'write' is disabled for MCP server 'probe'"
+      },
+      "executed": false
+    },
+    "other_thread_write": {
+      "success": true,
+      "executed": true
+    }
+  }
+}

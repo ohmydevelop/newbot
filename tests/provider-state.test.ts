@@ -49,7 +49,7 @@ test("v6 migration preserves existing session, model selection and credential da
     db.addThread("original", "saved_gateway");
     db.raw
       .prepare(
-        "INSERT INTO session_runtime VALUES('original',4,'saved_gateway','fixture-model','medium','ask')",
+        "INSERT INTO session_runtime(thread_id,revision,provider,model,effort,approval) VALUES('original',4,'saved_gateway','fixture-model','medium','ask')",
       )
       .run();
     db.raw

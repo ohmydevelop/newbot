@@ -94,6 +94,7 @@ async function fixture(fn: (f: any) => Promise<void>) {
       post,
       run: (payload = {}) =>
         post("/api/agent/run", {
+          mode: "work",
           text: "test",
           requestId: randomUUID(),
           ...payload,
@@ -485,3 +486,34 @@ test("an edit arriving during native application is retained for the following t
       "high",
     );
   }));
+
+
+test("chat is the new-session default; work preference survives mode switches and restart", async () => fixture(async f => {
+  const first = await f.run({mode: "chat", approval: "full"});
+  const id = first.json().threadId; assert.equal(first.statusCode,200,first.body);
+  assert.equal(f.service.runtimeSettings.get(id).mode,"chat");
+  const turn=f.codex.calls.findLast((c:any)=>c.method === "turn/start").params;
+  assert.deepEqual(turn.sandboxPolicy,{type:"readOnly",networkAccess:false});
+  assert.equal(turn.approvalPolicy,"never"); f.codex.finish(id);
+  const update=await f.action({action:"session/update",threadId:id,expectedRevision:0,mode:"work"});
+  assert.equal(update.statusCode,200,update.body); assert.equal(update.json().approval,"full");
+  await f.restart(); assert.equal(f.service.runtimeSettings.get(id).mode,"work"); assert.equal(f.service.runtimeSettings.get(id).approval,"full");
+}));
+test("running work keeps its mode; next-turn chat cannot be applied by a live model update", async () => fixture(async f => {
+  const first=(await f.run({mode:"work"})).json(); f.codex.runtimeCapabilities.liveModelRoutes=true;
+  assert(first.turn?.id); f.codex.activeTurns.set(first.threadId,first.turn.id);
+  const count=f.codex.calls.filter((c:any)=>c.method==="turn/settings/update").length;
+  const update=await f.action({action:"session/update",threadId:first.threadId,expectedRevision:0,mode:"chat"});
+  assert.equal(update.statusCode,200,update.body); assert.equal(update.json().mode,"chat"); assert.equal(update.json().applied.mode,"work");
+  assert.equal(f.codex.calls.filter((c:any)=>c.method==="turn/settings/update").length,count);
+  f.codex.finish(first.threadId); const next=await f.run({threadId:first.threadId});assert.equal(next.statusCode,200,next.body);
+  assert.equal(f.service.runtimeSettings.applied(first.threadId).mode,"chat");
+  assert.equal(f.codex.calls.findLast((c:any)=>c.method==="turn/start").params.sandboxPolicy.type,"readOnly");
+}));
+test("failed mode application blocks sending and keeps the confirmed mode",async()=>fixture(async f=>{
+ const first=(await f.run({mode:"work"})).json(); f.codex.finish(first.threadId);f.codex.failResume=true;
+ const changed=await f.action({action:"session/update",threadId:first.threadId,expectedRevision:0,mode:"chat"});
+ assert.equal(changed.statusCode,200,changed.body);assert.equal(changed.json().pending.state,"failed");assert.equal(changed.json().applied.mode,"work");
+ const n=f.codex.calls.filter((c:any)=>c.method==="turn/start").length;
+ const send=await f.run({threadId:first.threadId});assert.equal(send.statusCode,400);assert.equal(f.codex.calls.filter((c:any)=>c.method==="turn/start").length,n);
+}));
