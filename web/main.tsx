@@ -5,6 +5,7 @@ import { LoadBoundary } from "./components/LoadBoundary";
 import "./styles.css";
 import "./shell.css";
 import "./plugins.css";
+import "./settings.css";
 import { installFormValidation } from "./form-validation";
 const removeFormValidation = installFormValidation(document);
 if (import.meta.hot) import.meta.hot.dispose(removeFormValidation);

@@ -29,6 +29,7 @@ export function Modal({
   className = "",
   onCloseAutoFocus,
   dismissible = true,
+  headerActions,
 }: {
   open: boolean;
   onOpenChange: (v: boolean) => void;
@@ -39,6 +40,7 @@ export function Modal({
   className?: string;
   onCloseAutoFocus?: (event: Event) => void;
   dismissible?: boolean;
+  headerActions?: ReactNode;
 }) {
   const content = useRef<HTMLDivElement | null>(null);
   const close = useRef(() => {});
@@ -116,6 +118,7 @@ export function Modal({
         >
           <header className="modal-header">
             <Dialog.Title>{title}</Dialog.Title>
+            {headerActions}
             <Dialog.Close
               className="icon-button"
               aria-label="关闭"

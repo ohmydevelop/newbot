@@ -1,9 +1,12 @@
+import { PanelResizer } from "./PanelResizer";
+import { useMediaQuery } from "../media";
+import type { CSSProperties } from "react";
 import {
   MoreIcon as MoreHorizontal,
   NavChevronIcon as ChevronDown,
   SearchIcon as Search,
 } from "./ReferenceIcons";
-import { PluginIcon as Blocks, NewChatIcon as SquarePen } from "./AppIcons";
+import { NewChatIcon as SquarePen } from "./AppIcons";
 import * as Dropdown from "@radix-ui/react-dropdown-menu";
 import { Archive, Pencil, Settings as SettingsIcon } from "lucide-react";
 import { useEffect, useId, useRef, useState } from "react";
@@ -17,6 +20,7 @@ import ThreadStatus from "./ThreadStatus";
 import { ActionMenuContent, ActionMenuItem } from "./ActionMenu";
 
 type NavigationProps = {
+  width: number;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   restoreFocus: () => void;
@@ -36,6 +40,7 @@ type NavigationProps = {
 };
 
 export function ConversationNavigation({
+  width,
   open,
   onOpenChange,
   restoreFocus,
@@ -53,6 +58,7 @@ export function ConversationNavigation({
   onRename,
   onArchive,
 }: NavigationProps) {
+  const narrow = useMediaQuery("(max-width: 760px)");
   const [historyOpen, setHistoryOpen] = useState(true);
   const historyId = useId();
   const navigation = useRef<HTMLDivElement>(null);
@@ -71,7 +77,12 @@ export function ConversationNavigation({
       ?.focus({ preventScroll: true });
   }, [open]);
   return (
-    <div ref={navigation} className="navigation-slot" data-open={open}>
+    <div
+      ref={navigation}
+      className="navigation-slot"
+      data-open={open}
+      style={{ "--navigation-width": `${width}px` } as CSSProperties}
+    >
       {!open && (
         <aside className="sidebar-rail" aria-label="对话导航">
           <button
@@ -105,19 +116,13 @@ export function ConversationNavigation({
           <span className="rail-spacer" />
           <button
             type="button"
-            className="rail-icon"
-            aria-label="插件"
-            title="插件"
-            onClick={() => onSettings("plugins")}
-          >
-            <Blocks size={18} aria-hidden="true" />
-          </button>
-          <button
-            type="button"
             className="rail-icon rail-avatar"
             aria-label="设置"
             title="设置"
-            onClick={() => onSettings("general")}
+            onClick={() => {
+              if (window.innerWidth <= 760) onOpenChange(false);
+              onSettings("general");
+            }}
           >
             <Mark size={21} />
           </button>
@@ -248,29 +253,25 @@ export function ConversationNavigation({
         </div>
         <div className="sidebar-bottom">
           <button
-            type="button"
-            className="sidebar-plugins"
-            onClick={() => onSettings("plugins")}
-          >
-            <Blocks size={18} aria-hidden="true" />
-            <span>插件</span>
-          </button>
-          <button
             className="account-button"
             aria-label="设置"
-            onClick={() => onSettings("general")}
+            onClick={() => {
+              if (window.innerWidth <= 760) onOpenChange(false);
+              onSettings("general");
+            }}
           >
             <span className="avatar">
               <Mark size={21} />
             </span>
             <span>
-              <strong>个人工作台</strong>
+              <strong>设置</strong>
               <small>私有实例</small>
             </span>
             <SettingsIcon size={18} />
           </button>
         </div>
       </Sidebar>
+      <PanelResizer side="left" width={width} disabled={!open || narrow} />
     </div>
   );
 }

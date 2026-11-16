@@ -1440,55 +1440,6 @@ button.primary.destructive:hover:not(:disabled) {
   width: 100%;
   font-weight: 400;
 }
-.settings-layout {
-  display: flex;
-  min-height: 440px;
-  max-height: min(600px, calc(100dvh - 145px));
-}
-.settings-layout > nav {
-  flex-shrink: 0;
-  width: 190px;
-  padding: 17px 10px;
-  border-right: 1px solid var(--line);
-}
-.settings-layout > nav > button {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  width: 100%;
-  padding: 10px 12px;
-  text-align: left;
-  font-size: 12px;
-  border-radius: 8px;
-  margin-bottom: 3px;
-  white-space: nowrap;
-}
-.settings-layout > nav > button:hover,
-.settings-layout > nav > button.selected {
-  background: var(--surface);
-}
-.settings-content {
-  min-width: 0;
-  flex: 1;
-  padding: 25px;
-  overflow-y: auto;
-  scrollbar-width: thin;
-}
-.settings-content h3 {
-  font-size: 17px;
-  font-weight: 550;
-  margin-bottom: 17px;
-}
-.settings-content h4 {
-  font-size: 12px;
-  font-weight: 550;
-  margin: 28px 0 8px;
-}
-.settings-content > .muted {
-  font-size: 12px;
-  line-height: 1.8;
-  margin-bottom: 18px;
-}
 .setting-row {
   display: flex;
   align-items: center;
@@ -1910,41 +1861,8 @@ button.primary.destructive:hover:not(:disabled) {
     max-height: calc(100dvh - 24px);
     width: calc(100vw - 20px);
   }
-  .settings-layout {
-    display: block;
-    min-height: 380px;
-    max-height: calc(100dvh - 110px);
-    overflow: auto;
-  }
-  .settings-layout > nav {
-    display: flex;
-    width: 100%;
-    overflow: auto;
-    border-right: 0;
-    border-bottom: 1px solid var(--line);
-    padding: 9px;
-    gap: 4px;
-    scrollbar-width: none;
-  }
-  .settings-layout > nav > button {
-    width: auto;
-    gap: 6px;
-    padding: 8px 10px;
-    font-size: 10px;
-    margin: 0;
-  }
-  .settings-layout > nav > button svg {
-    width: 15px;
-  }
-  .settings-content {
-    padding: 22px 20px;
-    overflow: visible;
-  }
   .setting-row {
     gap: 10px;
-  }
-  .settings-content h3 {
-    font-size: 16px;
   }
   .inventory-row {
     gap: 8px;
@@ -3560,29 +3478,6 @@ button.primary.destructive:hover:not(:disabled) {
   z-index: 120;
   max-width: calc(100vw - 24px);
 }
-.modal.settings-modal {
-  display: flex;
-  flex-direction: column;
-  height: min(720px, calc(100dvh - 48px));
-  width: min(1040px, calc(100vw - 48px));
-}
-.settings-modal > .modal-header {
-  flex-shrink: 0;
-}
-.settings-modal > .settings-layout {
-  flex: 1;
-  min-height: 0;
-  max-height: none;
-  overflow: hidden;
-}
-.settings-modal .settings-content {
-  min-height: 0;
-  overflow-y: auto;
-  scroll-padding-block: 12px;
-}
-.settings-layout > nav {
-  scroll-padding: 12px;
-}
 .modal-actions {
   flex-wrap: wrap;
 }
@@ -3615,18 +3510,6 @@ button.primary.destructive:hover:not(:disabled) {
   .composer-area {
     padding-inline: env(safe-area-inset-left) env(safe-area-inset-right);
   }
-  .settings-modal > .settings-layout {
-    display: flex;
-    flex-direction: column;
-  }
-  .settings-modal .settings-content {
-    flex: 1;
-    padding: 18px;
-  }
-  .settings-modal .settings-layout > nav {
-    flex-shrink: 0;
-  }
-  .settings-layout > nav > button,
   .setting-row select,
   .modal-actions button {
     min-height: 44px;
@@ -3640,18 +3523,6 @@ button.primary.destructive:hover:not(:disabled) {
   .attachment-list > span {
     max-width: 100%;
     overflow-wrap: anywhere;
-  }
-}
-@media (max-height: 500px) {
-  .modal.settings-modal {
-    height: calc(100dvh - 20px);
-    max-height: calc(100dvh - 20px);
-  }
-  .settings-modal > .modal-header {
-    padding-block: 6px;
-  }
-  .settings-modal .settings-content {
-    padding-block: 12px;
   }
 }
 
@@ -4390,17 +4261,6 @@ button.primary.destructive:hover:not(:disabled) {
 .section-heading > h3 {
   margin: 0;
 }
-.settings-layout > nav > button > svg {
-  flex: 0 0 22px;
-  width: 22px;
-  height: 22px;
-}
-.settings-layout > nav > button.selected > svg {
-  color: var(--text);
-}
-.settings-layout > nav > button.selected {
-  background: var(--hover);
-}
 .catalog-icon {
   display: inline-flex;
   align-items: center;
@@ -5004,11 +4864,6 @@ textarea:focus-visible,
   outline-offset: 2px;
 }
 @media (max-width: 760px) {
-  .modal.settings-modal {
-    width: calc(100vw - 24px);
-    height: calc(100dvh - 24px);
-    max-height: calc(100dvh - 24px);
-  }
   .gateway-row > [data-gateway-edit] {
     grid-column: 2;
     grid-row: 1;
@@ -5341,37 +5196,6 @@ textarea:focus-visible,
 .thread-status.is-read {
   color: var(--muted);
 }
-
-.extension-tabs {
-  display: flex;
-  gap: 4px;
-  border-bottom: 1px solid var(--line);
-  margin-bottom: 24px;
-}
-.extension-tabs > button {
-  position: relative;
-  padding: 12px 16px;
-  min-height: 44px;
-  border-radius: 8px 8px 0 0;
-  color: var(--muted);
-  background: transparent;
-  white-space: nowrap;
-}
-.extension-tabs > button:hover {
-  background: var(--hover);
-  color: var(--text);
-}
-.extension-tabs > button[aria-selected="true"] {
-  color: var(--text);
-  font-weight: 550;
-}
-.extension-tabs > button[aria-selected="true"]::after {
-  content: "";
-  position: absolute;
-  height: 2px;
-  background: var(--text);
-  inset: auto 16px -1px;
-}
 .extension-empty {
   padding: 36px 16px;
   display: flex;
@@ -5525,13 +5349,6 @@ textarea:focus-visible,
   overflow-wrap: anywhere;
 }
 @media (max-width: 760px) {
-  .extension-tabs {
-    margin-bottom: 16px;
-  }
-  .extension-tabs > button {
-    flex: 1;
-    padding: 12px 8px;
-  }
   .expert-member-picker label {
     min-height: 44px;
   }
@@ -5939,8 +5756,15 @@ button[data-variant="destructive"]:hover:not(:disabled) {
   flex-shrink: 0;
 }
 
-.turn-diagnostic { margin-top: 8px; font-size: 13px; overflow-wrap: anywhere; }
-.turn-diagnostic summary { cursor: pointer; color: var(--muted); }
+.turn-diagnostic {
+  margin-top: 8px;
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+.turn-diagnostic summary {
+  cursor: pointer;
+  color: var(--muted);
+}
 
 /* Session associations panel: the plugins and skills a conversation keeps. */
 .topbar .icon-button {
@@ -6106,25 +5930,6 @@ button[data-variant="destructive"]:hover:not(:disabled) {
   font-size: 11px;
 }
 
-.rail-resizer {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: -3px;
-  width: 6px;
-  cursor: col-resize;
-  touch-action: none;
-}
-.rail-resizer:hover,
-.rail-resizer:active {
-  background: var(--line);
-}
-@media (max-width: 1080px) {
-  .rail-resizer {
-    display: none;
-  }
-}
-
 .storage-limit {
   display: flex;
   align-items: center;
@@ -6209,20 +6014,6 @@ button[data-variant="destructive"]:hover:not(:disabled) {
   background: var(--hover);
   color: var(--text);
 }
-.sidebar-plugins {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  width: 100%;
-  min-height: 36px;
-  padding: 6px 10px;
-  border-radius: 10px;
-  color: var(--text);
-  font-size: 14px;
-}
-.sidebar-plugins:hover {
-  background: var(--hover);
-}
 @media (max-width: 760px) {
   .sidebar-rail {
     display: none;
@@ -6236,26 +6027,6 @@ button[data-variant="destructive"]:hover:not(:disabled) {
 
 /* Extensions page: segmented tabs and a two-column catalogue, matching the
    reference plugin screen without an app store. */
-.extension-tabs {
-  display: inline-flex;
-  gap: 2px;
-  padding: 3px;
-  margin-bottom: 18px;
-  border: 0;
-  border-radius: 999px;
-  background: var(--surface);
-}
-.extension-tabs > button {
-  min-height: 32px;
-  padding: 4px 14px;
-  border-radius: 999px;
-  color: var(--muted);
-  font-size: 13px;
-}
-.extension-tabs > button[aria-selected="true"] {
-  color: var(--text);
-  background: var(--bg);
-}
 .tools-catalog[data-mode="plugins"] {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -6292,17 +6063,4 @@ button[data-variant="destructive"]:hover:not(:disabled) {
   .tools-catalog[data-mode="plugins"] {
     grid-template-columns: minmax(0, 1fr);
   }
-}
-.settings-layout > nav[hidden] {
-  display: none;
-}
-.plugins-modal .settings-content {
-  padding: 20px 24px;
-}
-.extensions-settings .extension-tabs {
-  border-bottom: 0;
-}
-.extensions-settings .extension-tabs > button[aria-selected="true"] {
-  color: var(--text);
-  background: var(--bg);
 }

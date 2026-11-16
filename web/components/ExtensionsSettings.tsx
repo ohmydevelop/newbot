@@ -4,34 +4,35 @@ import type { Json } from "../../shared/types";
 import {
   lazy,
   Suspense,
-  useId,
   useRef,
   useState,
   useCallback,
   useEffect,
+  useLayoutEffect,
 } from "react";
+import {
+  catalogViews,
+  useCatalogField,
+  type CatalogSection,
+} from "../catalog-state";
 import { CatalogNavigation } from "./CatalogNavigation";
 const Experts = lazy(() => import("./ExpertsSettings"));
 const Plugins = lazy(() => import("./ToolsSettings"));
 const Skills = lazy(() => import("./SkillsSettings"));
-const tabs = [
-  { id: "connectors", label: "连接器" },
-  { id: "skills", label: "技能" },
-  { id: "experts", label: "专家" },
-];
 export default function ExtensionsSettings({
-  initialTab = "plugins",
+  tab,
+  toolbar,
   onLocked,
   onUse,
+  restoreFocus,
 }: {
-  initialTab?: string;
+  tab: CatalogSection;
+  restoreFocus: boolean;
+  toolbar: HTMLElement | null;
   onUse?: (kind: "$" | "@", entry: Json, signal: AbortSignal) => Promise<void>;
   onLocked?: (locked: boolean) => void;
 }) {
-  const [tab, setTab] = useState(
-    ["skills", "experts"].includes(initialTab) ? initialTab : "connectors",
-  );
-  const [skillScope, setSkillScope] = useState("");
+  const [skillScope, setSkillScope] = useCatalogField("skills", "filter");
   const [locks, setLocks] = useState(0);
   const lock = useCallback(() => {
     setLocks((n) => n + 1);
@@ -41,70 +42,78 @@ export default function ExtensionsSettings({
     onLocked?.(locks > 0);
     return () => onLocked?.(false);
   }, [locks, onLocked]);
-  const [toolbar, setToolbar] = useState<HTMLDivElement | null>(null);
   const [details, setDetails] = useState<HTMLDivElement | null>(null);
-  const id = useId(),
-    refs = useRef(new Map<string, HTMLButtonElement>());
+  const scroller = useRef<HTMLDivElement>(null);
+  const restoring = useRef(false);
+  useLayoutEffect(() => {
+    const node = scroller.current;
+    if (!node) return;
+    const saved = catalogViews.getState().views[tab];
+    restoring.current = saved.scroll > 0;
+    const restore = () => {
+      if (
+        !restoring.current ||
+        node.scrollHeight - node.clientHeight < saved.scroll
+      )
+        return;
+      node.scrollTop = saved.scroll;
+      restoring.current = false;
+    };
+    const observer = new MutationObserver(restore);
+    observer.observe(node, { childList: true, subtree: true });
+    restore();
+    const cancelRestore = () => {
+      restoring.current = false;
+    };
+    node.addEventListener("wheel", cancelRestore, { passive: true });
+    node.addEventListener("pointerdown", cancelRestore);
+    node.addEventListener("keydown", cancelRestore);
+    return () => {
+      observer.disconnect();
+      node.removeEventListener("wheel", cancelRestore);
+      node.removeEventListener("pointerdown", cancelRestore);
+      node.removeEventListener("keydown", cancelRestore);
+    };
+  }, [tab]);
+  useEffect(() => {
+    if (!restoreFocus || !toolbar || !scroller.current) return;
+    const label = catalogViews.getState().views[tab].focus;
+    if (!label) return;
+    let done = false;
+    const restore = () => {
+      if (done) return;
+      const target = [
+        ...toolbar.querySelectorAll<HTMLElement>("[aria-label]"),
+        ...scroller.current!.querySelectorAll<HTMLElement>("[aria-label]"),
+      ].find(
+        (node) =>
+          node.getAttribute("aria-label") === label &&
+          node.getClientRects().length,
+      );
+      if (target) {
+        done = true;
+        target.focus({ preventScroll: true });
+      }
+    };
+    const observer = new MutationObserver(restore);
+    observer.observe(toolbar, { childList: true, subtree: true });
+    observer.observe(scroller.current, { childList: true, subtree: true });
+    restore();
+    return () => observer.disconnect();
+  }, [restoreFocus, tab, toolbar]);
   return (
-    <div
-      className="extensions-settings"
-      onKeyDownCapture={(event) => {
-        if (event.key === "Escape" && details?.lastElementChild) {
-          event.preventDefault();
-          event.stopPropagation();
-          event.nativeEvent.stopImmediatePropagation();
-          details.lastElementChild
-            .querySelector<HTMLButtonElement>(".catalog-back")
-            ?.click();
-        }
-      }}
-    >
-      <header className="plugin-center-header">
-        <div className="extension-tabs" role="tablist" aria-label="插件分类">
-          {tabs.map((t, i) => (
-            <button
-              key={t.id}
-              id={`${id}-${t.id}`}
-              ref={(el) => {
-                if (el) refs.current.set(t.id, el);
-              }}
-              type="button"
-              disabled={locks > 0}
-              role="tab"
-              aria-selected={tab === t.id}
-              aria-controls={`${id}-panel`}
-              tabIndex={tab === t.id ? 0 : -1}
-              onClick={() => setTab(t.id)}
-              onKeyDown={(e) => {
-                const index =
-                  e.key === "ArrowRight" || e.key === "ArrowLeft"
-                    ? (i + (e.key === "ArrowRight" ? 1 : tabs.length - 1)) %
-                      tabs.length
-                    : e.key === "Home"
-                      ? 0
-                      : e.key === "End"
-                        ? tabs.length - 1
-                        : -1;
-                if (index >= 0) {
-                  e.preventDefault();
-                  setTab(tabs[index].id);
-                  refs.current.get(tabs[index].id)?.focus();
-                }
-              }}
-            >
-              {t.label}
-            </button>
-          ))}
-        </div>
-        <div className="plugin-center-tools" ref={setToolbar} />
-      </header>
+    <div className="extensions-settings">
       <CatalogNavigation.Provider value={{ toolbar, details, lock, onUse }}>
         <div
-          id={`${id}-panel`}
-          role="tabpanel"
-          aria-labelledby={`${id}-${tab}`}
+          ref={scroller}
           className="plugin-center-content"
           data-catalog-view={tab}
+          onScroll={(event) => {
+            if (!restoring.current && !details?.childElementCount)
+              catalogViews
+                .getState()
+                .update(tab, { scroll: event.currentTarget.scrollTop });
+          }}
         >
           <div className="plugin-center-list">
             {tab === "skills" && (

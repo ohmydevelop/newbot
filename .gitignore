@@ -27,3 +27,7 @@ deploy/production.env
 
 # Local attachments from agent conversations.
 /.codex-attachments/
+
+# Browser regression output
+/test-results/
+/playwright-report/

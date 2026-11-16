@@ -1,3 +1,4 @@
+import { useCatalogField } from "../catalog-state";
 import { CatalogFilter } from "./CatalogFilter";
 import { CatalogCopy } from "./CatalogCopy";
 import { useOperationScope } from "../use-operation-scope";
@@ -41,8 +42,8 @@ export default function ToolsSettings({
   const s = useApp(),
     [catalog, setCatalog] = useState<Json | null>(null),
     [detail, setDetail] = useState<Json | null>(null),
-    [query, setQuery] = useState(""),
-    [marketplace, setMarketplace] = useState(""),
+    [query, setQuery] = useCatalogField("connectors", "query"),
+    [marketplace, setMarketplace] = useCatalogField("connectors", "filter"),
     [managingMarkets, setManagingMarkets] = useState(false),
     [error, setError] = useState(""),
     [importing, setImporting] = useState(false),

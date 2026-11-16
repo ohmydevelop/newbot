@@ -1,3 +1,4 @@
+import { useCatalogField } from "../catalog-state";
 import { CatalogCopy } from "./CatalogCopy";
 import { CatalogRefreshButton } from "./CatalogRefreshButton";
 import SkillCreate from "./SkillCreate";
@@ -28,7 +29,7 @@ export default function SkillsSettings({ scope = "" }: { scope?: string }) {
   const readable = useApp((s) => s.skillDocuments);
   const [importing, setImporting] = useState(false);
   const [creating, setCreating] = useState(false);
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useCatalogField("skills", "query");
   const [removing, setRemoving] = useState<SkillDocument | null>(null);
   const [selected, setSelected] = useState<Skill | null>(null);
   const [busy, setBusy] = useState("");

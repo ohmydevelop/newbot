@@ -1,3 +1,4 @@
+import { usePanelLayout } from "./panels";
 import UserMessage from "./components/chat/UserMessage";
 import { SearchIcon as Search } from "./components/ReferenceIcons";
 import {
@@ -353,6 +354,7 @@ export default function App() {
   useEffect(() => {
     if (!railOpen) setRailCapabilityFocus(null);
   }, [railOpen]);
+  const panelLayout = usePanelLayout(s.sidebar, railOpen && !!s.selectedId);
   const [settings, setSettings] = useState<string | null>(null);
   const [search, setSearch] = useState(false);
   useEffect(() => {
@@ -1089,6 +1091,7 @@ export default function App() {
         跳到消息输入
       </a>
       <ConversationNavigation
+        width={panelLayout.left}
         open={s.sidebar}
         onOpenChange={(sidebar) => s.set({ sidebar })}
         restoreFocus={() =>
@@ -1903,56 +1906,72 @@ export default function App() {
           </form>
         </div>
       </main>
-      {railOpen && s.selectedId && (
-        <>
-          <WorkbenchRail
-            capabilityFocus={railCapabilityFocus}
-            onClose={() => setRailOpen(false)}
-            restoreFocus={() => {
-              const action = afterRailClose.current;
-              afterRailClose.current = null;
-              const trigger = capabilityReturnFocus.current;
-              capabilityReturnFocus.current = null;
-              if (action) requestAnimationFrame(action);
-              else
-                (trigger?.isConnected ? trigger : railToggle.current)?.focus();
-            }}
-            thread={s.thread || undefined}
-            busy={selectionDisabled}
-            expert={selectedExpert || undefined}
-            onExpert={() => {
-              afterRailClose.current = () => setExpertDetail(selectedExpert);
-              setRailOpen(false);
-            }}
-            onRemoveExpert={() => void chooseExpert(null).catch(s.notify)}
-            canPickPlugins={s.pluginSelection || s.expertSelection}
-            canPickSkills={s.skillSelection}
-            onAdd={(kind) => {
-              afterRailClose.current = () =>
-                mentions.open(kind, railToggle.current);
-              setRailOpen(false);
-            }}
-            onPickFiles={openWorkspaceFiles}
-            onOpenArtifact={(artifact) => {
-              rememberWorkbenchFocus();
-              setRailArtifact(artifact);
-            }}
-            onRemove={(kind, id) => {
-              const current = s.thread?.nextInput;
-              if (!current || !s.selectedId) return;
-              const skills =
-                kind === "skills"
-                  ? current.skills.filter((x) => x.id !== id)
-                  : current.skills;
-              const plugins =
-                kind === "plugins"
-                  ? current.plugins.filter((x) => x.id !== id)
-                  : current.plugins;
-              void saveInputs(s.selectedId, skills, plugins).catch(s.notify);
-            }}
-          />
-        </>
-      )}
+      {railOpen &&
+        s.selectedId &&
+        !(
+          panelLayout.overlay &&
+          (settings ||
+            search ||
+            rename ||
+            attachmentPreview ||
+            workspacePicker ||
+            expertDetail ||
+            privateAccess)
+        ) && (
+          <>
+            <WorkbenchRail
+              width={panelLayout.right}
+              narrow={panelLayout.overlay}
+              capabilityFocus={railCapabilityFocus}
+              onClose={() => setRailOpen(false)}
+              restoreFocus={() => {
+                const action = afterRailClose.current;
+                afterRailClose.current = null;
+                const trigger = capabilityReturnFocus.current;
+                capabilityReturnFocus.current = null;
+                if (action) requestAnimationFrame(action);
+                else
+                  (trigger?.isConnected
+                    ? trigger
+                    : railToggle.current
+                  )?.focus();
+              }}
+              thread={s.thread || undefined}
+              busy={selectionDisabled}
+              expert={selectedExpert || undefined}
+              onExpert={() => {
+                afterRailClose.current = () => setExpertDetail(selectedExpert);
+                setRailOpen(false);
+              }}
+              onRemoveExpert={() => void chooseExpert(null).catch(s.notify)}
+              canPickPlugins={s.pluginSelection || s.expertSelection}
+              canPickSkills={s.skillSelection}
+              onAdd={(kind) => {
+                afterRailClose.current = () =>
+                  mentions.open(kind, railToggle.current);
+                setRailOpen(false);
+              }}
+              onPickFiles={openWorkspaceFiles}
+              onOpenArtifact={(artifact) => {
+                rememberWorkbenchFocus();
+                setRailArtifact(artifact);
+              }}
+              onRemove={(kind, id) => {
+                const current = s.thread?.nextInput;
+                if (!current || !s.selectedId) return;
+                const skills =
+                  kind === "skills"
+                    ? current.skills.filter((x) => x.id !== id)
+                    : current.skills;
+                const plugins =
+                  kind === "plugins"
+                    ? current.plugins.filter((x) => x.id !== id)
+                    : current.plugins;
+                void saveInputs(s.selectedId, skills, plugins).catch(s.notify);
+              }}
+            />
+          </>
+        )}
       {railArtifact && (
         <Suspense fallback={null}>
           <ArtifactPreview

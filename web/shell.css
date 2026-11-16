@@ -123,12 +123,6 @@ summary:focus-visible {
   border-top: 0;
   padding-top: 12px;
 }
-.sidebar-plugins {
-  min-height: 36px;
-  padding: 6px;
-  gap: 6px;
-  border-radius: 12px;
-}
 .account-button {
   margin-top: 6px;
   padding: 10px;
@@ -318,38 +312,6 @@ summary:focus-visible {
   border-radius: var(--radius-panel);
   box-shadow: var(--panel-shadow);
 }
-.modal.settings-modal {
-  width: min(960px, calc(100vw - 48px));
-  height: min(720px, calc(100dvh - 64px));
-}
-.settings-modal > .modal-header {
-  padding: 20px 24px;
-}
-.settings-layout > nav {
-  width: 190px;
-  padding: 18px 12px;
-  background: var(--sidebar);
-}
-.settings-layout > nav > button {
-  font-size: 14px;
-  min-height: 44px;
-  padding: 10px 12px;
-  border-radius: 10px;
-}
-.settings-layout > nav > button.selected {
-  background: var(--hover);
-}
-.settings-content,
-.plugins-modal .settings-content {
-  padding: 28px 32px;
-}
-.settings-content h3 {
-  font-size: 22px;
-  margin-bottom: 24px;
-}
-.settings-content h4 {
-  font-size: 14px;
-}
 .setting-row {
   padding-block: 18px;
 }
@@ -360,15 +322,6 @@ summary:focus-visible {
 .setting-row p {
   font-size: 13px;
   line-height: 1.7;
-}
-.extension-tabs {
-  border-radius: 12px;
-  padding: 4px;
-  gap: 4px;
-}
-.extension-tabs > button {
-  border-radius: 9px;
-  min-height: 36px;
 }
 .catalog-toolbar {
   gap: 12px;
@@ -412,10 +365,6 @@ summary:focus-visible {
 }
 .rail-row > span {
   font-size: 14px;
-}
-.rail-resizer:focus-visible {
-  outline: 2px solid var(--focus);
-  outline-offset: -1px;
 }
 .rail-overlay {
   outline: none;
@@ -494,7 +443,6 @@ summary:focus-visible {
     display: none;
   }
   .main-nav > button,
-  .sidebar-plugins,
   .history-disclosure {
     min-height: 44px;
   }
@@ -551,31 +499,6 @@ summary:focus-visible {
   .prose {
     font-size: 15px;
   }
-  .modal.settings-modal {
-    width: calc(100vw - 20px);
-    height: calc(100dvh - 32px);
-  }
-  .settings-modal > .modal-header {
-    padding: 16px 18px;
-  }
-  .settings-layout > nav {
-    width: 100%;
-    padding: 8px;
-    gap: 4px;
-  }
-  .settings-layout > nav > button {
-    font-size: 13px;
-    padding: 8px 12px;
-  }
-  .settings-layout > nav > button svg {
-    width: 17px;
-  }
-  .settings-modal .settings-content {
-    padding: 22px 18px;
-  }
-  .settings-content h3 {
-    font-size: 20px;
-  }
   .rail.rail-overlay {
     width: min(380px, 100vw);
   }
@@ -599,17 +522,19 @@ summary:focus-visible {
   .composer-tools-left > [data-composer-picker] {
     display: inline-flex;
   }
-  .composer .approval-trigger > span { display: none; }
-  .composer .runtime-picker-trigger { max-width: clamp(56px, 22vw, 100px); }
-  .composer .approval-trigger { padding-inline: 6px; }
+  .composer .approval-trigger > span {
+    display: none;
+  }
+  .composer .runtime-picker-trigger {
+    max-width: clamp(56px, 22vw, 100px);
+  }
+  .composer .approval-trigger {
+    padding-inline: 6px;
+  }
   .composer-tools .runtime-selectors {
     margin-left: auto;
     flex: 0 1 auto;
     min-width: 0;
-  }
-  .settings-layout > nav > button {
-    padding-inline: 10px;
-    gap: 6px;
   }
 }
 @media (max-height: 500px) {
@@ -623,65 +548,334 @@ summary:focus-visible {
 }
 
 /* Capabilities belong to the draft once, and to the conversation sidebar after send. */
-.capabilities { display: flex; align-items: flex-start; gap: 4px; min-width: 0; margin: 0 0 10px; }
-.capability-row { display: flex; flex: 1; gap: 6px; min-width: 0; overflow: hidden; }
-.capability-chip { display: flex; align-items: center; gap: 4px; flex: 0 0 auto; max-width: 100%; height: 36px; padding: 0 7px 0 10px; border: 1px solid var(--line); border-radius: 18px; font-size: 13px; }
-.capability-label { display: inline-flex; align-items: center; gap: 6px; min-width: 0; max-width: 240px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.capability-label svg { flex: none; }
-.capability-chip button { background: transparent; color: inherit; border: 0; padding: 4px; border-radius: 50%; min-width: 28px; min-height: 28px; }
-.capability-chip button.capability-label { border-radius: 12px; }
-.capability-chip button:hover { background: var(--hover); }
-.capability-expand { display: flex; align-items: center; justify-content: center; gap: 2px; min-width: 48px; height: 36px; border: 0; border-radius: 18px; background: transparent; color: var(--muted); font-size: 13px; }
-.capabilities.is-expanded .capability-row { flex-wrap: wrap; }
-.rail-capability-actions { display: flex; flex-direction: column; gap: 4px; margin-top: 18px; }
-.rail-capability-actions button { display: flex; align-items: center; gap: 8px; background: transparent; border: 0; text-align: left; min-height: 40px; padding: 8px; border-radius: 10px; color: var(--text); font-size: 14px; }
-.rail-capability-actions button:hover { background: var(--hover); }
-.reasoning-text { white-space: pre-wrap; line-height: 1.65; font-size: 14px; color: var(--muted); }
-.submission-status { display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: 14px; margin-top: 28px; }
-.pending-message .user-bubble p { white-space: pre-wrap; margin: 0; }
-.pending-file { display: inline-flex; align-items: center; gap: 6px; padding-top: 8px; font-size: 13px; }
-.send-button.is-submitting:disabled { opacity: 1; cursor: progress; }
-.submission-stop { position: relative; display: grid; place-items: center; }
-.submission-stop > .spin { position: absolute; opacity: .6; }
+.capabilities {
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+  min-width: 0;
+  margin: 0 0 10px;
+}
+.capability-row {
+  display: flex;
+  flex: 1;
+  gap: 6px;
+  min-width: 0;
+  overflow: hidden;
+}
+.capability-chip {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: 0 0 auto;
+  max-width: 100%;
+  height: 36px;
+  padding: 0 7px 0 10px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  font-size: 13px;
+}
+.capability-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  max-width: 240px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.capability-label svg {
+  flex: none;
+}
+.capability-chip button {
+  background: transparent;
+  color: inherit;
+  border: 0;
+  padding: 4px;
+  border-radius: 50%;
+  min-width: 28px;
+  min-height: 28px;
+}
+.capability-chip button.capability-label {
+  border-radius: 12px;
+}
+.capability-chip button:hover {
+  background: var(--hover);
+}
+.capability-expand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-width: 48px;
+  height: 36px;
+  border: 0;
+  border-radius: 18px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 13px;
+}
+.capabilities.is-expanded .capability-row {
+  flex-wrap: wrap;
+}
+.rail-capability-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 18px;
+}
+.rail-capability-actions button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: 0;
+  text-align: left;
+  min-height: 40px;
+  padding: 8px;
+  border-radius: 10px;
+  color: var(--text);
+  font-size: 14px;
+}
+.rail-capability-actions button:hover {
+  background: var(--hover);
+}
+.reasoning-text {
+  white-space: pre-wrap;
+  line-height: 1.65;
+  font-size: 14px;
+  color: var(--muted);
+}
+.submission-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 14px;
+  margin-top: 28px;
+}
+.pending-message .user-bubble p {
+  white-space: pre-wrap;
+  margin: 0;
+}
+.pending-file {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding-top: 8px;
+  font-size: 13px;
+}
+.send-button.is-submitting:disabled {
+  opacity: 1;
+  cursor: progress;
+}
+.submission-stop {
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+.submission-stop > .spin {
+  position: absolute;
+  opacity: 0.6;
+}
 
-.reasoning-text { min-width: 0; }
+.reasoning-text {
+  min-width: 0;
+}
 
 /* Recovery belongs to the chat layout, so it cannot cover the title or messages. */
-.submission-notices { flex: none; min-width: 0; max-height: 24vh; overflow: auto; padding: 0 12px; }
-.submission-notices:has(.pending-run), .submission-notices:has(.pending-navigation) { padding-bottom: 8px; }
-.submission-notices .pending-run, .submission-notices .pending-navigation-list {
-  position: static; inset: auto; transform: none; width: 100%; max-width: none;
-  box-sizing: border-box; margin: 0; box-shadow: none;
+.submission-notices {
+  flex: none;
+  min-width: 0;
+  max-height: 24vh;
+  overflow: auto;
+  padding: 0 12px;
 }
-.submission-notices .pending-run { gap: 4px 12px; padding: 4px 12px; background: var(--surface); }
-.submission-notices .pending-navigation-list { gap: 6px; overflow: auto; }
-.submission-notices .pending-navigation-list:empty { display: none; }
-.submission-notices .pending-run + .pending-navigation-list:not(:empty) { margin-top: 6px; }
-.submission-notices .pending-navigation { min-height: 40px; font-size: 13px; }
-.chat-notifications { position: static; inset: auto; flex: none; min-height: 0; max-height: 24vh; overflow: auto; padding: 0 12px; }
-.chat-notifications:has(> *) { padding-bottom: 8px; }
+.submission-notices:has(.pending-run),
+.submission-notices:has(.pending-navigation) {
+  padding-bottom: 8px;
+}
+.submission-notices .pending-run,
+.submission-notices .pending-navigation-list {
+  position: static;
+  inset: auto;
+  transform: none;
+  width: 100%;
+  max-width: none;
+  box-sizing: border-box;
+  margin: 0;
+  box-shadow: none;
+}
+.submission-notices .pending-run {
+  gap: 4px 12px;
+  padding: 4px 12px;
+  background: var(--surface);
+}
+.submission-notices .pending-navigation-list {
+  gap: 6px;
+  overflow: auto;
+}
+.submission-notices .pending-navigation-list:empty {
+  display: none;
+}
+.submission-notices .pending-run + .pending-navigation-list:not(:empty) {
+  margin-top: 6px;
+}
+.submission-notices .pending-navigation {
+  min-height: 40px;
+  font-size: 13px;
+}
+.chat-notifications {
+  position: static;
+  inset: auto;
+  flex: none;
+  min-height: 0;
+  max-height: 24vh;
+  overflow: auto;
+  padding: 0 12px;
+}
+.chat-notifications:has(> *) {
+  padding-bottom: 8px;
+}
 
 /* One icon slot and baseline for every execution step; status never replaces identity. */
-.app-icon { flex: none; vertical-align: middle; }
-.process-group .tool-item > summary { gap: 8px; min-height: 32px; padding: 4px 0; }
-.process-kind-icon, .process-toggle > svg:first-child { flex: 0 0 18px; width: 18px; height: 18px; }
-.process-step-status { display: inline-flex; align-items: center; gap: 4px; flex: none; }
-.process-group .tool-item > summary > svg:last-child { flex: 0 0 14px; }
-.process-group .reasoning-text { margin: 0 0 10px 26px; overflow-wrap: anywhere; }
-.process-group .tool-detail { margin-left: 26px; }
-.process-group .process-toggle { gap: 8px; }
+.app-icon {
+  flex: none;
+  vertical-align: middle;
+}
+.process-group .tool-item > summary {
+  gap: 8px;
+  min-height: 32px;
+  padding: 4px 0;
+}
+.process-kind-icon,
+.process-toggle > svg:first-child {
+  flex: 0 0 18px;
+  width: 18px;
+  height: 18px;
+}
+.process-step-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex: none;
+}
+.process-group .tool-item > summary > svg:last-child {
+  flex: 0 0 14px;
+}
+.process-group .reasoning-text {
+  margin: 0 0 10px 26px;
+  overflow-wrap: anywhere;
+}
+.process-group .tool-detail {
+  margin-left: 26px;
+}
+.process-group .process-toggle {
+  gap: 8px;
+}
 @media (max-width: 760px), (pointer: coarse) {
-  .process-group .tool-item > summary { min-height: 36px; }
+  .process-group .tool-item > summary {
+    min-height: 36px;
+  }
 }
 
 /* Navigation uses a 24px slot around an 18px glyph, matching the observed reference. */
-.main-nav > button, .sidebar-plugins { gap: 4px; }
-.main-nav > button > svg, .sidebar-plugins > svg { flex: none; margin-inline: 3px; }
+.main-nav > button {
+  gap: 4px;
+}
+.main-nav > button > svg {
+  flex: none;
+  margin-inline: 3px;
+}
 
-.user-message-stack { display:flex; flex-direction:column; align-items:flex-end; gap:10px; max-width:85%; min-width:0; }
-.user-message .user-bubble { max-width:100%; }
-.user-message .message-image { display:block; padding:0; border:0; background:none; max-width:100%; overflow:hidden; border-radius:16px; }
-.user-message .message-image img { display:block; max-width:100%; width:auto; max-height:420px; object-fit:contain; border-radius:16px; }
-.user-message .message-file { display:flex; gap:10px; align-items:center; padding:14px 16px; border:1px solid var(--line); border-radius:14px; background:var(--surface); max-width:100%; text-align:left; }
-.user-message .message-file span { overflow-wrap:anywhere; }
-@media(max-width:700px) { .user-message-stack { max-width:92%; } }
+.user-message-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+  max-width: 85%;
+  min-width: 0;
+}
+.user-message .user-bubble {
+  max-width: 100%;
+}
+.user-message .message-image {
+  display: block;
+  padding: 0;
+  border: 0;
+  background: none;
+  max-width: 100%;
+  overflow: hidden;
+  border-radius: 16px;
+}
+.user-message .message-image img {
+  display: block;
+  max-width: 100%;
+  width: auto;
+  max-height: 420px;
+  object-fit: contain;
+  border-radius: 16px;
+}
+.user-message .message-file {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--surface);
+  max-width: 100%;
+  text-align: left;
+}
+.user-message .message-file span {
+  overflow-wrap: anywhere;
+}
+@media (max-width: 700px) {
+  .user-message-stack {
+    max-width: 92%;
+  }
+}
+
+.panel-resizer {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 8px;
+  z-index: 5;
+  touch-action: none;
+  cursor: col-resize;
+}
+.panel-resizer-left {
+  right: 0;
+}
+.panel-resizer-right {
+  left: 0;
+}
+.panel-resizer::after {
+  content: "";
+  position: absolute;
+  inset: 0 3px;
+  background: transparent;
+  transition: background var(--motion-fast) var(--ease-out);
+}
+.panel-resizer:hover::after,
+.panel-resizer:focus-visible::after {
+  background: var(--muted);
+}
+.panel-resizer:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: -2px;
+}
+.panel-drag-shield {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  cursor: col-resize;
+}
+:root[data-panel-dragging] {
+  user-select: none;
+  cursor: col-resize;
+}
+:root[data-panel-dragging] .navigation-slot {
+  transition: none;
+}

@@ -1,3 +1,4 @@
+import { useCatalogField } from "../catalog-state";
 import { CatalogCopy } from "./CatalogCopy";
 import { useOperationScope } from "../use-operation-scope";
 import { CatalogRefreshButton } from "./CatalogRefreshButton";
@@ -39,7 +40,7 @@ const empty = (): Draft => ({
 export default function ExpertsSettings() {
   const [data, setData] = useState<ExpertCatalog | null>(null),
     [error, setError] = useState(""),
-    [query, setQuery] = useState("");
+    [query, setQuery] = useCatalogField("experts", "query");
   const [draft, setDraft] = useState<Draft | null>(null),
     [memberQuery, setMemberQuery] = useState(""),
     [formError, setFormError] = useState(""),

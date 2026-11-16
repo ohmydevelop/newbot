@@ -6,6 +6,25 @@ export function installPerformanceProbe() {
   output.id = "newbot-performance";
   output.hidden = true;
   document.body.append(output);
+  const feedbackMs: number[] = [];
+  const dragFrameMs: number[] = [];
+  let lastInput = 0;
+  const input = (event: Event) => {
+    if (
+      (event.target as HTMLElement)?.closest(
+        "input, button, [role='separator']",
+      )
+    )
+      lastInput = performance.now();
+  };
+  for (const type of ["click", "input", "keydown"])
+    document.addEventListener(type, input, true);
+  const dragFrame = (event: Event) => {
+    dragFrameMs.push((event as CustomEvent<number>).detail);
+    if (dragFrameMs.length > 200) dragFrameMs.shift();
+    update();
+  };
+  window.addEventListener("newbot:panel-frame", dragFrame);
   let historyReadyMs: number | null = null,
     appReadyMs: number | null = null;
   let uiReadyMs: number | null = null,
@@ -30,6 +49,8 @@ export function installPerformanceProbe() {
       | undefined;
     output.textContent = JSON.stringify({
       sampledAtMs: performance.now(),
+      feedbackMs,
+      dragFrameMs,
       uiReadyMs,
       historyReadyMs,
       appReadyMs,
@@ -58,7 +79,20 @@ export function installPerformanceProbe() {
     clearTimeout(timer);
     timer = setTimeout(publish, 80);
   };
-  const observer = new MutationObserver(update);
+  const observer = new MutationObserver(() => {
+    if (lastInput && performance.now() - lastInput < 1000) {
+      const start = lastInput;
+      lastInput = 0;
+      requestAnimationFrame(() =>
+        requestAnimationFrame(() => {
+          feedbackMs.push(performance.now() - start);
+          if (feedbackMs.length > 200) feedbackMs.shift();
+          update();
+        }),
+      );
+    }
+    update();
+  });
   observer.observe(document.getElementById("root")!, {
     childList: true,
     subtree: true,
@@ -72,6 +106,9 @@ export function installPerformanceProbe() {
       clearTimeout(timer);
       observer.disconnect();
       perf.disconnect();
+      for (const type of ["click", "input", "keydown"])
+        document.removeEventListener(type, input, true);
+      window.removeEventListener("newbot:panel-frame", dragFrame);
     },
     { once: true },
   );

@@ -1,3 +1,4 @@
+import { PanelResizer } from "./PanelResizer";
 import {
   ExpertIcon as UsersRound,
   PluginIcon as Blocks,
@@ -32,6 +33,8 @@ const tabs: { id: RailTab; label: string; icon: typeof SlidersHorizontal }[] = [
  * (files, artifacts, later sub-agents) can share one strip without moving chat.
  */
 export default function WorkbenchRail({
+  width,
+  narrow,
   thread,
   busy,
   expert,
@@ -47,6 +50,8 @@ export default function WorkbenchRail({
   restoreFocus,
   capabilityFocus,
 }: {
+  width: number;
+  narrow: boolean;
   capabilityFocus?: { kind: "plugins" | "skills"; version: number } | null;
   thread?: Thread;
   busy: boolean;
@@ -90,34 +95,6 @@ export default function WorkbenchRail({
   useEffect(() => {
     localStorage.setItem("newbot:rail-tab", tab);
   }, [tab]);
-  const narrow = useMediaQuery("(max-width: 1080px)");
-  const [width, setWidth] = useState(() => {
-    const saved = Number(localStorage.getItem("newbot:rail-width"));
-    return Number.isFinite(saved) && saved >= 260 && saved <= 520 ? saved : 300;
-  });
-  const drag = useRef<{ startX: number; startWidth: number } | null>(null);
-  function onResizeStart(event: React.PointerEvent<HTMLDivElement>) {
-    if (narrow) return;
-    drag.current = { startX: event.clientX, startWidth: width };
-    event.currentTarget.setPointerCapture(event.pointerId);
-  }
-  function onResizeMove(event: React.PointerEvent<HTMLDivElement>) {
-    if (!drag.current) return;
-    const next = Math.min(
-      520,
-      Math.max(
-        260,
-        drag.current.startWidth - (event.clientX - drag.current.startX),
-      ),
-    );
-    setWidth(next);
-  }
-  function onResizeEnd(event: React.PointerEvent<HTMLDivElement>) {
-    if (!drag.current) return;
-    drag.current = null;
-    localStorage.setItem("newbot:rail-width", String(width));
-    event.currentTarget.releasePointerCapture(event.pointerId);
-  }
   const plugins = (thread?.nextInput?.plugins || []).map((x) => ({
     id: x.id,
     name: x.displayName || x.name || "名称暂不可用",
@@ -137,31 +114,7 @@ export default function WorkbenchRail({
   ].reverse();
   const content = (
     <>
-      <div
-        className="rail-resizer"
-        role="separator"
-        aria-orientation="vertical"
-        aria-label="调整右侧栏宽度"
-        title="拖动调整宽度"
-        tabIndex={narrow ? -1 : 0}
-        aria-valuemin={260}
-        aria-valuemax={520}
-        aria-valuenow={width}
-        onKeyDown={(event) => {
-          if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
-          event.preventDefault();
-          const next = Math.min(
-            520,
-            Math.max(260, width + (event.key === "ArrowLeft" ? 20 : -20)),
-          );
-          setWidth(next);
-          localStorage.setItem("newbot:rail-width", String(next));
-        }}
-        onPointerDown={onResizeStart}
-        onPointerMove={onResizeMove}
-        onPointerUp={onResizeEnd}
-        onPointerCancel={onResizeEnd}
-      />
+      <PanelResizer side="right" width={width} disabled={narrow} />
       <div className="rail-tabs" role="tablist" aria-label="侧栏面板">
         {tabs.map((t) => (
           <button

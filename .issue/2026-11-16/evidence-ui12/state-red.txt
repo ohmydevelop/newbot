@@ -1,0 +1,35 @@
+node:internal/modules/esm/resolve:241
+    throw new ERR_MODULE_NOT_FOUND(
+          ^
+
+Error [ERR_MODULE_NOT_FOUND]: Cannot find module '/home/a/Documents/ChatGPT/newbot-systematize/web/catalog-state' imported from /home/a/Documents/ChatGPT/newbot-systematize/tests/catalog-navigation-state.test.ts
+    at finalizeResolution (node:internal/modules/esm/resolve:241:11)
+    at moduleResolve (node:internal/modules/esm/resolve:846:10)
+    at defaultResolve (node:internal/modules/esm/resolve:973:11)
+    at #cachedDefaultResolve (node:internal/modules/esm/loader:752:20)
+    at #resolveAndMaybeBlockOnLoaderThread (node:internal/modules/esm/loader:772:38)
+    at nextStep (node:internal/modules/customization_hooks:189:26)
+    at resolveBaseSync (file:///home/a/Documents/ChatGPT/newbot-systematize/node_modules/tsx/dist/register-nyXW-TH3.mjs:2:11092)
+    at resolveDirectorySync (file:///home/a/Documents/ChatGPT/newbot-systematize/node_modules/tsx/dist/register-nyXW-TH3.mjs:2:12398)
+    at resolveTsPathsSync (file:///home/a/Documents/ChatGPT/newbot-systematize/node_modules/tsx/dist/register-nyXW-TH3.mjs:2:13605)
+    at resolve (file:///home/a/Documents/ChatGPT/newbot-systematize/node_modules/tsx/dist/register-nyXW-TH3.mjs:2:16832) {
+  code: 'ERR_MODULE_NOT_FOUND',
+  url: 'file:///home/a/Documents/ChatGPT/newbot-systematize/web/catalog-state'
+}
+
+Node.js v26.12.0
+✖ tests/catalog-navigation-state.test.ts (82.263805ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 87.185528
+
+✖ failing tests:
+
+test at tests/catalog-navigation-state.test.ts:1:1
+✖ tests/catalog-navigation-state.test.ts (82.263805ms)
+  'test failed'

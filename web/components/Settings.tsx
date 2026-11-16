@@ -1,8 +1,14 @@
 import { AppearanceIcon, BehaviorIcon, DataIcon } from "./SettingsIcons";
-import { GatewayIcon } from "./AppIcons";
+import {
+  settingsSection,
+  settingsNavigation,
+  catalogViews,
+  type CatalogSection,
+} from "../catalog-state";
+import { GatewayIcon, ExpertIcon } from "./AppIcons";
 import { PluginIcon as Blocks, SkillIcon as BookOpen } from "./AppIcons";
 import { approvalLabels } from "../../shared/runtime-settings";
-import { lazy, Suspense, useState, useId } from "react";
+import { lazy, Suspense, useState, useId, useRef } from "react";
 import {
   Check,
   ChevronRight,
@@ -29,6 +35,9 @@ const SudoSettings = lazy(() => import("./SudoSettings"));
 const tabs = [
   { id: "general", label: "外观", icon: AppearanceIcon },
   { id: "behavior", label: "操作", icon: BehaviorIcon },
+  { id: "connectors", label: "连接器", icon: Blocks },
+  { id: "skills", label: "技能", icon: BookOpen },
+  { id: "experts", label: "专家", icon: ExpertIcon },
   { id: "models", label: "模型服务", icon: GatewayIcon },
   { id: "storage", label: "存储", icon: DataIcon },
   { id: "security", label: "安全", icon: Shield },
@@ -46,18 +55,19 @@ export default function Settings({
 }) {
   const s = useApp();
   const contentId = useId();
-  const pluginsOnly = [
-    "plugins",
-    "mcp",
-    "skills",
-    "experts",
-    "connectors",
-  ].includes(initialTab);
-  const [tab, setTab] = useState(
-    ["plugins", "mcp", "skills", "experts", "connectors"].includes(initialTab)
-      ? "extensions"
-      : initialTab,
+  const [tab, setTab] = useState(() =>
+    initialTab === "general"
+      ? settingsNavigation.getState().section
+      : settingsSection(initialTab),
   );
+  const restoreCatalogFocus = useRef(true);
+  const rememberFocus = (event: React.FocusEvent) => {
+    const label = (event.target as HTMLElement).getAttribute("aria-label");
+    if (catalog && label && label !== "关闭")
+      catalogViews.getState().update(tab as CatalogSection, { focus: label });
+  };
+  const [toolbar, setToolbar] = useState<HTMLDivElement | null>(null);
+  const catalog = ["connectors", "skills", "experts"].includes(tab);
   const [pluginLocked, setPluginLocked] = useState(false);
   const [busy, setBusy] = useState("");
   const [notice, setNotice] = useState("");
@@ -77,13 +87,20 @@ export default function Settings({
     <Modal
       open={open}
       onOpenChange={onOpenChange}
-      title={pluginsOnly ? "插件" : "设置"}
+      title={tabs.find((item) => item.id === tab)?.label || "设置"}
+      headerActions={
+        <div
+          className="settings-toolbar"
+          ref={setToolbar}
+          onFocusCapture={rememberFocus}
+        />
+      }
       wide
       dismissible={!pluginLocked}
-      className={`settings-modal ${pluginsOnly ? "plugins-modal" : ""}`}
+      className="settings-dialog"
     >
       <div className="settings-layout">
-        <nav aria-label="设置分类" hidden={pluginsOnly}>
+        <nav aria-label="设置分类">
           {tabs
             .filter((t) => t.id !== "storage" || s.storageManagement)
             .map((t) => (
@@ -92,7 +109,13 @@ export default function Settings({
                 key={t.id}
                 aria-current={tab === t.id ? "page" : undefined}
                 aria-controls={contentId}
-                onClick={() => setTab(t.id)}
+                disabled={pluginLocked}
+                onClick={() => {
+                  restoreCatalogFocus.current = false;
+                  const section = settingsSection(t.id);
+                  settingsNavigation.setState({ section });
+                  setTab(section);
+                }}
               >
                 <t.icon size={16} strokeWidth={2} aria-hidden="true" />
                 {t.label}
@@ -100,7 +123,8 @@ export default function Settings({
             ))}
         </nav>
         <section
-          className="settings-content"
+          className={`settings-content ${catalog ? "settings-catalog" : ""}`}
+          onFocusCapture={rememberFocus}
           id={contentId}
           aria-label={tabs.find((t) => t.id === tab)?.label}
         >
@@ -193,10 +217,13 @@ export default function Settings({
               <ProviderSettings />
             </Suspense>
           )}
-          {tab === "extensions" && (
+          {catalog && (
             <Suspense fallback={<p role="status">正在加载扩展…</p>}>
               <ExtensionsSettings
-                initialTab={initialTab}
+                key={tab}
+                tab={tab as CatalogSection}
+                restoreFocus={restoreCatalogFocus.current}
+                toolbar={toolbar}
                 onLocked={setPluginLocked}
                 onUse={onUse}
               />
