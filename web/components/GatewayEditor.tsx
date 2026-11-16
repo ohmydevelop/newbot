@@ -2,7 +2,8 @@ import ServerCertificateEditor from "./ServerCertificateEditor";
 import { FormActions, FormSubmit } from "./FormActions";
 import { useRef, useState, useEffect } from "react";
 import { RefreshCw } from "lucide-react";
-import { Modal } from "./ui";
+import { CatalogDetail as Modal } from "./CatalogNavigation";
+import { CatalogFilter } from "./CatalogFilter";
 import { request, useApp } from "../store";
 import type {
   ConfigurationView,
@@ -73,7 +74,7 @@ export default function GatewayEditor({
     try {
       await onSaved();
     } catch {
-      useApp.getState().notify("模型服务已保存，列表暂未刷新。");
+      useApp.getState().notify("连接已保存，列表暂未刷新。");
     }
     onClose();
   }
@@ -149,7 +150,7 @@ export default function GatewayEditor({
         setUnknownWrite((err as { operationId: string }).operationId);
       else if (!ordinary) requestId.current = crypto.randomUUID();
       setError(
-        `${ordinary ? "模型服务信息已保存；" : ""}${err instanceof Error ? err.message : "保存未完成"}`,
+        `${ordinary ? "连接信息已保存；" : ""}${err instanceof Error ? err.message : "保存未完成"}`,
       );
     } finally {
       posting.current = false;
@@ -195,10 +196,11 @@ export default function GatewayEditor({
       setBusy(false);
     }
   }
+  const [previewModel, setPreviewModel] = useState("");
   return (
     <Modal
       open
-      title={provider ? provider.name : "添加模型服务"}
+      title={provider ? provider.name : "添加连接"}
       wide
       className="connection-editor-modal gateway-editor-modal"
       dismissible={!locked}
@@ -208,7 +210,7 @@ export default function GatewayEditor({
     >
       <form
         className="provider-editor"
-        aria-label={provider ? "编辑模型服务 表单" : "新增模型服务 表单"}
+        aria-label={provider ? "编辑连接 表单" : "新增连接 表单"}
         onSubmit={save}
       >
         <div className="connection-editor-body">
@@ -216,7 +218,7 @@ export default function GatewayEditor({
             <span className="sr-only">名称</span>
             <input
               autoFocus
-              placeholder="模型服务名称"
+              placeholder="连接名称"
               required
               maxLength={80}
               value={name}
@@ -290,18 +292,17 @@ export default function GatewayEditor({
           )}
           {(provider || saved) && (
             <div className="model-directory-control">
-              <select
-                aria-label="已发现模型"
+              <CatalogFilter
+                label="已发现模型"
+                value={previewModel}
+                onValueChange={setPreviewModel}
+                placeholder="模型目录"
                 disabled={!models.length}
-                defaultValue=""
-              >
-                <option value="" disabled>
-                  模型目录
-                </option>
-                {models.map((m) => (
-                  <option key={m}>{m}</option>
-                ))}
-              </select>
+                options={models.map((model) => ({
+                  value: model,
+                  label: model,
+                }))}
+              />
               <button
                 type="button"
                 className="icon-button"
@@ -333,7 +334,7 @@ export default function GatewayEditor({
             </label>
           </details>
           {readOnly && (
-            <p className="muted">此模型服务由账户或其他配置来源管理。</p>
+            <p className="muted">此连接由账户或其他配置来源管理。</p>
           )}
           {children && (
             <section className="gateway-connection-tools" aria-label="连接管理">
@@ -363,7 +364,7 @@ export default function GatewayEditor({
                   if (receipt.state === "saved") {
                     setSaved(receipt.result);
                     setUnknownWrite(null);
-                    setError("模型服务信息已保存，请继续完成凭证设置。");
+                    setError("连接信息已保存，请继续完成凭证设置。");
                   } else if (["unseen", "unchanged"].includes(receipt.state)) {
                     setUnknownWrite(null);
                     requestId.current = crypto.randomUUID();

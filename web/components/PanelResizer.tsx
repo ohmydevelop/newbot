@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type PointerEvent } from "react";
 import { createPortal } from "react-dom";
 import {
   panelKeyboard,
@@ -36,6 +36,9 @@ export function PanelResizer({
       active.node.releasePointerCapture(active.pointer);
     document.documentElement.removeAttribute("data-panel-dragging");
     setDragging(false);
+  };
+  const finishPointer = (event: PointerEvent) => {
+    if (event.pointerId === drag.current?.pointer) finish();
   };
   useEffect(() => {
     window.addEventListener("blur", finish);
@@ -105,9 +108,9 @@ export function PanelResizer({
             });
           }
         }}
-        onPointerUp={finish}
-        onPointerCancel={finish}
-        onLostPointerCapture={finish}
+        onPointerUp={finishPointer}
+        onPointerCancel={finishPointer}
+        onLostPointerCapture={finishPointer}
       />
       {dragging &&
         createPortal(

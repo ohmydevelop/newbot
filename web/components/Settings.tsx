@@ -29,7 +29,6 @@ import type { Json, Model } from "../../shared/types";
 import { useApp, loadSettings, request, disconnect, newChat } from "../store";
 import { Modal } from "./ui";
 const ExtensionsSettings = lazy(() => import("./ExtensionsSettings"));
-const ProviderSettings = lazy(() => import("./ProviderSettings"));
 const StorageSettings = lazy(() => import("./StorageSettings"));
 const SudoSettings = lazy(() => import("./SudoSettings"));
 const tabs = [
@@ -38,7 +37,7 @@ const tabs = [
   { id: "connectors", label: "连接器", icon: Blocks },
   { id: "skills", label: "技能", icon: BookOpen },
   { id: "experts", label: "专家", icon: ExpertIcon },
-  { id: "models", label: "模型服务", icon: GatewayIcon },
+  { id: "models", label: "模型", icon: GatewayIcon },
   { id: "storage", label: "存储", icon: DataIcon },
   { id: "security", label: "安全", icon: Shield },
 ];
@@ -67,7 +66,7 @@ export default function Settings({
       catalogViews.getState().update(tab as CatalogSection, { focus: label });
   };
   const [toolbar, setToolbar] = useState<HTMLDivElement | null>(null);
-  const catalog = ["connectors", "skills", "experts"].includes(tab);
+  const catalog = ["connectors", "skills", "experts", "models"].includes(tab);
   const [pluginLocked, setPluginLocked] = useState(false);
   const [busy, setBusy] = useState("");
   const [notice, setNotice] = useState("");
@@ -211,11 +210,6 @@ export default function Settings({
                 </div>
               </div>
             </>
-          )}
-          {tab === "models" && (
-            <Suspense fallback={<p role="status">正在加载模型服务…</p>}>
-              <ProviderSettings />
-            </Suspense>
           )}
           {catalog && (
             <Suspense fallback={<p role="status">正在加载扩展…</p>}>

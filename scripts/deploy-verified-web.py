@@ -23,7 +23,7 @@ receipt = pathlib.Path(args.receipt).resolve()
 subprocess.run(["node", "--import", "tsx", "scripts/verify-release.ts", "dist/web", str(receipt)], cwd=source, check=True)
 manifest = json.loads((source / "dist/web/release-manifest.json").read_text())
 release = manifest["source"][:12]
-backup = target / ".data/backups" / (time.strftime("%Y-%m-%d-ui12-") + release)
+backup = target / ".data/backups" / (time.strftime("%Y-%m-%d-web-") + release)
 backup.mkdir(mode=0o700, parents=True)
 stage = target / ".data" / ("staged-web-" + release)
 old = target / ".data" / ("previous-web-" + release)

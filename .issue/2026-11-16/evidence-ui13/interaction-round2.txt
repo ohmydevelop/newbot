@@ -1,0 +1,156 @@
+[WebServer] (node:3915678) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 8 tests using 1 worker
+
+(node:3915690) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 tests/browser/interaction-acceptance.spec.ts:37:1 › 左右拖拽跨越不透明 iframe，边界、点击恢复与宽度持久化 (723ms)
+(node:3915844) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  2 tests/browser/interaction-acceptance.spec.ts:96:1 › 拖拽只接受所属指针，失去捕获、取消、失焦和卸载均清理 (892ms)
+  ✘  3 tests/browser/interaction-acceptance.spec.ts:140:3 › 动画真实帧连续且减弱模式即时稳定 false (1.4s)
+(node:3916023) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  4 tests/browser/interaction-acceptance.spec.ts:140:3 › 动画真实帧连续且减弱模式即时稳定 true (3.2s)
+  ✘  5 tests/browser/interaction-acceptance.spec.ts:235:1 › 工作流程默认折叠，内部滚动到两端后衔接聊天，重开保留位置 (3.1s)
+(node:3916242) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  6 tests/browser/interaction-acceptance.spec.ts:292:3 › 模型共享目录和配置详情 1280 (3.8s)
+  ✓  7 tests/browser/interaction-acceptance.spec.ts:292:3 › 模型共享目录和配置详情 320 (4.0s)
+  ✓  8 tests/browser/interaction-acceptance.spec.ts:364:1 › 目录迟到响应不得覆盖用户新查询、滚动和焦点 (3.4s)
+
+
+  1) tests/browser/interaction-acceptance.spec.ts:37:1 › 左右拖拽跨越不透明 iframe，边界、点击恢复与宽度持久化 ────────────
+
+    Error: locator.waitFor: Target page, context or browser has been closed
+    Browser logs:
+
+    <launching> /home/a/.cache/ms-playwright/chromium_headless_shell-1255/chrome-headless-shell-linux64/chrome-headless-shell --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,HttpsUpgrades,HttpsFirstBalancedModeAutoEnable,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,AvoidCorsURLLoaderRestartOnRedirect,TcpPortRandomizationWin,OptimizationHints,NetworkTimeServiceQuerying,AimEnabled,PreconnectToSearch,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface,SkipListAccountsWithoutGaiaCookies --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --enable-unsafe-swiftshader --edge-skip-compat-layer-relaunch --disable-stack-profiler --disable-infobars --disable-sync --do-not-de-elevate --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=/tmp/playwright_chromiumdev_profile-wV7rHG --remote-debugging-pipe --no-startup-window
+    <launched> pid=3915703
+    [pid=3915703][err] [1116/161931.492366:WARNING:sandbox/policy/linux/sandbox_linux.cc:406] InitializeSandbox() called with multiple threads in process gpu-process.
+    [pid=3915703][err] [1116/161931.492535:WARNING:components/dbus/xdg/portal.cc:166] Failed to register with org.freedesktop.host.portal.Registry
+    [pid=3915703][err] Received signal 11 SEGV_ACCERR 55c16febe679
+    [pid=3915703][err] #0 0x55c16da42f03 (/home/a/.cache/ms-playwright/chromium_headless_shell-1255/chrome-headless-shell-linux64/chrome-headless-shell+0x5328f02)
+    [pid=3915703][err] #1 0x55c170b0cff4 (/home/a/.cache/ms-playwright/chromium_headless_shell-1255/chrome-headless-shell-linux64/chrome-headless-shell+0x83f2ff3)
+    [pid=3915703][err] #2 0x7fd0b543e6f0 (/usr/lib/libc.so.6+0x3e6ef)
+    [pid=3915703][err] #3 0x55c16febed0b (/home/a/.cache/ms-playwright/chromium_headless_shell-1255/chrome-headless-shell-linux64/chrome-headless-shell+0x77a4d0a)
+    [pid=3915703][err] #4 0x55c16acbb628 (/home/a/.cache/ms-playwright/chromium_headless_shell-1255/chrome-headless-shell-linux64/chrome-headless-shell+0x25a1627)
+    [pid=3915703][err] #5 0x55c16acac6c3 (/home/a/.cache/ms-playwright/chromium_headless_shell-1255/chrome-headless-shell-linux64/chrome-headless-shell+0x25926c2)
+    [pid=3915703][err] #6 0x55c16cf6e73f (/home/a/.cache/ms-playwright/chromium_headless_shell-1255/chrome-headless-shell-linux64/chrome-headless-shell+0x485473e)
+    [pid=3915703][err] #7 0x55c16cf6de7c (/home/a/.cache/ms-playwright/chromium_headless_shell-1255/chrome-headless-shell-linux64/chrome-headless-shell+0x4853e7b)
+    [pid=3915703][err] #8 0x55c16cf6dd38 (/home/a/.cache/ms-playwright/chromium_headless_shell-1255/chrome-headless-shell-linux64/chrome-headless-shell+0x4853d37)
+    [pid=3915703][err] #9 0x55c16be139bf (/home/a/.cache/ms-playwright/chromium_headless_shell-1255/chrome-headless-shell-linux64/chrome-headless-shell+0x36f99be)
+    [pid=3915703][err] #10 0x55c16be12f2f (/home/a/.cache/ms-playwright/chromium_headless_shell-1255/chrome-headless-shell-linux64/chrome-headless-shell+0x36f8f2e)
+    [pid=3915703][err] #11 0x7fd0b5498042 (/usr/lib/libc.so.6+0x98041)
+    [pid=3915703][err] #12 0x7fd0b552072c (/usr/lib/libc.so.6+0x12072b)
+    [pid=3915703][err]   r8: 0000000000000ba0  r9: 00007fd0b6254010 r10: 0000000015742916 r11: 0000784d6561f174
+    [pid=3915703][err]  r12: 0000241400928a20 r13: 00002414002b8b40 r14: 0000000000000021 r15: 0000000000000000
+    [pid=3915703][err]   di: 0000000000000021  si: 0000241400576660  bp: 00007fd0a85e7ae0  bx: 00007fd0a85e7ac0
+    [pid=3915703][err]   dx: 8000000000000090  ax: 000055c16febe6f0  cx: 0000241400928a58  sp: 00007fd0a85e7ac0
+    [pid=3915703][err]   ip: 000055c16febed5a efl: 0000000000010206 cgf: 002b000000000033 erf: 0000000000000007
+    [pid=3915703][err]  trp: 000000000000000e msk: 0000000000000000 cr2: 000055c16febe679
+    [pid=3915703][err] [end of stack trace]
+    Call log:
+      - waiting for getByText('测试回复完成。', { exact: true }).last() to be visible
+
+
+      23 |   await page.getByRole("textbox", { name: "消息", exact: true }).fill(message);
+      24 |   await page.getByRole("button", { name: "发送消息", exact: true }).click();
+    > 25 |   await page.getByText("测试回复完成。", { exact: true }).last().waitFor();
+         |                                                           ^
+      26 | }
+      27 | async function startDrag(page: Page, side: "左" | "右") {
+      28 |   const handle = page.getByRole("separator", { name: `调整${side}侧栏宽度` });
+        at chat (/home/a/Documents/ChatGPT/newbot-systematize/tests/browser/interaction-acceptance.spec.ts:25:59)
+        at /home/a/Documents/ChatGPT/newbot-systematize/tests/browser/interaction-acceptance.spec.ts:42:3
+
+    Error Context: test-results/interaction-acceptance-左右拖拽跨越不透明-iframe，边界、点击恢复与宽度持久化/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/interaction-acceptance-左右拖拽跨越不透明-iframe，边界、点击恢复与宽度持久化/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/interaction-acceptance-左右拖拽跨越不透明-iframe，边界、点击恢复与宽度持久化/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) tests/browser/interaction-acceptance.spec.ts:140:3 › 动画真实帧连续且减弱模式即时稳定 false ───────────────────
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    If it should pass with deep equality, replace "toBe" with "toStrictEqual"
+
+    Expected: Any<Number>
+    Received: 12
+
+      177 |     for (let i = 1; i < frames.length; i++)
+      178 |       expect(frames[i].width).toBeLessThanOrEqual(frames[i - 1].width + 0.1);
+    > 179 |     expect(frames.filter((f) => f.width > 58 && f.width < 255).length).toBe(
+          |                                                                        ^
+      180 |       reduced ? 0 : expect.any(Number),
+      181 |     );
+      182 |     if (!reduced)
+        at /home/a/Documents/ChatGPT/newbot-systematize/tests/browser/interaction-acceptance.spec.ts:179:72
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/interaction-acceptance-动画真实帧连续且减弱模式即时稳定-false/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/interaction-acceptance-动画真实帧连续且减弱模式即时稳定-false/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/interaction-acceptance-动画真实帧连续且减弱模式即时稳定-false/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/interaction-acceptance-动画真实帧连续且减弱模式即时稳定-false/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/interaction-acceptance-动画真实帧连续且减弱模式即时稳定-false/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3) tests/browser/interaction-acceptance.spec.ts:235:1 › 工作流程默认折叠，内部滚动到两端后衔接聊天，重开保留位置 ─────────────
+
+    Error: expect(received).toBeCloseTo(expected, precision)
+
+    Expected: 1048
+    Received: 1259
+
+    Expected precision:    0
+    Expected difference: < 0.5
+    Received difference:   211
+
+      261 |     .poll(() => inner.evaluate((e) => e.scrollTop))
+      262 |     .toBeGreaterThan(180);
+    > 263 |   expect(await outer.evaluate((e) => e.scrollTop)).toBeCloseTo(before, 0);
+          |                                                    ^
+      264 |   await inner.evaluate((e) => {
+      265 |     e.scrollTop = 0;
+      266 |   });
+        at /home/a/Documents/ChatGPT/newbot-systematize/tests/browser/interaction-acceptance.spec.ts:263:52
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/interaction-acceptance-工作流程默认折叠，内部滚动到两端后衔接聊天，重开保留位置/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/interaction-acceptance-工作流程默认折叠，内部滚动到两端后衔接聊天，重开保留位置/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/interaction-acceptance-工作流程默认折叠，内部滚动到两端后衔接聊天，重开保留位置/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/interaction-acceptance-工作流程默认折叠，内部滚动到两端后衔接聊天，重开保留位置/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/interaction-acceptance-工作流程默认折叠，内部滚动到两端后衔接聊天，重开保留位置/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3 failed
+    tests/browser/interaction-acceptance.spec.ts:37:1 › 左右拖拽跨越不透明 iframe，边界、点击恢复与宽度持久化 ─────────────
+    tests/browser/interaction-acceptance.spec.ts:140:3 › 动画真实帧连续且减弱模式即时稳定 false ────────────────────
+    tests/browser/interaction-acceptance.spec.ts:235:1 › 工作流程默认折叠，内部滚动到两端后衔接聊天，重开保留位置 ──────────────
+  5 passed (22.8s)

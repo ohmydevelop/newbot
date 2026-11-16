@@ -1,0 +1,30 @@
+{
+  "stats": {
+    "startTime": "2026-11-16T08:42:35.851Z",
+    "duration": 12147.452,
+    "expected": 2,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "tests": [
+    {
+      "title": "工作流程默认折叠，内部滚动到两端后衔接聊天，重开保留位置",
+      "status": "passed",
+      "duration": 6065,
+      "evidence": [
+        ".issue/2026-11-16/evidence-ui13/recordings/工作流程默认折叠-内部滚动到两端后衔接聊天-重开保留位置.webm"
+      ]
+    },
+    {
+      "title": "模型与MCP长配置共用外层滚动，不截断证书和保存入口",
+      "status": "passed",
+      "duration": 4808,
+      "evidence": [
+        ".issue/2026-11-16/evidence-ui13/screenshots/long-模型.png",
+        ".issue/2026-11-16/evidence-ui13/screenshots/long-连接器.png",
+        ".issue/2026-11-16/evidence-ui13/recordings/模型与MCP长配置共用外层滚动-不截断证书和保存入口.webm"
+      ]
+    }
+  ]
+}

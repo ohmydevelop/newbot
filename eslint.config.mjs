@@ -1,7 +1,7 @@
 import ts from "typescript-eslint";
 export default ts.config({
   files: [
-    "web/components/{Settings,ExtensionsSettings,ConversationNavigation,PanelResizer,WorkbenchRail,CatalogToolbar}.tsx",
+    "web/components/{Settings,ExtensionsSettings,ConversationNavigation,PanelResizer,WorkbenchRail,CatalogToolbar,ProviderSettings,GatewayEditor,CatalogFilter}.tsx",
     "web/{catalog-state,panels,panel-sizing}.ts",
   ],
   languageOptions: {

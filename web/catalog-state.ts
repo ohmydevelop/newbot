@@ -10,7 +10,7 @@ export const settingsSections = [
   "security",
 ] as const;
 export type SettingsSection = (typeof settingsSections)[number];
-export type CatalogSection = "connectors" | "skills" | "experts";
+export type CatalogSection = "connectors" | "skills" | "experts" | "models";
 export function settingsSection(value: string): SettingsSection {
   if (value === "plugins" || value === "mcp") return "connectors";
   return settingsSections.includes(value as SettingsSection)
@@ -33,7 +33,12 @@ export const catalogViews = create<{
   views: Record<CatalogSection, CatalogViewState>;
   update: (section: CatalogSection, patch: Partial<CatalogViewState>) => void;
 }>((set) => ({
-  views: { connectors: empty(), skills: empty(), experts: empty() },
+  views: {
+    connectors: empty(),
+    skills: empty(),
+    experts: empty(),
+    models: empty(),
+  },
   update: (section, patch) =>
     set((state) => ({
       views: {

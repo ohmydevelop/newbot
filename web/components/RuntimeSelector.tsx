@@ -406,8 +406,8 @@ export default function RuntimeSelector({
             <input
               ref={search}
               type="search"
-              aria-label="搜索模型服务或模型"
-              placeholder="搜索模型服务或模型"
+              aria-label="搜索模型或连接"
+              placeholder="搜索模型或连接"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               onKeyDown={(e) => modelKeys(e, true)}
@@ -459,7 +459,7 @@ export default function RuntimeSelector({
             )}
             {mutating && (
               <p role="status" className="muted">
-                正在检查并更新模型设置…首次使用可能需要验证模型服务能力。
+                正在验证模型并更新设置…
               </p>
             )}
           </div>
@@ -529,7 +529,7 @@ export default function RuntimeSelector({
                         </button>
                       ))}
                       {!g.matches.length && !g.error && !g.profileError && (
-                        <p className="menu-empty">此模型服务暂未提供模型</p>
+                        <p className="menu-empty">此连接暂无可用模型</p>
                       )}
                     </div>
                   )}
@@ -538,7 +538,7 @@ export default function RuntimeSelector({
             })}
             {!reading && !groups.length && (
               <p className="menu-empty">
-                {filter ? "没有匹配的模型" : "没有可用的模型服务"}
+                {filter ? "没有匹配的模型" : "没有可用的模型连接"}
               </p>
             )}
           </div>

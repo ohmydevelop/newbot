@@ -1,0 +1,99 @@
+[WebServer] (node:3917571) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 4 tests using 1 worker
+
+(node:3917616) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 tests/browser/interaction-acceptance.spec.ts:37:1 › 左右拖拽跨越不透明 iframe，边界、点击恢复与宽度持久化 (8.5s)
+(node:3917869) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  2 tests/browser/interaction-acceptance.spec.ts:140:3 › 动画真实帧连续且减弱模式即时稳定 false (3.5s)
+  ✓  3 tests/browser/interaction-acceptance.spec.ts:140:3 › 动画真实帧连续且减弱模式即时稳定 true (3.2s)
+  ✘  4 tests/browser/interaction-acceptance.spec.ts:233:1 › 工作流程默认折叠，内部滚动到两端后衔接聊天，重开保留位置 (8.1s)
+
+
+  1) tests/browser/interaction-acceptance.spec.ts:37:1 › 左右拖拽跨越不透明 iframe，边界、点击恢复与宽度持久化 ────────────
+
+    Error: expect(locator).toHaveText(expected) failed
+
+    Locator:  locator('#drag-fixture').contentFrame().getByRole('button')
+    Expected: "clicked"
+    Received: "iframe click"
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveText" locator('#drag-fixture').contentFrame().getByRole('button') with timeout 5000ms
+      - waiting for locator('#drag-fixture').contentFrame().getByRole('button')
+        14 × locator resolved to <button onclick="this.textContent='clicked'">iframe click</button>
+           - unexpected value "iframe click"
+
+
+      82 |     await expect(
+      83 |       page.frameLocator("#drag-fixture").getByRole("button"),
+    > 84 |     ).toHaveText("clicked");
+         |       ^
+      85 |     await page.locator("#drag-fixture").evaluate((f) => f.remove());
+      86 |   }
+      87 |   await page.reload();
+        at /home/a/Documents/ChatGPT/newbot-systematize/tests/browser/interaction-acceptance.spec.ts:84:7
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/interaction-acceptance-左右拖拽跨越不透明-iframe，边界、点击恢复与宽度持久化/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/interaction-acceptance-左右拖拽跨越不透明-iframe，边界、点击恢复与宽度持久化/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/interaction-acceptance-左右拖拽跨越不透明-iframe，边界、点击恢复与宽度持久化/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/interaction-acceptance-左右拖拽跨越不透明-iframe，边界、点击恢复与宽度持久化/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/interaction-acceptance-左右拖拽跨越不透明-iframe，边界、点击恢复与宽度持久化/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) tests/browser/interaction-acceptance.spec.ts:233:1 › 工作流程默认折叠，内部滚动到两端后衔接聊天，重开保留位置 ─────────────
+
+    Error: expect(received).toBeGreaterThan(expected)
+
+    Expected: > 180
+    Received:   0
+
+    Call Log:
+    - Timeout 5000ms exceeded while waiting on the predicate
+
+      259 |   await expect
+      260 |     .poll(() => inner.evaluate((e) => e.scrollTop))
+    > 261 |     .toBeGreaterThan(180);
+          |      ^
+      262 |   expect(await outer.evaluate((e) => e.scrollTop)).toBeCloseTo(before, 0);
+      263 |   await inner.evaluate((e) => {
+      264 |     e.scrollTop = 0;
+        at /home/a/Documents/ChatGPT/newbot-systematize/tests/browser/interaction-acceptance.spec.ts:261:6
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/interaction-acceptance-工作流程默认折叠，内部滚动到两端后衔接聊天，重开保留位置/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/interaction-acceptance-工作流程默认折叠，内部滚动到两端后衔接聊天，重开保留位置/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/interaction-acceptance-工作流程默认折叠，内部滚动到两端后衔接聊天，重开保留位置/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/interaction-acceptance-工作流程默认折叠，内部滚动到两端后衔接聊天，重开保留位置/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/interaction-acceptance-工作流程默认折叠，内部滚动到两端后衔接聊天，重开保留位置/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2 failed
+    tests/browser/interaction-acceptance.spec.ts:37:1 › 左右拖拽跨越不透明 iframe，边界、点击恢复与宽度持久化 ─────────────
+    tests/browser/interaction-acceptance.spec.ts:233:1 › 工作流程默认折叠，内部滚动到两端后衔接聊天，重开保留位置 ──────────────
+  2 passed (25.2s)

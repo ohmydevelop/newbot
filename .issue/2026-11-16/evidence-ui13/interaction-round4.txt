@@ -1,0 +1,57 @@
+[WebServer] (node:3919495) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 2 tests using 1 worker
+
+(node:3919550) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 tests/browser/interaction-acceptance.spec.ts:37:1 › 左右拖拽跨越不透明 iframe，边界、点击恢复与宽度持久化 (7.9s)
+(node:3919955) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  2 tests/browser/interaction-acceptance.spec.ts:236:1 › 工作流程默认折叠，内部滚动到两端后衔接聊天，重开保留位置 (4.0s)
+
+
+  1) tests/browser/interaction-acceptance.spec.ts:37:1 › 左右拖拽跨越不透明 iframe，边界、点击恢复与宽度持久化 ────────────
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('#drag-fixture').contentFrame().getByRole('checkbox')
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" locator('#drag-fixture').contentFrame().getByRole('checkbox') with timeout 5000ms
+      - waiting for locator('#drag-fixture').contentFrame().getByRole('checkbox')
+
+
+      65 |     await expect(
+      66 |       page.frameLocator("#drag-fixture").getByRole("checkbox"),
+    > 67 |     ).toBeVisible();
+         |       ^
+      68 |     expect(
+      69 |       await page
+      70 |         .locator("#drag-fixture")
+        at /home/a/Documents/ChatGPT/newbot-systematize/tests/browser/interaction-acceptance.spec.ts:67:7
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/interaction-acceptance-左右拖拽跨越不透明-iframe，边界、点击恢复与宽度持久化/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/interaction-acceptance-左右拖拽跨越不透明-iframe，边界、点击恢复与宽度持久化/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/interaction-acceptance-左右拖拽跨越不透明-iframe，边界、点击恢复与宽度持久化/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/interaction-acceptance-左右拖拽跨越不透明-iframe，边界、点击恢复与宽度持久化/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/interaction-acceptance-左右拖拽跨越不透明-iframe，边界、点击恢复与宽度持久化/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    tests/browser/interaction-acceptance.spec.ts:37:1 › 左右拖拽跨越不透明 iframe，边界、点击恢复与宽度持久化 ─────────────
+  1 passed (13.5s)

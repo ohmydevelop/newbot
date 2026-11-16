@@ -177,6 +177,14 @@ class IssueCodex extends SkillsCodex {
     if (method === "plugin/uninstall") this.installed = false;
     if (method === "configRequirements/read")
       return { requirements: null } as any;
+    if (method === "thread/list" && p.modelProviders)
+      return {
+        data: [...this.threads.values()].filter(
+          (thread) =>
+            p.modelProviders.includes(thread.modelProvider) && !p.archived,
+        ),
+        nextCursor: null,
+      } as any;
     const result = (await super.call(method, params)) as any;
     if (method === "model/list" && process.env.ISSUE_RICH_UI) {
       result.data[0].supportedReasoningEfforts = [
@@ -524,9 +532,12 @@ if (process.env.ISSUE_ACTIVITY_UI)
       codex.finish(threadId, state);
     return {};
   });
-const closeCertificateFixture = process.env.ISSUE_CERTIFICATES === "1"
-  ? await (await import("./certificate-preview-fixture.js")).certificatePreview(ctx, codex, directory)
-  : undefined;
+const closeCertificateFixture =
+  process.env.ISSUE_CERTIFICATES === "1"
+    ? await (
+        await import("./certificate-preview-fixture.js")
+      ).certificatePreview(ctx, codex, directory)
+    : undefined;
 await ctx.app.listen({ host: "127.0.0.1", port });
 console.log("Issue UI fixture ready");
 for (const signal of ["SIGTERM", "SIGINT"] as const)

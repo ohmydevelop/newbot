@@ -1,0 +1,55 @@
+[WebServer] (node:3913656) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 1 test using 1 worker
+
+(node:3913683) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 tests/browser/interaction-acceptance.spec.ts:364:1 › 目录迟到响应不得覆盖用户新查询、滚动和焦点 (8.6s)
+
+
+  1) tests/browser/interaction-acceptance.spec.ts:364:1 › 目录迟到响应不得覆盖用户新查询、滚动和焦点 ────────────────────
+
+    Error: expect(locator).toBeFocused() failed
+
+    Locator:  getByRole('searchbox', { name: '搜索连接器' })
+    Expected: focused
+    Received: inactive
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toBeFocused" getByRole('searchbox', { name: '搜索连接器' }) with timeout 5000ms
+      - waiting for getByRole('searchbox', { name: '搜索连接器' })
+        14 × locator resolved to <input value="测试" type="search" placeholder="搜索…" aria-label="搜索连接器" class="catalog-search"/>
+           - unexpected value "inactive"
+
+
+      377 |   await search.fill("测试");
+      378 |   await entry.waitFor();
+    > 379 |   await expect(search).toBeFocused();
+          |                        ^
+      380 |   await expect(search).toHaveValue("测试");
+      381 |   await expect.poll(()=>page.locator(".plugin-center-content").evaluate(e=>e.scrollTop)).toBe(0);
+      382 |   const events=await (await page.request.get("/fixture/catalog-state")).json();
+        at /home/a/Documents/ChatGPT/newbot-systematize/tests/browser/interaction-acceptance.spec.ts:379:24
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/interaction-acceptance-目录迟到响应不得覆盖用户新查询、滚动和焦点/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/interaction-acceptance-目录迟到响应不得覆盖用户新查询、滚动和焦点/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/interaction-acceptance-目录迟到响应不得覆盖用户新查询、滚动和焦点/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/interaction-acceptance-目录迟到响应不得覆盖用户新查询、滚动和焦点/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/interaction-acceptance-目录迟到响应不得覆盖用户新查询、滚动和焦点/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    tests/browser/interaction-acceptance.spec.ts:364:1 › 目录迟到响应不得覆盖用户新查询、滚动和焦点 ─────────────────────

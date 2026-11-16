@@ -3917,55 +3917,6 @@ button.primary.destructive:hover:not(:disabled) {
     display: none;
   }
 }
-.gateway-head,
-.gateway-row {
-  display: grid;
-  grid-template-columns: minmax(120px, 1fr) minmax(0, 1.5fr) 96px 40px;
-  gap: 12px;
-  align-items: center;
-}
-.gateway-head {
-  color: var(--muted);
-  font-size: 12px;
-  padding: 8px 0;
-}
-.gateway-name {
-  overflow: hidden;
-}
-.gateway-name strong,
-.gateway-name small {
-  display: block;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.gateway-name small {
-  color: var(--muted);
-  font-size: 12px;
-}
-.gateway-row select {
-  min-width: 0;
-  width: 100%;
-}
-.gateway-details {
-  grid-column: 1/-1;
-  font-size: 13px;
-}
-.gateway-details summary {
-  cursor: pointer;
-  color: var(--muted);
-}
-@media (max-width: 760px) {
-  .gateway-head {
-    display: none;
-  }
-  .gateway-row {
-    grid-template-columns: minmax(0, 1fr) auto;
-  }
-  .gateway-row select {
-    grid-column: 1;
-  }
-}
 .plugin-detail {
   padding: 16px;
   border: 1px solid var(--line);
@@ -4204,7 +4155,7 @@ button.primary.destructive:hover:not(:disabled) {
     min-width: 0;
   }
 }
-.connection-editor-modal {
+.modal.connection-editor-modal {
   max-height: 90dvh;
   display: flex;
   flex-direction: column;
@@ -4244,12 +4195,6 @@ button.primary.destructive:hover:not(:disabled) {
 .connection-editor-modal .field-label select,
 .connection-editor-modal .field-label textarea {
   max-width: 100%;
-}
-@media (max-width: 760px) {
-  .gateway-row > button {
-    min-width: 44px;
-    min-height: 44px;
-  }
 }
 
 /* Shared settings catalog and editor hierarchy (2026-11-09, second feedback). */
@@ -4552,18 +4497,6 @@ button.primary.destructive:hover:not(:disabled) {
 .skill-entry-controls .skill-remove:disabled {
   opacity: 0.25;
 }
-.gateway-row {
-  align-items: center;
-}
-.gateway-name {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-.gateway-name strong {
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
 .tools-catalog .mcp-settings > .configuration-actions {
   display: none;
 }
@@ -4791,17 +4724,6 @@ button.primary.destructive:hover:not(:disabled) {
 .suggestion-icon {
   color: var(--text);
 }
-.gateway-default {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 96px;
-  min-height: 40px;
-  font-size: 12px;
-}
-span.gateway-default {
-  color: var(--muted);
-}
 .gateway-editor-modal .provider-editor {
   display: flex;
   flex-direction: column;
@@ -4864,17 +4786,6 @@ textarea:focus-visible,
   outline-offset: 2px;
 }
 @media (max-width: 760px) {
-  .gateway-row > [data-gateway-edit] {
-    grid-column: 2;
-    grid-row: 1;
-    justify-self: end;
-  }
-  .gateway-row > .gateway-default {
-    grid-column: 2;
-    grid-row: 2;
-    justify-self: end;
-    min-height: 44px;
-  }
   .gateway-editor-modal .provider-editor .field-label > input,
   .gateway-editor-modal .provider-editor .field-label > select,
   .gateway-connection-tools .provider-actions > button {
@@ -4887,111 +4798,6 @@ textarea:focus-visible,
 }
 
 /* Compact gateway units and tool-first connection details. */
-.gateway-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
-  margin-top: 16px;
-}
-.gateway-card {
-  position: relative;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 12px 8px;
-  align-content: start;
-  min-width: 0;
-  padding: 16px;
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: 14px;
-}
-.gateway-card.is-default {
-  border-color: var(--muted);
-}
-.gateway-card:has(.gateway-select:hover:not(:disabled)) {
-  background: var(--hover);
-}
-.gateway-select {
-  display: flex;
-  align-self: center;
-  gap: 8px;
-  min-width: 0;
-  padding: 0 0 0 12px;
-  text-align: left;
-  background: transparent;
-  align-items: center;
-}
-.gateway-select::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: 14px;
-}
-.gateway-select:focus-visible {
-  outline: none;
-}
-.gateway-select:focus-visible::after {
-  outline: 2px solid var(--accent);
-  outline-offset: 3px;
-}
-.gateway-select .gateway-name {
-  min-width: 0;
-  flex: 1;
-  align-items: baseline;
-  display: flex;
-  flex-direction: row;
-  gap: 10px;
-}
-.gateway-card .gateway-name strong {
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 20px;
-}
-.gateway-card .gateway-name small {
-  flex-shrink: 0;
-  white-space: nowrap;
-  color: var(--muted);
-  font-size: 12px;
-  line-height: 16px;
-}
-.gateway-actions {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-.gateway-actions .icon-button {
-  width: 32px;
-  height: 32px;
-}
-.gateway-card > select,
-.gateway-card > .muted {
-  grid-column: 1 / -1;
-  position: relative;
-  z-index: 1;
-  min-width: 0;
-  width: 100%;
-}
-.gateway-card > select {
-  min-height: 36px;
-  padding: 8px 12px;
-  background-color: var(--bg);
-  font-size: 13px;
-  border-radius: 8px;
-}
-.gateway-card .gateway-details {
-  grid-column: 1 / -1;
-  margin: 0;
-  font-size: 12px;
-  line-height: 18px;
-  position: relative;
-  z-index: 1;
-}
 .gateway-editor-modal textarea {
   min-height: 88px;
   resize: vertical;
@@ -5083,20 +4889,6 @@ textarea:focus-visible,
 .connection-credentials {
   font-size: 13px;
   margin-top: 12px;
-}
-@media (max-width: 1000px) {
-  .gateway-grid {
-    grid-template-columns: minmax(0, 1fr);
-  }
-}
-@media (max-width: 760px), (pointer: coarse) {
-  .gateway-actions .icon-button {
-    width: 44px;
-    height: 44px;
-  }
-  .gateway-card > select {
-    min-height: 44px;
-  }
 }
 
 /* Notifications occupy an overlay, never the message/composer flow. */

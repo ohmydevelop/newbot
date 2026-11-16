@@ -1,0 +1,516 @@
+[WebServer] (node:3922231) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 26 tests using 1 worker
+
+(node:3922365) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 tests/browser/interaction-acceptance.spec.ts:37:1 › 左右拖拽跨越不透明 iframe，边界、点击恢复与宽度持久化 (3.9s)
+  ✓   2 tests/browser/interaction-acceptance.spec.ts:95:1 › 拖拽只接受所属指针，失去捕获、取消、失焦和卸载均清理 (840ms)
+  ✓   3 tests/browser/interaction-acceptance.spec.ts:139:3 › 动画真实帧连续且减弱模式即时稳定 false (3.5s)
+  ✓   4 tests/browser/interaction-acceptance.spec.ts:139:3 › 动画真实帧连续且减弱模式即时稳定 true (3.2s)
+  ✓   5 tests/browser/interaction-acceptance.spec.ts:235:1 › 工作流程默认折叠，内部滚动到两端后衔接聊天，重开保留位置 (4.0s)
+  ✓   6 tests/browser/interaction-acceptance.spec.ts:299:3 › 模型共享目录和配置详情 1280 (3.7s)
+  ✓   7 tests/browser/interaction-acceptance.spec.ts:299:3 › 模型共享目录和配置详情 320 (3.8s)
+  ✓   8 tests/browser/interaction-acceptance.spec.ts:371:1 › 目录迟到响应不得覆盖用户新查询、滚动和焦点 (3.4s)
+  ✓   9 tests/browser/interaction-acceptance.spec.ts:411:1 › 浏览器触摸取消释放拖拽捕获并保存最后宽度 (438ms)
+  ✘  10 tests/browser/interaction-acceptance.spec.ts:440:1 › 模型连接创建保存、重新读取、移除以及目录失败恢复 (31.1s)
+(node:3926582) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  11 tests/browser/settings-contracts.spec.ts:22:1 › 分类真正卸载、关闭重开和详情返回保留目录状态 (3.7s)
+  ✘  12 tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 1440 light (7.2s)
+(node:3928493) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  13 tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 1440 dark (7.3s)
+(node:3929657) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  14 tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 1280 light (7.3s)
+(node:3929853) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  15 tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 1280 dark (7.3s)
+(node:3930397) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  16 tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 768 light (7.2s)
+(node:3930616) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  17 tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 768 dark (7.3s)
+(node:3930819) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  18 tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 390 light (7.5s)
+(node:3931321) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  19 tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 390 dark (7.5s)
+(node:3931665) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  20 tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 320 light (7.4s)
+(node:3931836) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  21 tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 320 dark (7.5s)
+(node:3932143) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  22 tests/browser/settings-contracts.spec.ts:130:1 › 标题栏偏移与查询丢失注入会被同一验收器拒绝 (2.0s)
+  ✓  23 tests/browser/settings-contracts.spec.ts:159:1 › 左栏键盘/拖拽与刷新持久化，折叠保留设置入口 (2.2s)
+  ✓  24 tests/browser/settings-contracts.spec.ts:185:3 › 正常/减弱动画 false (2.0s)
+  ✓  25 tests/browser/settings-contracts.spec.ts:185:3 › 正常/减弱动画 true (2.0s)
+  ✓  26 tests/browser/settings-contracts.spec.ts:204:1 › 桌面设置缩为手机时右栏不能抢焦点 (2.1s)
+
+
+  1) tests/browser/interaction-acceptance.spec.ts:440:1 › 模型连接创建保存、重新读取、移除以及目录失败恢复 ─────────────────
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for getByRole('button', { name: '刷新模型', exact: true })
+
+
+      482 |     rules: [{ key: "gateway/catalog", fail: true, remaining: 1 }],
+      483 |   });
+    > 484 |   await refresh.click();
+          |                 ^
+      485 |   await expect(page.getByRole("alert")).toBeVisible();
+      486 |   await expect(
+      487 |     page.getByRole("button", { name: "查看模型连接 测试网关", exact: true }),
+        at /home/a/Documents/ChatGPT/newbot-systematize/tests/browser/interaction-acceptance.spec.ts:484:17
+
+    attachment #2: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/interaction-acceptance-模型连接创建保存、重新读取、移除以及目录失败恢复/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/interaction-acceptance-模型连接创建保存、重新读取、移除以及目录失败恢复/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/interaction-acceptance-模型连接创建保存、重新读取、移除以及目录失败恢复/error-context.md
+
+    attachment #5: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/interaction-acceptance-模型连接创建保存、重新读取、移除以及目录失败恢复/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/interaction-acceptance-模型连接创建保存、重新读取、移除以及目录失败恢复/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 1440 light ───────────────────────────────
+
+    Error: expect(locator).toBeEnabled() failed
+
+    Locator: getByRole('button', { name: '刷新连接器', exact: true })
+    Expected: enabled
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeEnabled" getByRole('button', { name: '刷新连接器', exact: true }) with timeout 5000ms
+      - waiting for getByRole('button', { name: '刷新连接器', exact: true })
+
+
+      79 |         await expect(
+      80 |           page.getByRole("button", { name: `刷新${section}`, exact: true }),
+    > 81 |         ).toBeEnabled();
+         |           ^
+      82 |         const rectangles = await page
+      83 |           .locator(
+      84 |             `.settings-dialog > .modal-header ${width > 700 ? ".icon-button," : ".catalog-toolbar .icon-button,"} .settings-toolbar .catalog-query, .settings-toolbar .catalog-add`,
+        at /home/a/Documents/ChatGPT/newbot-systematize/tests/browser/settings-contracts.spec.ts:81:11
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/settings-contracts-设置布局-1440-light/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/settings-contracts-设置布局-1440-light/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/settings-contracts-设置布局-1440-light/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/settings-contracts-设置布局-1440-light/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/settings-contracts-设置布局-1440-light/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3) tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 1440 dark ────────────────────────────────
+
+    Error: expect(locator).toBeEnabled() failed
+
+    Locator: getByRole('button', { name: '刷新连接器', exact: true })
+    Expected: enabled
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeEnabled" getByRole('button', { name: '刷新连接器', exact: true }) with timeout 5000ms
+      - waiting for getByRole('button', { name: '刷新连接器', exact: true })
+
+
+      79 |         await expect(
+      80 |           page.getByRole("button", { name: `刷新${section}`, exact: true }),
+    > 81 |         ).toBeEnabled();
+         |           ^
+      82 |         const rectangles = await page
+      83 |           .locator(
+      84 |             `.settings-dialog > .modal-header ${width > 700 ? ".icon-button," : ".catalog-toolbar .icon-button,"} .settings-toolbar .catalog-query, .settings-toolbar .catalog-add`,
+        at /home/a/Documents/ChatGPT/newbot-systematize/tests/browser/settings-contracts.spec.ts:81:11
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/settings-contracts-设置布局-1440-dark/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/settings-contracts-设置布局-1440-dark/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/settings-contracts-设置布局-1440-dark/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/settings-contracts-设置布局-1440-dark/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/settings-contracts-设置布局-1440-dark/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  4) tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 1280 light ───────────────────────────────
+
+    Error: expect(locator).toBeEnabled() failed
+
+    Locator: getByRole('button', { name: '刷新连接器', exact: true })
+    Expected: enabled
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeEnabled" getByRole('button', { name: '刷新连接器', exact: true }) with timeout 5000ms
+      - waiting for getByRole('button', { name: '刷新连接器', exact: true })
+
+
+      79 |         await expect(
+      80 |           page.getByRole("button", { name: `刷新${section}`, exact: true }),
+    > 81 |         ).toBeEnabled();
+         |           ^
+      82 |         const rectangles = await page
+      83 |           .locator(
+      84 |             `.settings-dialog > .modal-header ${width > 700 ? ".icon-button," : ".catalog-toolbar .icon-button,"} .settings-toolbar .catalog-query, .settings-toolbar .catalog-add`,
+        at /home/a/Documents/ChatGPT/newbot-systematize/tests/browser/settings-contracts.spec.ts:81:11
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/settings-contracts-设置布局-1280-light/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/settings-contracts-设置布局-1280-light/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/settings-contracts-设置布局-1280-light/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/settings-contracts-设置布局-1280-light/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/settings-contracts-设置布局-1280-light/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  5) tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 1280 dark ────────────────────────────────
+
+    Error: expect(locator).toBeEnabled() failed
+
+    Locator: getByRole('button', { name: '刷新连接器', exact: true })
+    Expected: enabled
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeEnabled" getByRole('button', { name: '刷新连接器', exact: true }) with timeout 5000ms
+      - waiting for getByRole('button', { name: '刷新连接器', exact: true })
+
+
+      79 |         await expect(
+      80 |           page.getByRole("button", { name: `刷新${section}`, exact: true }),
+    > 81 |         ).toBeEnabled();
+         |           ^
+      82 |         const rectangles = await page
+      83 |           .locator(
+      84 |             `.settings-dialog > .modal-header ${width > 700 ? ".icon-button," : ".catalog-toolbar .icon-button,"} .settings-toolbar .catalog-query, .settings-toolbar .catalog-add`,
+        at /home/a/Documents/ChatGPT/newbot-systematize/tests/browser/settings-contracts.spec.ts:81:11
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/settings-contracts-设置布局-1280-dark/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/settings-contracts-设置布局-1280-dark/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/settings-contracts-设置布局-1280-dark/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/settings-contracts-设置布局-1280-dark/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/settings-contracts-设置布局-1280-dark/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  6) tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 768 light ────────────────────────────────
+
+    Error: expect(locator).toBeEnabled() failed
+
+    Locator: getByRole('button', { name: '刷新连接器', exact: true })
+    Expected: enabled
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeEnabled" getByRole('button', { name: '刷新连接器', exact: true }) with timeout 5000ms
+      - waiting for getByRole('button', { name: '刷新连接器', exact: true })
+
+
+      79 |         await expect(
+      80 |           page.getByRole("button", { name: `刷新${section}`, exact: true }),
+    > 81 |         ).toBeEnabled();
+         |           ^
+      82 |         const rectangles = await page
+      83 |           .locator(
+      84 |             `.settings-dialog > .modal-header ${width > 700 ? ".icon-button," : ".catalog-toolbar .icon-button,"} .settings-toolbar .catalog-query, .settings-toolbar .catalog-add`,
+        at /home/a/Documents/ChatGPT/newbot-systematize/tests/browser/settings-contracts.spec.ts:81:11
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/settings-contracts-设置布局-768-light/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/settings-contracts-设置布局-768-light/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/settings-contracts-设置布局-768-light/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/settings-contracts-设置布局-768-light/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/settings-contracts-设置布局-768-light/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  7) tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 768 dark ─────────────────────────────────
+
+    Error: expect(locator).toBeEnabled() failed
+
+    Locator: getByRole('button', { name: '刷新连接器', exact: true })
+    Expected: enabled
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeEnabled" getByRole('button', { name: '刷新连接器', exact: true }) with timeout 5000ms
+      - waiting for getByRole('button', { name: '刷新连接器', exact: true })
+
+
+      79 |         await expect(
+      80 |           page.getByRole("button", { name: `刷新${section}`, exact: true }),
+    > 81 |         ).toBeEnabled();
+         |           ^
+      82 |         const rectangles = await page
+      83 |           .locator(
+      84 |             `.settings-dialog > .modal-header ${width > 700 ? ".icon-button," : ".catalog-toolbar .icon-button,"} .settings-toolbar .catalog-query, .settings-toolbar .catalog-add`,
+        at /home/a/Documents/ChatGPT/newbot-systematize/tests/browser/settings-contracts.spec.ts:81:11
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/settings-contracts-设置布局-768-dark/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/settings-contracts-设置布局-768-dark/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/settings-contracts-设置布局-768-dark/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/settings-contracts-设置布局-768-dark/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/settings-contracts-设置布局-768-dark/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  8) tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 390 light ────────────────────────────────
+
+    Error: expect(locator).toBeEnabled() failed
+
+    Locator: getByRole('button', { name: '刷新连接器', exact: true })
+    Expected: enabled
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeEnabled" getByRole('button', { name: '刷新连接器', exact: true }) with timeout 5000ms
+      - waiting for getByRole('button', { name: '刷新连接器', exact: true })
+
+
+      79 |         await expect(
+      80 |           page.getByRole("button", { name: `刷新${section}`, exact: true }),
+    > 81 |         ).toBeEnabled();
+         |           ^
+      82 |         const rectangles = await page
+      83 |           .locator(
+      84 |             `.settings-dialog > .modal-header ${width > 700 ? ".icon-button," : ".catalog-toolbar .icon-button,"} .settings-toolbar .catalog-query, .settings-toolbar .catalog-add`,
+        at /home/a/Documents/ChatGPT/newbot-systematize/tests/browser/settings-contracts.spec.ts:81:11
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/settings-contracts-设置布局-390-light/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/settings-contracts-设置布局-390-light/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/settings-contracts-设置布局-390-light/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/settings-contracts-设置布局-390-light/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/settings-contracts-设置布局-390-light/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  9) tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 390 dark ─────────────────────────────────
+
+    Error: expect(locator).toBeEnabled() failed
+
+    Locator: getByRole('button', { name: '刷新连接器', exact: true })
+    Expected: enabled
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeEnabled" getByRole('button', { name: '刷新连接器', exact: true }) with timeout 5000ms
+      - waiting for getByRole('button', { name: '刷新连接器', exact: true })
+
+
+      79 |         await expect(
+      80 |           page.getByRole("button", { name: `刷新${section}`, exact: true }),
+    > 81 |         ).toBeEnabled();
+         |           ^
+      82 |         const rectangles = await page
+      83 |           .locator(
+      84 |             `.settings-dialog > .modal-header ${width > 700 ? ".icon-button," : ".catalog-toolbar .icon-button,"} .settings-toolbar .catalog-query, .settings-toolbar .catalog-add`,
+        at /home/a/Documents/ChatGPT/newbot-systematize/tests/browser/settings-contracts.spec.ts:81:11
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/settings-contracts-设置布局-390-dark/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/settings-contracts-设置布局-390-dark/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/settings-contracts-设置布局-390-dark/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/settings-contracts-设置布局-390-dark/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/settings-contracts-设置布局-390-dark/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  10) tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 320 light ───────────────────────────────
+
+    Error: expect(locator).toBeEnabled() failed
+
+    Locator: getByRole('button', { name: '刷新连接器', exact: true })
+    Expected: enabled
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeEnabled" getByRole('button', { name: '刷新连接器', exact: true }) with timeout 5000ms
+      - waiting for getByRole('button', { name: '刷新连接器', exact: true })
+
+
+      79 |         await expect(
+      80 |           page.getByRole("button", { name: `刷新${section}`, exact: true }),
+    > 81 |         ).toBeEnabled();
+         |           ^
+      82 |         const rectangles = await page
+      83 |           .locator(
+      84 |             `.settings-dialog > .modal-header ${width > 700 ? ".icon-button," : ".catalog-toolbar .icon-button,"} .settings-toolbar .catalog-query, .settings-toolbar .catalog-add`,
+        at /home/a/Documents/ChatGPT/newbot-systematize/tests/browser/settings-contracts.spec.ts:81:11
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/settings-contracts-设置布局-320-light/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/settings-contracts-设置布局-320-light/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/settings-contracts-设置布局-320-light/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/settings-contracts-设置布局-320-light/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/settings-contracts-设置布局-320-light/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  11) tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 320 dark ────────────────────────────────
+
+    Error: expect(locator).toBeEnabled() failed
+
+    Locator: getByRole('button', { name: '刷新连接器', exact: true })
+    Expected: enabled
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeEnabled" getByRole('button', { name: '刷新连接器', exact: true }) with timeout 5000ms
+      - waiting for getByRole('button', { name: '刷新连接器', exact: true })
+
+
+      79 |         await expect(
+      80 |           page.getByRole("button", { name: `刷新${section}`, exact: true }),
+    > 81 |         ).toBeEnabled();
+         |           ^
+      82 |         const rectangles = await page
+      83 |           .locator(
+      84 |             `.settings-dialog > .modal-header ${width > 700 ? ".icon-button," : ".catalog-toolbar .icon-button,"} .settings-toolbar .catalog-query, .settings-toolbar .catalog-add`,
+        at /home/a/Documents/ChatGPT/newbot-systematize/tests/browser/settings-contracts.spec.ts:81:11
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/settings-contracts-设置布局-320-dark/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/settings-contracts-设置布局-320-dark/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/settings-contracts-设置布局-320-dark/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/settings-contracts-设置布局-320-dark/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/settings-contracts-设置布局-320-dark/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  11 failed
+    tests/browser/interaction-acceptance.spec.ts:440:1 › 模型连接创建保存、重新读取、移除以及目录失败恢复 ──────────────────
+    tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 1440 light ────────────────────────────────
+    tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 1440 dark ─────────────────────────────────
+    tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 1280 light ────────────────────────────────
+    tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 1280 dark ─────────────────────────────────
+    tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 768 light ─────────────────────────────────
+    tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 768 dark ──────────────────────────────────
+    tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 390 light ─────────────────────────────────
+    tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 390 dark ──────────────────────────────────
+    tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 320 light ─────────────────────────────────
+    tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 320 dark ──────────────────────────────────
+  15 passed (2.5m)

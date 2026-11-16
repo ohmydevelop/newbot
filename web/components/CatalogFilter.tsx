@@ -4,20 +4,32 @@ import { ActionMenuContent } from "./ActionMenu";
 
 export function CatalogFilter({
   label,
+  id,
+  disabled = false,
+  placeholder,
   value,
   options,
   onValueChange,
 }: {
   label: string;
+  id?: string;
+  disabled?: boolean;
+  placeholder?: string;
   value: string;
   options: { value: string; label: string }[];
   onValueChange: (value: string) => void;
 }) {
   return (
     <Dropdown.Root>
-      <Dropdown.Trigger className="market-filter-trigger" aria-label={label}>
+      <Dropdown.Trigger
+        id={id}
+        disabled={disabled}
+        className="market-filter-trigger"
+        aria-label={label}
+      >
         <span>
           {options.find((option) => option.value === value)?.label ||
+            placeholder ||
             options[0]?.label}
         </span>
         <ChevronDown size={16} aria-hidden="true" />

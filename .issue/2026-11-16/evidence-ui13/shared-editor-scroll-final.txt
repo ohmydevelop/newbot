@@ -1,0 +1,11 @@
+[WebServer] (node:3955401) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 2 tests using 1 worker
+
+(node:3955418) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/browser/interaction-acceptance.spec.ts:255:1 › 工作流程默认折叠，内部滚动到两端后衔接聊天，重开保留位置 (6.1s)
+  ✓  2 tests/browser/interaction-acceptance.spec.ts:551:1 › 模型与MCP长配置共用外层滚动，不截断证书和保存入口 (4.8s)
+
+  2 passed (12.1s)

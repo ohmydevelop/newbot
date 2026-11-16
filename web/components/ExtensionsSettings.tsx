@@ -16,6 +16,7 @@ import {
   type CatalogSection,
 } from "../catalog-state";
 import { CatalogNavigation } from "./CatalogNavigation";
+const Models = lazy(() => import("./ProviderSettings"));
 const Experts = lazy(() => import("./ExpertsSettings"));
 const Plugins = lazy(() => import("./ToolsSettings"));
 const Skills = lazy(() => import("./SkillsSettings"));
@@ -51,6 +52,9 @@ export default function ExtensionsSettings({
     const saved = catalogViews.getState().views[tab];
     restoring.current = saved.scroll > 0;
     const restore = () => {
+      const current = catalogViews.getState().views[tab];
+      if (current.query !== saved.query || current.filter !== saved.filter)
+        restoring.current = false;
       if (
         !restoring.current ||
         node.scrollHeight - node.clientHeight < saved.scroll
@@ -65,14 +69,15 @@ export default function ExtensionsSettings({
     const cancelRestore = () => {
       restoring.current = false;
     };
-    node.addEventListener("wheel", cancelRestore, { passive: true });
-    node.addEventListener("pointerdown", cancelRestore);
-    node.addEventListener("keydown", cancelRestore);
+    const dialog = node.closest(".settings-dialog");
+    dialog?.addEventListener("wheel", cancelRestore, { passive: true });
+    dialog?.addEventListener("pointerdown", cancelRestore, true);
+    dialog?.addEventListener("keydown", cancelRestore, true);
     return () => {
       observer.disconnect();
-      node.removeEventListener("wheel", cancelRestore);
-      node.removeEventListener("pointerdown", cancelRestore);
-      node.removeEventListener("keydown", cancelRestore);
+      dialog?.removeEventListener("wheel", cancelRestore);
+      dialog?.removeEventListener("pointerdown", cancelRestore, true);
+      dialog?.removeEventListener("keydown", cancelRestore, true);
     };
   }, [tab]);
   useEffect(() => {
@@ -80,6 +85,13 @@ export default function ExtensionsSettings({
     const label = catalogViews.getState().views[tab].focus;
     if (!label) return;
     let done = false;
+    const cancelRestore = () => {
+      done = true;
+    };
+    const dialog = toolbar.closest(".settings-dialog");
+    dialog?.addEventListener("wheel", cancelRestore, { passive: true });
+    dialog?.addEventListener("pointerdown", cancelRestore, true);
+    dialog?.addEventListener("keydown", cancelRestore, true);
     const restore = () => {
       if (done) return;
       const target = [
@@ -99,7 +111,12 @@ export default function ExtensionsSettings({
     observer.observe(toolbar, { childList: true, subtree: true });
     observer.observe(scroller.current, { childList: true, subtree: true });
     restore();
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+      dialog?.removeEventListener("wheel", cancelRestore);
+      dialog?.removeEventListener("pointerdown", cancelRestore, true);
+      dialog?.removeEventListener("keydown", cancelRestore, true);
+    };
   }, [restoreFocus, tab, toolbar]);
   return (
     <div className="extensions-settings">
@@ -135,6 +152,8 @@ export default function ExtensionsSettings({
                 <Plugins />
               ) : tab === "experts" ? (
                 <Experts />
+              ) : tab === "models" ? (
+                <Models />
               ) : (
                 <Skills scope={skillScope} />
               )}

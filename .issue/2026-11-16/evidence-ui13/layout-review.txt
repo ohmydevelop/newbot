@@ -1,0 +1,67 @@
+[WebServer] (node:3934663) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 11 tests using 1 worker
+
+(node:3934743) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 tests/browser/interaction-acceptance.spec.ts:440:1 › 模型连接创建保存、重新读取、移除以及目录失败恢复 (3.4s)
+  ✓   2 tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 1440 light (4.7s)
+  ✓   3 tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 1440 dark (4.7s)
+  ✓   4 tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 1280 light (4.7s)
+  ✓   5 tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 1280 dark (4.7s)
+  ✓   6 tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 768 light (4.7s)
+  ✓   7 tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 768 dark (4.7s)
+  ✘   8 tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 390 light (4.9s)
+(node:3937645) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   9 tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 390 dark (4.9s)
+  ✓  10 tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 320 light (4.8s)
+  ✓  11 tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 320 dark (4.8s)
+
+
+  1) tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 390 light ────────────────────────────────
+
+    Error: expect(Buffer).toMatchSnapshot(expected) failed
+
+      1648 pixels (ratio 0.01 of all image pixels) are different.
+
+      Snapshot: 390-light-experts.png
+
+
+      123 |               clip: { ...rect, height: Math.floor(rect.height) },
+      124 |             }),
+    > 125 |           ).toMatchSnapshot(`${width}-${theme}-experts.png`, {
+          |             ^
+      126 |             maxDiffPixelRatio: 0.005,
+      127 |           });
+      128 |         }
+        at /home/a/Documents/ChatGPT/newbot-systematize/tests/browser/settings-contracts.spec.ts:125:13
+
+    attachment #5: 390-light-experts (image/png) ───────────────────────────────────────────────────
+    Expected: tests/browser/__screenshots__/390-light-experts.png
+    Received: test-results/settings-contracts-设置布局-390-light/390-light-experts-actual.png
+    Diff:     test-results/settings-contracts-设置布局-390-light/390-light-experts-diff.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #6: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/settings-contracts-设置布局-390-light/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #7: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/settings-contracts-设置布局-390-light/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/settings-contracts-设置布局-390-light/error-context.md
+
+    attachment #9: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/settings-contracts-设置布局-390-light/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/settings-contracts-设置布局-390-light/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 390 light ─────────────────────────────────
+  10 passed (52.8s)

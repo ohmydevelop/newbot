@@ -1,0 +1,521 @@
+
+> newbot@0.2.0 test:ui-contracts
+> playwright test --config=playwright.config.ts
+
+[WebServer] (node:3893862) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 16 tests using 1 worker
+
+(node:3893880) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 tests/browser/settings-contracts.spec.ts:22:1 › 分类真正卸载、关闭重开和详情返回保留目录状态 (3.6s)
+  ✘   2 tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 1440 light (4.2s)
+(node:3894310) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘   3 tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 1440 dark (4.2s)
+(node:3894677) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘   4 tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 1280 light (4.2s)
+(node:3895214) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘   5 tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 1280 dark (4.2s)
+(node:3895560) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘   6 tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 768 light (4.2s)
+(node:3895927) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘   7 tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 768 dark (4.1s)
+(node:3896270) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   8 tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 390 light (4.0s)
+  ✓   9 tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 390 dark (4.0s)
+  ✘  10 tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 320 light (4.2s)
+(node:3896592) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  11 tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 320 dark (4.1s)
+  ✓  12 tests/browser/settings-contracts.spec.ts:117:1 › 标题栏偏移与查询丢失注入会被同一验收器拒绝 (1.9s)
+  ✓  13 tests/browser/settings-contracts.spec.ts:146:1 › 左栏键盘/拖拽与刷新持久化，折叠保留设置入口 (2.2s)
+  ✓  14 tests/browser/settings-contracts.spec.ts:172:3 › 正常/减弱动画 false (2.0s)
+  ✓  15 tests/browser/settings-contracts.spec.ts:172:3 › 正常/减弱动画 true (2.0s)
+  ✓  16 tests/browser/settings-contracts.spec.ts:191:1 › 桌面设置缩为手机时右栏不能抢焦点 (2.1s)
+
+
+  1) tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 1440 light ───────────────────────────────
+
+    Error: expect(locator).toHaveScreenshot(expected) failed
+
+    Locator: locator('.settings-dialog')
+      Expected an image 1000px by 717px, received 1000px by 718px. 
+
+      Snapshot: 1440-light-experts.png
+
+    Call log:
+      - Expect "toHaveScreenshot(1440-light-experts.png)" locator('.settings-dialog') with timeout 5000ms
+        - verifying given screenshot expectation
+      - waiting for locator('.settings-dialog')
+        - locator resolved to <div role="dialog" tabindex="-1" id="radix-_r_i_" data-state="open" aria-labelledby="radix-_r_j_" class="modal wide settings-dialog">…</div>
+      - taking element screenshot
+        - disabled all CSS animations
+      - waiting for fonts to load...
+      - fonts loaded
+      - attempting scroll into view action
+        - waiting for element to be stable
+      - Expected an image 1000px by 717px, received 1000px by 718px.
+      - waiting 100ms before taking screenshot
+      - waiting for locator('.settings-dialog')
+        - locator resolved to <div role="dialog" tabindex="-1" id="radix-_r_i_" data-state="open" aria-labelledby="radix-_r_j_" class="modal wide settings-dialog">…</div>
+      - taking element screenshot
+        - disabled all CSS animations
+      - waiting for fonts to load...
+      - fonts loaded
+      - attempting scroll into view action
+        - waiting for element to be stable
+      - captured a stable screenshot
+      - Expected an image 1000px by 717px, received 1000px by 718px.
+
+
+      107 |         if (section === "专家") {
+      108 |           await page.getByText("尚未创建专家", { exact: true }).waitFor();
+    > 109 |           await expect(page.locator(".settings-dialog")).toHaveScreenshot(
+          |                                                          ^
+      110 |             `${width}-${theme}-experts.png`,
+      111 |             { animations: "disabled", maxDiffPixelRatio: 0.005 },
+      112 |           );
+        at /home/a/Documents/ChatGPT/newbot-systematize/tests/browser/settings-contracts.spec.ts:109:58
+
+    attachment #4: 1440-light-experts (image/png) ──────────────────────────────────────────────────
+    Expected: tests/browser/__screenshots__/1440-light-experts.png
+    Received: test-results/settings-contracts-设置布局-1440-light/1440-light-experts-actual.png
+    Diff:     test-results/settings-contracts-设置布局-1440-light/1440-light-experts-diff.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #5: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/settings-contracts-设置布局-1440-light/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #6: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/settings-contracts-设置布局-1440-light/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/settings-contracts-设置布局-1440-light/error-context.md
+
+    attachment #8: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/settings-contracts-设置布局-1440-light/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/settings-contracts-设置布局-1440-light/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 1440 dark ────────────────────────────────
+
+    Error: expect(locator).toHaveScreenshot(expected) failed
+
+    Locator: locator('.settings-dialog')
+      Expected an image 1000px by 717px, received 1000px by 718px. 
+
+      Snapshot: 1440-dark-experts.png
+
+    Call log:
+      - Expect "toHaveScreenshot(1440-dark-experts.png)" locator('.settings-dialog') with timeout 5000ms
+        - verifying given screenshot expectation
+      - waiting for locator('.settings-dialog')
+        - locator resolved to <div role="dialog" tabindex="-1" id="radix-_r_i_" data-state="open" aria-labelledby="radix-_r_j_" class="modal wide settings-dialog">…</div>
+      - taking element screenshot
+        - disabled all CSS animations
+      - waiting for fonts to load...
+      - fonts loaded
+      - attempting scroll into view action
+        - waiting for element to be stable
+      - Expected an image 1000px by 717px, received 1000px by 718px.
+      - waiting 100ms before taking screenshot
+      - waiting for locator('.settings-dialog')
+        - locator resolved to <div role="dialog" tabindex="-1" id="radix-_r_i_" data-state="open" aria-labelledby="radix-_r_j_" class="modal wide settings-dialog">…</div>
+      - taking element screenshot
+        - disabled all CSS animations
+      - waiting for fonts to load...
+      - fonts loaded
+      - attempting scroll into view action
+        - waiting for element to be stable
+      - captured a stable screenshot
+      - Expected an image 1000px by 717px, received 1000px by 718px.
+
+
+      107 |         if (section === "专家") {
+      108 |           await page.getByText("尚未创建专家", { exact: true }).waitFor();
+    > 109 |           await expect(page.locator(".settings-dialog")).toHaveScreenshot(
+          |                                                          ^
+      110 |             `${width}-${theme}-experts.png`,
+      111 |             { animations: "disabled", maxDiffPixelRatio: 0.005 },
+      112 |           );
+        at /home/a/Documents/ChatGPT/newbot-systematize/tests/browser/settings-contracts.spec.ts:109:58
+
+    attachment #4: 1440-dark-experts (image/png) ───────────────────────────────────────────────────
+    Expected: tests/browser/__screenshots__/1440-dark-experts.png
+    Received: test-results/settings-contracts-设置布局-1440-dark/1440-dark-experts-actual.png
+    Diff:     test-results/settings-contracts-设置布局-1440-dark/1440-dark-experts-diff.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #5: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/settings-contracts-设置布局-1440-dark/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #6: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/settings-contracts-设置布局-1440-dark/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/settings-contracts-设置布局-1440-dark/error-context.md
+
+    attachment #8: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/settings-contracts-设置布局-1440-dark/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/settings-contracts-设置布局-1440-dark/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3) tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 1280 light ───────────────────────────────
+
+    Error: expect(locator).toHaveScreenshot(expected) failed
+
+    Locator: locator('.settings-dialog')
+      Expected an image 1000px by 717px, received 1000px by 718px. 
+
+      Snapshot: 1280-light-experts.png
+
+    Call log:
+      - Expect "toHaveScreenshot(1280-light-experts.png)" locator('.settings-dialog') with timeout 5000ms
+        - verifying given screenshot expectation
+      - waiting for locator('.settings-dialog')
+        - locator resolved to <div role="dialog" tabindex="-1" id="radix-_r_i_" data-state="open" aria-labelledby="radix-_r_j_" class="modal wide settings-dialog">…</div>
+      - taking element screenshot
+        - disabled all CSS animations
+      - waiting for fonts to load...
+      - fonts loaded
+      - attempting scroll into view action
+        - waiting for element to be stable
+      - Expected an image 1000px by 717px, received 1000px by 718px.
+      - waiting 100ms before taking screenshot
+      - waiting for locator('.settings-dialog')
+        - locator resolved to <div role="dialog" tabindex="-1" id="radix-_r_i_" data-state="open" aria-labelledby="radix-_r_j_" class="modal wide settings-dialog">…</div>
+      - taking element screenshot
+        - disabled all CSS animations
+      - waiting for fonts to load...
+      - fonts loaded
+      - attempting scroll into view action
+        - waiting for element to be stable
+      - captured a stable screenshot
+      - Expected an image 1000px by 717px, received 1000px by 718px.
+
+
+      107 |         if (section === "专家") {
+      108 |           await page.getByText("尚未创建专家", { exact: true }).waitFor();
+    > 109 |           await expect(page.locator(".settings-dialog")).toHaveScreenshot(
+          |                                                          ^
+      110 |             `${width}-${theme}-experts.png`,
+      111 |             { animations: "disabled", maxDiffPixelRatio: 0.005 },
+      112 |           );
+        at /home/a/Documents/ChatGPT/newbot-systematize/tests/browser/settings-contracts.spec.ts:109:58
+
+    attachment #4: 1280-light-experts (image/png) ──────────────────────────────────────────────────
+    Expected: tests/browser/__screenshots__/1280-light-experts.png
+    Received: test-results/settings-contracts-设置布局-1280-light/1280-light-experts-actual.png
+    Diff:     test-results/settings-contracts-设置布局-1280-light/1280-light-experts-diff.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #5: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/settings-contracts-设置布局-1280-light/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #6: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/settings-contracts-设置布局-1280-light/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/settings-contracts-设置布局-1280-light/error-context.md
+
+    attachment #8: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/settings-contracts-设置布局-1280-light/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/settings-contracts-设置布局-1280-light/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  4) tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 1280 dark ────────────────────────────────
+
+    Error: expect(locator).toHaveScreenshot(expected) failed
+
+    Locator: locator('.settings-dialog')
+      Expected an image 1000px by 717px, received 1000px by 718px. 
+
+      Snapshot: 1280-dark-experts.png
+
+    Call log:
+      - Expect "toHaveScreenshot(1280-dark-experts.png)" locator('.settings-dialog') with timeout 5000ms
+        - verifying given screenshot expectation
+      - waiting for locator('.settings-dialog')
+        - locator resolved to <div role="dialog" tabindex="-1" id="radix-_r_i_" data-state="open" aria-labelledby="radix-_r_j_" class="modal wide settings-dialog">…</div>
+      - taking element screenshot
+        - disabled all CSS animations
+      - waiting for fonts to load...
+      - fonts loaded
+      - attempting scroll into view action
+        - waiting for element to be stable
+      - Expected an image 1000px by 717px, received 1000px by 718px.
+      - waiting 100ms before taking screenshot
+      - waiting for locator('.settings-dialog')
+        - locator resolved to <div role="dialog" tabindex="-1" id="radix-_r_i_" data-state="open" aria-labelledby="radix-_r_j_" class="modal wide settings-dialog">…</div>
+      - taking element screenshot
+        - disabled all CSS animations
+      - waiting for fonts to load...
+      - fonts loaded
+      - attempting scroll into view action
+        - waiting for element to be stable
+      - captured a stable screenshot
+      - Expected an image 1000px by 717px, received 1000px by 718px.
+
+
+      107 |         if (section === "专家") {
+      108 |           await page.getByText("尚未创建专家", { exact: true }).waitFor();
+    > 109 |           await expect(page.locator(".settings-dialog")).toHaveScreenshot(
+          |                                                          ^
+      110 |             `${width}-${theme}-experts.png`,
+      111 |             { animations: "disabled", maxDiffPixelRatio: 0.005 },
+      112 |           );
+        at /home/a/Documents/ChatGPT/newbot-systematize/tests/browser/settings-contracts.spec.ts:109:58
+
+    attachment #4: 1280-dark-experts (image/png) ───────────────────────────────────────────────────
+    Expected: tests/browser/__screenshots__/1280-dark-experts.png
+    Received: test-results/settings-contracts-设置布局-1280-dark/1280-dark-experts-actual.png
+    Diff:     test-results/settings-contracts-设置布局-1280-dark/1280-dark-experts-diff.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #5: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/settings-contracts-设置布局-1280-dark/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #6: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/settings-contracts-设置布局-1280-dark/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/settings-contracts-设置布局-1280-dark/error-context.md
+
+    attachment #8: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/settings-contracts-设置布局-1280-dark/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/settings-contracts-设置布局-1280-dark/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  5) tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 768 light ────────────────────────────────
+
+    Error: expect(locator).toHaveScreenshot(expected) failed
+
+    Locator: locator('.settings-dialog')
+      Expected an image 736px by 717px, received 736px by 718px. 
+
+      Snapshot: 768-light-experts.png
+
+    Call log:
+      - Expect "toHaveScreenshot(768-light-experts.png)" locator('.settings-dialog') with timeout 5000ms
+        - verifying given screenshot expectation
+      - waiting for locator('.settings-dialog')
+        - locator resolved to <div role="dialog" tabindex="-1" id="radix-_r_i_" data-state="open" aria-labelledby="radix-_r_j_" class="modal wide settings-dialog">…</div>
+      - taking element screenshot
+        - disabled all CSS animations
+      - waiting for fonts to load...
+      - fonts loaded
+      - attempting scroll into view action
+        - waiting for element to be stable
+      - Expected an image 736px by 717px, received 736px by 718px.
+      - waiting 100ms before taking screenshot
+      - waiting for locator('.settings-dialog')
+        - locator resolved to <div role="dialog" tabindex="-1" id="radix-_r_i_" data-state="open" aria-labelledby="radix-_r_j_" class="modal wide settings-dialog">…</div>
+      - taking element screenshot
+        - disabled all CSS animations
+      - waiting for fonts to load...
+      - fonts loaded
+      - attempting scroll into view action
+        - waiting for element to be stable
+      - captured a stable screenshot
+      - Expected an image 736px by 717px, received 736px by 718px.
+
+
+      107 |         if (section === "专家") {
+      108 |           await page.getByText("尚未创建专家", { exact: true }).waitFor();
+    > 109 |           await expect(page.locator(".settings-dialog")).toHaveScreenshot(
+          |                                                          ^
+      110 |             `${width}-${theme}-experts.png`,
+      111 |             { animations: "disabled", maxDiffPixelRatio: 0.005 },
+      112 |           );
+        at /home/a/Documents/ChatGPT/newbot-systematize/tests/browser/settings-contracts.spec.ts:109:58
+
+    attachment #4: 768-light-experts (image/png) ───────────────────────────────────────────────────
+    Expected: tests/browser/__screenshots__/768-light-experts.png
+    Received: test-results/settings-contracts-设置布局-768-light/768-light-experts-actual.png
+    Diff:     test-results/settings-contracts-设置布局-768-light/768-light-experts-diff.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #5: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/settings-contracts-设置布局-768-light/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #6: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/settings-contracts-设置布局-768-light/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/settings-contracts-设置布局-768-light/error-context.md
+
+    attachment #8: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/settings-contracts-设置布局-768-light/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/settings-contracts-设置布局-768-light/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  6) tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 768 dark ─────────────────────────────────
+
+    Error: expect(locator).toHaveScreenshot(expected) failed
+
+    Locator: locator('.settings-dialog')
+      Expected an image 736px by 717px, received 736px by 718px. 
+
+      Snapshot: 768-dark-experts.png
+
+    Call log:
+      - Expect "toHaveScreenshot(768-dark-experts.png)" locator('.settings-dialog') with timeout 5000ms
+        - verifying given screenshot expectation
+      - waiting for locator('.settings-dialog')
+        - locator resolved to <div role="dialog" tabindex="-1" id="radix-_r_i_" data-state="open" aria-labelledby="radix-_r_j_" class="modal wide settings-dialog">…</div>
+      - taking element screenshot
+        - disabled all CSS animations
+      - waiting for fonts to load...
+      - fonts loaded
+      - attempting scroll into view action
+        - waiting for element to be stable
+      - Expected an image 736px by 717px, received 736px by 718px.
+      - waiting 100ms before taking screenshot
+      - waiting for locator('.settings-dialog')
+        - locator resolved to <div role="dialog" tabindex="-1" id="radix-_r_i_" data-state="open" aria-labelledby="radix-_r_j_" class="modal wide settings-dialog">…</div>
+      - taking element screenshot
+        - disabled all CSS animations
+      - waiting for fonts to load...
+      - fonts loaded
+      - attempting scroll into view action
+        - waiting for element to be stable
+      - captured a stable screenshot
+      - Expected an image 736px by 717px, received 736px by 718px.
+
+
+      107 |         if (section === "专家") {
+      108 |           await page.getByText("尚未创建专家", { exact: true }).waitFor();
+    > 109 |           await expect(page.locator(".settings-dialog")).toHaveScreenshot(
+          |                                                          ^
+      110 |             `${width}-${theme}-experts.png`,
+      111 |             { animations: "disabled", maxDiffPixelRatio: 0.005 },
+      112 |           );
+        at /home/a/Documents/ChatGPT/newbot-systematize/tests/browser/settings-contracts.spec.ts:109:58
+
+    attachment #4: 768-dark-experts (image/png) ────────────────────────────────────────────────────
+    Expected: tests/browser/__screenshots__/768-dark-experts.png
+    Received: test-results/settings-contracts-设置布局-768-dark/768-dark-experts-actual.png
+    Diff:     test-results/settings-contracts-设置布局-768-dark/768-dark-experts-diff.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #5: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/settings-contracts-设置布局-768-dark/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #6: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/settings-contracts-设置布局-768-dark/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/settings-contracts-设置布局-768-dark/error-context.md
+
+    attachment #8: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/settings-contracts-设置布局-768-dark/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/settings-contracts-设置布局-768-dark/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  7) tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 320 light ────────────────────────────────
+
+    Error: expect(locator).toHaveScreenshot(expected) failed
+
+    Locator: locator('.settings-dialog')
+      1387 pixels (ratio 0.01 of all image pixels) are different.
+
+      Snapshot: 320-light-experts.png
+
+    Call log:
+      - Expect "toHaveScreenshot(320-light-experts.png)" locator('.settings-dialog') with timeout 5000ms
+        - verifying given screenshot expectation
+      - waiting for locator('.settings-dialog')
+        - locator resolved to <div role="dialog" tabindex="-1" id="radix-_r_l_" data-state="open" aria-labelledby="radix-_r_m_" class="modal wide settings-dialog">…</div>
+      - taking element screenshot
+        - disabled all CSS animations
+      - waiting for fonts to load...
+      - fonts loaded
+      - attempting scroll into view action
+        - waiting for element to be stable
+      - 1387 pixels (ratio 0.01 of all image pixels) are different.
+      - waiting 100ms before taking screenshot
+      - waiting for locator('.settings-dialog')
+        - locator resolved to <div role="dialog" tabindex="-1" id="radix-_r_l_" data-state="open" aria-labelledby="radix-_r_m_" class="modal wide settings-dialog">…</div>
+      - taking element screenshot
+        - disabled all CSS animations
+      - waiting for fonts to load...
+      - fonts loaded
+      - attempting scroll into view action
+        - waiting for element to be stable
+      - captured a stable screenshot
+      - 1387 pixels (ratio 0.01 of all image pixels) are different.
+
+
+      107 |         if (section === "专家") {
+      108 |           await page.getByText("尚未创建专家", { exact: true }).waitFor();
+    > 109 |           await expect(page.locator(".settings-dialog")).toHaveScreenshot(
+          |                                                          ^
+      110 |             `${width}-${theme}-experts.png`,
+      111 |             { animations: "disabled", maxDiffPixelRatio: 0.005 },
+      112 |           );
+        at /home/a/Documents/ChatGPT/newbot-systematize/tests/browser/settings-contracts.spec.ts:109:58
+
+    attachment #4: 320-light-experts (image/png) ───────────────────────────────────────────────────
+    Expected: tests/browser/__screenshots__/320-light-experts.png
+    Received: test-results/settings-contracts-设置布局-320-light/320-light-experts-actual.png
+    Diff:     test-results/settings-contracts-设置布局-320-light/320-light-experts-diff.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #5: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/settings-contracts-设置布局-320-light/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #6: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/settings-contracts-设置布局-320-light/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/settings-contracts-设置布局-320-light/error-context.md
+
+    attachment #8: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/settings-contracts-设置布局-320-light/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/settings-contracts-设置布局-320-light/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  7 failed
+    tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 1440 light ────────────────────────────────
+    tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 1440 dark ─────────────────────────────────
+    tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 1280 light ────────────────────────────────
+    tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 1280 dark ─────────────────────────────────
+    tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 768 light ─────────────────────────────────
+    tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 768 dark ──────────────────────────────────
+    tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 320 light ─────────────────────────────────
+  9 passed (58.7s)

@@ -1,0 +1,40 @@
+
+> newbot@0.2.0 test:ui-contracts
+> playwright test --config=playwright.config.ts
+
+[WebServer] (node:3949693) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 27 tests using 1 worker
+
+(node:3949706) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 tests/browser/interaction-acceptance.spec.ts:37:1 › 左右拖拽跨越不透明 iframe，边界、点击恢复与宽度持久化 (3.9s)
+  ✓   2 tests/browser/interaction-acceptance.spec.ts:112:1 › 拖拽只接受所属指针，失去捕获、取消、失焦和卸载均清理 (802ms)
+  ✓   3 tests/browser/interaction-acceptance.spec.ts:156:3 › 动画真实帧连续且减弱模式即时稳定 false (3.5s)
+  ✓   4 tests/browser/interaction-acceptance.spec.ts:156:3 › 动画真实帧连续且减弱模式即时稳定 true (3.1s)
+  ✓   5 tests/browser/interaction-acceptance.spec.ts:252:1 › 工作流程默认折叠，内部滚动到两端后衔接聊天，重开保留位置 (4.0s)
+  ✓   6 tests/browser/interaction-acceptance.spec.ts:316:3 › 模型共享目录和配置详情 1280 (3.3s)
+  ✓   7 tests/browser/interaction-acceptance.spec.ts:316:3 › 模型共享目录和配置详情 320 (3.7s)
+  ✓   8 tests/browser/interaction-acceptance.spec.ts:388:1 › 目录迟到响应不得覆盖用户新查询、滚动和焦点 (3.3s)
+  ✓   9 tests/browser/interaction-acceptance.spec.ts:428:1 › 浏览器触摸取消释放拖拽捕获并保存最后宽度 (411ms)
+  ✓  10 tests/browser/interaction-acceptance.spec.ts:457:1 › 模型连接创建保存、重新读取、移除以及目录失败恢复 (3.3s)
+  ✓  11 tests/browser/interaction-acceptance.spec.ts:510:1 › 设为默认需先选择有效模型，显式操作才切换连接 (2.9s)
+  ✓  12 tests/browser/settings-contracts.spec.ts:22:1 › 分类真正卸载、关闭重开和详情返回保留目录状态 (3.6s)
+  ✓  13 tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 1440 light (4.7s)
+  ✓  14 tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 1440 dark (4.7s)
+  ✓  15 tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 1280 light (4.8s)
+  ✓  16 tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 1280 dark (4.7s)
+  ✓  17 tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 768 light (4.7s)
+  ✓  18 tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 768 dark (4.7s)
+  ✓  19 tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 390 light (4.9s)
+  ✓  20 tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 390 dark (4.9s)
+  ✓  21 tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 320 light (4.8s)
+  ✓  22 tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 320 dark (4.9s)
+  ✓  23 tests/browser/settings-contracts.spec.ts:134:1 › 标题栏偏移与查询丢失注入会被同一验收器拒绝 (2.0s)
+  ✓  24 tests/browser/settings-contracts.spec.ts:163:1 › 左栏键盘/拖拽与刷新持久化，折叠保留设置入口 (2.2s)
+  ✓  25 tests/browser/settings-contracts.spec.ts:189:3 › 正常/减弱动画 false (2.0s)
+  ✓  26 tests/browser/settings-contracts.spec.ts:189:3 › 正常/减弱动画 true (2.0s)
+  ✓  27 tests/browser/settings-contracts.spec.ts:208:1 › 桌面设置缩为手机时右栏不能抢焦点 (2.1s)
+
+  27 passed (1.6m)

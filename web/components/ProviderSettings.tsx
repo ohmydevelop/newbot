@@ -4,8 +4,18 @@ import type { Operation } from "../operation-scope";
 import ConfigurationFeedback, {
   useConfigurationRecovery,
 } from "./ConfigurationFeedback";
-import { useState, useEffect } from "react";
-import { Plus, RefreshCw, Pencil, CloudDownload, Trash2 } from "lucide-react";
+import { useState, useEffect, useContext } from "react";
+import { Check, Pencil, CloudDownload, Trash2 } from "lucide-react";
+import * as Dropdown from "@radix-ui/react-dropdown-menu";
+import { GatewayIcon } from "./AppIcons";
+import { MoreIcon } from "./ReferenceIcons";
+import { CatalogToolbar } from "./CatalogToolbar";
+import { CatalogRefreshButton } from "./CatalogRefreshButton";
+import { CatalogCopy } from "./CatalogCopy";
+import { CatalogFilter } from "./CatalogFilter";
+import { CatalogNavigation } from "./CatalogNavigation";
+import { ActionMenuContent, ActionMenuItem } from "./ActionMenu";
+import { useCatalogField } from "../catalog-state";
 import type {
   ConfigurationView,
   DefaultsSaveResult,
@@ -15,6 +25,8 @@ import { useApp, loadSettings, request } from "../store";
 type Draft = { id: string; revision: string };
 export default function ProviderSettings() {
   const settings = useApp((s) => s.settings);
+  const [query, setQuery] = useCatalogField("models", "query");
+  const navigation = useContext(CatalogNavigation);
   const [catalog, setCatalog] = useState<
     Record<
       string,
@@ -77,6 +89,9 @@ export default function ProviderSettings() {
   const busy =
     busyState || (editorBusy ? "editor" : recovery.busy ? "recovery" : "");
   const [notice, setNotice] = useState("");
+  useEffect(() => {
+    if (busyState && busyState !== "catalog") return navigation?.lock();
+  }, [busyState, navigation?.lock]);
   const providers: {
     id: string;
     current: boolean;
@@ -212,207 +227,182 @@ export default function ProviderSettings() {
       }}
     />
   );
+  const matches = providers.filter((p) => {
+    const entry = catalog[p.id];
+    return [
+      p.id,
+      p.summary?.name,
+      ...(entry?.models.flatMap((m) => [m.model, m.displayName]) || []),
+    ]
+      .join(" ")
+      .toLowerCase()
+      .includes(query.trim().toLowerCase());
+  });
+  async function makeDefault(id: string) {
+    const entry = catalog[id];
+    if (!entry?.models.some((model) => model.model === entry.defaultModel)) {
+      edit(id);
+      return;
+    }
+    await action(`default:${id}`, (task) =>
+      saveGatewayDefault(
+        {
+          id,
+          model: entry.defaultModel,
+          expectedDefaultRevision: entry.defaultRevision,
+          expectedRevision: config?.revision,
+          makeDefault: true,
+        },
+        task,
+      ),
+    );
+  }
   return (
-    <section className="provider-settings" aria-label="模型服务管理">
-      <div className="section-heading">
-        <h3>模型服务</h3>
-        <div className="section-actions">
-          {config?.providerSourceConfigured && (
-            <button
-              type="button"
-              className="icon-button"
-              title="从配置来源刷新"
-              aria-label="从配置来源刷新"
-              disabled={!!busy}
-              onClick={() =>
-                void action("source", async (task) => {
-                  const response = await fetch("/api/runtime/config/reload", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ expectedRevision: config.revision }),
-                  });
-                  if (!response.ok)
-                    throw new Error("配置来源暂不可用，已保留当前参数。");
-                  await refresh(task);
-                })
-              }
-            >
-              <CloudDownload size={18} aria-hidden="true" />
-            </button>
-          )}
-
+    <section className="provider-settings" aria-label="模型管理">
+      <CatalogToolbar label="模型" query={query} onQuery={setQuery}>
+        {config?.providerSourceConfigured && (
           <button
+            type="button"
             className="icon-button"
-            aria-label="添加模型服务"
-            title="添加模型服务"
-            disabled={!!busy || recovery.blocked || !config?.writable}
-            onClick={() => edit()}
-          >
-            <Plus size={18} aria-hidden="true" />
-          </button>
-          <button
-            className="icon-button"
-            aria-label="刷新模型服务"
-            title="刷新模型服务"
+            title="从配置来源刷新"
+            aria-label="从配置来源刷新"
             disabled={!!busy}
-            onClick={() => void action("reload", refresh)}
+            onClick={() =>
+              void action("source", async (task) => {
+                const response = await fetch("/api/runtime/config/reload", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ expectedRevision: config.revision }),
+                });
+                if (!response.ok)
+                  throw new Error("配置来源暂不可用，已保留当前参数。");
+                await refresh(task);
+              })
+            }
           >
-            <RefreshCw
-              size={18}
-              className={busy ? "spin" : ""}
-              aria-hidden="true"
-            />
+            <CloudDownload size={18} aria-hidden="true" />
           </button>
-        </div>
-      </div>
+        )}
+        <button
+          type="button"
+          className="primary catalog-add"
+          aria-label="添加模型连接"
+          disabled={!!busy || recovery.blocked || !config?.writable}
+          onClick={() => edit()}
+        >
+          添加连接
+        </button>
+        <CatalogRefreshButton
+          label="刷新模型"
+          busy={!!busy}
+          onClick={() => void action("reload", refresh)}
+        />
+      </CatalogToolbar>
       {config?.providerSourceStatus === "unavailable" && (
         <p className="inline-error" role="alert">
           配置来源暂不可用，可手动添加或稍后重试。
         </p>
       )}
       {config?.providerStorage === "memory" && (
-        <p className="muted">当前模型服务仅临时保存，服务重启后需重新配置。</p>
-      )}
-      {config && !config.providers.some((p) => !p.missing) && (
-        <p className="muted">尚未添加模型服务</p>
+        <p className="muted">当前连接仅临时保存，重启后需重新配置。</p>
       )}
       {catalogError && (
         <p role="alert" className="inline-error">
           {catalogError}
         </p>
       )}
-      <div className="gateway-grid" role="group" aria-label="选择默认模型服务">
-        {providers.map((p) => {
+      {!matches.length && (
+        <div className="extension-empty">
+          <GatewayIcon size={24} aria-hidden="true" />
+          <p>{query ? "没有匹配的模型或连接" : "尚未添加连接"}</p>
+        </div>
+      )}
+      <div className="catalog-grid" aria-label="模型连接">
+        {matches.map((p) => {
           const entry = catalog[p.id],
             name = p.summary?.name || p.id;
-          const disabled =
-            !!busy ||
-            recovery.blocked ||
-            !config?.writable ||
-            !!p.summary?.missing ||
-            !!entry?.profileError;
           return (
-            <div
-              className={`gateway-card ${p.current ? "is-default" : ""}`}
-              key={p.id}
-            >
+            <div className="catalog-entry model-entry" key={p.id}>
               <button
                 type="button"
-                className="gateway-select"
-                aria-pressed={p.current}
-                aria-label={`${name}，${p.current ? "当前默认模型服务" : "选择为默认模型服务"}`}
-                disabled={disabled}
-                onClick={() => {
-                  if (p.current) return;
-                  if (
-                    !entry?.models.some((m) => m.model === entry.defaultModel)
-                  ) {
-                    document.getElementById(`gateway-model-${p.id}`)?.focus();
-                    return;
-                  }
-                  void action(`default:${p.id}`, (task) =>
-                    saveGatewayDefault(
-                      {
-                        id: p.id,
-                        model: entry.defaultModel,
-                        expectedDefaultRevision: entry.defaultRevision,
-                        expectedRevision: config?.revision,
-                        makeDefault: true,
-                      },
-                      task,
-                    ),
-                  );
-                }}
+                className="catalog-entry-main"
+                aria-label={`查看模型连接 ${name}`}
+                disabled={!!busy}
+                onClick={() => edit(p.id)}
               >
-                <span className="gateway-name">
-                  <strong title={name}>{name}</strong>
-                  <small>
-                    {!entry
-                      ? "正在读取模型"
-                      : entry.models.length
-                        ? `${entry.models.length} 个模型`
-                        : entry.error
-                          ? "目录暂不可用"
-                          : "暂无模型"}
-                  </small>
+                <span className="expert-icon">
+                  <GatewayIcon size={22} aria-hidden="true" />
                 </span>
+                <CatalogCopy
+                  name={name}
+                  description={
+                    p.summary?.missing
+                      ? "等待恢复配置"
+                      : entry
+                        ? entry.models.length
+                          ? `${entry.defaultModel || "未选默认模型"} · ${entry.models.length} 个模型`
+                          : entry.error
+                            ? "目录暂不可用"
+                            : "暂无模型"
+                        : "正在读取模型"
+                  }
+                  status={
+                    p.current ? (
+                      <>
+                        <Check size={14} aria-hidden="true" />
+                        默认
+                      </>
+                    ) : undefined
+                  }
+                />
               </button>
-              <div className="gateway-actions">
-                <button
-                  className="icon-button"
-                  type="button"
-                  data-gateway-edit
+              <Dropdown.Root>
+                <Dropdown.Trigger
+                  className="icon-button catalog-more"
+                  aria-label={`${name} 更多操作`}
                   disabled={!!busy}
-                  aria-label={`编辑 ${name}`}
-                  title={p.summary?.editable ? "编辑" : "查看连接"}
-                  onClick={() => edit(p.id)}
                 >
-                  <Pencil size={16} aria-hidden="true" />
-                </button>
-                <button
-                  className="icon-button"
-                  type="button"
-                  disabled={!!busy || !p.summary?.editable}
-                  data-variant="destructive"
-                  aria-label={`删除 ${name}`}
-                  title={
-                    p.summary?.editable
-                      ? "删除模型服务"
-                      : "此模型服务由其他来源管理"
-                  }
-                  onClick={() => {
-                    edit(p.id);
-                    setDeleting({ id: p.id, revision: config!.revision });
-                  }}
-                >
-                  <Trash2 size={16} aria-hidden="true" />
-                </button>
-              </div>
-              {p.summary?.missing ? (
-                <span className="muted">等待恢复配置</span>
-              ) : (
-                <select
-                  id={`gateway-model-${p.id}`}
-                  aria-label={`${name} 默认模型`}
-                  disabled={disabled || !entry?.models.length}
-                  value={
-                    entry?.models.some((m) => m.model === entry.defaultModel)
-                      ? entry.defaultModel
-                      : ""
-                  }
-                  onChange={(e) => {
-                    const model = e.target.value;
-                    void action(`default:${p.id}`, (task) =>
-                      saveGatewayDefault(
-                        {
-                          id: p.id,
-                          model,
-                          expectedDefaultRevision: entry?.defaultRevision,
-                          expectedRevision: config?.revision,
-                        },
-                        task,
-                      ),
-                    );
-                  }}
-                >
-                  <option value="" disabled>
-                    选择默认模型
-                  </option>
-                  {entry?.models.map((m) => (
-                    <option key={m.model} value={m.model}>
-                      {m.displayName}
-                      {m.source === "manual" ? " · 手动" : ""}
-                    </option>
-                  ))}
-                </select>
-              )}
+                  <MoreIcon size={18} aria-hidden="true" />
+                </Dropdown.Trigger>
+                <Dropdown.Portal>
+                  <ActionMenuContent>
+                    <ActionMenuItem icon={Pencil} onSelect={() => edit(p.id)}>
+                      配置连接
+                    </ActionMenuItem>
+                    <ActionMenuItem
+                      icon={Check}
+                      disabled={
+                        p.current ||
+                        !config?.writable ||
+                        recovery.blocked ||
+                        !!p.summary?.missing ||
+                        !!entry?.profileError
+                      }
+                      onSelect={() => void makeDefault(p.id)}
+                    >
+                      设为默认
+                    </ActionMenuItem>
+                    <ActionMenuItem
+                      icon={Trash2}
+                      destructive
+                      disabled={!p.summary?.editable}
+                      onSelect={() => {
+                        edit(p.id);
+                        setDeleting({ id: p.id, revision: config!.revision });
+                      }}
+                    >
+                      移除连接
+                    </ActionMenuItem>
+                  </ActionMenuContent>
+                </Dropdown.Portal>
+              </Dropdown.Root>
               {entry?.error && (
-                <p className="gateway-details muted" role="status">
+                <p className="inline-error model-entry-error" role="status">
                   {entry.error}
                 </p>
               )}
               {entry?.profileError && (
-                <p className="inline-error gateway-details" role="alert">
+                <p className="inline-error model-entry-error" role="alert">
                   {entry.profileError}
                 </p>
               )}
@@ -441,10 +431,70 @@ export default function ProviderSettings() {
               const p = providers.find((p) => p.id === draft.id)?.summary;
               return (
                 <>
+                  {!deleting && (
+                    <div className="model-default-control">
+                      <span>默认模型</span>
+                      <CatalogFilter
+                        label={`${p?.name || draft.id} 默认模型`}
+                        id={`gateway-model-${draft.id}`}
+                        value={catalog[draft.id]?.defaultModel || ""}
+                        placeholder="选择默认模型"
+                        disabled={
+                          !!busy ||
+                          recovery.blocked ||
+                          !config?.writable ||
+                          !!p?.missing ||
+                          !!catalog[draft.id]?.profileError ||
+                          !catalog[draft.id]?.models.length
+                        }
+                        options={(catalog[draft.id]?.models || []).map((m) => ({
+                          value: m.model,
+                          label:
+                            m.displayName +
+                            (m.source === "manual" ? " · 手动" : ""),
+                        }))}
+                        onValueChange={(model) =>
+                          void action(`default:${draft.id}`, (task) =>
+                            saveGatewayDefault(
+                              {
+                                id: draft.id,
+                                model,
+                                expectedDefaultRevision:
+                                  catalog[draft.id]?.defaultRevision,
+                                expectedRevision: config?.revision,
+                              },
+                              task,
+                            ),
+                          )
+                        }
+                      />
+                      {!providers.find((provider) => provider.id === draft.id)
+                        ?.current && (
+                        <button
+                          type="button"
+                          className="secondary"
+                          disabled={
+                            !!busy ||
+                            !config?.writable ||
+                            recovery.blocked ||
+                            !!p?.missing ||
+                            !!catalog[draft.id]?.profileError ||
+                            !catalog[draft.id]?.models.some(
+                              (model) =>
+                                model.model === catalog[draft.id]?.defaultModel,
+                            )
+                          }
+                          onClick={() => void makeDefault(draft.id)}
+                        >
+                          设为默认连接
+                        </button>
+                      )}
+                    </div>
+                  )}
                   {deleting && (
-                    <div role="group" aria-label="确认删除模型服务">
+                    <div role="group" aria-label="确认移除连接">
                       <p>
-                        删除后无法从此处恢复。历史会话仍在使用的模型服务不能删除。
+                        删除后无法从此处恢复。历史会话仍在使用的连接不能移除。
                       </p>
                       <button
                         type="button"
@@ -482,7 +532,7 @@ export default function ProviderSettings() {
         </GatewayEditor>
       )}
       <span className="sr-only" role="status">
-        {busy ? "正在处理模型服务配置" : notice}
+        {busy ? "正在处理模型配置" : notice}
       </span>
       {!draft && feedback}
     </section>

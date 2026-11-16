@@ -222,3 +222,27 @@
     height: 44px;
   }
 }
+.model-entry-error {
+  flex-basis: 100%;
+  margin: 0 12px 12px;
+  font-size: 13px;
+}
+.model-default-control {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.model-default-control > span {
+  font-size: 14px;
+}
+.model-default-control .market-filter-trigger {
+  max-width: 100%;
+}
+.model-directory-control .market-filter-trigger {
+  min-width: 0;
+  flex: 1;
+}
+.model-entry {
+  flex-wrap: wrap;
+}

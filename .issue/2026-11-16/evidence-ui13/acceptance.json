@@ -1,0 +1,217 @@
+{
+  "environment": "Local Playwright Chromium 1.65.1; 1 worker; synthetic upstream; videos retained",
+  "total": 28,
+  "passed": 28,
+  "executions": [
+    "browser-final.txt",
+    "shared-editor-scroll-final.txt"
+  ],
+  "tests": [
+    {
+      "title": "左右拖拽跨越不透明 iframe，边界、点击恢复与宽度持久化",
+      "status": "passed",
+      "duration": 3910,
+      "evidence": [
+        ".issue/2026-11-16/evidence-ui13/drag-frames.json",
+        ".issue/2026-11-16/evidence-ui13/recordings/左右拖拽跨越不透明-iframe-边界-点击恢复与宽度持久化.webm"
+      ]
+    },
+    {
+      "title": "拖拽只接受所属指针，失去捕获、取消、失焦和卸载均清理",
+      "status": "passed",
+      "duration": 802,
+      "evidence": [
+        ".issue/2026-11-16/evidence-ui13/recordings/拖拽只接受所属指针-失去捕获-取消-失焦和卸载均清理.webm"
+      ]
+    },
+    {
+      "title": "动画真实帧连续且减弱模式即时稳定 false",
+      "status": "passed",
+      "duration": 3511,
+      "evidence": [
+        ".issue/2026-11-16/evidence-ui13/navigation-frames.json",
+        ".issue/2026-11-16/evidence-ui13/detail-frames.json",
+        ".issue/2026-11-16/evidence-ui13/recordings/动画真实帧连续且减弱模式即时稳定-false.webm"
+      ]
+    },
+    {
+      "title": "动画真实帧连续且减弱模式即时稳定 true",
+      "status": "passed",
+      "duration": 3117,
+      "evidence": [
+        ".issue/2026-11-16/evidence-ui13/reduced-navigation-frames.json",
+        ".issue/2026-11-16/evidence-ui13/reduced-detail-frames.json",
+        ".issue/2026-11-16/evidence-ui13/recordings/动画真实帧连续且减弱模式即时稳定-true.webm"
+      ]
+    },
+    {
+      "title": "工作流程默认折叠，内部滚动到两端后衔接聊天，重开保留位置",
+      "status": "passed",
+      "duration": 6065,
+      "evidence": [
+        ".issue/2026-11-16/evidence-ui13/recordings/工作流程默认折叠-内部滚动到两端后衔接聊天-重开保留位置.webm"
+      ]
+    },
+    {
+      "title": "模型共享目录和配置详情 1280",
+      "status": "passed",
+      "duration": 3275,
+      "evidence": [
+        ".issue/2026-11-16/evidence-ui13/screenshots/models-1280.png",
+        ".issue/2026-11-16/evidence-ui13/recordings/模型共享目录和配置详情-1280.webm"
+      ]
+    },
+    {
+      "title": "模型共享目录和配置详情 320",
+      "status": "passed",
+      "duration": 3738,
+      "evidence": [
+        ".issue/2026-11-16/evidence-ui13/screenshots/models-320.png",
+        ".issue/2026-11-16/evidence-ui13/recordings/模型共享目录和配置详情-320.webm"
+      ]
+    },
+    {
+      "title": "目录迟到响应不得覆盖用户新查询、滚动和焦点",
+      "status": "passed",
+      "duration": 3345,
+      "evidence": [
+        ".issue/2026-11-16/evidence-ui13/recordings/目录迟到响应不得覆盖用户新查询-滚动和焦点.webm"
+      ]
+    },
+    {
+      "title": "浏览器触摸取消释放拖拽捕获并保存最后宽度",
+      "status": "passed",
+      "duration": 411,
+      "evidence": [
+        ".issue/2026-11-16/evidence-ui13/recordings/浏览器触摸取消释放拖拽捕获并保存最后宽度.webm"
+      ]
+    },
+    {
+      "title": "模型连接创建保存、重新读取、移除以及目录失败恢复",
+      "status": "passed",
+      "duration": 3300,
+      "evidence": [
+        ".issue/2026-11-16/evidence-ui13/screenshots/model-create.png",
+        ".issue/2026-11-16/evidence-ui13/recordings/模型连接创建保存-重新读取-移除以及目录失败恢复.webm"
+      ]
+    },
+    {
+      "title": "设为默认需先选择有效模型，显式操作才切换连接",
+      "status": "passed",
+      "duration": 2864,
+      "evidence": [
+        ".issue/2026-11-16/evidence-ui13/recordings/设为默认需先选择有效模型-显式操作才切换连接.webm"
+      ]
+    },
+    {
+      "title": "分类真正卸载、关闭重开和详情返回保留目录状态",
+      "status": "passed",
+      "duration": 3593,
+      "evidence": []
+    },
+    {
+      "title": "设置布局 1440 light",
+      "status": "passed",
+      "duration": 4720,
+      "evidence": []
+    },
+    {
+      "title": "设置布局 1440 dark",
+      "status": "passed",
+      "duration": 4714,
+      "evidence": []
+    },
+    {
+      "title": "设置布局 1280 light",
+      "status": "passed",
+      "duration": 4764,
+      "evidence": []
+    },
+    {
+      "title": "设置布局 1280 dark",
+      "status": "passed",
+      "duration": 4683,
+      "evidence": [
+        ".issue/2026-11-16/evidence-ui13/screenshots/1280-dark-模型.png"
+      ]
+    },
+    {
+      "title": "设置布局 768 light",
+      "status": "passed",
+      "duration": 4700,
+      "evidence": []
+    },
+    {
+      "title": "设置布局 768 dark",
+      "status": "passed",
+      "duration": 4677,
+      "evidence": []
+    },
+    {
+      "title": "设置布局 390 light",
+      "status": "passed",
+      "duration": 4853,
+      "evidence": []
+    },
+    {
+      "title": "设置布局 390 dark",
+      "status": "passed",
+      "duration": 4876,
+      "evidence": []
+    },
+    {
+      "title": "设置布局 320 light",
+      "status": "passed",
+      "duration": 4849,
+      "evidence": []
+    },
+    {
+      "title": "设置布局 320 dark",
+      "status": "passed",
+      "duration": 4891,
+      "evidence": [
+        ".issue/2026-11-16/evidence-ui13/screenshots/320-dark-模型.png"
+      ]
+    },
+    {
+      "title": "标题栏偏移与查询丢失注入会被同一验收器拒绝",
+      "status": "passed",
+      "duration": 1953,
+      "evidence": []
+    },
+    {
+      "title": "左栏键盘/拖拽与刷新持久化，折叠保留设置入口",
+      "status": "passed",
+      "duration": 2206,
+      "evidence": []
+    },
+    {
+      "title": "正常/减弱动画 false",
+      "status": "passed",
+      "duration": 1994,
+      "evidence": []
+    },
+    {
+      "title": "正常/减弱动画 true",
+      "status": "passed",
+      "duration": 2021,
+      "evidence": []
+    },
+    {
+      "title": "桌面设置缩为手机时右栏不能抢焦点",
+      "status": "passed",
+      "duration": 2109,
+      "evidence": []
+    },
+    {
+      "title": "模型与MCP长配置共用外层滚动，不截断证书和保存入口",
+      "status": "passed",
+      "duration": 4808,
+      "evidence": [
+        ".issue/2026-11-16/evidence-ui13/screenshots/long-模型.png",
+        ".issue/2026-11-16/evidence-ui13/screenshots/long-连接器.png",
+        ".issue/2026-11-16/evidence-ui13/recordings/模型与MCP长配置共用外层滚动-不截断证书和保存入口.webm"
+      ]
+    }
+  ]
+}

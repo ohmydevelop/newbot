@@ -1,0 +1,279 @@
+[WebServer] (node:3910687) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 7 tests using 1 worker
+
+(node:3910702) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 tests/browser/interaction-acceptance.spec.ts:36:1 › 左右拖拽跨越不透明 iframe，边界、点击恢复与宽度持久化 (7.9s)
+(node:3910923) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  2 tests/browser/interaction-acceptance.spec.ts:95:1 › 拖拽只接受所属指针，失去捕获、取消、失焦和卸载均清理 (5.5s)
+(node:3911162) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  3 tests/browser/interaction-acceptance.spec.ts:139:3 › 动画真实帧连续且减弱模式即时稳定 false (1.5s)
+(node:3911263) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  4 tests/browser/interaction-acceptance.spec.ts:139:3 › 动画真实帧连续且减弱模式即时稳定 true (3.2s)
+  ✘  5 tests/browser/interaction-acceptance.spec.ts:234:1 › 工作流程默认折叠，内部滚动到两端后衔接聊天，重开保留位置 (30.3s)
+(node:3912045) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  6 tests/browser/interaction-acceptance.spec.ts:291:3 › 模型共享目录和配置详情 1280 (8.1s)
+(node:3912295) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  7 tests/browser/interaction-acceptance.spec.ts:291:3 › 模型共享目录和配置详情 320 (8.3s)
+
+
+  1) tests/browser/interaction-acceptance.spec.ts:36:1 › 左右拖拽跨越不透明 iframe，边界、点击恢复与宽度持久化 ────────────
+
+    Error: expect(locator).toHaveCount(expected) failed
+
+    Locator:  locator('.panel-drag-shield')
+    Expected: 1
+    Received: 0
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveCount" locator('.panel-drag-shield') with timeout 5000ms
+      - waiting for locator('.panel-drag-shield')
+        14 × locator resolved to 0 elements
+           - unexpected value "0"
+
+
+      30 |   await page.mouse.move(r.x + r.width / 2, 250);
+      31 |   await page.mouse.down();
+    > 32 |   await expect(page.locator(".panel-drag-shield")).toHaveCount(1);
+         |                                                    ^
+      33 |   return { handle, x: r.x + r.width / 2 };
+      34 | }
+      35 |
+        at startDrag (/home/a/Documents/ChatGPT/newbot-systematize/tests/browser/interaction-acceptance.spec.ts:32:52)
+        at /home/a/Documents/ChatGPT/newbot-systematize/tests/browser/interaction-acceptance.spec.ts:72:19
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/interaction-acceptance-左右拖拽跨越不透明-iframe，边界、点击恢复与宽度持久化/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/interaction-acceptance-左右拖拽跨越不透明-iframe，边界、点击恢复与宽度持久化/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/interaction-acceptance-左右拖拽跨越不透明-iframe，边界、点击恢复与宽度持久化/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/interaction-acceptance-左右拖拽跨越不透明-iframe，边界、点击恢复与宽度持久化/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/interaction-acceptance-左右拖拽跨越不透明-iframe，边界、点击恢复与宽度持久化/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) tests/browser/interaction-acceptance.spec.ts:95:1 › 拖拽只接受所属指针，失去捕获、取消、失焦和卸载均清理 ────────────────
+
+    Error: expect(locator).toHaveCount(expected) failed
+
+    Locator:  locator('.panel-drag-shield')
+    Expected: 1
+    Received: 0
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveCount" locator('.panel-drag-shield') with timeout 5000ms
+      - waiting for locator('.panel-drag-shield')
+        14 × locator resolved to 0 elements
+           - unexpected value "0"
+
+
+      108 |   await startDrag(page, "左");
+      109 |   await h.dispatchEvent("pointerup", { pointerId: 999, button: 0 });
+    > 110 |   await expect(page.locator(".panel-drag-shield")).toHaveCount(1);
+          |                                                    ^
+      111 |   await page.mouse.move(350, 250, { steps: 4 });
+      112 |   await h.evaluate((e) =>
+      113 |     e.releasePointerCapture(Number(e.getAttribute("data-test-pointer"))),
+        at /home/a/Documents/ChatGPT/newbot-systematize/tests/browser/interaction-acceptance.spec.ts:110:52
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/interaction-acceptance-拖拽只接受所属指针，失去捕获、取消、失焦和卸载均清理/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/interaction-acceptance-拖拽只接受所属指针，失去捕获、取消、失焦和卸载均清理/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/interaction-acceptance-拖拽只接受所属指针，失去捕获、取消、失焦和卸载均清理/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/interaction-acceptance-拖拽只接受所属指针，失去捕获、取消、失焦和卸载均清理/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/interaction-acceptance-拖拽只接受所属指针，失去捕获、取消、失焦和卸载均清理/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3) tests/browser/interaction-acceptance.spec.ts:139:3 › 动画真实帧连续且减弱模式即时稳定 false ───────────────────
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    If it should pass with deep equality, replace "toBe" with "toStrictEqual"
+
+    Expected: Any<Number>
+    Received: 12
+
+      176 |     for (let i = 1; i < frames.length; i++)
+      177 |       expect(frames[i].width).toBeLessThanOrEqual(frames[i - 1].width + 0.1);
+    > 178 |     expect(frames.filter((f) => f.width > 58 && f.width < 255).length).toBe(
+          |                                                                        ^
+      179 |       reduced ? 0 : expect.any(Number),
+      180 |     );
+      181 |     if (!reduced)
+        at /home/a/Documents/ChatGPT/newbot-systematize/tests/browser/interaction-acceptance.spec.ts:178:72
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/interaction-acceptance-动画真实帧连续且减弱模式即时稳定-false/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/interaction-acceptance-动画真实帧连续且减弱模式即时稳定-false/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/interaction-acceptance-动画真实帧连续且减弱模式即时稳定-false/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/interaction-acceptance-动画真实帧连续且减弱模式即时稳定-false/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/interaction-acceptance-动画真实帧连续且减弱模式即时稳定-false/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  4) tests/browser/interaction-acceptance.spec.ts:234:1 › 工作流程默认折叠，内部滚动到两端后衔接聊天，重开保留位置 ─────────────
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.getAttribute: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for locator('.history-row.active')
+
+
+      242 |   const threadId = await page
+      243 |     .locator(".history-row.active")
+    > 244 |     .getAttribute("data-thread-id");
+          |      ^
+      245 |   expect(threadId).toBeTruthy();
+      246 |   await fixture(page, "/api/test/process", { threadId, count: 36 });
+      247 |   const toggle = page.locator(".process-toggle").last();
+        at /home/a/Documents/ChatGPT/newbot-systematize/tests/browser/interaction-acceptance.spec.ts:244:6
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/interaction-acceptance-工作流程默认折叠，内部滚动到两端后衔接聊天，重开保留位置/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/interaction-acceptance-工作流程默认折叠，内部滚动到两端后衔接聊天，重开保留位置/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/interaction-acceptance-工作流程默认折叠，内部滚动到两端后衔接聊天，重开保留位置/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/interaction-acceptance-工作流程默认折叠，内部滚动到两端后衔接聊天，重开保留位置/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/interaction-acceptance-工作流程默认折叠，内部滚动到两端后衔接聊天，重开保留位置/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  5) tests/browser/interaction-acceptance.spec.ts:291:3 › 模型共享目录和配置详情 1280 ─────────────────────────
+
+    Error: expect(locator).toHaveText(expected) failed
+
+    Locator: getByRole('button', { name: '测试网关 默认模型', exact: true })
+    Expected pattern: /fixture-model/
+    Received string:  "测试模型"
+    Timeout: 5000ms
+
+    Call log:
+      - Expect "toHaveText" getByRole('button', { name: '测试网关 默认模型', exact: true }) with timeout 5000ms
+      - waiting for getByRole('button', { name: '测试网关 默认模型', exact: true })
+        14 × locator resolved to <button type="button" data-state="closed" aria-haspopup="menu" aria-expanded="false" aria-label="测试网关 默认模型" id="gateway-model-fixture" class="market-filter-trigger">…</button>
+           - unexpected value "测试模型"
+
+
+      320 |     await expect(
+      321 |       page.getByRole("button", { name: "测试网关 默认模型", exact: true }),
+    > 322 |     ).toHaveText(/fixture-model/);
+          |       ^
+      323 |     await page
+      324 |       .getByRole("button", { name: "测试网关 默认模型", exact: true })
+      325 |       .click();
+        at /home/a/Documents/ChatGPT/newbot-systematize/tests/browser/interaction-acceptance.spec.ts:322:7
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/interaction-acceptance-模型共享目录和配置详情-1280/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/interaction-acceptance-模型共享目录和配置详情-1280/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/interaction-acceptance-模型共享目录和配置详情-1280/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/interaction-acceptance-模型共享目录和配置详情-1280/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/interaction-acceptance-模型共享目录和配置详情-1280/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  6) tests/browser/interaction-acceptance.spec.ts:291:3 › 模型共享目录和配置详情 320 ──────────────────────────
+
+    Error: expect(locator).toHaveText(expected) failed
+
+    Locator: getByRole('button', { name: '测试网关 默认模型', exact: true })
+    Expected pattern: /fixture-model/
+    Received string:  "测试模型"
+    Timeout: 5000ms
+
+    Call log:
+      - Expect "toHaveText" getByRole('button', { name: '测试网关 默认模型', exact: true }) with timeout 5000ms
+      - waiting for getByRole('button', { name: '测试网关 默认模型', exact: true })
+        14 × locator resolved to <button type="button" data-state="closed" aria-haspopup="menu" aria-expanded="false" aria-label="测试网关 默认模型" id="gateway-model-fixture" class="market-filter-trigger">…</button>
+           - unexpected value "测试模型"
+
+
+      320 |     await expect(
+      321 |       page.getByRole("button", { name: "测试网关 默认模型", exact: true }),
+    > 322 |     ).toHaveText(/fixture-model/);
+          |       ^
+      323 |     await page
+      324 |       .getByRole("button", { name: "测试网关 默认模型", exact: true })
+      325 |       .click();
+        at /home/a/Documents/ChatGPT/newbot-systematize/tests/browser/interaction-acceptance.spec.ts:322:7
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/interaction-acceptance-模型共享目录和配置详情-320/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/interaction-acceptance-模型共享目录和配置详情-320/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/interaction-acceptance-模型共享目录和配置详情-320/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/interaction-acceptance-模型共享目录和配置详情-320/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/interaction-acceptance-模型共享目录和配置详情-320/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  6 failed
+    tests/browser/interaction-acceptance.spec.ts:36:1 › 左右拖拽跨越不透明 iframe，边界、点击恢复与宽度持久化 ─────────────
+    tests/browser/interaction-acceptance.spec.ts:95:1 › 拖拽只接受所属指针，失去捕获、取消、失焦和卸载均清理 ─────────────────
+    tests/browser/interaction-acceptance.spec.ts:139:3 › 动画真实帧连续且减弱模式即时稳定 false ────────────────────
+    tests/browser/interaction-acceptance.spec.ts:234:1 › 工作流程默认折叠，内部滚动到两端后衔接聊天，重开保留位置 ──────────────
+    tests/browser/interaction-acceptance.spec.ts:291:3 › 模型共享目录和配置详情 1280 ──────────────────────────
+    tests/browser/interaction-acceptance.spec.ts:291:3 › 模型共享目录和配置详情 320 ───────────────────────────
+  1 passed (1.1m)

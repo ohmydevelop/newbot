@@ -73,9 +73,14 @@ for (const width of [1440, 1280, 768, 390, 320])
           exact: true,
         })
         .click();
-      for (const section of ["连接器", "技能", "专家"]) {
+      for (const section of ["连接器", "技能", "模型", "专家"]) {
         await page.getByRole("button", { name: section, exact: true }).click();
         await page.getByRole("searchbox", { name: `搜索${section}` }).waitFor();
+        await expect(
+          page.getByRole("button", {
+            name: /^刷新(连接器|插件|技能|专家|模型)$/,
+          }),
+        ).toBeEnabled();
         const rectangles = await page
           .locator(
             `.settings-dialog > .modal-header ${width > 700 ? ".icon-button," : ".catalog-toolbar .icon-button,"} .settings-toolbar .catalog-query, .settings-toolbar .catalog-add`,
@@ -106,10 +111,22 @@ for (const width of [1440, 1280, 768, 390, 320])
         });
         if (section === "专家") {
           await page.getByText("尚未创建专家", { exact: true }).waitFor();
-          await expect(page.locator(".settings-dialog")).toHaveScreenshot(
-            `${width}-${theme}-experts.png`,
-            { animations: "disabled", maxDiffPixelRatio: 0.005 },
-          );
+          await page
+            .locator(".settings-layout > nav > .selected")
+            .evaluate((e) =>
+              e.scrollIntoView({ block: "nearest", inline: "center" }),
+            );
+          const rect = (await page.locator(".settings-dialog").boundingBox())!;
+          await page.mouse.move(0, 0);
+          await expect(
+            await page.screenshot({
+              animations: "disabled",
+              clip: { ...rect, height: Math.floor(rect.height) },
+              path: info.outputPath(`${width}-${theme}-review.png`),
+            }),
+          ).toMatchSnapshot(`${width}-${theme}-experts.png`, {
+            maxDiffPixelRatio: 0.005,
+          });
         }
       }
     });

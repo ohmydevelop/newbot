@@ -68,7 +68,7 @@ function TurnFeedback({ turn, threadId }: { turn: Turn; threadId: string }) {
           <details className="turn-diagnostic">
             <summary>诊断信息</summary>
             {turn.error?.httpStatus && (
-              <small>模型服务响应：HTTP {turn.error.httpStatus}</small>
+              <small>模型响应：HTTP {turn.error.httpStatus}</small>
             )}
             {turn.error?.code && <small>错误类型：{turn.error.code}</small>}
             <small>任务编号：{turn.id}</small>

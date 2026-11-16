@@ -1,0 +1,182 @@
+[
+  {
+    "name": "1280-dark-experts.png",
+    "size": [
+      1000,
+      717
+    ],
+    "changedPixels": 241,
+    "bounds": [
+      75,
+      21,
+      873,
+      257
+    ],
+    "outsideNavigationAndRefresh": 37,
+    "oldSha256": "f19cb629f717dca884ba203944fecf8d685877e1e3410ea400439a3810bf07a9",
+    "newSha256": "12639d140a504bb6217cb8dc07935a3e9afd3a84fd324cc1ae2743f68ca0be8f",
+    "review": "Desktop: 模型服务→模型 in navigation; 35–37 antialias pixels on button top edge from CUA fractional clip. Mobile: deterministic selected-tab centering and idle refresh icon. Body, title, search, spacing unchanged. Reviewed before promotion."
+  },
+  {
+    "name": "1280-light-experts.png",
+    "size": [
+      1000,
+      717
+    ],
+    "changedPixels": 263,
+    "bounds": [
+      75,
+      21,
+      872,
+      257
+    ],
+    "outsideNavigationAndRefresh": 35,
+    "oldSha256": "6aecf38b3f4279f06c8e32c6ae8ad13bd80ea8454fd7bacaefc1e9b2bc333d42",
+    "newSha256": "a88c27585fc78b7c6bb55d350d91ce7ca37875c832654ca0032ca65da41e71d6",
+    "review": "Desktop: 模型服务→模型 in navigation; 35–37 antialias pixels on button top edge from CUA fractional clip. Mobile: deterministic selected-tab centering and idle refresh icon. Body, title, search, spacing unchanged. Reviewed before promotion."
+  },
+  {
+    "name": "1440-dark-experts.png",
+    "size": [
+      1000,
+      717
+    ],
+    "changedPixels": 241,
+    "bounds": [
+      75,
+      21,
+      873,
+      257
+    ],
+    "outsideNavigationAndRefresh": 37,
+    "oldSha256": "0e0a62a9cdd39d3869d1d79dbdd62f9981c487283405fb5ee6023bf764208712",
+    "newSha256": "e9a45abd8efab774c8104dd6eac7ab10121ba61a73996b10e3c7ed9e198c922d",
+    "review": "Desktop: 模型服务→模型 in navigation; 35–37 antialias pixels on button top edge from CUA fractional clip. Mobile: deterministic selected-tab centering and idle refresh icon. Body, title, search, spacing unchanged. Reviewed before promotion."
+  },
+  {
+    "name": "1440-light-experts.png",
+    "size": [
+      1000,
+      717
+    ],
+    "changedPixels": 263,
+    "bounds": [
+      75,
+      21,
+      872,
+      257
+    ],
+    "outsideNavigationAndRefresh": 35,
+    "oldSha256": "ad239484928440c72387aa29e5ed332f47e19850f43c4a9ea04429d468d246b9",
+    "newSha256": "ec8e15c2ff5327881d55129c8c378e428cdb00ce90fb449c07b947e77a91fb87",
+    "review": "Desktop: 模型服务→模型 in navigation; 35–37 antialias pixels on button top edge from CUA fractional clip. Mobile: deterministic selected-tab centering and idle refresh icon. Body, title, search, spacing unchanged. Reviewed before promotion."
+  },
+  {
+    "name": "320-dark-experts.png",
+    "size": [
+      320,
+      844
+    ],
+    "changedPixels": 2055,
+    "bounds": [
+      0,
+      86,
+      319,
+      162
+    ],
+    "outsideNavigationAndRefresh": 0,
+    "oldSha256": "6397a64110df7894a2e023b0d69120bc8118c899ccfe7146333d5a29fe54b0f1",
+    "newSha256": "b448caae33a0466af968fa3e8cff5d94ba9c7b20c0c88c6ec2aeee14931657f0",
+    "review": "Desktop: 模型服务→模型 in navigation; 35–37 antialias pixels on button top edge from CUA fractional clip. Mobile: deterministic selected-tab centering and idle refresh icon. Body, title, search, spacing unchanged. Reviewed before promotion."
+  },
+  {
+    "name": "320-light-experts.png",
+    "size": [
+      320,
+      844
+    ],
+    "changedPixels": 2136,
+    "bounds": [
+      0,
+      86,
+      319,
+      162
+    ],
+    "outsideNavigationAndRefresh": 0,
+    "oldSha256": "4d6c0aa0d34ae0ed01f4b95b1b2d688048075c4c588b94cf405aba9eb1737e2e",
+    "newSha256": "6331d3cc2a8012419f261ee77f0eb68d3a840ae4081d8b8b78855c6bdc923895",
+    "review": "Desktop: 模型服务→模型 in navigation; 35–37 antialias pixels on button top edge from CUA fractional clip. Mobile: deterministic selected-tab centering and idle refresh icon. Body, title, search, spacing unchanged. Reviewed before promotion."
+  },
+  {
+    "name": "390-dark-experts.png",
+    "size": [
+      390,
+      844
+    ],
+    "changedPixels": 2476,
+    "bounds": [
+      0,
+      86,
+      377,
+      162
+    ],
+    "outsideNavigationAndRefresh": 0,
+    "oldSha256": "7eedb16a7b7f9d91608d132770294f52e96f7c7ef37a725f3d25629bedf780fe",
+    "newSha256": "5a08637dec579a8bcbcb802f894c0baf5daad2ee7e2aee8a5ed1e06bd107936b",
+    "review": "Desktop: 模型服务→模型 in navigation; 35–37 antialias pixels on button top edge from CUA fractional clip. Mobile: deterministic selected-tab centering and idle refresh icon. Body, title, search, spacing unchanged. Reviewed before promotion."
+  },
+  {
+    "name": "390-light-experts.png",
+    "size": [
+      390,
+      844
+    ],
+    "changedPixels": 2588,
+    "bounds": [
+      0,
+      86,
+      377,
+      162
+    ],
+    "outsideNavigationAndRefresh": 0,
+    "oldSha256": "fc75635b7dd949267a3699bf63ae90391870d0e817852af46abd211613ffdf80",
+    "newSha256": "64b6061fee3b6c5ac37badd52ba3562b929df1b2151eb8f8c9cb8994276b34bd",
+    "review": "Desktop: 模型服务→模型 in navigation; 35–37 antialias pixels on button top edge from CUA fractional clip. Mobile: deterministic selected-tab centering and idle refresh icon. Body, title, search, spacing unchanged. Reviewed before promotion."
+  },
+  {
+    "name": "768-dark-experts.png",
+    "size": [
+      736,
+      717
+    ],
+    "changedPixels": 241,
+    "bounds": [
+      75,
+      21,
+      609,
+      257
+    ],
+    "outsideNavigationAndRefresh": 37,
+    "oldSha256": "62c641bc4d11a3649b80035c3a4782907acd37f75307bdb1a94eecf757e3d765",
+    "newSha256": "12d6168f913261e72666b5ea4687250f339813a388b7322f426d0b18e17b544a",
+    "review": "Desktop: 模型服务→模型 in navigation; 35–37 antialias pixels on button top edge from CUA fractional clip. Mobile: deterministic selected-tab centering and idle refresh icon. Body, title, search, spacing unchanged. Reviewed before promotion."
+  },
+  {
+    "name": "768-light-experts.png",
+    "size": [
+      736,
+      717
+    ],
+    "changedPixels": 263,
+    "bounds": [
+      75,
+      21,
+      608,
+      257
+    ],
+    "outsideNavigationAndRefresh": 35,
+    "oldSha256": "5c891e883e0f1266cb9d238c6ce1dcd160bf70cc5c782eba6a0f1dd5c8772150",
+    "newSha256": "8c3c98ae3e21bec6af13591a6f9784cbd3069ee412211696802760d7172787d8",
+    "review": "Desktop: 模型服务→模型 in navigation; 35–37 antialias pixels on button top edge from CUA fractional clip. Mobile: deterministic selected-tab centering and idle refresh icon. Body, title, search, spacing unchanged. Reviewed before promotion."
+  }
+]
