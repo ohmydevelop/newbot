@@ -30,4 +30,4 @@
 5. 记录验证与差距，提交推送、备份部署；核对公网产物与任务页面。实测有回归则先修再发布。
 
 ## 状态与证据
-L1–L6实施及本地验收完成，独立设计复核ship；L7保留明确范围。待发布及公网执行验证。证据目录 evidence-automations-live；进度文件 006-automations-live-alignment-progress.md。不修改既有数据库列，新增字段存在JSON且旧值有默认回退。SMTP外部投递与真机仍待外部条件，不重复宣称已验证。
+L1–L6实施、本地验收、备份发布及公网真实模型执行完成，独立设计复核ship；L7保留明确范围。发布源码0a89fd1，详见进度及deployment/public-smoke证据。证据目录 evidence-automations-live；进度文件 006-automations-live-alignment-progress.md。不修改既有数据库列，新增字段存在JSON且旧值有默认回退。SMTP外部投递与真机仍待外部条件，不重复宣称已验证。

@@ -22,3 +22,9 @@
 - 最终触摸整组12/12通过，包含自动任务两种动画、专家两端滚动交接、抽屉恢复、类别横滑、平板拖拽/取消、工作流程边缘滚动、插件内技能与导入预览、长工具目录返回。证据：evidence-automations-live/mobile-results.json、mobile-final.txt；失败诊断保留mobile-attempt1.json与touch-diagnostic.txt。
 - 单元全量591通过/1既有跳过，最终相关9/9；完整浏览器74/74，平板修正后相关10/10；types、lint和构建通过。原有截图基线未改；未增第二套设计系统。
 - 当前阶段：已验证，待提交、备份上线与公网真实模型执行。
+
+## 上线与真实执行验收（完成）
+- 发布源码 `0a89fd16c9cabc7033acfba9e201171b6500ca5c`，已推送 `codex/newbot-systematize`。生产地址：https://integration-love-angela-heated.trycloudflare.com。Web hash `7d96b692a07641c226a7c333f0fd026a436edb453ba254be660fec282322a147`；server hash `195255dbf4621407cc6ae53cdd5738f9afac941ebbdd282866500059527ad8db`，公网manifest与验证产物一致。
+- 备份 `/home/a/Documents/ChatGPT/newbot/.data/backups/2026-11-17-web-0a89fd16c9ca`；数据库仍v19，无迁移。部署前后10张会话/配置关联表摘要一致，历史权限模式不变。凭据未输出或改写。
+- 公网登录→侧栏自动任务→服务端真实模型执行成功→运行记录→打开真实会话并核对回复通过；验收任务已删除、验收会话归档，未改变其他任务。证据：evidence-automations-live/public-smoke.json、public-run.png。
+- 实测完成范围L1–L6。外部邮件投递、Gmail/GitHub等事件触发、实体手机与未观察的Grok已保存任务界面依旧不在通过声明内；不放置假可用按钮。本轮自动任务设计对齐与兼容发布完成。
