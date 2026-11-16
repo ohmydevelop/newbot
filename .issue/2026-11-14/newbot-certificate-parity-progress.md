@@ -21,4 +21,14 @@
 - 浏览器 TLS 为真实本地 TLS；仅证书观察 DNS/连接目标使用隔离夹具注入（生产不允许回环地址）；UI 的原生目录是替身，不把该页面的连接检查称为实际 MCP 工具证据，实际 MCP 证据来自独立原生脚本。
 - Impeccable 对四个受影响组件静态检查无发现；原生补丁正向/反向 dry-run 对照已编译源码通过。
 
-待完成：备份并部署 Server/Web/native、验证公开入口和实际模型、提交推送。
+## 发布与收尾
+
+2026-11-15 已部署产品提交 97dbf9f（Server、Web、固定原生发布 fe2f185-provider-ca）；2026-11-16 用户回复“可以了”，本轮收尾，不继续修改生产配置。
+
+- 备份：生产目录 .data/backups/2026-11-15-certificate-parity，包含完整 dist、SQLite 一致备份、环境及原访问配置。新增运行依赖 undici 8.12.4，核对无传递依赖；源代码与锁文件已记录。
+- 重启前无运行中任务。重启后 ready/runtime 均 ready，六类持久数据逐行摘要一致：27 条聊天记录、1 份模型配置、2 份插件连接配置、4 份私密字段、5 个插件包、3 个导入记录。旧前端资源继续返回 200，避免已打开页面失效。密码不变。
+- 公开入口 https://integration-love-angela-heated.trycloudflare.com/ 的脚本与候选构建字节一致（public-deployment.json）；证书接口已在线，拒绝 HTTP 地址 400。实际运行进程使用新的固定 native release。
+- 真实浏览器线上打开现有模型网关，获取服务器证书成功，系统验证通过；没有替用户更改既有信任或凭证。截图 online-gateway-acquired.png。插件目录仍显示原有 Sentry、Slack、GitHub、cloudwalker、独立 hids 等。
+- 验证边界：本轮上线后未新增真实商业模型推理请求，也未完成 CloudWalker 业务接口重测；真实原生推理/TLS 使用合成上游的证据见上文。线上历史 CloudWalker 消息仍有 TLS 失败，不能将本轮入口修复称为其业务问题已解决；未自动更新其指纹。Slack 外部账号 OAuth 未执行。
+
+证书入口、保存恢复与作用域内信任修复已上线。外部账号授权、CloudWalker 业务 TLS 及线上新增推理验证保留为明确未验证项，不列为已通过。
