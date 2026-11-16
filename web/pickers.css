@@ -75,13 +75,13 @@
   padding: 8px;
 }
 .picker-results > button {
-  display: flex;
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr) 18px;
   width: 100%;
   align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  min-height: 56px;
-  padding: 10px 12px;
+  gap: 10px;
+  min-height: 52px;
+  padding: 8px 12px;
   border-radius: 12px;
   text-align: left;
 }

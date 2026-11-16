@@ -11,6 +11,8 @@ export const certificateRequest = z.strictObject({
 export type CertificateRequest = z.infer<typeof certificateRequest>;
 export type CertificateObservation = {
   origin: string;
+  /** Short-lived server observation used only for explicit plugin pin confirmation. */
+  observationId?: string;
   subject: string;
   issuer: string;
   validFrom: number;

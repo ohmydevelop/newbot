@@ -14,6 +14,12 @@ export const pluginConfigurationSave = z.strictObject({
   enabled: z.boolean(),
   caCertificate: z.string().max(43692).nullable().optional(),
   certificateAddress: z.string().max(4096).optional(),
+  certificateConfirmation: z
+    .strictObject({
+      observationId: z.string().uuid(),
+      targetId: z.string().min(1).max(80),
+    })
+    .optional(),
   clearSecrets: z.array(z.string().max(80)).max(32).default([]),
 });
 export type PluginConfigurationSave = z.infer<typeof pluginConfigurationSave>;

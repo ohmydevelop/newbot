@@ -69,6 +69,7 @@ function ConnectionEditor({
     [error, setError] = useState("");
   const [dirty, setDirty] = useState(false);
   async function accepted() {
+    acquiredCertificate.current = null;
     if (form.current)
       for (const el of form.current.querySelectorAll<HTMLInputElement>(
         'input[type="password"]',
@@ -106,6 +107,17 @@ function ConnectionEditor({
           values,
           enabled,
           clearSecrets: clear,
+          ...(acquiredCertificate.current?.observation.observationId &&
+          values[acquiredCertificate.current.targetId] ===
+            acquiredCertificate.current.observation.fingerprint
+            ? {
+                certificateConfirmation: {
+                  observationId:
+                    acquiredCertificate.current.observation.observationId,
+                  targetId: acquiredCertificate.current.targetId,
+                },
+              }
+            : {}),
           ...(c.transport === "http"
             ? {
                 caCertificate: caCertificate || null,

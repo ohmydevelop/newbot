@@ -1,0 +1,30 @@
+✔ certificate targets allow explicit private services but reject metadata, loopback, unsafe schemes and credentials (25.088733ms)
+✔ TLS observation pins checked DNS, sends no application data, reports trust and invalid certificates, and times out (100.666204ms)
+✔ certificate drafts never infer secret destinations or keep a generated pin for a changed address (0.73121ms)
+✔ certificate inspection enforces concurrency and per-minute limits including failures (0.50259ms)
+✔ real TLS rejects oversized certificates and never assumes a SAN-less certificate matches an IP (16.853975ms)
+✔ plugin settings preserve ownership, encrypt credentials and recover without config files (35.658739ms)
+✔ same-name connectors in different plugins stay isolated, including disable and uninstall (22.775623ms)
+✔ plugin saves reject missing or invalidated credentials atomically instead of reporting success (43.075484ms)
+✔ selected plugin readiness uses the captured configuration and leaves unrelated or intentionally disabled connectors alone (23.738994ms)
+✔ endpoint/package changes cannot inherit secrets and concurrent writes preserve the first save (25.299572ms)
+✔ upgrades require review and keep credentials when the destination is unchanged (20.270883ms)
+✔ MCPB numeric/optional fields and HTTP runtime headers bind only declared destinations (19.786859ms)
+✔ unsupported descriptors, sensitive command templates and protected env fail closed (15.979875ms)
+✔ configuration-free connectors need no credential, and declared manifest paths stay within the package (9.879793ms)
+✔ MCPB discovery uses declared names and manifest-relative roots, rejects obsolete pointers and malformed bundles (8.54624ms)
+✔ certificate observation validates ownership, field privacy and revision before and after network work (17.727244ms)
+✔ verified plugin relocation keeps credentials bound to the same package and receiver across restart (21.479721ms)
+✔ a plugin upgrade keeps credentials when only the package digest moved (8.634249ms)
+✔ rows bound with the previous provenance digest re-seal once on read (9.347245ms)
+✔ a stale physical credential binding is not silently rebound after its original receiver changes (10.052266ms)
+✔ confirmed same-address certificate rotation reseals the saved secret while arbitrary receiver edits remain rejected (59.818478ms)
+✔ certificate observation cannot authorize a startup argument change (10.925987ms)
+ℹ tests 22
+ℹ suites 0
+ℹ pass 22
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 519.088252

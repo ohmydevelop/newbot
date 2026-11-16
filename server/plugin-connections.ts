@@ -25,7 +25,10 @@ import {
 } from "./plugin-descriptor.js";
 import { PublicError } from "./public-error.js";
 import { certificateRequest } from "../shared/certificates.js";
-import type { CertificateObservation } from "../shared/certificates.js";
+import type {
+  CertificateObservation,
+  CertificateRequest,
+} from "../shared/certificates.js";
 
 type Package = { name: string; path: string; digest: string; content: string };
 type Setting = {
@@ -41,6 +44,16 @@ export function pluginConnections(
   vault?: ReturnType<typeof credentialVault>,
   supportsCustomCa: () => boolean = () => false,
 ) {
+  const certificateObservations = new Map<
+    string,
+    {
+      request: CertificateRequest;
+      packageDigest: string;
+      fingerprint: string;
+      canUse: boolean;
+      expiresAt: number;
+    }
+  >();
   const owners = new Map<
     string,
     { pluginId: string; server: string; source: string }
@@ -399,6 +412,7 @@ export function pluginConnections(
         };
       }
     }
+    confirmedCertificate(before, p, values);
     const resolved = configuration(before, values, trust);
     if (resolved.secrets.length && !vault)
       throw new PublicError("插件私密配置不可用");
@@ -435,8 +449,10 @@ export function pluginConnections(
           )
         )
           throw new PublicError("私密字段不属于此插件");
-        const next = secrets(d, resolved.config);
         const prior = state(d).stored;
+        const next = confirmedCertificate(d, p, values)
+          ? { ...prior }
+          : secrets(d, resolved.config);
         for (const f of resolved.secrets) {
           const key = fieldKey(f.field);
           if (p.clearSecrets.includes(f.id)) delete next[key];
@@ -524,9 +540,65 @@ export function pluginConnections(
           db.raw.exec("ROLLBACK");
           throw e;
         }
+        if (p.certificateConfirmation)
+          certificateObservations.delete(
+            p.certificateConfirmation.observationId,
+          );
         return { state: "succeeded", applied: true };
       },
     };
+  }
+  function confirmedCertificate(
+    d: PluginDescriptor,
+    p: PluginConfigurationSave,
+    values: Record<string, unknown>,
+  ) {
+    if (!p.certificateConfirmation) return false;
+    const { observationId, targetId } = p.certificateConfirmation;
+    const receipt = certificateObservations.get(observationId);
+    const fail = () => {
+      throw new PublicError(
+        "证书确认已失效或连接配置已变化，请重新获取证书；原配置和凭证已保留。",
+      );
+    };
+    if (
+      !receipt ||
+      !receipt.canUse ||
+      receipt.expiresAt <= Date.now() ||
+      receipt.packageDigest !== d.digest ||
+      receipt.request.pluginId !== d.pluginId ||
+      receipt.request.connectionId !== d.id ||
+      receipt.request.schemaDigest !== d.schemaDigest ||
+      receipt.request.expectedRevision !== p.expectedRevision ||
+      targetId === receipt.request.fieldId ||
+      !d.fields.some(
+        (f) => f.id === targetId && f.type === "string" && !f.sensitive,
+      )
+    )
+      return fail();
+    const saved = state(d).values;
+    const sourceId = receipt.request.fieldId;
+    if (
+      saved[sourceId] !== receipt.request.address ||
+      values[sourceId] !== receipt.request.address ||
+      values[targetId] !== receipt.fingerprint ||
+      !/^[a-f0-9]{64}$/i.test(receipt.fingerprint) ||
+      !/^(?:[a-f0-9]{64})?$/i.test(String(saved[targetId] ?? ""))
+    )
+      return fail();
+    // This exception is only for a stdio certificate pin delivered via an env
+    // field. URL, command, arguments, working directory and headers remain bound.
+    const template = "${user_config." + targetId + "}";
+    const { env, ...rest } = d.definition;
+    if (
+      d.definition.url ||
+      !Object.values(env || {}).includes(template) ||
+      JSON.stringify(rest).includes(template)
+    )
+      return fail();
+    for (const key of new Set([...Object.keys(saved), ...Object.keys(values)]))
+      if (key !== targetId && saved[key] !== values[key]) return fail();
+    return true;
   }
   async function certificate(
     input: unknown,
@@ -550,12 +622,30 @@ export function pluginConnections(
         )
       )
         throw new PublicError("服务地址必须来自插件声明的普通文本字段");
+      return d;
     };
-    await check();
+    const before = await check();
     const result = await inspect(p.address);
-    await check();
-    return result;
+    const after = await check();
+    if (after.digest !== before.digest)
+      throw new PublicError("插件已更新，请重新获取证书");
+    for (const [id, item] of certificateObservations)
+      if (item.expiresAt <= Date.now()) certificateObservations.delete(id);
+    while (certificateObservations.size >= 32)
+      certificateObservations.delete(
+        certificateObservations.keys().next().value!,
+      );
+    const observationId = randomUUID();
+    certificateObservations.set(observationId, {
+      request: p,
+      packageDigest: after.digest,
+      fingerprint: result.fingerprint,
+      canUse: result.canUse,
+      expiresAt: Math.min(result.expiresAt, Date.now() + 5 * 60_000),
+    });
+    return { ...result, observationId };
   }
+
   function owner(id: string) {
     const known = owners.get(id);
     if (

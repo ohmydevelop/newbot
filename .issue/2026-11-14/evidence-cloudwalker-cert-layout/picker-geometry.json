@@ -1,0 +1,23 @@
+{
+  "desktop": {
+    "before": {
+      "rowHeight": 55,
+      "iconX": 430,
+      "textX": 458,
+      "rowWidth": 367
+    },
+    "after": {
+      "rowHeight": 55,
+      "iconX": 430,
+      "textX": 458,
+      "rowWidth": 367
+    }
+  },
+  "mobile": {
+    "width": 390,
+    "height": 844,
+    "checked": "buttons, scrolling, footer visible; no horizontal overflow"
+  },
+  "keyboard": "search → ArrowDown → Enter selects filtered plugin; count 1 to 2",
+  "fixture": "isolated IssueCodex synthetic catalog; not real plugin tool execution"
+}

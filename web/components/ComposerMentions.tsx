@@ -435,10 +435,10 @@ export function useComposerMentions({
                 <small>
                   {entry.kind === "expert"
                     ? entry.available
-                      ? "专家 · 用于当前会话"
+                      ? "专家"
                       : entry.problems?.join("；")
                     : entry.kind === "plugin"
-                      ? "插件 · " + entry.name
+                      ? "插件"
                       : entry.name}
                   {entry.enabled === false ? " · 已停用" : ""}
                 </small>

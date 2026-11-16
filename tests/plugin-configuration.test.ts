@@ -924,3 +924,244 @@ test("a stale physical credential binding is not silently rebound after its orig
     await f.close();
   }
 });
+
+test("confirmed same-address certificate rotation reseals the saved secret while arbitrary receiver edits remain rejected", async () => {
+  const f = await fixture();
+  const oldPin = "a".repeat(64),
+    newPin = "b".repeat(64);
+  try {
+    const def = {
+      command: "node",
+      args: ["${PLUGIN_ROOT}/main.mjs"],
+      env: {
+        SERVICE_URL: "${user_config.url}",
+        SERVICE_KEY: "${user_config.key}",
+        SERVICE_PIN: "${user_config.pin}",
+        SERVICE_OPTION: "${user_config.option}",
+      },
+    };
+    const fields = {
+      url: { type: "string", title: "服务地址", required: true },
+      key: { type: "string", title: "密钥", sensitive: true, required: true },
+      pin: { type: "string", title: "证书指纹", default: "" },
+      option: { type: "string", title: "其他参数", default: "" },
+    };
+    const id = await f.install("rotation", def, fields);
+    const values = { url: "https://one.example", pin: oldPin };
+    await f.save(id, values);
+    const view = await f.view(id);
+    const before = await f.inject((await f.config()).config);
+    const observe = async (extra: any = {}) =>
+      f.connections.certificate(
+        {
+          pluginId: id,
+          connectionId: view.id,
+          schemaDigest: view.schemaDigest,
+          expectedRevision: view.revision,
+          fieldId: "url",
+          address: values.url,
+        },
+        async () => ({
+          origin: values.url,
+          subject: "test",
+          issuer: "test",
+          validFrom: 0,
+          validTo: Date.now() + 60000,
+          fingerprint: newPin,
+          systemTrusted: true,
+          hostnameMatches: true,
+          canUse: true,
+          observedAt: Date.now(),
+          expiresAt: Date.now() + 60000,
+          ...extra,
+        }),
+      );
+    const observation = await observe();
+    const confirmation = {
+      observationId: observation.observationId,
+      targetId: "pin",
+    };
+    const changed = { ...values, pin: newPin };
+    await assert.rejects(f.save(id, changed, {}), /重新填写.*密钥/);
+    await assert.rejects(
+      f.save(
+        id,
+        changed,
+        {},
+        {
+          certificateConfirmation: {
+            ...confirmation,
+            observationId: randomUUID(),
+          },
+        },
+      ),
+      /确认已失效/,
+    );
+    await assert.rejects(
+      f.save(
+        id,
+        changed,
+        {},
+        { certificateConfirmation: { ...confirmation, targetId: "key" } },
+      ),
+      /确认已失效/,
+    );
+    await assert.rejects(
+      f.save(
+        id,
+        { ...changed, url: "https://other.example" },
+        {},
+        { certificateConfirmation: confirmation },
+      ),
+      /确认已失效/,
+    );
+    await assert.rejects(
+      f.save(
+        id,
+        { ...changed, option: "new" },
+        {},
+        { certificateConfirmation: confirmation },
+      ),
+      /确认已失效/,
+    );
+    await assert.rejects(
+      f.save(
+        id,
+        { ...changed, pin: "c".repeat(64) },
+        {},
+        { certificateConfirmation: confirmation },
+      ),
+      /确认已失效/,
+    );
+    const expired = await observe({ expiresAt: Date.now() - 1 });
+    await assert.rejects(
+      f.save(
+        id,
+        changed,
+        {},
+        {
+          certificateConfirmation: {
+            ...confirmation,
+            observationId: expired.observationId,
+          },
+        },
+      ),
+      /确认已失效/,
+    );
+    const unusable = await observe({ canUse: false });
+    await assert.rejects(
+      f.save(
+        id,
+        changed,
+        {},
+        {
+          certificateConfirmation: {
+            ...confirmation,
+            observationId: unusable.observationId,
+          },
+        },
+      ),
+      /确认已失效/,
+    );
+    const other = await f.install("other-rotation", def, fields);
+    await f.save(other, values);
+    await assert.rejects(
+      f.save(other, changed, {}, { certificateConfirmation: confirmation }),
+      /确认已失效/,
+    );
+    assert.equal(
+      (await f.view(id)).revision,
+      view.revision,
+      "all refused saves preserve old state",
+    );
+    await f.save(id, changed, {}, { certificateConfirmation: confirmation });
+    const injected = await f.inject((await f.config()).config);
+    assert.equal(injected.config.mcp_servers[view.id].env.SERVICE_PIN, newPin);
+    assert.equal(injected.config.mcp_servers[view.id].env.SERVICE_KEY, marker);
+    assert.equal(
+      before.config.mcp_servers[view.id].env.SERVICE_PIN,
+      oldPin,
+      "existing task snapshot unchanged",
+    );
+    assert.equal(before.config.mcp_servers[view.id].env.SERVICE_KEY, marker);
+    await assert.rejects(
+      f.save(id, changed, {}, { certificateConfirmation: confirmation }),
+      /确认已失效/,
+    );
+    f.restart();
+    assert.equal((await f.view(id)).configured, true);
+    const restored = await f.inject((await f.config()).config);
+    assert.equal(restored.config.mcp_servers[view.id].env.SERVICE_PIN, newPin);
+    assert.equal(restored.config.mcp_servers[view.id].env.SERVICE_KEY, marker);
+    await assert.rejects(
+      f.save(id, { ...changed, url: "https://other.example" }, {}),
+      /重新填写.*密钥/,
+    );
+  } finally {
+    await f.close();
+  }
+});
+
+test("certificate observation cannot authorize a startup argument change", async () => {
+  const f = await fixture();
+  try {
+    const id = await f.install(
+      "argument-pin",
+      {
+        command: "node",
+        args: ["${PLUGIN_ROOT}/main.mjs", "${user_config.pin}"],
+        env: {
+          SERVICE_URL: "${user_config.url}",
+          SERVICE_KEY: "${user_config.key}",
+          SERVICE_PIN: "${user_config.pin}",
+        },
+      },
+      {
+        url: { type: "string", title: "URL", required: true },
+        key: { type: "string", title: "Key", required: true, sensitive: true },
+        pin: { type: "string", title: "Pin" },
+      },
+    );
+    await f.save(id, { url: "https://one.example", pin: "a".repeat(64) });
+    const v = await f.view(id);
+    const o = await f.connections.certificate(
+      {
+        pluginId: id,
+        connectionId: v.id,
+        expectedRevision: v.revision,
+        schemaDigest: v.schemaDigest,
+        fieldId: "url",
+        address: "https://one.example",
+      },
+      async () => ({
+        origin: "https://one.example",
+        subject: "test",
+        issuer: "test",
+        validFrom: 0,
+        validTo: Date.now() + 10000,
+        fingerprint: "b".repeat(64),
+        canUse: true,
+        hostnameMatches: true,
+        systemTrusted: true,
+        observedAt: Date.now(),
+        expiresAt: Date.now() + 10000,
+      }),
+    );
+    await assert.rejects(
+      f.save(
+        id,
+        { url: "https://one.example", pin: "b".repeat(64) },
+        {},
+        {
+          certificateConfirmation: {
+            observationId: o.observationId,
+            targetId: "pin",
+          },
+        },
+      ),
+      /确认已失效/,
+    );
+  } finally {
+    await f.close();
+  }
+});
