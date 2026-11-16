@@ -22,3 +22,15 @@
 - 深/浅色菜单截图通过；ArrowDown + Enter 选择项目技能，列表实际缩减到代码审查；Esc 恢复触发器焦点；选择 local 商店保留该市场插件并排除独立 MCP。
 - 隔离预览使用模拟上游，只证明 UI 交互；其中追问失败来自模拟端点，本轮未将其作为真实模型验证。专家数据为空，真实专家行将在部署后只读检查。其他业务设置原生 select 未声称验证通过。
 - 证据：evidence-composer-catalog-consistency/preview-*.png；构建和测试日志同目录。尚待线上资产核对、真实目录及重载验证。
+
+### 上线与最终验收（2026-11-16）
+
+- 已提交并推送产品提交 d9d311e（codex/newbot-systematize），部署前端到原实例。地址保持 https://integration-love-angela-heated.trycloudflare.com/ 。维护入口确认无任务/授权后停止服务、替换前端并恢复服务；保留旧哈希资源供旧页面懒加载。
+- readiness ready=true；公开入口 HTML、主 JS 和 CSS 与候选构建逐字节相同。服务器 bundle、native 不变；7 张关键业务表更新前后哈希相同。备份在 /home/a/Documents/ChatGPT/newbot/.data/backups/2026-11-16-ui11/。详见 deployment.json。
+- 线上真实旧会话刷新后仍有专家/插件、技能按钮；点击技能准确聚焦侧栏“添加技能”，原有专家和选中能力仍只在侧栏。390px 手机底部入口可见，未重新出现已选标签。
+- 线上真实目录：Sentry/Slack/GitHub/CloudWalker、newbot_test“已添加”、hids“已连接”均沿首行对齐。状态值来自原状态机，未通过改显示值伪装连接成功。
+- 商店菜单清晰显示全部商店、Codex official、Awesome Codex Plugins、自定义导入；选择自定义导入后仅显示 CloudWalker。
+- 真实专家手机行：牧云安全专家，第二行“1 个技能 · 1 个插件”；原能力保持。CloudWalker 描述 clientWidth=231、scrollWidth=557、white-space=nowrap、text-overflow=ellipsis，点击详情可读完整说明。
+- 视口覆盖已清除（1280×720）。证据 live-*.png；公开资源哈希见 deployment.json。
+
+完成：本轮三个 UI 问题及同机制的技能目录筛选。限制：本轮只做前端与目录只读线上验证，未重测 OAuth 或真实模型/工具调用；缺少用途元数据的独立 MCP 不编造第二行。其他业务设置原生下拉不是本轮已验收范围。已将模拟与真实环境验证分开记录。

@@ -1,0 +1,26 @@
+{
+  "commit": "d9d311e",
+  "url": "https://integration-love-angela-heated.trycloudflare.com",
+  "ready": {
+    "ready": true,
+    "runtime": "ready"
+  },
+  "dataUnchanged": true,
+  "tables": [
+    "threads",
+    "session_runtime",
+    "session_runtime_pending",
+    "thread_workspaces",
+    "plugin_connection_settings",
+    "private_field_sets",
+    "provider_configuration"
+  ],
+  "assets": {
+    "/assets/index-BSlEzZc1.js": "f71cbe2346d61da7ae167adb18cad8fd22bc822ca7ed58dde4e253b12ff82417",
+    "/assets/index-j88PavSO.css": "6812381584b441cd985c62fc562536723ded899f66393fd9cef18e06f7303bd2"
+  },
+  "retainedOldAssets": 1373,
+  "backup": "/home/a/Documents/ChatGPT/newbot/.data/backups/2026-11-16-ui11",
+  "serverUnchanged": true,
+  "nativeUnchanged": true
+}
