@@ -1,0 +1,22 @@
+{
+  "url": "https://integration-love-angela-heated.trycloudflare.com/",
+  "modelConnection": "百智-MQ",
+  "defaultModel": "deepseek-flash",
+  "availableModels": 25,
+  "certificateActions": [
+    "获取服务器证书",
+    "选择证书"
+  ],
+  "settingsHeading": "模型",
+  "chat": {
+    "immediateSubmissionVisible": true,
+    "answer": "模型与聊天连接正常",
+    "processCollapsed": true,
+    "followups": [
+      "UI13 验收还需要哪些检查项？",
+      "再测试一次，确认仍未调用工具？",
+      "如何验证“不读文件”约束已生效？"
+    ]
+  },
+  "configurationWrites": false
+}

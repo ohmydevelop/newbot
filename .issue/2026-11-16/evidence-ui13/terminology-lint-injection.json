@@ -1,0 +1,20 @@
+[
+  {
+    "name": "old-label",
+    "exitCode": 1,
+    "expected": 1,
+    "output": "/home/a/Documents/ChatGPT/newbot-systematize/web/components/Settings.tsx\n  1:20  error  设置统一称为模型，共享加载状态不暴露内部扩展模块名称。  no-restricted-syntax\n\n✖ 1 problem (1 error, 0 warnings)"
+  },
+  {
+    "name": "internal-name",
+    "exitCode": 1,
+    "expected": 1,
+    "output": "/home/a/Documents/ChatGPT/newbot-systematize/web/components/Settings.tsx\n  1:42  error  设置统一称为模型，共享加载状态不暴露内部扩展模块名称。  no-restricted-syntax\n\n✖ 1 problem (1 error, 0 warnings)"
+  },
+  {
+    "name": "neutral",
+    "exitCode": 0,
+    "expected": 0,
+    "output": ""
+  }
+]

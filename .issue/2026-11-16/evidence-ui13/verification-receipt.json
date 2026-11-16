@@ -1,0 +1,35 @@
+{
+  "source": "b2043e66d96a082b0f8cfd24e0e49dfe2508f413",
+  "webHash": "883fad2edd00fc3cbddfbb778f1872e8cb64d908efbab57f2894c190ef4499bc",
+  "created": "2026-11-16T08:44:37.382Z",
+  "checks": {
+    "types": {
+      "passed": true,
+      "evidence": ".issue/2026-11-16/evidence-ui13/types.txt"
+    },
+    "unit": {
+      "passed": true,
+      "evidence": ".issue/2026-11-16/evidence-ui13/unit.txt"
+    },
+    "design": {
+      "passed": true,
+      "evidence": ".issue/2026-11-16/evidence-ui13/design-lint.txt"
+    },
+    "browser": {
+      "passed": true,
+      "evidence": ".issue/2026-11-16/evidence-ui13/acceptance.json"
+    },
+    "motion": {
+      "passed": true,
+      "evidence": ".issue/2026-11-16/evidence-ui13/drag-frames.json"
+    }
+  },
+  "ci": "GitHub billing blocked; local Playwright 28 scenarios + 570 unit tests; Linux Chromium, synthetic upstream",
+  "motionEvidence": [
+    ".issue/2026-11-16/evidence-ui13/navigation-frames.json",
+    ".issue/2026-11-16/evidence-ui13/detail-frames.json",
+    ".issue/2026-11-16/evidence-ui13/reduced-navigation-frames.json",
+    ".issue/2026-11-16/evidence-ui13/reduced-detail-frames.json",
+    ".issue/2026-11-16/evidence-ui13/recordings"
+  ]
+}

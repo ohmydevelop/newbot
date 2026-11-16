@@ -17,6 +17,10 @@ export default ts.config({
           "目录/设置采用 CatalogFilter 或共享菜单，不能另建原生主题不一致的 select。",
       },
       {
+        selector: "Literal[value='模型服务'], JSXText[value=/正在加载扩展/]",
+        message: "设置统一称为模型，共享加载状态不暴露内部扩展模块名称。",
+      },
+      {
         selector:
           "JSXAttribute[name.name='style'] ObjectExpression Property[key.name=/^(color|background|fontFamily|transition|animation)$/]",
         message: "视觉值必须来自公共样式与设计 token。",

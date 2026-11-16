@@ -1,0 +1,12 @@
+[WebServer] (node:3960436) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 3 tests using 1 worker
+
+(node:3960464) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/browser/interaction-acceptance.spec.ts:319:3 › 模型共享目录和配置详情 1280 (3.8s)
+  ✓  2 tests/browser/interaction-acceptance.spec.ts:319:3 › 模型共享目录和配置详情 320 (3.8s)
+  ✓  3 tests/browser/settings-contracts.spec.ts:22:1 › 分类真正卸载、关闭重开和详情返回保留目录状态 (3.6s)
+
+  3 passed (12.4s)

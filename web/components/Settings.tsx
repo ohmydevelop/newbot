@@ -212,7 +212,7 @@ export default function Settings({
             </>
           )}
           {catalog && (
-            <Suspense fallback={<p role="status">正在加载扩展…</p>}>
+            <Suspense fallback={<p role="status">正在读取…</p>}>
               <ExtensionsSettings
                 key={tab}
                 tab={tab as CatalogSection}
