@@ -79,7 +79,13 @@ export function installPerformanceProbe() {
     clearTimeout(timer);
     timer = setTimeout(publish, 80);
   };
-  const observer = new MutationObserver(() => {
+  const observer = new MutationObserver((records) => {
+    if (
+      records.every(
+        (record) => record.target === output || output.contains(record.target),
+      )
+    )
+      return;
     if (lastInput && performance.now() - lastInput < 1000) {
       const start = lastInput;
       lastInput = 0;
@@ -93,7 +99,7 @@ export function installPerformanceProbe() {
     }
     update();
   });
-  observer.observe(document.getElementById("root")!, {
+  observer.observe(document.body, {
     childList: true,
     subtree: true,
   });

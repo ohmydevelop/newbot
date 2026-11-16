@@ -19,3 +19,10 @@
 - motion.json：正常catalog-step为0.18s、导航0.3s；reduce均0s。截图不能替代实际录屏；完整时序视频尚未获得。
 - 性能探针已加入。后台IAB的rAF出现约270ms节流，本轮后台样本不能当作前台p95≤100ms达标证据；需要固定前台/CI环境验证，保留这一边界，不改阈值冒充达标。
 - 单元570通过，类型/限定设计lint通过；本地浏览器由CUA操作。Playwright测试将在CI执行，不把编写完脚本当运行通过。
+
+## 发布前状态
+- 前台真实采样：24次反馈p95=38.3ms；16个拖动样本p95=22.6ms；屏幕帧间隔p95=16.8ms。证据performance.json。后台节流样本排除并保留前述原因，不混算。
+- 十张明确审阅的设置视觉基线已纳入tests/browser/__screenshots__，CI截图比较不自动更新。CI固定Ubuntu24.04、Playwright1.65.1及Noto字体依赖；跨环境像素容差仍须CI首次实际运行验证。
+- CI运行43823799634未启动任何step：GitHub账户付款失败或额度不足（ci-blocked.json）。不改账户计费，不宣称CI通过。现有私有仓库套餐也不支持rulesets；不能保证有仓库/主机写权限的人不能绕过检查。
+- 标准发布入口scripts/deploy-verified-web.py要求验证receipt，核对源码/当前资产，维护排空、备份SQLite及旧web、保留旧资产、失败恢复，最终核对原公网入口和配置表。
+- 未完成外部/扩展验收：CI实际执行及跨环境像素基线；完整工作流程录屏；真实iframe跨越、操作系统级pointercancel/blur故障注入（有capture/blur共享代码约束及已有基本拖动证据）。本轮不将这些标为已测试。

@@ -104,6 +104,13 @@ for (const width of [1440, 1280, 768, 390, 320])
           body: await page.screenshot({ animations: "disabled" }),
           contentType: "image/png",
         });
+        if (section === "专家") {
+          await page.getByText("尚未创建专家", { exact: true }).waitFor();
+          await expect(page.locator(".settings-dialog")).toHaveScreenshot(
+            `${width}-${theme}-experts.png`,
+            { animations: "disabled", maxDiffPixelRatio: 0.005 },
+          );
+        }
       }
     });
   }

@@ -1,0 +1,206 @@
+{
+  "summary": {
+    "feedbackSamples": 24,
+    "feedbackP95Ms": 38.30000001192093,
+    "dragSamples": 16,
+    "dragP95Ms": 22.599999994039536,
+    "frameP95Ms": 16.799999999999272
+  },
+  "frames": [
+    16.700000000000728,
+    16.700000000000728,
+    16.599999999998545,
+    16.700000000000728,
+    16.600000000002183,
+    16.799999999999272,
+    16.599999999998545,
+    16.600000000002183,
+    16.69999999999709,
+    16.700000000000728,
+    16.600000000002183,
+    16.69999999999709
+  ],
+  "probe": {
+    "appReadyMs": null,
+    "assets": [
+      {
+        "decodedBytes": 141831,
+        "durationMs": 0,
+        "encodedBytes": 25287,
+        "path": "/assets/index-CrQ1WHZd.css",
+        "transferBytes": 0
+      },
+      {
+        "decodedBytes": 512081,
+        "durationMs": 12.699999988079073,
+        "encodedBytes": 153082,
+        "path": "/assets/index-DmQFs9r3.js",
+        "transferBytes": 153382
+      },
+      {
+        "decodedBytes": 2242,
+        "durationMs": 1.899999976158142,
+        "encodedBytes": 925,
+        "path": "/assets/performance-BaqxSYW8.js",
+        "transferBytes": 1225
+      },
+      {
+        "decodedBytes": 17161,
+        "durationMs": 2.600000023841858,
+        "encodedBytes": 3034,
+        "path": "/assets/schemas-CqYFK0Uk.js",
+        "transferBytes": 3334
+      },
+      {
+        "decodedBytes": 99963,
+        "durationMs": 0,
+        "encodedBytes": 26766,
+        "path": "/assets/schemas-C8IouiGr.js",
+        "transferBytes": 0
+      },
+      {
+        "decodedBytes": 172121,
+        "durationMs": 12.199999988079073,
+        "encodedBytes": 50108,
+        "path": "/assets/Renderer-4rNI7kcA.js",
+        "transferBytes": 50408
+      },
+      {
+        "decodedBytes": 7667,
+        "durationMs": 2.2999999821186066,
+        "encodedBytes": 3061,
+        "path": "/assets/Settings-OWvwq5QC.js",
+        "transferBytes": 3361
+      },
+      {
+        "decodedBytes": 3965,
+        "durationMs": 2.2999999821186066,
+        "encodedBytes": 1648,
+        "path": "/assets/ExtensionsSettings-B5ZN7jJ0.js",
+        "transferBytes": 1948
+      },
+      {
+        "decodedBytes": 2780,
+        "durationMs": 2.4000000059604645,
+        "encodedBytes": 1195,
+        "path": "/assets/CatalogNavigation-Dpni3sCg.js",
+        "transferBytes": 1495
+      },
+      {
+        "decodedBytes": 46730,
+        "durationMs": 3.300000011920929,
+        "encodedBytes": 13503,
+        "path": "/assets/ToolsSettings-CAT3hsUF.js",
+        "transferBytes": 13803
+      },
+      {
+        "decodedBytes": 1220,
+        "durationMs": 3.5,
+        "encodedBytes": 500,
+        "path": "/assets/CatalogToolbar-Blhu8ZaH.js",
+        "transferBytes": 800
+      },
+      {
+        "decodedBytes": 580,
+        "durationMs": 5.200000017881393,
+        "encodedBytes": 580,
+        "path": "/assets/use-operation-scope-4wLK1-RW.js",
+        "transferBytes": 880
+      },
+      {
+        "decodedBytes": 589,
+        "durationMs": 5.4000000059604645,
+        "encodedBytes": 589,
+        "path": "/assets/FormActions-BYTEn_vN.js",
+        "transferBytes": 889
+      },
+      {
+        "decodedBytes": 329,
+        "durationMs": 5.600000023841858,
+        "encodedBytes": 329,
+        "path": "/assets/trash-2-D9eKRHQ5.js",
+        "transferBytes": 629
+      },
+      {
+        "decodedBytes": 14093,
+        "durationMs": 4.899999976158142,
+        "encodedBytes": 4892,
+        "path": "/assets/CatalogIcon-Cf9d-9U4.js",
+        "transferBytes": 5192
+      },
+      {
+        "decodedBytes": 231,
+        "durationMs": 6.199999988079071,
+        "encodedBytes": 231,
+        "path": "/assets/upload-BVK0KMFK.js",
+        "transferBytes": 531
+      },
+      {
+        "decodedBytes": 12993,
+        "durationMs": 6.5999999940395355,
+        "encodedBytes": 4615,
+        "path": "/assets/PrivateFieldEditor-B0MnUIe-.js",
+        "transferBytes": 4915
+      }
+    ],
+    "domContentLoadedMs": 50.69999998807907,
+    "dragFrameMs": [
+      16.700000017881393,
+      15,
+      12.800000011920927,
+      14,
+      18.19999998807907,
+      11.599999994039536,
+      12.700000017881392,
+      20.80000001192093,
+      20.900000005960464,
+      16.599999994039536,
+      22.599999994039536,
+      16.600000023841858,
+      18.399999976158146,
+      10.400000005960464,
+      12.5,
+      21.19999998807907
+    ],
+    "feedbackMs": [
+      38.30000001192093,
+      24.5,
+      20.30000001192093,
+      26.80000001192093,
+      31.5,
+      26.099999994039536,
+      12.899999976158142,
+      26.400000005960464,
+      25.100000023841854,
+      15.900000005960464,
+      3.5999999940395355,
+      21.5,
+      18,
+      28.299999982118607,
+      18,
+      30.5,
+      21.900000005960464,
+      21.5,
+      6.199999988079071,
+      19.900000005960464,
+      19.100000023841854,
+      14.5,
+      34.900000005960464,
+      182.89999997615817
+    ],
+    "historyReadyMs": 214.5,
+    "loadMs": 56.5,
+    "paint": [
+      {
+        "name": "first-paint",
+        "startMs": 100
+      },
+      {
+        "name": "first-contentful-paint",
+        "startMs": 100
+      }
+    ],
+    "sampledAtMs": 25345.40000000596,
+    "uiReadyMs": 214.5
+  }
+}
