@@ -43,3 +43,22 @@
 - 新断言先在未修正构建失败：手机顶部偏移12px、桌面8px，sticky-gap-reproduced.txt。
 - 将顶部内容间距由.plugin-center-content转至list/details直接子内容，以共享--catalog-content-inset保持原值；滚动容器本身顶部不再有padding。常规设置页面的原padding保持不变，无局部负数偏移或遮罩补丁。
 - 补充验收在原56项浏览器测试内执行；旧视觉快照不更新。全套运行中曾因diff复核发现替换范围包含普通settings-content而主动停止一轮，恢复其原值后重新构建并完整执行browser-sticky-final；中止轮不作为通过证据。
+
+## 最终交付（已上线）
+- 最终产品提交 **b6129510b98b7ee07e271735d2a6aa8d91e1b3d4**，分支codex/newbot-systematize，已推送。前一主功能提交578a6b1，本地OAuth/触摸验收提交9a528c5。
+- 修正后完整浏览器 **56/56**（browser-sticky-final.txt/json），触摸 **10/10**（mobile-sticky.txt/json）。类型与UI规则继续通过；单元573项与本地OAuth8项不涉及此次CSS间距改动，沿用已通过证据。旧视觉快照未改。
+- 最终构建hash **9ec54de2c2570a59479a4efb207573ad9e36e18e43c5140c37eb0cca3427a144**；提交后复建与浏览器验收资产相同。release-receipt.json对应最终产品提交；deployment.json记录实际公网文件校验、服务ready、10类数据不变、后端不变。
+- 发布备份：/home/a/Documents/ChatGPT/newbot/.data/backups/2026-11-16-web-b6129510b98b 。生产原source分支未重置，仅发布已验收web文件。
+- 公网 https://integration-love-angela-heated.trycloudflare.com/ 最终只读浏览器检查通过（live-browser.json），零页面JS错误；4个已装插件、125工具均保留。旧会话小选择框1280/390搜索与焦点恢复、模型证书按钮、所有可见行中心几何、同坐标折叠均通过。
+- 最终公网桌面/390工具目录到底的导航顶边与滚动视口顶边一致；人工复看live-tools-bottom.png与live-mobile-tools-bottom.png，已无标题上方漏字。live-connectors.png、live-models.png、live-390-plugins.png记录实际最终目录与选择框。
+- CI最终提交仍被账户账单/限额阻止，两个job均0步骤（ci-sticky-runs/jobs/annotations.json），明确不计CI通过。本地验收作为本次发布门槛。
+
+## 问题到证据索引
+|问题|共同原因与修复|验收证据|
+|---|---|---|
+|A 输入框两个按钮都开右栏|去掉按selectedId分叉，统一现有ComposerMentions真实按钮锚点、取消与scope机制|catalog-continuity.spec已有会话390/1280、迟到读取取消；live-browser.json和live-*-plugins/skills.png|
+|B/D/E 空洞、对齐、添加按钮|共享CatalogCopy整体居中、说明一行省略；插件/MCP同一grid，条目复用CatalogAddButton|目录四类几何、卸载/重装网格断言；live-connectors/models.png|
+|C 详情底部按钮与返回|共享CatalogDetail固定标题/反馈；次级动作复用同一菜单；顶部间距转入内容层|125工具底部返回/测试/更多；新增先失败后通过的顶边断言；触摸滚动/返回；live-mobile-tools-bottom.png|
+|F 侧栏顺序与固定切换|移除顶部品牌，先新建再搜索，展开/收起控制同坐标|Grok只读坐标观测；390/1280同位置连续6次；拖拽宽度恢复与手机抽屉回归|
+
+上述UI16条目均已完成。未解决的外部验收条件仍是物理手机/Safari与真实Slack授权；用户已要求本地OAuth，未使用公网OAuth服务器替代该要求。未进行生产配置修改或模型/工具测试消息。

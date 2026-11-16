@@ -1,0 +1,70 @@
+
+> newbot@0.2.0 test:ui-contracts
+> playwright test --config=playwright.config.ts
+
+[WebServer] (node:4169904) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 56 tests using 1 worker
+
+(node:4169939) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 tests/browser/catalog-continuity.spec.ts:17:3 › 侧栏同坐标连续折叠和导航顺序 390 (2.4s)
+  ✓   2 tests/browser/catalog-continuity.spec.ts:17:3 › 侧栏同坐标连续折叠和导航顺序 1280 (382ms)
+  ✓   3 tests/browser/catalog-continuity.spec.ts:52:3 › 已有会话的两个输入框入口就地搜索选择 390 (3.5s)
+  ✓   4 tests/browser/catalog-continuity.spec.ts:52:3 › 已有会话的两个输入框入口就地搜索选择 1280 (3.7s)
+  ✓   5 tests/browser/catalog-continuity.spec.ts:113:3 › 目录整体中心对齐、说明省略与图标添加 390 (4.8s)
+  ✓   6 tests/browser/catalog-continuity.spec.ts:113:3 › 目录整体中心对齐、说明省略与图标添加 1280 (4.6s)
+  ✓   7 tests/browser/catalog-continuity.spec.ts:184:1 › 删除后插件与独立连接器连续填满同一网格 (2.4s)
+  ✓   8 tests/browser/catalog-continuity.spec.ts:216:3 › 长连接器详情底部仍可返回与管理 390 (2.7s)
+  ✓   9 tests/browser/catalog-continuity.spec.ts:216:3 › 长连接器详情底部仍可返回与管理 1280 (2.5s)
+  ✓  10 tests/browser/catalog-continuity.spec.ts:269:1 › 取消就地技能读取后切换聊天，迟到响应不能修改新聊天 (2.4s)
+  ✓  11 tests/browser/deep-catalog-contracts.spec.ts:30:1 › 目录状态和更多操作对齐，与有无说明无关 (1.9s)
+  ✓  12 tests/browser/deep-catalog-contracts.spec.ts:55:1 › 技能切换说明和源码不会移动主操作 (2.2s)
+  ✓  13 tests/browser/deep-catalog-contracts.spec.ts:77:1 › 持久表单字段填值后标签仍然可见 (2.0s)
+  ✓  14 tests/browser/deep-catalog-contracts.spec.ts:93:1 › 工具详情使用主滚动容器，长目录不受旧卡片高度限制 (1.9s)
+  ✓  15 tests/browser/deep-catalog-contracts.spec.ts:140:5 › 深层目录视觉 320 浅色 (4.3s)
+  ✓  16 tests/browser/deep-catalog-contracts.spec.ts:140:5 › 深层目录视觉 320 深色 (4.3s)
+  ✘  17 tests/browser/deep-catalog-contracts.spec.ts:140:5 › 深层目录视觉 390 浅色 (3.4s)
+
+
+  1) tests/browser/deep-catalog-contracts.spec.ts:140:5 › 深层目录视觉 390 浅色 ────────────────────────────
+
+    Test was interrupted.
+
+    Error: locator.waitFor: Test ended.
+    Call log:
+      - waiting for getByRole('searchbox', { name: '搜索模型' }) to be visible
+
+
+      145 |       for (const section of ["连接器", "技能", "模型"]) {
+      146 |         await page.getByRole("button", { name: section, exact: true }).click();
+    > 147 |         await page.getByRole("searchbox", { name: `搜索${section}` }).waitFor();
+          |                                                                     ^
+      148 |         await expect(page.locator(".catalog-status").first()).toBeVisible();
+      149 |         await alignedRows(page);
+      150 |         const add = page.locator(".settings-toolbar .catalog-create");
+        at /home/a/Documents/ChatGPT/newbot-systematize/tests/browser/deep-catalog-contracts.spec.ts:147:69
+
+    attachment #3: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/deep-catalog-contracts-深层目录视觉-390-浅色/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #4: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/deep-catalog-contracts-深层目录视觉-390-浅色/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/deep-catalog-contracts-深层目录视觉-390-浅色/error-context.md
+
+    attachment #6: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/deep-catalog-contracts-深层目录视觉-390-浅色/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/deep-catalog-contracts-深层目录视觉-390-浅色/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 interrupted
+    tests/browser/deep-catalog-contracts.spec.ts:140:5 › 深层目录视觉 390 浅色 ─────────────────────────────
+  39 did not run
+  16 passed (50.6s)

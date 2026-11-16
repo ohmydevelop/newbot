@@ -1,0 +1,9 @@
+{
+  "origin": "https://integration-love-angela-heated.trycloudflare.com",
+  "checks": {
+    "fixedToggle": true
+  },
+  "scope": "Production read-only navigation/search; no configuration saves or model/tool executions",
+  "passed": false,
+  "error": "expect(locator).toBeEnabled() failed\n\nLocator:  getByRole('button', { name: /^刷新(插件|连接器)$/ })\nExpected: enabled\nReceived: disabled\nTimeout:  5000ms\n\nCall log:\n  - Expect \"toBeEnabled\" getByRole('button', { name: /^刷新(插件|连接器)$/ }) with timeout 5000ms\n  - waiting for getByRole('button', { name: /^刷新(插件|连接器)$/ })\n    14 × locator resolved to <button disabled title=\"刷新插件\" type=\"button\" aria-busy=\"true\" aria-label=\"刷新插件\" class=\"icon-button\">…</button>\n       - unexpected value \"disabled\"\n"
+}

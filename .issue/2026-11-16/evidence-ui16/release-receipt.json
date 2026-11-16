@@ -1,0 +1,35 @@
+{
+  "source": "b6129510b98b7ee07e271735d2a6aa8d91e1b3d4",
+  "webHash": "9ec54de2c2570a59479a4efb207573ad9e36e18e43c5140c37eb0cca3427a144",
+  "created": "2026-11-16T11:42:43.011605+00:00",
+  "checks": {
+    "types": {
+      "passed": true,
+      "evidence": ".issue/2026-11-16/evidence-ui16/types-sticky.txt"
+    },
+    "unit": {
+      "passed": true,
+      "evidence": ".issue/2026-11-16/evidence-ui16/unit.txt"
+    },
+    "design": {
+      "passed": true,
+      "evidence": ".issue/2026-11-16/evidence-ui16/design-sticky.txt"
+    },
+    "browser": {
+      "passed": true,
+      "evidence": ".issue/2026-11-16/evidence-ui16/browser-sticky-final.json"
+    },
+    "motion": {
+      "passed": true,
+      "evidence": ".issue/2026-11-16/evidence-ui16/inspection-sticky/左右拖拽跨越不透明 iframe，边界、点击恢复与宽度持久化-drag-frames.json.json"
+    },
+    "mobile": {
+      "passed": true,
+      "evidence": ".issue/2026-11-16/evidence-ui16/mobile-sticky.json"
+    },
+    "oauth": {
+      "passed": true,
+      "evidence": ".issue/2026-11-16/evidence-ui16/local-oauth/result.json"
+    }
+  }
+}
