@@ -1,0 +1,22 @@
+Full suite before final color assertion:
+✔ 故障注入：查询/筛选/滚动丢失必须阻止验收 (0.669264ms)
+ℹ tests 592
+ℹ suites 0
+ℹ pass 591
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 1
+ℹ todo 0
+ℹ duration_ms 26501.233442
+Final automation suite including color/window restart persistence:
+✔ pagination retains unread counts and pinned attachments survive cleanup until task deletion (17.690555ms)
+✔ hourly windows include endpoints, respect weekdays and skip duplicate or missing DST wall times (4.307001ms)
+✔ hourly catch-up coalesces and persists icon/window through restart without replay (5.632426ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 9
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 701.807065

@@ -4,6 +4,7 @@ export const scheduleSchema = z
     id: z.string().uuid(),
     frequency: z.enum([
       "once",
+      "hourly",
       "daily",
       "weekdays",
       "weekly",
@@ -33,13 +34,35 @@ export const scheduleSchema = z
         );
       }, "请选择有效日期"),
     weekdays: z.array(z.number().int().min(1).max(7)).max(7).default([]),
+    until: z
+      .string()
+      .regex(/^([01]\d|2[0-3]):[0-5]\d$/)
+      .optional(),
   })
   .refine(
     (v) => v.frequency !== "weekly" || v.weekdays.length > 0,
     "请选择星期",
+  )
+  .refine(
+    (v) => v.frequency !== "hourly" || (!!v.until && v.until >= v.time),
+    "每小时执行的结束时间不能早于开始时间",
   );
 export const automationSchema = z.object({
   name: z.string().trim().min(1).max(100),
+  color: z.enum(["default", "blue", "orange", "green", "red"]).optional(),
+  icon: z
+    .enum([
+      "clock",
+      "sun",
+      "news",
+      "chart",
+      "calendar",
+      "research",
+      "shield",
+      "health",
+      "language",
+    ])
+    .optional(),
   prompt: z.string().trim().min(1).max(20000),
   triggers: z.array(scheduleSchema).min(1).max(8),
   provider: z.string().max(200).default(""),
@@ -92,6 +115,7 @@ export type AutomationRun = {
 };
 export const frequencyLabels = {
   once: "仅一次",
+  hourly: "每小时",
   daily: "每天",
   weekdays: "工作日",
   weekly: "每周",
@@ -111,6 +135,8 @@ export const runStateLabels: Record<string, string> = {
   blocked: "需要处理",
 };
 export function scheduleLabel(t: AutomationSchedule) {
+  if (t.frequency === "hourly")
+    return `每小时 ${t.time}–${t.until || t.time}${t.weekdays.length ? " · 周" + t.weekdays.map((d) => "一二三四五六日"[d - 1]).join("、") : ""}`;
   const detail =
     t.frequency === "once"
       ? t.date

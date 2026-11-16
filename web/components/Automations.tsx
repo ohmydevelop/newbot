@@ -3,7 +3,6 @@ import { PickerContent } from "./Picker";
 import { useEffect, useId, useRef, useState } from "react";
 import {
   ArrowLeft,
-  Plus,
   Play,
   Pause,
   Pencil,
@@ -13,15 +12,15 @@ import {
   Check,
   Clock3,
   Square,
-  CalendarClock,
 } from "lucide-react";
 import * as Dropdown from "@radix-ui/react-dropdown-menu";
-import { MoreIcon, SearchIcon } from "./ReferenceIcons";
+import { MoreIcon } from "./ReferenceIcons";
 import { SidebarIcon } from "./SidebarIcon";
 import { ActionMenuContent, ActionMenuItem } from "./ActionMenu";
 import { Modal } from "./ui";
 import AutomationMailSettings from "./AutomationMailSettings";
 import AutomationEditor from "./AutomationEditor";
+import { AutomationCatalog } from "./AutomationCatalog";
 import { automationRequest, useAutomations } from "../automations";
 import {
   scheduleLabel,
@@ -34,26 +33,6 @@ import {
 } from "../../shared/automations";
 import { modeLabels } from "../../shared/runtime-settings";
 import { absoluteTime } from "../time";
-const templates = [
-  {
-    name: "晨间简报",
-    prompt:
-      "整理今天与我相关的重要信息，注明来源和日期，优先列出需要我关注的变化。",
-    frequency: "daily" as const,
-  },
-  {
-    name: "每周回顾",
-    prompt:
-      "回顾本周的进展、尚未完成的事项和下周重点。只查询已允许的资料，不修改数据。",
-    frequency: "weekly" as const,
-  },
-  {
-    name: "安全巡检",
-    prompt:
-      "查询已连接安全平台的近期告警，汇总严重程度、影响范围及建议核查项。只读取，不执行处置。",
-    frequency: "weekdays" as const,
-  },
-];
 export default function Automations({
   open,
   data,
@@ -70,6 +49,10 @@ export default function Automations({
   chatDraft?: Partial<AutomationInput>;
 }) {
   const panelId = useId();
+  const [category, setCategory] = useState("全部");
+  const scroll = useRef<HTMLDivElement>(null);
+  const listPosition = useRef(0);
+  const lastTask = useRef<string | null>(null);
   const [detailVersion, setDetailVersion] = useState(0);
   const [older, setOlder] = useState<AutomationRun[]>([]),
     [historyCursor, setHistoryCursor] = useState<string | null | undefined>(
@@ -164,6 +147,8 @@ export default function Automations({
   }, [open]);
   function select(id: string, target?: HTMLButtonElement) {
     listFocus.current = target || null;
+    lastTask.current = id;
+    listPosition.current = scroll.current?.scrollTop || 0;
     currentSelection.current = id;
     setOlder([]);
     setHistoryCursor(undefined);
@@ -171,7 +156,10 @@ export default function Automations({
     setSelected(id);
     setTab("overview");
     setError("");
-    requestAnimationFrame(() => detailTitle.current?.focus());
+    requestAnimationFrame(() => {
+      if (scroll.current) scroll.current.scrollTop = 0;
+      detailTitle.current?.focus({ preventScroll: true });
+    });
   }
   function back() {
     currentSelection.current = null;
@@ -179,7 +167,15 @@ export default function Automations({
     setHistoryCursor(undefined);
     setSelected(null);
     setError("");
-    requestAnimationFrame(() => listFocus.current?.focus());
+    requestAnimationFrame(() => {
+      if (scroll.current) scroll.current.scrollTop = listPosition.current;
+      const target = lastTask.current
+        ? document.querySelector<HTMLButtonElement>(
+            `[data-task-id="${lastTask.current}"]`,
+          )
+        : listFocus.current;
+      target?.focus({ preventScroll: true });
+    });
   }
   async function act(fn: () => Promise<unknown>) {
     if (posting.current) return;
@@ -239,11 +235,6 @@ export default function Automations({
     });
   }
   const task = detail?.task;
-  const rows = data.tasks.filter(
-    (t) =>
-      (filter === "all" || (filter === "active" ? t.enabled : !t.enabled)) &&
-      `${t.name} ${t.prompt}`.toLowerCase().includes(query.toLowerCase()),
-  );
   const menu = (t: Automation) => (
     <Dropdown.Root>
       <Dropdown.Trigger
@@ -291,7 +282,7 @@ export default function Automations({
       inert={!open}
       aria-label="自动任务工作区"
     >
-      <header className="topbar">
+      <header className="topbar" hidden={!!editor}>
         <div className="topbar-left">
           {!sidebarOpen && (
             <button
@@ -303,7 +294,9 @@ export default function Automations({
               <SidebarIcon size={18} />
             </button>
           )}
-          <strong>自动任务</strong>
+          <span className="muted">
+            {editor ? "编辑任务" : selected ? "任务详情" : ""}
+          </span>
         </div>
         <div className="topbar-right">
           <Popover.Root>
@@ -359,7 +352,12 @@ export default function Automations({
           </button>
         </div>
       </header>
-      <div className="automation-scroll">
+      <div
+        className="automation-scroll"
+        ref={scroll}
+        hidden={!!editor}
+        inert={!!editor}
+      >
         <div className="automation-content">
           {selected ? (
             <>
@@ -621,128 +619,19 @@ export default function Automations({
             </>
           ) : (
             <>
-              <div className="automation-heading">
-                <h1 id="automations-heading" tabIndex={-1}>
-                  自动任务
-                </h1>
-                <button
-                  type="button"
-                  className="primary"
-                  onClick={() => setEditor({})}
-                >
-                  <Plus size={18} />
-                  新建任务
-                </button>
-              </div>
-              <div className="automation-list-toolbar">
-                <div
-                  className="automation-tabs"
-                  role="group"
-                  aria-label="筛选自动任务"
-                >
-                  {(["all", "active", "paused"] as const).map((v, i) => (
-                    <button
-                      type="button"
-                      key={v}
-                      aria-pressed={filter === v}
-                      onClick={() => setFilter(v)}
-                    >
-                      {["全部", "已启用", "已暂停"][i]}
-                    </button>
-                  ))}
-                </div>
-                <div className="catalog-query">
-                  <SearchIcon size={17} />
-                  <input
-                    type="search"
-                    className="catalog-search"
-                    aria-label="搜索自动任务"
-                    placeholder="搜索…"
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                  />
-                </div>
-              </div>
-              {!data.loaded && !data.error && (
-                <p role="status" className="muted">
-                  正在读取…
-                </p>
-              )}
-              <div className="automation-list">
-                {rows.map((t) => (
-                  <div className="automation-row" key={t.id}>
-                    <CalendarClock size={22} />
-                    <button
-                      type="button"
-                      className="automation-row-copy"
-                      onClick={(e) => select(t.id, e.currentTarget)}
-                    >
-                      <strong>
-                        {t.name}
-                        {t.unread > 0 && (
-                          <span
-                            className="automation-unread"
-                            aria-label={`${t.unread} 个未读结果`}
-                          />
-                        )}
-                      </strong>
-                      <small title={t.triggers.map(scheduleLabel).join(" · ")}>
-                        {t.activeRuns
-                          ? "正在运行或等待处理"
-                          : t.triggers.map(scheduleLabel).join(" · ")}
-                      </small>
-                    </button>
-                    <span className="automation-row-status">
-                      {t.enabled ? "" : "已暂停"}
-                    </span>
-                    {menu(t)}
-                  </div>
-                ))}
-              </div>
-              {data.loaded && !rows.length && (
-                <p className="automation-empty">
-                  {query
-                    ? "没有匹配的任务"
-                    : data.tasks.length
-                      ? "这个分类暂无任务"
-                      : "把重复的工作交给 newbot"}
-                </p>
-              )}
-              {!data.tasks.length && data.loaded && (
-                <section className="automation-templates" aria-label="任务模板">
-                  <h2>试试这些任务</h2>
-                  {templates.map((t) => (
-                    <button
-                      type="button"
-                      key={t.name}
-                      onClick={() =>
-                        setEditor({
-                          initial: {
-                            name: t.name,
-                            prompt: t.prompt,
-                            triggers: [
-                              {
-                                id: crypto.randomUUID(),
-                                frequency: t.frequency,
-                                time: "08:00",
-                                timezone:
-                                  Intl.DateTimeFormat().resolvedOptions()
-                                    .timeZone,
-                                date: new Date().toLocaleDateString("en-CA"),
-                                weekdays: [5],
-                              },
-                            ],
-                          },
-                        })
-                      }
-                    >
-                      <CalendarClock size={18} />
-                      <span>{t.name}</span>
-                      <Plus size={16} />
-                    </button>
-                  ))}
-                </section>
-              )}
+              <AutomationCatalog
+                tasks={data.tasks}
+                loaded={data.loaded}
+                query={query}
+                onQuery={setQuery}
+                category={category}
+                onCategory={setCategory}
+                filter={filter}
+                onFilter={setFilter}
+                onSelect={select}
+                onCreate={(initial) => setEditor({ initial })}
+                menu={menu}
+              />
               {chatDraft?.prompt && (
                 <button
                   type="button"
@@ -824,6 +713,10 @@ export default function Automations({
             setOlder([]);
             setHistoryCursor(undefined);
             setSelected(t.id);
+            setDetailVersion((v) => v + 1);
+            requestAnimationFrame(() =>
+              detailTitle.current?.focus({ preventScroll: true }),
+            );
             setDetail({
               task: t,
               runs: detail?.task.id === t.id ? detail.runs : [],

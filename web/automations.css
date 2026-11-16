@@ -1,4 +1,6 @@
-.main[hidden] {
+.main[hidden],
+.automation-page > .topbar[hidden],
+.automation-scroll[hidden] {
   display: none;
 }
 .automation-page {
@@ -9,24 +11,32 @@
   min-height: 0;
   overflow-y: auto;
   overscroll-behavior-y: auto;
+  scrollbar-gutter: stable;
 }
 .automation-content {
   max-width: 848px;
   margin: 0 auto;
-  padding: 36px 24px 64px;
+  padding: 16px 24px 48px;
 }
 .automation-heading {
+  position: sticky;
+  top: -16px;
+  background: var(--bg);
+  z-index: 1;
+  padding: 12px 0;
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
+  min-height: 36px;
 }
 .automation-heading h1 {
   flex: 1;
   min-width: 0;
   margin: 0;
-  font-size: 24px;
-  line-height: 1.4;
+  font-size: 16px;
+  font-weight: 550;
+  line-height: 1.5;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -37,45 +47,66 @@
   gap: 6px;
   flex-shrink: 0;
 }
-.automation-tabs {
+.automation-catalog-heading .catalog-query {
+  width: 240px;
+  min-width: 0;
+}
+.automation-catalog-heading input.catalog-search {
+  width: 100%;
+  min-width: 0;
+  flex: 1;
+}
+.automation-tabs,
+.automation-categories {
   display: flex;
   gap: 4px;
-  flex-wrap: wrap;
 }
-.automation-tabs > button {
-  padding: 8px 12px;
+.automation-tabs > button,
+.automation-categories > button {
+  flex-shrink: 0;
+  padding: 6px 12px;
   border: 0;
   border-radius: 999px;
   background: transparent;
   color: var(--muted);
-  font-size: 14px;
+  font-size: 13px;
+  min-height: 32px;
 }
 .automation-tabs > button[aria-selected="true"],
-.automation-tabs > button[aria-pressed="true"] {
+.automation-tabs > button[aria-pressed="true"],
+.automation-categories > button[aria-pressed="true"] {
   background: var(--surface);
   color: var(--text);
 }
-.automation-list-toolbar {
+.automation-categories {
+  overflow-x: auto;
+  scrollbar-width: thin;
+  margin-bottom: 24px;
+  padding-bottom: 4px;
+}
+.automation-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+  column-gap: 16px;
+  row-gap: 4px;
+}
+.automation-section-heading {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 20px;
+  gap: 8px;
+  margin-bottom: 8px;
 }
-.automation-list-toolbar .catalog-query {
-  max-width: 220px;
-  min-width: 120px;
+.automation-owned {
+  margin-bottom: 24px;
 }
 .automation-row {
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 18px 12px;
-  border-bottom: 1px solid var(--line);
-}
-.automation-row > svg {
-  flex: 0 0 auto;
-  color: var(--muted);
+  gap: 12px;
+  padding: 10px 8px;
+  min-width: 0;
+  border-radius: 12px;
 }
 .automation-row-copy {
   flex: 1;
@@ -85,6 +116,9 @@
   background: transparent;
   text-align: left;
 }
+.automation-row-copy:hover {
+  background: transparent;
+}
 .automation-row-copy strong,
 .automation-row-copy small {
   display: block;
@@ -93,17 +127,59 @@
   white-space: nowrap;
 }
 .automation-row-copy strong {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 550;
+  line-height: 1.5;
 }
-.automation-row-copy small,
-.automation-row-status {
-  margin-top: 4px;
-  font-size: 13px;
+.automation-row-copy small {
+  margin-top: 2px;
+  font-size: 12px;
   color: var(--muted);
+  line-height: 1.5;
 }
 .automation-row-status {
   margin: 0;
+  flex-shrink: 0;
+  font-size: 12px;
+  color: var(--muted);
+}
+.automation-identity {
+  width: 32px;
+  height: 32px;
+  flex: 0 0 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  color: var(--muted);
+}
+.automation-identity[data-icon="sun"],
+.automation-identity[data-icon="news"],
+.automation-identity[data-icon="research"],
+.automation-identity[data-icon="language"] {
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-color: transparent;
+}
+.automation-identity[data-icon="chart"],
+.automation-identity[data-icon="calendar"] {
+  color: var(--entity);
+}
+.automation-identity[data-icon="shield"],
+.automation-identity[data-icon="health"] {
+  color: var(--success);
+}
+.automation-template-add {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border-radius: 9px;
+  border: 1px solid var(--line);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
   flex-shrink: 0;
 }
 .automation-unread {
@@ -117,33 +193,26 @@
 .automation-empty {
   text-align: center;
   color: var(--muted);
-  padding: 48px 0 32px;
+  padding: 24px 0;
+  font-size: 13px;
 }
 .automation-templates {
-  margin: 12px auto 32px;
-  max-width: 480px;
+  margin: 0 0 24px;
+}
+.automation-templates > section + section {
+  margin-top: 24px;
 }
 .automation-templates h2,
-.automation-overview h2 {
-  font-size: 14px;
-  font-weight: 550;
-  margin: 0 0 12px;
+.automation-overview h2,
+.automation-section-heading h2 {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--muted);
+  margin: 0 0 8px;
 }
-.automation-templates > button {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  width: 100%;
-  padding: 12px;
-  background: transparent;
-  border: 0;
-  border-radius: 12px;
-  text-align: left;
+.automation-section-heading h2 {
+  margin: 0;
 }
-.automation-templates > button span {
-  flex: 1;
-}
-.automation-templates > button:hover,
 .automation-row:hover {
   background: var(--surface);
 }
@@ -165,10 +234,10 @@
   font-size: 12px;
 }
 .automation-overview {
-  margin-top: 24px;
+  margin-top: 20px;
 }
 .automation-overview > section {
-  padding: 24px 0;
+  padding: 20px 0;
   border-bottom: 1px solid var(--line);
 }
 .automation-detail-actions {
@@ -210,7 +279,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 18px 0;
+  padding: 14px 0;
   border-bottom: 1px solid var(--line);
 }
 .automation-run-icon {
@@ -248,6 +317,36 @@
   padding: 16px 20px;
   flex-shrink: 0;
 }
+.automation-editor-inline {
+  width: 100%;
+  max-width: 848px;
+  flex: 1;
+  min-height: 0;
+  max-height: none;
+  margin: 0 auto;
+}
+.automation-editor-header {
+  flex-shrink: 0;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 16px 24px;
+  min-width: 0;
+}
+.automation-editor-header h1 {
+  font-size: 16px;
+  font-weight: 550;
+  margin: 0;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.automation-editor-header > span {
+  font-size: 13px;
+  flex-shrink: 0;
+}
 .automation-editor > form {
   flex: 1;
   min-height: 0;
@@ -259,30 +358,57 @@
   flex: 1;
   overflow-y: auto;
   min-height: 0;
-  padding: 4px 20px 20px;
+  padding: 4px 24px 24px;
+  scrollbar-gutter: stable;
 }
+.automation-name-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .automation-editor input.automation-name {
-  font-size: 18px;
-  font-weight: 550;
-  border: 0;
-  padding: 10px 0;
-  border-radius: 0;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 6px 10px;
+  height: 34px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
   background: transparent;
   width: 100%;
+  min-width: 0;
 }
 .automation-field {
-  margin-top: 24px;
+  margin-top: 20px;
 }
 .automation-field h3 {
   font-size: 13px;
-  font-weight: 550;
-  margin: 0 0 8px;
+  color: var(--muted);
+  font-weight: 500;
+  margin: 0 0 6px;
 }
 .automation-schedule {
-  border-radius: 12px;
-  padding: 10px 12px;
-  background: var(--surface);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 6px 8px;
+  background: transparent;
   margin-bottom: 8px;
+  min-width: 0;
+}
+.automation-schedule > svg {
+  color: var(--muted);
+  flex-shrink: 0;
+}
+.automation-schedule-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px 8px;
+  flex-wrap: wrap;
+  flex: 1;
+  min-width: 0;
 }
 .automation-schedule-line {
   display: flex;
@@ -290,36 +416,28 @@
   gap: 8px;
   min-width: 0;
 }
-.automation-schedule-line + .automation-schedule-line {
-  margin-top: 8px;
-}
 .automation-schedule-line > svg {
   flex-shrink: 0;
-}
-.automation-schedule-line input {
-  width: auto;
-  min-width: 0;
-  max-width: 155px;
-  padding: 6px 8px;
-  background: transparent;
-}
-.automation-schedule-line .automation-choice {
-  flex: 1;
-  min-width: 0;
 }
 .automation-choice {
   display: inline-flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
+  gap: 6px;
   max-width: 100%;
-  border: 0;
-  padding: 8px;
-  border-radius: 8px;
+  min-width: 0;
+  border: 1px solid var(--line);
+  padding: 4px 8px;
+  min-height: 28px;
+  border-radius: 9px;
   background: transparent;
   text-align: left;
   font-size: 13px;
+}
+.automation-choice > span {
   overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .automation-choice > svg {
   flex: 0 0 auto;
@@ -334,48 +452,72 @@
   padding: 10px 12px;
   min-height: 40px;
 }
+.automation-calendar {
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px;
+}
+.automation-calendar label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 13px;
+}
+.automation-calendar input {
+  min-width: 0;
+  width: 100%;
+}
+.automation-calendar .automation-choice {
+  width: 100%;
+  min-height: 36px;
+}
 .automation-weekdays {
   display: flex;
-  gap: 5px;
-  margin: 10px 0;
+  gap: 4px;
 }
 .automation-weekdays button {
-  width: 32px;
-  height: 32px;
+  width: 28px;
+  height: 28px;
   padding: 0;
   border: 0;
   border-radius: 50%;
   background: transparent;
+  font-size: 12px;
 }
 .automation-weekdays button[aria-pressed="true"] {
   background: var(--strong);
   color: var(--on-strong);
 }
 .automation-add-trigger {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  gap: 8px;
-  width: 100%;
-  border: 1px dashed var(--line);
-  border-radius: 999px;
-  padding: 10px;
+  gap: 6px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  padding: 4px 8px;
+  margin-top: 8px;
   background: transparent;
   font-size: 13px;
 }
 .automation-prompt {
-  background: var(--surface);
+  background: transparent;
   border: 1px solid var(--line);
   border-radius: 16px;
 }
+.automation-prompt:focus-within {
+  border-color: var(--focus);
+}
 .automation-prompt textarea {
+  display: block;
   border: 0;
   background: transparent;
-  min-height: 140px;
+  min-height: 120px;
   resize: vertical;
   width: 100%;
   padding: 12px;
-  font-size: 15px;
+  font-size: 14px;
 }
 .automation-capabilities {
   display: flex;
@@ -387,21 +529,30 @@
 .automation-capability {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  padding: 8px;
-  border: 0;
-  border-radius: 999px;
+  gap: 4px;
+  padding: 4px 6px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
   background: transparent;
   font-size: 12px;
+  min-height: 28px;
+}
+.automation-runtime > .automation-choice {
+  max-width: 160px;
 }
 .automation-capabilities .approval-trigger {
-  margin-left: auto;
+  font-size: 12px;
+  min-height: 28px;
+  padding: 4px 6px;
 }
 .automation-chips {
   display: flex;
   gap: 6px;
   flex-wrap: wrap;
   margin-top: 8px;
+}
+.automation-chips:empty {
+  display: none;
 }
 .automation-chips button {
   display: inline-flex;
@@ -418,7 +569,7 @@
 }
 .automation-editor-footer {
   flex-shrink: 0;
-  padding: 12px 20px;
+  padding: 12px 24px;
   border-top: 1px solid var(--line);
 }
 .automation-editor-footer .editor-actions {
@@ -428,58 +579,97 @@
   font-size: 13px;
   margin: 0 0 8px;
 }
+.automation-editor-inline .automation-editor-footer {
+  animation: none;
+}
 @media (max-width: 700px) {
   .automation-content {
-    padding: 24px 16px 48px;
+    padding: 4px 16px 32px;
   }
   .automation-heading {
-    margin-bottom: 20px;
+    position: sticky;
+    top: -16px;
+    background: var(--bg);
+    z-index: 1;
+    padding: 12px 0;
+    margin-bottom: 16px;
   }
-  .automation-heading h1 {
-    font-size: 22px;
-  }
-  .automation-heading .primary {
-    font-size: 13px;
-    padding: 8px 12px;
-  }
-  .automation-list-toolbar {
+  .automation-catalog-heading {
+    top: -4px;
     flex-wrap: wrap;
-    gap: 12px;
+    gap: 8px;
   }
-  .automation-list-toolbar .catalog-query {
-    flex: 1;
-    max-width: 100%;
+  .automation-catalog-heading .catalog-query {
+    order: 3;
+    flex-basis: 100%;
+  }
+  .automation-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 4px;
   }
   .automation-row {
-    gap: 10px;
-    padding: 16px 4px;
+    padding: 10px 4px;
+    gap: 12px;
+  }
+  .automation-template-add {
+    width: 40px;
+    height: 40px;
+  }
+  .automation-categories > button,
+  .automation-tabs > button {
+    min-height: 40px;
   }
   .automation-editor {
     width: calc(100vw - 16px);
     max-height: calc(100dvh - 32px);
   }
+  .automation-editor-inline {
+    width: 100%;
+    max-height: none;
+  }
   .automation-editor > .modal-header {
     padding: 14px 16px;
   }
+  .automation-editor-header {
+    padding: 8px 12px;
+    gap: 4px;
+  }
+  .automation-editor-header > span:first-of-type {
+    display: none;
+  }
+  .automation-editor-header > span[aria-hidden] {
+    display: none;
+  }
+  .automation-editor-header h1 {
+    font-size: 15px;
+  }
   .automation-editor-body {
-    padding: 0 16px 16px;
+    padding: 8px 16px 16px;
   }
   .automation-editor-footer {
     padding: 12px 16px max(12px, env(safe-area-inset-bottom));
   }
   .automation-schedule {
-    padding: 8px;
+    gap: 6px;
   }
-  .automation-schedule-line input {
-    max-width: 135px;
-    font-size: 13px;
+  .automation-schedule > .icon-button {
+    width: 32px;
+    flex: 0 0 32px;
   }
   .automation-weekdays {
-    gap: 2px;
-    justify-content: space-between;
+    gap: 0;
   }
+  .automation-weekdays button {
+    width: 27px;
+    height: 36px;
+  }
+  .automation-choice,
   .automation-capability {
-    padding: 6px;
+    min-height: 36px;
+  }
+  .automation-section-heading {
+    align-items: center;
+    flex-wrap: wrap;
   }
 }
 .automation-notices {
@@ -544,11 +734,6 @@
   margin-left: 8px;
 }
 
-.automation-list-toolbar .catalog-query input.catalog-search {
-  width: 100%;
-  min-width: 0;
-  flex: 1;
-}
 .automation-mail-fields {
   display: flex;
   flex-direction: column;
@@ -571,8 +756,116 @@
   white-space: nowrap;
   max-width: 100%;
 }
-@media (max-width: 700px) {
-  .automation-list-toolbar .catalog-query {
-    flex-basis: 100%;
+
+.automation-days {
+  width: 284px;
+  padding: 12px;
+}
+.automation-days .automation-weekdays {
+  justify-content: space-between;
+}
+.automation-days .automation-weekdays button {
+  width: 36px;
+  height: 40px;
+}
+.automation-days > .text-button {
+  margin-top: 8px;
+}
+
+.automation-icon-trigger {
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: 9px;
+}
+.automation-icon-picker {
+  width: 260px;
+  padding: 12px;
+}
+.automation-color-options {
+  display: flex;
+  gap: 6px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--line);
+}
+.automation-color-options button {
+  padding: 2px;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  background: transparent;
+}
+.automation-color-options button[aria-pressed="true"] {
+  border-color: var(--focus);
+}
+.automation-identity[data-color="default"] {
+  color: var(--muted);
+  background: transparent;
+  border-color: var(--line);
+}
+.automation-identity[data-color="blue"] {
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-color: transparent;
+}
+.automation-identity[data-color="orange"] {
+  color: var(--entity);
+  background: transparent;
+  border-color: var(--line);
+}
+.automation-identity[data-color="green"] {
+  color: var(--success);
+  background: transparent;
+  border-color: var(--line);
+}
+.automation-identity[data-color="red"] {
+  color: var(--danger);
+  background: transparent;
+  border-color: var(--line);
+}
+.automation-icon-options {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 4px;
+  padding-top: 12px;
+}
+.automation-icon-options button {
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+}
+.automation-icon-options button[aria-pressed="true"],
+.automation-icon-options button:hover {
+  background: var(--hover);
+}
+.automation-editor-inline {
+  animation: automation-step-in var(--motion-fast) var(--ease-out);
+}
+@keyframes automation-step-in {
+  from {
+    opacity: 0.75;
+    transform: translateY(4px);
   }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .automation-editor-inline {
+    animation: none;
+  }
+}
+
+.automation-runtime {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+  max-width: 100%;
+  min-width: 0;
 }

@@ -16,13 +16,17 @@ for (const reducedMotion of ["reduce", "no-preference"] as const)
       .getByRole("button", { name: /^自动任务/ })
       .tap();
     await page.getByRole("button", { name: "新建任务", exact: true }).tap();
-    const modal = page.getByRole("dialog", {
+    const modal = page.getByRole("region", {
         name: "新建自动任务",
         exact: true,
       }),
       body = modal.locator(".automation-editor-body");
-    await modal.getByRole("button", { name: "添加触发器", exact: true }).tap();
-    await modal.getByRole("button", { name: "添加触发器", exact: true }).tap();
+    for (let i = 0; i < 6; i++) {
+      await modal
+        .getByRole("button", { name: "添加触发器", exact: true })
+        .tap();
+      await page.getByRole("button", { name: "每周", exact: true }).tap();
+    }
     const cdp = await context.newCDPSession(page);
     await swipe(cdp, 200, 560, 0, -350);
     await expect
@@ -49,6 +53,24 @@ for (const reducedMotion of ["reduce", "no-preference"] as const)
       body: await page.screenshot(),
       contentType: "image/png",
     });
+    await body.evaluate(
+      (element) =>
+        new Promise<void>((resolve, reject) => {
+          let previous = element.scrollTop;
+          let stableSince = performance.now();
+          const started = stableSince;
+          const sample = () => {
+            const now = performance.now();
+            if (element.scrollTop !== previous) stableSince = now;
+            previous = element.scrollTop;
+            if (now - stableSince >= 160) return resolve();
+            if (now - started > 4000)
+              return reject(new Error("Touch scrolling did not settle"));
+            requestAnimationFrame(sample);
+          };
+          requestAnimationFrame(sample);
+        }),
+    );
     await modal.getByRole("button", { name: "关闭", exact: true }).tap();
     await expect(
       page.getByRole("button", { name: "新建任务", exact: true }),

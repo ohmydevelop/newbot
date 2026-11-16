@@ -10,9 +10,9 @@ function occurrence(
   const local = Temporal.Instant.fromEpochMilliseconds(
     after,
   ).toZonedDateTimeISO(schedule.timezone);
-  const at = (d: Temporal.PlainDate) =>
+  const at = (d: Temporal.PlainDate, clock = time) =>
     d
-      .toPlainDateTime(time)
+      .toPlainDateTime(clock)
       .toZonedDateTime(schedule.timezone, { disambiguation: "compatible" })
       .epochMilliseconds;
   if (schedule.frequency === "once") {
@@ -26,6 +26,36 @@ function occurrence(
   }
   for (let i = 0; i < 366 * 9; i++, day = day.add({ days: direction })) {
     if (Temporal.PlainDate.compare(day, date) < 0) break;
+    if (schedule.frequency === "hourly") {
+      if (
+        schedule.weekdays.length &&
+        !schedule.weekdays.includes(day.dayOfWeek)
+      )
+        continue;
+      const end = Temporal.PlainTime.from(schedule.until || schedule.time);
+      const minutes = time.hour * 60 + time.minute;
+      const last = end.hour * 60 + end.minute;
+      const candidates: number[] = [];
+      for (let m = minutes; m <= last; m += 60) {
+        const clock = Temporal.PlainTime.from({
+          hour: Math.floor(m / 60),
+          minute: m % 60,
+        });
+        const value = at(day, clock);
+        const actual = Temporal.Instant.fromEpochMilliseconds(
+          value,
+        ).toZonedDateTimeISO(schedule.timezone);
+        if (actual.hour !== clock.hour || actual.minute !== clock.minute)
+          continue;
+        candidates.push(value);
+      }
+      if (direction === -1) candidates.reverse();
+      const value = candidates.find((v) =>
+        direction === 1 ? v > after : v <= after,
+      );
+      if (value !== undefined) return value;
+      continue;
+    }
     if (schedule.frequency === "weekdays" && day.dayOfWeek > 5) continue;
     if (
       schedule.frequency === "weekly" &&

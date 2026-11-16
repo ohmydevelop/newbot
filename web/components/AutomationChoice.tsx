@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import * as Popover from "@radix-ui/react-popover";
 import { Check, ChevronDown } from "lucide-react";
 import { PickerContent } from "./Picker";
@@ -10,6 +10,7 @@ export function AutomationChoice({
   onChange,
   search = false,
   disabled = false,
+  trigger,
 }: {
   label: string;
   value: string;
@@ -17,6 +18,7 @@ export function AutomationChoice({
   onChange: (v: string) => void;
   search?: boolean;
   disabled?: boolean;
+  trigger?: ReactNode;
 }) {
   const [open, setOpen] = useState(false),
     [query, setQuery] = useState("");
@@ -37,8 +39,14 @@ export function AutomationChoice({
         aria-label={label}
         disabled={disabled}
       >
-        {options.find((v) => v.id === value)?.label || value || label}
-        <ChevronDown size={15} />
+        {trigger || (
+          <>
+            <span>
+              {options.find((v) => v.id === value)?.label || value || label}
+            </span>
+            <ChevronDown size={15} />
+          </>
+        )}
       </Popover.Trigger>
       <PickerContent className="automation-options" align="start">
         {search && (

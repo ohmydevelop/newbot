@@ -6,7 +6,10 @@ import { join } from "node:path";
 import { randomUUID } from "node:crypto";
 import { database } from "../server/db.js";
 import { automations } from "../server/automations.js";
-import { nextOccurrence } from "../server/automation-schedule.js";
+import {
+  nextOccurrence,
+  latestScheduled,
+} from "../server/automation-schedule.js";
 import {
   automationSchema,
   type AutomationSchedule,
@@ -339,4 +342,83 @@ test("pagination retains unread counts and pinned attachments survive cleanup un
     );
     a.control(task.id, 1, "delete");
     assert.equal(files.cleanup(), 1);
+  }));
+
+test("hourly windows include endpoints, respect weekdays and skip duplicate or missing DST wall times", () => {
+  const h = trigger({
+    frequency: "hourly",
+    time: "09:30",
+    until: "18:30",
+    weekdays: [1, 2, 3, 4, 5],
+  });
+  const next = (t: AutomationSchedule, after: string) =>
+    new Date(nextOccurrence(t, Date.parse(after))!).toISOString();
+  assert.equal(next(h, "2026-11-16T01:29:59Z"), "2026-11-16T01:30:00.000Z");
+  assert.equal(next(h, "2026-11-16T01:30:00Z"), "2026-11-16T02:30:00.000Z");
+  assert.equal(next(h, "2026-11-20T10:30:00Z"), "2026-11-23T01:30:00.000Z");
+  assert.equal(
+    latestScheduled([h], Date.parse("2026-11-20T10:30:00Z")),
+    Date.parse("2026-11-20T10:30:00Z"),
+  );
+  const dst = trigger({
+    frequency: "hourly",
+    time: "00:30",
+    until: "03:30",
+    timezone: "America/New_York",
+    date: "2026-01-01",
+  });
+  assert.equal(next(dst, "2026-03-08T06:30:00Z"), "2026-03-08T07:30:00.000Z");
+  assert.equal(next(dst, "2026-11-01T05:30:00Z"), "2026-11-01T07:30:00.000Z");
+  assert.equal(
+    latestScheduled([dst], Date.parse("2026-11-01T06:45:00Z")),
+    Date.parse("2026-11-01T05:30:00Z"),
+  );
+  const v = input();
+  assert.equal(
+    automationSchema.safeParse({ ...v, triggers: [{ ...h, until: "08:30" }] })
+      .success,
+    false,
+  );
+  assert.equal(
+    automationSchema.safeParse({ ...v, triggers: [{ ...h, until: undefined }] })
+      .success,
+    false,
+  );
+  assert.equal(
+    automationSchema.safeParse({ ...v, icon: "<script>" }).success,
+    false,
+  );
+  assert.equal(automationSchema.parse(v).triggers[0].frequency, "daily");
+});
+test("hourly catch-up coalesces and persists icon/window through restart without replay", () =>
+  fixture(async ({ a, db, dependencies, setClock, calls, setState }: any) => {
+    const t = await a.save({
+      id: randomUUID(),
+      expectedRevision: 0,
+      content: {
+        ...input(),
+        icon: "research",
+        color: "green",
+        triggers: [
+          trigger({ frequency: "hourly", time: "09:00", until: "18:00" }),
+        ],
+      },
+    });
+    setClock(Date.parse("2026-11-16T04:30:00Z"));
+    await Promise.all([a.tick(), a.tick()]);
+    assert.equal(calls.length, 1);
+    assert.equal(
+      a.read(t.id).runs[0].scheduledAt,
+      Date.parse("2026-11-16T04:00:00Z"),
+    );
+    setState("succeeded");
+    await a.tick();
+    await a.close();
+    const restarted = automations(db, dependencies);
+    assert.equal(restarted.read(t.id).task.icon, "research");
+    assert.equal(restarted.read(t.id).task.color, "green");
+    assert.equal(restarted.read(t.id).task.triggers[0].until, "18:00");
+    await restarted.tick();
+    assert.equal(calls.length, 1);
+    await restarted.close();
   }));

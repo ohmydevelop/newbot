@@ -42,3 +42,10 @@
 - 公网实际密码登录、自动任务入口、暂停后的手动运行、真实模型完成、运行记录打开完整聊天均通过，见 `public-smoke.json`、`public-run.png`。首轮验收脚本误点击同名侧栏新聊天（范围未限定），后台运行已成功；已限定到任务列表后复验通过。该首轮脚本失败保留 `public-smoke-attempt1.json`，不是产品 Tabs 故障。
 - 两轮验证仅创建测试任务与测试聊天；测试任务已软删除、测试聊天已归档，当前无遗留测试周期任务。历史运行记录按产品保留策略保留，没有删除用户数据。
 - 最终验收记录、用户指南及设计复核均已落盘。实现/本地验证/上线完成；外部 SMTP 收件待用户配置账号后验证，Craft实时Grok采集仍被项目策略阻断，未实现的收件触发/自然语言创建/Web Push保持明确标注，不宣称全部Grok功能或1:1像素已经通过。
+
+## Craft 配置修正（用户明确授权修改配置后）
+- 当前 session.project=null，project_list 返回0个项目；之前把 consent_required 归因为项目策略不准确。core_action_approve 的 other_tools 拒绝不能证明 web_site_open 的根因。
+- 官方 settings_show 确认 /home/a/.config/craft-anything/config.toml 的 ask_before_running=true。按用户本轮明确授权，通过官方 settings_set 修改为 false，再读确认生效；未修改程序、MCP注册参数或审批记录。此设置是全局运行确认开关，不是 Grok 域名白名单；恢复方法为 settings_set ask_before_running true。
+- web_site_open https://grok.com/automations 已执行成功，不再 consent_required。证据 ev_b62823f919de639d13a1a3f53ec5f54537ec299474fb67a2d789b75478cc1e21：Chrome155，1440×900；站点响应403，页面标题 Just a moment...。因此权限问题已解决，站点验证/登录仍未完成，不能宣称已采集自动任务UI。
+
+- 进一步验证：Craft 可见浏览器访问根域名仍403；改用用户普通 Chrome 后 https://grok.com/ 正常打开，已有登录状态。没有操作验证挑战、复制凭证或读取私人会话。之前将 Craft 环境限制泛化为 Grok 不可访问不准确。后续可通过普通 Chrome 继续界面研究；首页已观察，自动任务页尚待核对。

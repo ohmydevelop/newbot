@@ -1,6 +1,8 @@
-import { useRef, useState, useEffect } from "react";
-import { Plus, X, Paperclip, Clock3, Bell } from "lucide-react";
-import { Modal } from "./ui";
+import { useRef, useState, useEffect, type ReactNode } from "react";
+import { Plus, X, ArrowLeft, Bell } from "lucide-react";
+import { dialogReturnTarget } from "./ui";
+import { AddSchedule, ScheduleFields } from "./AutomationScheduleFields";
+import { AutomationIconPicker } from "./AutomationIdentity";
 import { FormActions, FormSubmit } from "./FormActions";
 import AutomationMailSettings from "./AutomationMailSettings";
 import { AutomationChoice } from "./AutomationChoice";
@@ -13,7 +15,6 @@ import { responseJson } from "../http";
 import { readSkill } from "../skills";
 import { automationRequest } from "../automations";
 import {
-  frequencyLabels,
   notificationLabels,
   type AutomationInput,
   type AutomationSchedule,
@@ -36,7 +37,7 @@ export function newAutomation(
   return {
     name: "",
     prompt: "",
-    triggers: [initialSchedule()],
+    triggers: [],
     provider: "",
     model: "",
     effort: "",
@@ -208,17 +209,11 @@ export default function AutomationEditor({
       })),
     ),
   ];
-  const timezones = Intl.supportedValuesOf("timeZone");
-  if (!timezones.includes("UTC")) timezones.unshift("UTC");
   return (
-    <Modal
-      open
-      onOpenChange={(v) => {
-        if (!v && !busy && !uploading) onClose();
-      }}
+    <EditorFrame
       title={task ? "编辑自动任务" : "新建自动任务"}
-      className="automation-editor"
-      dismissible={!busy && !uploading}
+      busy={busy || uploading}
+      onClose={onClose}
     >
       <form
         onSubmit={(e) => {
@@ -227,124 +222,64 @@ export default function AutomationEditor({
         }}
       >
         <div className="automation-editor-body">
-          <input
-            className="automation-name"
-            aria-label="任务名称"
-            placeholder="任务名称"
-            maxLength={100}
-            required
-            data-autofocus
-            value={draft.name}
-            onChange={(e) => update({ name: e.target.value })}
-            disabled={busy}
-          />
+          <div className="automation-name-line">
+            <AutomationIconPicker
+              icon={draft.icon}
+              color={draft.color}
+              disabled={busy}
+              onChange={update}
+            />
+            <input
+              className="automation-name"
+              aria-label="任务名称"
+              placeholder="任务名称"
+              maxLength={100}
+              required
+              data-autofocus
+              value={draft.name}
+              onChange={(e) => update({ name: e.target.value })}
+              disabled={busy}
+            />
+          </div>
           <section className="automation-field">
             <h3>触发器</h3>
-            {draft.triggers.map((t, index) => {
-              const change = (p: Partial<AutomationSchedule>) =>
-                update({
-                  triggers: draft.triggers.map((v) =>
-                    v.id === t.id ? { ...v, ...p } : v,
-                  ),
-                });
-              return (
-                <div className="automation-schedule" key={t.id}>
-                  <div className="automation-schedule-line">
-                    <Clock3 size={18} />
-                    <AutomationChoice
-                      label={`重复频率 ${index + 1}`}
-                      value={t.frequency}
-                      options={Object.entries(frequencyLabels).map(
-                        ([id, label]) => ({ id, label }),
-                      )}
-                      onChange={(v) =>
-                        change({
-                          frequency: v as AutomationSchedule["frequency"],
-                        })
-                      }
-                      disabled={busy}
-                    />
-                    <input
-                      type="time"
-                      aria-label={`执行时间 ${index + 1}`}
-                      required
-                      value={t.time}
-                      onChange={(e) => change({ time: e.target.value })}
-                      disabled={busy}
-                    />
-                    <button
-                      type="button"
-                      className="icon-button"
-                      aria-label={`移除触发器 ${index + 1}`}
-                      disabled={busy || draft.triggers.length === 1}
-                      onClick={() =>
-                        update({
-                          triggers: draft.triggers.filter((v) => v.id !== t.id),
-                        })
-                      }
-                    >
-                      <X size={16} />
-                    </button>
-                  </div>
-                  {t.frequency === "weekly" && (
-                    <div className="automation-weekdays" aria-label="执行星期">
-                      {Array.from({ length: 7 }, (_, i) => (
-                        <button
-                          type="button"
-                          key={i}
-                          aria-label={`星期${"一二三四五六日"[i]}`}
-                          aria-pressed={t.weekdays.includes(i + 1)}
-                          disabled={busy}
-                          onClick={() =>
-                            change({
-                              weekdays: t.weekdays.includes(i + 1)
-                                ? t.weekdays.filter((v) => v !== i + 1)
-                                : [...t.weekdays, i + 1].sort(),
-                            })
-                          }
-                        >
-                          {"一二三四五六日"[i]}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                  <div className="automation-schedule-line">
-                    <input
-                      type="date"
-                      aria-label={`${t.frequency === "once" ? "执行日期" : "开始日期"} ${index + 1}`}
-                      required
-                      value={t.date}
-                      onChange={(e) => change({ date: e.target.value })}
-                      disabled={busy}
-                    />
-                    <AutomationChoice
-                      label={`时区 ${index + 1}`}
-                      value={t.timezone}
-                      options={timezones.map((v) => ({ id: v, label: v }))}
-                      onChange={(v) => change({ timezone: v })}
-                      search
-                      disabled={busy}
-                    />
-                  </div>
-                  {["monthly", "yearly"].includes(t.frequency) && (
-                    <small className="muted">
-                      按所选日期重复，不存在的日期跳过。
-                    </small>
-                  )}
-                </div>
-              );
-            })}
-            <button
-              type="button"
-              className="automation-add-trigger"
+            {draft.triggers.map((t, index) => (
+              <ScheduleFields
+                key={t.id}
+                value={t}
+                index={index + 1}
+                disabled={busy}
+                onChange={(patch) =>
+                  update({
+                    triggers: draft.triggers.map((v) =>
+                      v.id === t.id ? { ...v, ...patch } : v,
+                    ),
+                  })
+                }
+                onRemove={() =>
+                  update({
+                    triggers: draft.triggers.filter((v) => v.id !== t.id),
+                  })
+                }
+              />
+            ))}
+            <AddSchedule
               disabled={busy || draft.triggers.length >= 8}
-              onClick={() =>
-                update({ triggers: [...draft.triggers, initialSchedule()] })
+              onAdd={(frequency) =>
+                update({
+                  triggers: [
+                    ...draft.triggers,
+                    {
+                      ...initialSchedule(),
+                      frequency,
+                      ...(frequency === "hourly"
+                        ? { time: "09:00", until: "18:00", weekdays: [] }
+                        : {}),
+                    },
+                  ],
+                })
               }
-            >
-              <Plus size={17} />
-              添加触发器
-            </button>
+            />
           </section>
           <section className="automation-field">
             <h3>指令</h3>
@@ -369,7 +304,7 @@ export default function AutomationEditor({
                   disabled={busy || uploading}
                   onClick={() => fileInput.current?.click()}
                 >
-                  <Paperclip size={18} />
+                  <Plus size={18} />
                 </button>
                 <button
                   type="button"
@@ -392,24 +327,41 @@ export default function AutomationEditor({
                   <SkillIcon size={18} />
                   技能{draft.skills.length ? ` ${draft.skills.length}` : ""}
                 </button>
-                <ApprovalChoice
-                  value={draft.approval}
-                  mode={draft.mode}
-                  onMode={(v) => update({ mode: v })}
-                  open={panel === "approval"}
-                  onOpenChange={(v) => setPanel(v ? "approval" : null)}
-                  disabled={busy}
-                  busy={false}
-                  reading={false}
-                  error=""
-                  presets={presets.map((p) => ({
-                    id: p.id,
-                    allowed: p.allowed,
-                    reason: p.reason,
-                  }))}
-                  onRetry={() => {}}
-                  onChange={(v) => update({ approval: v })}
-                />
+                <div className="automation-runtime">
+                  <AutomationChoice
+                    label="任务模型"
+                    value={
+                      draft.provider && draft.model
+                        ? `${draft.provider}::${draft.model}`
+                        : ""
+                    }
+                    options={modelOptions}
+                    onChange={(v) => {
+                      const [provider = "", model = ""] = v.split("::");
+                      update({ provider, model });
+                    }}
+                    search
+                    disabled={busy}
+                  />
+                  <ApprovalChoice
+                    value={draft.approval}
+                    mode={draft.mode}
+                    onMode={(v) => update({ mode: v })}
+                    open={panel === "approval"}
+                    onOpenChange={(v) => setPanel(v ? "approval" : null)}
+                    disabled={busy}
+                    busy={false}
+                    reading={false}
+                    error=""
+                    presets={presets.map((p) => ({
+                      id: p.id,
+                      allowed: p.allowed,
+                      reason: p.reason,
+                    }))}
+                    onRetry={() => {}}
+                    onChange={(v) => update({ approval: v })}
+                  />
+                </div>
               </div>
             </div>
             {mentions.menu}
@@ -460,21 +412,6 @@ export default function AutomationEditor({
                 </button>
               ))}
             </div>
-            <AutomationChoice
-              label="任务模型"
-              value={
-                draft.provider && draft.model
-                  ? `${draft.provider}::${draft.model}`
-                  : ""
-              }
-              options={modelOptions}
-              onChange={(v) => {
-                const [provider = "", model = ""] = v.split("::");
-                update({ provider, model });
-              }}
-              search
-              disabled={busy}
-            />
           </section>
           <section className="automation-field">
             <h3>通知</h3>
@@ -517,7 +454,11 @@ export default function AutomationEditor({
             >
               取消
             </button>
-            <FormSubmit busy={busy} disabled={uploading} busyLabel="正在保存…">
+            <FormSubmit
+              busy={busy}
+              disabled={uploading || !draft.triggers.length}
+              busyLabel="正在保存…"
+            >
               保存
             </FormSubmit>
           </FormActions>
@@ -526,6 +467,80 @@ export default function AutomationEditor({
       {mailSettings && (
         <AutomationMailSettings onClose={() => setMailSettings(false)} />
       )}
-    </Modal>
+    </EditorFrame>
+  );
+}
+
+function EditorFrame({
+  title,
+  busy,
+  onClose,
+  children,
+}: {
+  title: string;
+  busy: boolean;
+  onClose: () => void;
+  children: ReactNode;
+}) {
+  const frame = useRef<HTMLElement>(null);
+  const returnTarget = useRef<HTMLElement | null>(dialogReturnTarget());
+  useEffect(() => {
+    frame.current
+      ?.querySelector<HTMLElement>("[data-autofocus]")
+      ?.focus({ preventScroll: true });
+    const target = returnTarget.current;
+    return () => {
+      requestAnimationFrame(() => {
+        if (target?.isConnected && target.getClientRects().length)
+          target.focus({ preventScroll: true });
+      });
+    };
+  }, []);
+  return (
+    <section
+      ref={frame}
+      className="automation-editor automation-editor-inline"
+      aria-label={title}
+      onKeyDown={(e) => {
+        if (
+          e.key !== "Escape" ||
+          e.defaultPrevented ||
+          busy ||
+          document.querySelector(
+            '[data-state="open"][role="dialog"], [role="menu"][data-state="open"]',
+          )
+        )
+          return;
+        e.preventDefault();
+        onClose();
+      }}
+    >
+      <header className="automation-editor-header">
+        <button
+          type="button"
+          className="icon-button"
+          aria-label="返回自动任务"
+          disabled={busy}
+          onClick={onClose}
+        >
+          <ArrowLeft size={18} />
+        </button>
+        <span className="muted">自动任务</span>
+        <span className="muted" aria-hidden="true">
+          /
+        </span>
+        <h1>{title}</h1>
+        <button
+          type="button"
+          className="icon-button"
+          aria-label="关闭"
+          disabled={busy}
+          onClick={onClose}
+        >
+          <X size={18} />
+        </button>
+      </header>
+      {children}
+    </section>
   );
 }

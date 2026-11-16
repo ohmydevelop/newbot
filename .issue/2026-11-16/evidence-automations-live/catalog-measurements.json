@@ -1,0 +1,211 @@
+[
+  {
+    "background": "rgba(0, 0, 0, 0)",
+    "color": "color(srgb 0.901811 0.898074 0.890184)",
+    "font": "15px",
+    "label": "Settings",
+    "radius": "0px",
+    "rect": {
+      "bottom": 91,
+      "height": 1,
+      "left": 180,
+      "right": 181,
+      "top": 90,
+      "width": 1,
+      "x": 180,
+      "y": 90
+    },
+    "role": "H2",
+    "weight": "650"
+  },
+  {
+    "background": "rgba(0, 0, 0, 0)",
+    "color": "color(srgb 0.901811 0.898074 0.890184)",
+    "font": "14px",
+    "label": "Search settings",
+    "radius": "0px",
+    "rect": {
+      "bottom": 138,
+      "height": 34,
+      "left": 227,
+      "right": 369,
+      "top": 104,
+      "width": 142,
+      "x": 227,
+      "y": 104
+    },
+    "role": "INPUT",
+    "weight": "425"
+  },
+  {
+    "background": "rgba(0, 0, 0, 0)",
+    "color": "color(srgb 0.901811 0.898074 0.890184)",
+    "font": "17px",
+    "label": "Automations",
+    "radius": "0px",
+    "rect": {
+      "bottom": 132,
+      "height": 22,
+      "left": 413,
+      "right": 514.25,
+      "top": 110,
+      "width": 101.25,
+      "x": 413,
+      "y": 110
+    },
+    "role": "H1",
+    "weight": "525"
+  },
+  {
+    "background": "rgba(0, 0, 0, 0)",
+    "color": "color(srgb 0.901811 0.898074 0.890184)",
+    "font": "14px",
+    "label": "Search automations",
+    "radius": "0px",
+    "rect": {
+      "bottom": 138,
+      "height": 34,
+      "left": 873,
+      "right": 1064,
+      "top": 104,
+      "width": 191,
+      "x": 873,
+      "y": 104
+    },
+    "role": "INPUT",
+    "weight": "425"
+  },
+  {
+    "background": "rgba(0, 0, 0, 0)",
+    "color": "color(srgb 0.901811 0.898074 0.890184 / 0.703)",
+    "font": "13px",
+    "label": "Featured",
+    "radius": "0px",
+    "rect": {
+      "bottom": 238,
+      "height": 24,
+      "left": 425,
+      "right": 1063,
+      "top": 214,
+      "width": 638,
+      "x": 425,
+      "y": 214
+    },
+    "role": "H2",
+    "weight": "525"
+  },
+  {
+    "background": "rgba(0, 0, 0, 0)",
+    "color": "color(srgb 0.901811 0.898074 0.890184)",
+    "font": "15px",
+    "label": "Add custom automation",
+    "radius": "10px",
+    "rect": {
+      "bottom": 287,
+      "height": 28,
+      "left": 680.8125,
+      "right": 732,
+      "top": 259,
+      "width": 51.1875,
+      "x": 680.8125,
+      "y": 259
+    },
+    "role": "BUTTON",
+    "weight": "525"
+  },
+  {
+    "background": "rgba(0, 0, 0, 0)",
+    "color": "color(srgb 0.901811 0.898074 0.890184 / 0.703)",
+    "font": "13px",
+    "label": "News",
+    "radius": "0px",
+    "rect": {
+      "bottom": 468,
+      "height": 24,
+      "left": 425,
+      "right": 1063,
+      "top": 444,
+      "width": 638,
+      "x": 425,
+      "y": 444
+    },
+    "role": "H2",
+    "weight": "525"
+  },
+  {
+    "background": "rgba(0, 0, 0, 0)",
+    "color": "color(srgb 0.901811 0.898074 0.890184 / 0.703)",
+    "font": "13px",
+    "label": "Productivity",
+    "radius": "0px",
+    "rect": {
+      "bottom": 574,
+      "height": 24,
+      "left": 425,
+      "right": 1063,
+      "top": 550,
+      "width": 638,
+      "x": 425,
+      "y": 550
+    },
+    "role": "H2",
+    "weight": "525"
+  },
+  {
+    "background": "rgba(0, 0, 0, 0)",
+    "color": "color(srgb 0.901811 0.898074 0.890184 / 0.703)",
+    "font": "13px",
+    "label": "Finance",
+    "radius": "0px",
+    "rect": {
+      "bottom": 680,
+      "height": 24,
+      "left": 425,
+      "right": 1063,
+      "top": 656,
+      "width": 638,
+      "x": 425,
+      "y": 656
+    },
+    "role": "H2",
+    "weight": "525"
+  },
+  {
+    "background": "rgba(0, 0, 0, 0)",
+    "color": "color(srgb 0.901811 0.898074 0.890184 / 0.703)",
+    "font": "13px",
+    "label": "Research",
+    "radius": "0px",
+    "rect": {
+      "bottom": 786,
+      "height": 24,
+      "left": 425,
+      "right": 1063,
+      "top": 762,
+      "width": 638,
+      "x": 425,
+      "y": 762
+    },
+    "role": "H2",
+    "weight": "525"
+  },
+  {
+    "background": "rgba(0, 0, 0, 0)",
+    "color": "color(srgb 0.901811 0.898074 0.890184 / 0.703)",
+    "font": "13px",
+    "label": "Lifestyle",
+    "radius": "0px",
+    "rect": {
+      "bottom": 954,
+      "height": 24,
+      "left": 425,
+      "right": 1063,
+      "top": 930,
+      "width": 638,
+      "x": 425,
+      "y": 930
+    },
+    "role": "H2",
+    "weight": "525"
+  }
+]

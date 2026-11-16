@@ -1,0 +1,2 @@
+TOUCH_DIAGNOSTIC [{"type":"pointerdown","target":"关闭","scroll":132,"time":2303.5},{"type":"touchstart","target":"关闭","scroll":132,"time":2303.599999964237},{"type":"pointerup","target":"关闭","scroll":132,"time":2303.699999988079},{"type":"touchend","target":"关闭","scroll":132,"time":2303.7999999523163}]
+Controlled rerun after scroll stability observation: 2 passed; no product change.

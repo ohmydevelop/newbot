@@ -11,7 +11,7 @@ import * as Dropdown from "@radix-ui/react-dropdown-menu";
 import {
   Archive,
   Pencil,
-  CalendarClock,
+  Clock3,
   Settings as SettingsIcon,
 } from "lucide-react";
 import { useEffect, useId, useRef, useState } from "react";
@@ -123,7 +123,7 @@ export function ConversationNavigation({
             aria-current={automationsOpen ? "page" : undefined}
             onClick={onAutomations}
           >
-            <CalendarClock size={18} aria-hidden="true" />
+            <Clock3 size={18} aria-hidden="true" />
           </button>
           <button
             type="button"
@@ -175,7 +175,7 @@ export function ConversationNavigation({
             onClick={onAutomations}
             aria-current={automationsOpen ? "page" : undefined}
           >
-            <CalendarClock size={18} aria-hidden="true" />
+            <Clock3 size={18} aria-hidden="true" />
             <span>自动任务</span>
             {automationUnread > 0 && (
               <span
