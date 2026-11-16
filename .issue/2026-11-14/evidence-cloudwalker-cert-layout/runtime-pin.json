@@ -1,0 +1,11 @@
+{
+  "savedPin": "b1234493f3a5a396c502ec1cf2a5251dd885926c4c859058e5b8ae70331c00b2",
+  "revision": "0ecc0ef6-69a6-4846-bab3-2b6eb5e0f1da",
+  "processes": [
+    {
+      "pid": "3616522",
+      "hasToken": true,
+      "pinMatchesSaved": true
+    }
+  ]
+}

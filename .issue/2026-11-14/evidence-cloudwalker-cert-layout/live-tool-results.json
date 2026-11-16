@@ -1,0 +1,36 @@
+{
+  "threadId": "01a1e297-3876-7360-955f-d8095ea42f04",
+  "verification": "Production Newbot UI → real model → Codex → installed CloudWalker 0.6.0 → actual business API. No mock upstream.",
+  "calls": [
+    {
+      "turnId": "01a1e297-409e-7941-816b-93d2eea2f82a",
+      "turnStatus": "completed",
+      "tool": "summarize_security_posture",
+      "toolStatus": "completed",
+      "readOnlyHint": true,
+      "durationMs": 480,
+      "error": null,
+      "resultStatus": "complete",
+      "sections": {
+        "handling": "ok",
+        "trend": "ok",
+        "distribution": "ok"
+      }
+    },
+    {
+      "turnId": "01a1e29a-2dbe-7c03-8fae-90aeeea63762",
+      "turnStatus": "completed",
+      "tool": "summarize_security_posture",
+      "toolStatus": "completed",
+      "readOnlyHint": true,
+      "durationMs": 542,
+      "error": null,
+      "resultStatus": "complete",
+      "sections": {
+        "handling": "ok",
+        "trend": "ok",
+        "distribution": "ok"
+      }
+    }
+  ]
+}

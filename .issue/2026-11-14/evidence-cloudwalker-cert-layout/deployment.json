@@ -1,0 +1,19 @@
+{
+  "commit": "f5181b8",
+  "url": "https://integration-love-angela-heated.trycloudflare.com",
+  "asset": "/assets/index-xM2HlpsU.js",
+  "sha256": "9f91072a1e860d533f9f447eb12fe6122b2e92a4332db1a780b1f6130b2e3f44",
+  "dataPreserved": {
+    "threads": 28,
+    "provider_configuration": 1,
+    "plugin_connection_settings": 2,
+    "private_field_sets": 4,
+    "extension_packages": 5,
+    "extension_imports": 3
+  },
+  "ready": {
+    "ready": true,
+    "runtime": "ready"
+  },
+  "nativeUnchanged": true
+}
