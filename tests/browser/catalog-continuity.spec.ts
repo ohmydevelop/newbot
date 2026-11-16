@@ -226,6 +226,11 @@ for (const width of [390, 1280])
     expect(await scroller.evaluate((e) => e.scrollTop)).toBeGreaterThan(200);
     const r = (await back.boundingBox())!,
       outer = (await scroller.boundingBox())!;
+    const navigation = (await page
+      .locator(".catalog-step-navigation")
+      .last()
+      .boundingBox())!;
+    expect(Math.abs(navigation.y - outer.y)).toBeLessThanOrEqual(1);
     expect(r.y).toBeGreaterThanOrEqual(outer.y - 1);
     expect(r.y + r.height).toBeLessThan(outer.y + 100);
     const testButton = page.getByRole("button", {

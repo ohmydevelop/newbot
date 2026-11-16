@@ -60,8 +60,12 @@
   overflow-y: auto;
   min-height: 0;
   flex: 1;
-  padding: 8px 32px 32px;
+  --catalog-content-inset: 8px;
+  padding: 0 32px 32px;
   scrollbar-gutter: stable;
+}
+.plugin-center-content > :is(.plugin-center-list, .plugin-center-details) {
+  padding-top: var(--catalog-content-inset);
 }
 .plugin-center-content:has(.plugin-center-details > *) > .plugin-center-list {
   display: none;
@@ -289,6 +293,7 @@
     padding-left: 0;
   }
   .plugin-center-content {
+    --catalog-content-inset: 0px;
     padding: 0 16px 24px;
   }
   .catalog-grid,

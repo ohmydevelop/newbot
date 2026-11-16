@@ -31,3 +31,15 @@
 
 ## 仍受限项
 无物理手机；以上为Chromium移动视口与触摸事件验收。WebKit因宿主缺少ABI库未运行；未声称Safari通过。用户改用本地OAuth，未执行Slack账号登录或第三方授权。CI历史受账户账单限制，本轮以实际本地验收为发布门槛。
+
+## 首次发布与公网复核
+- 产品提交578a6b1已推送，提交后复建hash与验收完全相同；仅发布web，生产10类数据校验不变，已备份。initial-deployment.json记录首轮发布。
+- 发布脚本用loopback origin登录被生产精确Origin校验403拒绝（尚未进入维护/服务停止）。清理本轮未使用的空备份/暂存构建后，改用原已授权公网origin成功发布；未削弱Origin保护。
+- 公网真实账号只读导航通过：原4个插件保留，125工具目录固定返回/更多，模型证书获取/选择仍可见，已有会话在1280/390两个小选择框搜索与Escape焦点恢复均通过，页面无JS错误；没有保存配置/发送消息/执行生产工具。第一次等待目录加载5秒不足，按生产启动加载等待30秒后通过，保留首轮失败记录。
+- 人工复核发现initial-live-tools-bottom.png固定标题顶部8px漏字；新增几何断言在390/1280分别复现12px/8px。不能把按钮可用当成视觉完成，补充计划后将顶部padding从scroller移到list/details内容层，初始布局保持，开始重新回归。
+- GitHub本轮CI仍0步骤未启动，明确原因账户付款/限额；ci-runs.json/ci-jobs.json/ci-annotations.json留证，本地通过不冒充CI通过。
+
+## 固定标题遮挡修正
+- 新断言先在未修正构建失败：手机顶部偏移12px、桌面8px，sticky-gap-reproduced.txt。
+- 将顶部内容间距由.plugin-center-content转至list/details直接子内容，以共享--catalog-content-inset保持原值；滚动容器本身顶部不再有padding。常规设置页面的原padding保持不变，无局部负数偏移或遮罩补丁。
+- 补充验收在原56项浏览器测试内执行；旧视觉快照不更新。全套运行中曾因diff复核发现替换范围包含普通settings-content而主动停止一轮，恢复其原值后重新构建并完整执行browser-sticky-final；中止轮不作为通过证据。

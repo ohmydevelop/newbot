@@ -1,0 +1,88 @@
+
+> newbot@0.2.0 test:ui-contracts
+> playwright test --config=playwright.config.ts --grep 长连接器详情底部
+
+[WebServer] (node:4168709) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 2 tests using 1 worker
+
+(node:4168725) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 tests/browser/catalog-continuity.spec.ts:216:3 › 长连接器详情底部仍可返回与管理 390 (2.6s)
+(node:4168865) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  2 tests/browser/catalog-continuity.spec.ts:216:3 › 长连接器详情底部仍可返回与管理 1280 (2.3s)
+
+
+  1) tests/browser/catalog-continuity.spec.ts:216:3 › 长连接器详情底部仍可返回与管理 390 ──────────────────────────
+
+    Error: expect(received).toBeLessThanOrEqual(expected)
+
+    Expected: <= 1
+    Received:    12
+
+      228 |       outer = (await scroller.boundingBox())!;
+      229 |     const navigation = (await page.locator(".catalog-step-navigation").last().boundingBox())!;
+    > 230 |     expect(Math.abs(navigation.y - outer.y)).toBeLessThanOrEqual(1);
+          |                                              ^
+      231 |     expect(r.y).toBeGreaterThanOrEqual(outer.y - 1);
+      232 |     expect(r.y + r.height).toBeLessThan(outer.y + 100);
+      233 |     const testButton = page.getByRole("button", {
+        at /home/a/Documents/ChatGPT/newbot-systematize/tests/browser/catalog-continuity.spec.ts:230:46
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/catalog-continuity-长连接器详情底部仍可返回与管理-390/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/catalog-continuity-长连接器详情底部仍可返回与管理-390/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/catalog-continuity-长连接器详情底部仍可返回与管理-390/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/catalog-continuity-长连接器详情底部仍可返回与管理-390/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/catalog-continuity-长连接器详情底部仍可返回与管理-390/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) tests/browser/catalog-continuity.spec.ts:216:3 › 长连接器详情底部仍可返回与管理 1280 ─────────────────────────
+
+    Error: expect(received).toBeLessThanOrEqual(expected)
+
+    Expected: <= 1
+    Received:    8
+
+      228 |       outer = (await scroller.boundingBox())!;
+      229 |     const navigation = (await page.locator(".catalog-step-navigation").last().boundingBox())!;
+    > 230 |     expect(Math.abs(navigation.y - outer.y)).toBeLessThanOrEqual(1);
+          |                                              ^
+      231 |     expect(r.y).toBeGreaterThanOrEqual(outer.y - 1);
+      232 |     expect(r.y + r.height).toBeLessThan(outer.y + 100);
+      233 |     const testButton = page.getByRole("button", {
+        at /home/a/Documents/ChatGPT/newbot-systematize/tests/browser/catalog-continuity.spec.ts:230:46
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/catalog-continuity-长连接器详情底部仍可返回与管理-1280/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/catalog-continuity-长连接器详情底部仍可返回与管理-1280/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/catalog-continuity-长连接器详情底部仍可返回与管理-1280/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/catalog-continuity-长连接器详情底部仍可返回与管理-1280/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/catalog-continuity-长连接器详情底部仍可返回与管理-1280/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2 failed
+    tests/browser/catalog-continuity.spec.ts:216:3 › 长连接器详情底部仍可返回与管理 390 ───────────────────────────
+    tests/browser/catalog-continuity.spec.ts:216:3 › 长连接器详情底部仍可返回与管理 1280 ──────────────────────────
