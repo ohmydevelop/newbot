@@ -597,8 +597,11 @@ summary:focus-visible {
     font-size: 25px;
   }
   .composer-tools-left > [data-composer-picker] {
-    display: none;
+    display: inline-flex;
   }
+  .composer .approval-trigger > span { display: none; }
+  .composer .runtime-picker-trigger { max-width: clamp(56px, 22vw, 100px); }
+  .composer .approval-trigger { padding-inline: 6px; }
   .composer-tools .runtime-selectors {
     margin-left: auto;
     flex: 0 1 auto;

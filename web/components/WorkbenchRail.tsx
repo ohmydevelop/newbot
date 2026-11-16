@@ -45,7 +45,9 @@ export default function WorkbenchRail({
   onOpenArtifact,
   onClose,
   restoreFocus,
+  capabilityFocus,
 }: {
+  capabilityFocus?: { kind: "plugins" | "skills"; version: number } | null;
   thread?: Thread;
   busy: boolean;
   expert?: { id: string; name: string };
@@ -68,6 +70,23 @@ export default function WorkbenchRail({
   };
   const [tab, setTab] = useState<RailTab>(stored);
   const panelId = useId();
+  const pluginAdd = useRef<HTMLButtonElement>(null);
+  const skillAdd = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    if (capabilityFocus) setTab("associations");
+  }, [capabilityFocus]);
+  useEffect(() => {
+    if (!capabilityFocus || tab !== "associations") return;
+    const frame = requestAnimationFrame(() => {
+      const target =
+        capabilityFocus.kind === "skills"
+          ? skillAdd.current
+          : pluginAdd.current;
+      target?.scrollIntoView({ block: "nearest" });
+      target?.focus({ preventScroll: true });
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [capabilityFocus, tab]);
   useEffect(() => {
     localStorage.setItem("newbot:rail-tab", tab);
   }, [tab]);
@@ -291,6 +310,7 @@ export default function WorkbenchRail({
                 <button
                   type="button"
                   disabled={busy}
+                  ref={pluginAdd}
                   onClick={() => onAdd("plugins")}
                 >
                   <Plus size={16} />
@@ -301,6 +321,7 @@ export default function WorkbenchRail({
                 <button
                   type="button"
                   disabled={busy}
+                  ref={skillAdd}
                   onClick={() => onAdd("skills")}
                 >
                   <Plus size={16} />

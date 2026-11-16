@@ -1,3 +1,4 @@
+import { CatalogFilter } from "./CatalogFilter";
 import { skillScopes } from "../../shared/skills";
 import type { Json } from "../../shared/types";
 import {
@@ -107,19 +108,18 @@ export default function ExtensionsSettings({
         >
           <div className="plugin-center-list">
             {tab === "skills" && (
-              <select
-                className="catalog-kind-filter"
-                aria-label="技能分类"
+              <CatalogFilter
+                label="技能分类"
                 value={skillScope}
-                onChange={(event) => setSkillScope(event.target.value)}
-              >
-                <option value="">所有技能</option>
-                {Object.entries(skillScopes).map(([id, label]) => (
-                  <option key={id} value={id}>
-                    {label}
-                  </option>
-                ))}
-              </select>
+                onValueChange={setSkillScope}
+                options={[
+                  { value: "", label: "所有技能" },
+                  ...Object.entries(skillScopes).map(([value, label]) => ({
+                    value,
+                    label,
+                  })),
+                ]}
+              />
             )}
             <Suspense fallback={<p role="status">正在读取…</p>}>
               {tab === "connectors" ? (

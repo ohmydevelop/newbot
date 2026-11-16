@@ -1267,3 +1267,45 @@
   color: var(--muted);
   opacity: 1;
 }
+
+/* Shared two-line catalog identity, including connector and expert states. */
+.catalog-title-line {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+.catalog-title-line > strong { flex: 1; min-width: 0; }
+.catalog-title-line > .catalog-status { flex: 0 0 auto; }
+.plugin-center-list .compact-skill-entry .catalog-title-line .catalog-status { padding: 0; }
+.catalog-copy { overflow: hidden; }
+.catalog-copy > small { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.market-filter-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 100%;
+  min-height: 40px;
+  padding: 6px 8px;
+  border-radius: 10px;
+  font-size: 14px;
+}
+.market-filter-trigger > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.market-filter-trigger:hover, .market-filter-trigger[data-state="open"] { background: var(--surface); }
+.market-filter-menu { min-width: 220px; max-width: min(360px, calc(100vw - 32px)); }
+.market-filter-option {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-height: 40px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  color: var(--text);
+  cursor: pointer;
+  outline: none;
+}
+.market-filter-option > span:first-child { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.market-filter-option[data-highlighted] { background: var(--hover); }
+@media (max-width: 700px) {
+  .market-filter-option, .market-filter-trigger { min-height: 44px; }
+}

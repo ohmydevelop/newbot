@@ -1,3 +1,4 @@
+import { CatalogCopy } from "./CatalogCopy";
 import { CatalogRefreshButton } from "./CatalogRefreshButton";
 import SkillCreate from "./SkillCreate";
 import * as Dropdown from "@radix-ui/react-dropdown-menu";
@@ -235,37 +236,46 @@ export default function SkillsSettings({ scope = "" }: { scope?: string }) {
                 onClick={() => setSelected(skill)}
               >
                 <CatalogIcon name={skill.name} />
-                <span>
-                  <strong>{displayName(skill)}</strong>
-                  <small>
-                    {skill.interface?.shortDescription ||
-                      skill.shortDescription ||
-                      skill.description}
-                  </small>
-                </span>
+                <CatalogCopy
+                  name={displayName(skill)}
+                  description={
+                    skill.interface?.shortDescription ||
+                    skill.shortDescription ||
+                    skill.description
+                  }
+                  status={
+                    skill.enabled ? (
+                      <>
+                        <Check size={14} /> 已启用
+                      </>
+                    ) : (
+                      "已停用"
+                    )
+                  }
+                />
               </button>
             ) : (
               <div className="catalog-entry-main">
                 <CatalogIcon name={skill.name} />
-                <span>
-                  <strong>{displayName(skill)}</strong>
-                  <small>
-                    {skill.interface?.shortDescription ||
-                      skill.shortDescription ||
-                      skill.description}
-                  </small>
-                </span>
+                <CatalogCopy
+                  name={displayName(skill)}
+                  description={
+                    skill.interface?.shortDescription ||
+                    skill.shortDescription ||
+                    skill.description
+                  }
+                  status={
+                    skill.enabled ? (
+                      <>
+                        <Check size={14} /> 已启用
+                      </>
+                    ) : (
+                      "已停用"
+                    )
+                  }
+                />
               </div>
             )}
-            <span className="catalog-status">
-              {skill.enabled ? (
-                <>
-                  <Check size={14} /> 已启用
-                </>
-              ) : (
-                "已停用"
-              )}
-            </span>
             {!readable && controls(skill)}
           </div>
         ))}

@@ -326,10 +326,33 @@ export default function App() {
     rememberWorkbenchFocus();
     setWorkspacePicker(true);
   }
+  const [railCapabilityFocus, setRailCapabilityFocus] = useState<{
+    kind: "plugins" | "skills";
+    version: number;
+  } | null>(null);
+  const capabilityReturnFocus = useRef<HTMLElement | null>(null);
+  function openComposerCapability(
+    kind: "plugins" | "skills",
+    trigger: HTMLElement | null,
+  ) {
+    if (!s.selectedId) {
+      mentions.open(kind, trigger);
+      return;
+    }
+    capabilityReturnFocus.current = trigger;
+    setRailCapabilityFocus((prior) => ({
+      kind,
+      version: (prior?.version || 0) + 1,
+    }));
+    setRailOpen(true);
+  }
   const [railArtifact, setRailArtifact] = useState<Artifact | null>(null);
   const [railOpen, setRailOpen] = useState(
     () => localStorage.getItem("newbot:rail") === "1",
   );
+  useEffect(() => {
+    if (!railOpen) setRailCapabilityFocus(null);
+  }, [railOpen]);
   const [settings, setSettings] = useState<string | null>(null);
   const [search, setSearch] = useState(false);
   useEffect(() => {
@@ -1336,10 +1359,20 @@ export default function App() {
                   className="turn pending-message"
                   aria-label="正在提交的消息"
                 >
-                  <UserMessage content={[
-                    { type: "text", text: submission.text },
-                    ...submission.files.map(file => ({ type: file.mime?.startsWith("image/") ? "image" : "attachment", id:file.id, name:file.name, mime:file.mime, url:`/api/files/${file.id}` }))
-                  ]} />
+                  <UserMessage
+                    content={[
+                      { type: "text", text: submission.text },
+                      ...submission.files.map((file) => ({
+                        type: file.mime?.startsWith("image/")
+                          ? "image"
+                          : "attachment",
+                        id: file.id,
+                        name: file.name,
+                        mime: file.mime,
+                        url: `/api/files/${file.id}`,
+                      })),
+                    ]}
+                  />
                   <div className="submission-status" role="status">
                     <LoaderCircle
                       size={15}
@@ -1734,79 +1767,70 @@ export default function App() {
                       >
                         添加工作区文件
                       </ActionMenuItem>
-                      {!s.selectedId ? (
-                        <>
-                          <ActionMenuItem
-                            icon={Blocks}
-                            separated
-                            disabled={!s.pluginSelection && !s.expertSelection}
-                            onSelect={() =>
-                              mentions.open(
-                                "plugins",
-                                document.getElementById("composer-add"),
-                              )
-                            }
-                          >
-                            选择专家或插件
-                          </ActionMenuItem>
-                          <ActionMenuItem
-                            icon={BookOpen}
-                            disabled={!s.skillSelection}
-                            onSelect={() =>
-                              mentions.open(
-                                "skills",
-                                document.getElementById("composer-add"),
-                              )
-                            }
-                          >
-                            选择技能
-                          </ActionMenuItem>
-                        </>
-                      ) : (
-                        <ActionMenuItem
-                          icon={SlidersHorizontal}
-                          separated
-                          onSelect={() => setRailOpen(true)}
-                        >
-                          管理会话能力
-                        </ActionMenuItem>
-                      )}
+                      <ActionMenuItem
+                        icon={Blocks}
+                        separated
+                        disabled={
+                          selectionDisabled ||
+                          (!s.pluginSelection && !s.expertSelection)
+                        }
+                        onSelect={() =>
+                          openComposerCapability(
+                            "plugins",
+                            document.getElementById("composer-add"),
+                          )
+                        }
+                      >
+                        选择专家或插件
+                      </ActionMenuItem>
+                      <ActionMenuItem
+                        icon={BookOpen}
+                        disabled={selectionDisabled || !s.skillSelection}
+                        onSelect={() =>
+                          openComposerCapability(
+                            "skills",
+                            document.getElementById("composer-add"),
+                          )
+                        }
+                      >
+                        选择技能
+                      </ActionMenuItem>
                     </ActionMenuContent>
                   </Dropdown.Portal>
                 </Dropdown.Root>
-                {!s.selectedId && !sending && !pendingSubmission && (
-                  <>
+                <>
+                  <button
+                    type="button"
+                    className="icon-button"
+                    aria-label="选择专家或插件"
+                    data-composer-picker
+                    title="选择专家或插件"
+                    disabled={
+                      selectionDisabled ||
+                      (!s.pluginSelection && !s.expertSelection)
+                    }
+                    onClick={(e) =>
+                      openComposerCapability("plugins", e.currentTarget)
+                    }
+                  >
+                    <Blocks size={18} />
+                  </button>
+                  {s.skillSelection && (
                     <button
                       type="button"
-                      className="icon-button"
-                      aria-label="选择专家或插件"
+                      className="icon-button skill-picker-trigger"
+                      title="选择技能"
+                      aria-label="选择技能"
                       data-composer-picker
-                      title="选择专家或插件"
-                      disabled={
-                        selectionDisabled ||
-                        (!s.pluginSelection && !s.expertSelection)
+                      disabled={selectionDisabled}
+                      onClick={(e) =>
+                        openComposerCapability("skills", e.currentTarget)
                       }
-                      onClick={(e) => mentions.open("plugins", e.currentTarget)}
                     >
-                      <Blocks size={18} />
+                      <BookOpen size={17} aria-hidden="true" />
                     </button>
-                    {s.skillSelection && (
-                      <button
-                        type="button"
-                        className="icon-button skill-picker-trigger"
-                        title="选择技能"
-                        aria-label="选择技能"
-                        data-composer-picker
-                        disabled={selectionDisabled}
-                        onClick={(e) =>
-                          mentions.open("skills", e.currentTarget)
-                        }
-                      >
-                        <BookOpen size={17} aria-hidden="true" />
-                      </button>
-                    )}
-                  </>
-                )}
+                  )}
+                </>
               </div>
               <RuntimeSelector
                 onBusy={setRuntimeBusy}
@@ -1882,12 +1906,16 @@ export default function App() {
       {railOpen && s.selectedId && (
         <>
           <WorkbenchRail
+            capabilityFocus={railCapabilityFocus}
             onClose={() => setRailOpen(false)}
             restoreFocus={() => {
               const action = afterRailClose.current;
               afterRailClose.current = null;
+              const trigger = capabilityReturnFocus.current;
+              capabilityReturnFocus.current = null;
               if (action) requestAnimationFrame(action);
-              else railToggle.current?.focus();
+              else
+                (trigger?.isConnected ? trigger : railToggle.current)?.focus();
             }}
             thread={s.thread || undefined}
             busy={selectionDisabled}

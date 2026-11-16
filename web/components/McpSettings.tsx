@@ -1,3 +1,4 @@
+import { CatalogCopy } from "./CatalogCopy";
 import { useMcpOAuthCompletion, type OAuthAttempt } from "../use-mcp-oauth";
 import { connectionStateLabels as stateLabel } from "../connection-state";
 import { MoreIcon as MoreHorizontal } from "./ReferenceIcons";
@@ -249,21 +250,24 @@ export default function McpSettings({
                   onClick={() => setDetailId(id)}
                 >
                   <CatalogIcon name={displayName} kind="connection" />
-                  <span>
-                    <strong>{displayName}</strong>
-                    <small className="connection-summary">
-                      <ConnectionState
-                        state={
-                          s?.enabled === false
-                            ? "disabled"
-                            : native?.runtimeStatus || "discovered"
-                        }
-                      />
-                      {s?.enabled === false
-                        ? "已停用"
-                        : stateLabel[native?.runtimeStatus || ""] || "已添加"}
-                    </small>
-                  </span>
+                  <CatalogCopy
+                    name={displayName}
+                    description={native?.serverInfo?.description}
+                    status={
+                      <>
+                        <ConnectionState
+                          state={
+                            s?.enabled === false
+                              ? "disabled"
+                              : native?.runtimeStatus || "discovered"
+                          }
+                        />
+                        {s?.enabled === false
+                          ? "已停用"
+                          : stateLabel[native?.runtimeStatus || ""] || "已添加"}
+                      </>
+                    }
+                  />
                 </button>
                 <Dropdown.Root>
                   <Dropdown.Trigger

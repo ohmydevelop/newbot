@@ -1,3 +1,5 @@
+import { CatalogFilter } from "./CatalogFilter";
+import { CatalogCopy } from "./CatalogCopy";
 import { useOperationScope } from "../use-operation-scope";
 import { CatalogRefreshButton } from "./CatalogRefreshButton";
 import MarketplaceSettings from "./MarketplaceSettings";
@@ -150,6 +152,21 @@ export default function ToolsSettings({
     }
   }
   const entries: Json[] = catalog?.entries || [];
+  const marketOptions = [
+    { name: "", label: "全部商店" },
+    ...(
+      catalog?.marketplaces ||
+      [...new Set(entries.map((p) => p.marketplace))]
+        .filter(Boolean)
+        .map((name) => ({ name, displayName: name }))
+    ).map((market: Json) => ({
+      name: market.name,
+      label:
+        market.name === "newbot-imports"
+          ? "自定义导入"
+          : market.displayName || market.name,
+    })),
+  ];
   function update(entry: Json) {
     setDetail(null);
     if (entry.update.kind === "import") {
@@ -236,25 +253,17 @@ export default function ToolsSettings({
           部分插件详情读取失败，请刷新重试。
         </p>
       )}
-      <label className="catalog-market-filter">
-        <select
-          aria-label="插件商店"
+      <div className="catalog-market-filter">
+        <CatalogFilter
+          label="插件商店"
           value={marketplace}
-          onChange={(e) => setMarketplace(e.target.value)}
-        >
-          <option value="">全部商店</option>
-          {(
-            catalog?.marketplaces ||
-            [...new Set(entries.map((p) => p.marketplace))]
-              .filter(Boolean)
-              .map((name) => ({ name, displayName: name }))
-          ).map((market: Json) => (
-            <option value={market.name} key={market.name}>
-              {market.displayName}
-            </option>
-          ))}
-        </select>
-      </label>
+          onValueChange={setMarketplace}
+          options={marketOptions.map((market) => ({
+            value: market.name,
+            label: market.label,
+          }))}
+        />
+      </div>
       <h3 className="catalog-group-title">已添加</h3>
       <div className="catalog-grid">
         {entries
@@ -269,10 +278,11 @@ export default function ToolsSettings({
                 onClick={() => void open(p.id)}
               >
                 <CatalogIcon name={p.name} kind="plugin" />
-                <span>
-                  <strong>{p.displayName}</strong>
-                  <small className="connection-summary">
-                    {p.needsRepair ? (
+                <CatalogCopy
+                  name={p.displayName}
+                  description={p.description}
+                  status={
+                    p.needsRepair ? (
                       "需要修复"
                     ) : p.enabled ? (
                       <>
@@ -280,9 +290,9 @@ export default function ToolsSettings({
                       </>
                     ) : (
                       "已停用"
-                    )}
-                  </small>
-                </span>
+                    )
+                  }
+                />
               </button>
               <Dropdown.Root>
                 <Dropdown.Trigger

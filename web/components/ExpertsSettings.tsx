@@ -1,3 +1,4 @@
+import { CatalogCopy } from "./CatalogCopy";
 import { useOperationScope } from "../use-operation-scope";
 import { CatalogRefreshButton } from "./CatalogRefreshButton";
 import { FormActions, FormSubmit } from "./FormActions";
@@ -190,19 +191,21 @@ export default function ExpertsSettings() {
               <span className="expert-icon">
                 <UsersRound size={22} aria-hidden="true" />
               </span>
-              <span>
-                <strong>{e.name}</strong>
-                <small>
-                  {e.description ||
-                    memberGroups
-                      .filter((g) => e[g.key].length)
-                      .map((g) => `${e[g.key].length} 个${g.label}`)
-                      .join(" · ")}
-                </small>
-                {!e.available && (
-                  <small className="danger-text">有扩展不可用</small>
-                )}
-              </span>
+              <CatalogCopy
+                name={e.name}
+                description={
+                  e.description ||
+                  memberGroups
+                    .filter((g) => e[g.key].length)
+                    .map((g) => `${e[g.key].length} 个${g.label}`)
+                    .join(" · ")
+                }
+                status={
+                  !e.available ? (
+                    <span className="danger-text">有扩展不可用</span>
+                  ) : undefined
+                }
+              />
             </button>
             <Dropdown.Root>
               <Dropdown.Trigger
