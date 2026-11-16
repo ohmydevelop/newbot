@@ -499,3 +499,85 @@ test(
     }
   },
 );
+
+test("pending and idle settings refresh stale MCP receivers before resume; retries preserve intent and run identity", async () => {
+  const c = await fixture();
+  try {
+    await c.add("stdio", "stdio");
+    const specs = [{ kind: "env", name: "SERVICE_TOKEN" }];
+    await c.fields("mcp", "stdio", specs, { "env:SERVICE_TOKEN": marker });
+    const run = (threadId?: string, requestId = randomUUID()) => c.post("/api/agent/run", {
+      requestId, text: "read-only settings recovery", ...(threadId ? { threadId } : {}),
+    });
+    const first = await run();
+    assert.equal(first.statusCode, 200, first.body);
+    const id = first.json().threadId;
+    const old = structuredClone(c.workspaces.saved(id));
+    const saved = await c.post("/api/agent/action", {
+      action: "session/update", threadId: id, expectedRevision: 0, approval: "full",
+    });
+    assert.equal(saved.json().pending.state, "pending");
+    c.codex.finish(id);
+    async function changeReceiver(version: number) {
+      const updated = await c.post("/api/config", {
+        action: "mcp/save", id: "stdio", create: false, transport: "stdio",
+        expectedRevision: (await c.config()).revisions!["mcp:stdio"],
+        patch: { args: [`test-fixture-v${version}.mjs`] },
+      });
+      assert.equal(updated.statusCode, 200, updated.body);
+      await c.fields("mcp", "stdio", specs, { "env:SERVICE_TOKEN": marker });
+    }
+    await changeReceiver(2);
+    await assert.rejects(c.privateFields.inject({ threadId: id, modelProvider: "fixture", config: old.snapshot.config }), /凭证接收方已变化/);
+    // Exercise the real credential boundary on the fake transport. Native
+    // protocol compatibility is separately verified with the pinned binary.
+    const original = c.codex.call.bind(c.codex);
+    let resumed = 0;
+    c.codex.call = async (method: any, params: any) => {
+      if (method === "thread/resume") {
+        const captured = c.codex.executionContext!(params.threadId);
+        const hydrated = await c.privateFields.inject({ ...params, config: { ...captured.config, ...params.config } });
+        assert.equal(hydrated.config.mcp_servers.stdio.env.SERVICE_TOKEN, marker);
+        resumed++;
+      }
+      const result: any = await original(method, params);
+      if (method === "thread/resume") result.modelProvider = params.modelProvider;
+      return result;
+    };
+    const requestId = randomUUID();
+    const next = await run(id, requestId);
+    assert.equal(next.statusCode, 200, next.body);
+    assert.equal(c.service.runtimeSettings.get(id).pending, undefined);
+    assert.equal(c.service.runtimeSettings.applied(id).approval, "full");
+    assert.deepEqual(c.workspaces.saved(id).snapshot.config.mcp_servers.stdio.args, ["test-fixture-v2.mjs"]);
+    const count = c.codex.calls.filter((c) => c.method === "turn/start").length;
+    assert.equal((await run(id, requestId)).statusCode, 200);
+    assert.equal(c.codex.calls.filter((c) => c.method === "turn/start").length, count);
+    c.codex.finish(id);
+    await changeReceiver(3);
+    const draft = c.service.inputs.get(id);
+    const idle = await c.post("/api/agent/action", {
+      action: "session/update", threadId: id, expectedRevision: 1, approval: "ask",
+    });
+    assert.equal(idle.statusCode, 200, idle.body);
+    assert.equal(idle.json().pending, undefined);
+    assert.equal(idle.json().applied.approval, "ask");
+    assert.deepEqual(c.service.inputs.get(id), draft);
+    assert.deepEqual(c.workspaces.saved(id).snapshot.config.mcp_servers.stdio.args, ["test-fixture-v3.mjs"]);
+    assert.ok(resumed >= 2);
+    const refresh = c.service.extensions!.refresh;
+    c.service.extensions!.refresh = async () => { throw Error("synthetic internal credential=" + marker); };
+    const failed = await c.post("/api/agent/action", {
+      action: "session/update", threadId: id, expectedRevision: 2, approval: "full",
+    });
+    assert.equal(failed.json().pending.state, "failed");
+    assert.equal(failed.json().applied.approval, "ask");
+    assert.ok(!failed.body.includes(marker));
+    assert.equal(c.codex.calls.filter((c) => c.method === "turn/start").length, count);
+    c.service.extensions!.refresh = refresh;
+    const retry = await run(id);
+    assert.equal(retry.statusCode, 200, retry.body);
+    assert.equal(c.service.runtimeSettings.get(id).pending, undefined);
+    assert.equal(c.service.runtimeSettings.applied(id).approval, "full");
+  } finally { await c.close(); }
+});

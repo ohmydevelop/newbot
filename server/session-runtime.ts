@@ -31,6 +31,11 @@ export function sessionRuntime(
   nativeCatalog: () => Promise<Json[]>,
   threadCwd: (id: string) => string = () => cwd,
   changed: (threadId: string, runtime: SessionRuntime) => void = () => {},
+  prepareNativeSettings: (
+    threadId: string,
+    before: RuntimeConfiguration,
+    providerRevision?: string,
+  ) => Promise<void> = async () => {},
 ) {
   const profiles = gatewayProfiles(() => codex.home);
   const readProfile = async (id: string) =>
@@ -786,12 +791,16 @@ export function sessionRuntime(
     threadId: string,
     expectedRevision: number,
     providerRevision?: string,
+    prepare?: (before: RuntimeConfiguration) => Promise<void>,
   ) {
     const next = get(threadId),
       before = applied(threadId);
     if (next.revision !== expectedRevision)
       throw new PublicError("会话配置已变化，请重新读取后发送");
-    if (!next.pending) return before;
+    if (!next.pending) {
+      await prepare?.(before);
+      return before;
+    }
     db.raw
       .prepare(
         "UPDATE session_runtime_pending SET state='applying',error=NULL WHERE thread_id=? AND revision=?",
@@ -799,6 +808,12 @@ export function sessionRuntime(
       .run(threadId, next.revision);
     announce(threadId);
     try {
+      await check(next);
+      // Resume must use the same extension/credential receiver snapshot as this
+      // operation. Restoring the previous turn first can no longer be valid
+      // after a plugin upgrade or a confirmed certificate rotation.
+      if (prepare) await prepare(before);
+      else await prepareNativeSettings(threadId, before, providerRevision);
       await nativeSettings(
         threadId,
         next,
@@ -827,7 +842,7 @@ export function sessionRuntime(
       db.audit("session/apply", threadId, next.approval);
       announce(threadId);
       return applied(threadId);
-    } catch {
+    } catch (error) {
       // Reload the last confirmed settings, including effort; do not restart the
       // shared process or approve any pending request. Next send must apply again.
       await nativeSettings(threadId, before, next, undefined, true).catch(
@@ -837,7 +852,11 @@ export function sessionRuntime(
         .prepare(
           "UPDATE session_runtime_pending SET state='failed',error=? WHERE thread_id=? AND revision=?",
         )
-        .run("设置已保存，应用失败。请重试或撤销。", threadId, next.revision);
+        .run(
+          `设置未生效：${publicErrorMessage(error)}`,
+          threadId,
+          next.revision,
+        );
       announce(threadId);
       throw new PublicError("下一轮设置应用失败，消息未发送，请重试或撤销设置");
     }

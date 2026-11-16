@@ -180,6 +180,22 @@ export function sessionExtensions(
       pending.delete(threadId);
     }
   }
+  async function refresh(
+    threadId: string,
+    settings: { provider: string; approval: any; model?: string },
+    providerRevision?: string,
+  ) {
+    const prior = workspaces.saved(threadId).snapshot.activePlugins || [];
+    const catalog = await plugins.list();
+    // Settings edits retain the last turn's usable selection. They must not
+    // consume the next-input draft or re-enable removed/disabled plugins.
+    const selected = prior
+      .map((p: { id: string }) => p.id)
+      .filter((id: string) => catalog.entries.some(
+        (p) => p.id === id && p.installed && p.enabled && p.available,
+      ));
+    await sync(threadId, await capture(selected), settings, providerRevision);
+  }
   function inputPaths(threadId: string, inputs: UserInput[]) {
     const resources: ExtensionSnapshot["resources"] =
       workspaces.saved(threadId).snapshot.resources || [];
@@ -194,5 +210,5 @@ export function sessionExtensions(
         : input,
     );
   }
-  return { capture, prepare, sync, context, inputPaths };
+  return { capture, prepare, sync, refresh, context, inputPaths };
 }

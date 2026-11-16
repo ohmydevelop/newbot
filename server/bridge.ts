@@ -150,6 +150,9 @@ export function bridge(
         value: { threadId, runtime },
         metadata: { threadId },
       }),
+    async (threadId, before, providerRevision) => {
+      await extensions?.refresh(threadId, before, providerRevision);
+    },
   );
   const experts = expertLibrary(db, library, plugins, configStore);
   const inputs = sessionInputs(db, library, plugins, (threadId, nextInput) =>
@@ -1898,22 +1901,24 @@ export function bridge(
                 effortSupport(model, data.effort) === "unsupported"
               )
                 throw new PublicError("模型不支持该推理强度");
-              await runtimeSettings.apply(
-                data.threadId,
-                session.revision,
-                p.providerConfigRevision,
-              );
               const extensionSnapshot: ExtensionSnapshot | undefined =
                 p.extensionSnapshot || (await extensions?.capture(p.plugins || []));
               await connections.requireConfigured(
                 data.plugins,
                 extensionSnapshot?.config,
               );
-              await extensions?.sync(
+              await runtimeSettings.apply(
                 data.threadId,
-                extensionSnapshot,
-                session,
+                session.revision,
                 p.providerConfigRevision,
+                async (before) => {
+                  await extensions?.sync(
+                    data.threadId,
+                    extensionSnapshot,
+                    before,
+                    p.providerConfigRevision,
+                  );
+                },
               );
               const resumed = await codex.resume(
                 data.threadId,

@@ -1,0 +1,224 @@
+{
+  "scope": "29 production snapshots inspected read-only; recovery executed only in isolated copied data with pinned native runtime; no model turns or business tools",
+  "threads": [
+    {
+      "threadId": "01a1cf1a-4c9a-7371-ac82-1bc4f7c4286b",
+      "staleCredentialReceivers": [],
+      "pending": null
+    },
+    {
+      "threadId": "01a1cf39-ee9f-7bb3-aad4-6b429dfeeb57",
+      "staleCredentialReceivers": [
+        "plugin_653b596318a40bf8c2ef1541b10f9c87"
+      ],
+      "pending": null
+    },
+    {
+      "threadId": "01a1cf3d-139a-7bb2-a35b-4b83f2b467dd",
+      "staleCredentialReceivers": [
+        "plugin_653b596318a40bf8c2ef1541b10f9c87"
+      ],
+      "pending": null
+    },
+    {
+      "threadId": "01a1cf7c-7846-79d2-a28d-4e3e52e66bc8",
+      "staleCredentialReceivers": [
+        "plugin_653b596318a40bf8c2ef1541b10f9c87"
+      ],
+      "pending": null
+    },
+    {
+      "threadId": "01a1cf8a-5fbd-7932-844f-3bb8fe337e8e",
+      "staleCredentialReceivers": [
+        "plugin_653b596318a40bf8c2ef1541b10f9c87"
+      ],
+      "pending": null
+    },
+    {
+      "threadId": "01a1d308-2fe3-7f60-a8a8-921348bd9317",
+      "staleCredentialReceivers": [],
+      "pending": null
+    },
+    {
+      "threadId": "01a1d428-6435-7150-8b18-14d9a92c8b8d",
+      "staleCredentialReceivers": [
+        "plugin_653b596318a40bf8c2ef1541b10f9c87"
+      ],
+      "pending": null
+    },
+    {
+      "threadId": "01a1d43f-1b17-7831-9cbf-c0a81e29235e",
+      "staleCredentialReceivers": [
+        "plugin_653b596318a40bf8c2ef1541b10f9c87"
+      ],
+      "pending": null
+    },
+    {
+      "threadId": "01a1d452-56e3-7030-9d4c-1ef3f1b2e284",
+      "staleCredentialReceivers": [
+        "plugin_653b596318a40bf8c2ef1541b10f9c87"
+      ],
+      "pending": "pending"
+    },
+    {
+      "threadId": "01a1d4ae-a2d1-7cd0-b86b-c96b38ca924a",
+      "staleCredentialReceivers": [],
+      "pending": null
+    },
+    {
+      "threadId": "01a1d4b1-bc9b-7cb0-8d6b-29437f97db08",
+      "staleCredentialReceivers": [],
+      "pending": null
+    },
+    {
+      "threadId": "01a1d4b5-9a4b-7092-bc94-e0278fb7c00b",
+      "staleCredentialReceivers": [
+        "plugin_653b596318a40bf8c2ef1541b10f9c87"
+      ],
+      "pending": null
+    },
+    {
+      "threadId": "01a1d4c4-3907-7cf3-8ee0-49692d8c4868",
+      "staleCredentialReceivers": [
+        "plugin_653b596318a40bf8c2ef1541b10f9c87"
+      ],
+      "pending": null
+    },
+    {
+      "threadId": "01a1d4cc-a286-70f1-9c45-6d49fdcee59a",
+      "staleCredentialReceivers": [],
+      "pending": null
+    },
+    {
+      "threadId": "01a1d4f9-dc27-72e0-8a3f-7c7d8dfd1986",
+      "staleCredentialReceivers": [],
+      "pending": null
+    },
+    {
+      "threadId": "01a1d506-209f-7f30-9937-64a6c4ce64d6",
+      "staleCredentialReceivers": [
+        "plugin_653b596318a40bf8c2ef1541b10f9c87"
+      ],
+      "pending": null
+    },
+    {
+      "threadId": "01a1d571-7b69-7590-a1c1-6aede19005d8",
+      "staleCredentialReceivers": [
+        "plugin_653b596318a40bf8c2ef1541b10f9c87"
+      ],
+      "pending": null
+    },
+    {
+      "threadId": "01a1d593-49c9-7592-93d9-b3973d54a050",
+      "staleCredentialReceivers": [],
+      "pending": null
+    },
+    {
+      "threadId": "01a1d5af-42ed-7123-92f3-ce36d93c1784",
+      "staleCredentialReceivers": [],
+      "pending": null
+    },
+    {
+      "threadId": "01a1d734-aef0-7d02-8ac8-5a1e9d52b8a6",
+      "staleCredentialReceivers": [],
+      "pending": null
+    },
+    {
+      "threadId": "01a1d74b-9fa0-7471-aa87-ff731c32bde8",
+      "staleCredentialReceivers": [],
+      "pending": null
+    },
+    {
+      "threadId": "01a1d772-156e-70f1-bc3a-5563b59870e4",
+      "staleCredentialReceivers": [],
+      "pending": null
+    },
+    {
+      "threadId": "01a1d7de-08ef-74d3-b19d-3769e84d5326",
+      "staleCredentialReceivers": [],
+      "pending": null
+    },
+    {
+      "threadId": "01a1d7f9-2e55-78e0-98eb-54307dfee278",
+      "staleCredentialReceivers": [],
+      "pending": null
+    },
+    {
+      "threadId": "01a1dd41-d39d-71c0-968b-87399da38107",
+      "staleCredentialReceivers": [],
+      "pending": null
+    },
+    {
+      "threadId": "01a1de31-4f37-7f92-8cd2-338643de79d4",
+      "staleCredentialReceivers": [],
+      "pending": null
+    },
+    {
+      "threadId": "01a1de62-0fb0-7c22-bf30-1fcb76dd4ce4",
+      "staleCredentialReceivers": [
+        "plugin_653b596318a40bf8c2ef1541b10f9c87"
+      ],
+      "pending": "failed"
+    },
+    {
+      "threadId": "01a1e287-3516-7c40-91b7-06e355f75216",
+      "staleCredentialReceivers": [],
+      "pending": null
+    },
+    {
+      "threadId": "01a1e297-3876-7360-955f-d8095ea42f04",
+      "staleCredentialReceivers": [],
+      "pending": null
+    }
+  ],
+  "recovery": [
+    {
+      "threadId": "01a1cf39-ee9f-7bb3-aad4-6b429dfeeb57",
+      "status": "resumed_with_current_snapshot"
+    },
+    {
+      "threadId": "01a1cf3d-139a-7bb2-a35b-4b83f2b467dd",
+      "status": "resumed_with_current_snapshot"
+    },
+    {
+      "threadId": "01a1cf7c-7846-79d2-a28d-4e3e52e66bc8",
+      "status": "resumed_with_current_snapshot"
+    },
+    {
+      "threadId": "01a1cf8a-5fbd-7932-844f-3bb8fe337e8e",
+      "status": "resumed_with_current_snapshot"
+    },
+    {
+      "threadId": "01a1d428-6435-7150-8b18-14d9a92c8b8d",
+      "status": "resumed_with_current_snapshot"
+    },
+    {
+      "threadId": "01a1d43f-1b17-7831-9cbf-c0a81e29235e",
+      "status": "resumed_with_current_snapshot"
+    },
+    {
+      "threadId": "01a1d452-56e3-7030-9d4c-1ef3f1b2e284",
+      "status": "resumed_with_current_snapshot"
+    },
+    {
+      "threadId": "01a1d4b5-9a4b-7092-bc94-e0278fb7c00b",
+      "status": "resumed_with_current_snapshot"
+    },
+    {
+      "threadId": "01a1d4c4-3907-7cf3-8ee0-49692d8c4868",
+      "status": "resumed_with_current_snapshot"
+    },
+    {
+      "threadId": "01a1d506-209f-7f30-9937-64a6c4ce64d6",
+      "status": "resumed_with_current_snapshot"
+    },
+    {
+      "threadId": "01a1d571-7b69-7590-a1c1-6aede19005d8",
+      "status": "resumed_with_current_snapshot"
+    },
+    {
+      "threadId": "01a1de62-0fb0-7c22-bf30-1fcb76dd4ce4",
+      "status": "resumed_with_current_snapshot"
+    }
+  ]
+}
