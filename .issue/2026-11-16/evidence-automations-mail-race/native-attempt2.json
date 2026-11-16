@@ -1,0 +1,16 @@
+{
+  "scope": "Isolated production snapshot; real model and local TLS SMTP, browser notification deep link; no external email or production changes",
+  "checks": [
+    "smtp-config-saved-through-authenticated-http",
+    "scheduled-without-browser-real-model",
+    "chat-mode-preserved",
+    "restart-preserves-task-and-result-without-replay",
+    "run-now-new-independent-conversation",
+    "paused-due-time-does-not-dispatch",
+    "scheduled-result-local-tls-mail-delivered-once",
+    "restart-retains-mail-config-and-does-not-resend",
+    "manual-result-separate-mail"
+  ],
+  "passed": false,
+  "error": "expect(locator).toHaveAttribute(expected) failed\n\nLocator: getByRole('tab', { name: '运行记录', exact: true })\nExpected: \"true\"\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"toHaveAttribute\" getByRole('tab', { name: '运行记录', exact: true }) with timeout 5000ms\n  - waiting for getByRole('tab', { name: '运行记录', exact: true })\n"
+}

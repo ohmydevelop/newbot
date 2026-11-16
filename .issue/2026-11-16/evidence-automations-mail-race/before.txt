@@ -1,0 +1,58 @@
+✖ SMTP STARTTLS: encrypted persistence, certificate, auth, delivery and independent retry (881.466064ms)
+✖ SMTP TLS: encrypted persistence, certificate, auth, delivery and independent retry (743.099765ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 0
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1820.45392
+
+✖ failing tests:
+
+test at tests/automation-mail.test.ts:22:3
+✖ SMTP STARTTLS: encrypted persistence, certificate, auth, delivery and independent retry (881.466064ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  -   'failed',
+      'sent',
+  +   'sent'
+    ]
+  
+      at TestContext.<anonymous> (/home/a/Documents/ChatGPT/newbot-systematize/tests/automation-mail.test.ts:234:14)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ 'sent', 'sent' ],
+    expected: [ 'failed', 'sent' ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests/automation-mail.test.ts:22:3
+✖ SMTP TLS: encrypted persistence, certificate, auth, delivery and independent retry (743.099765ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  -   'failed',
+      'sent',
+  +   'sent'
+    ]
+  
+      at TestContext.<anonymous> (/home/a/Documents/ChatGPT/newbot-systematize/tests/automation-mail.test.ts:234:14)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ 'sent', 'sent' ],
+    expected: [ 'failed', 'sent' ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }

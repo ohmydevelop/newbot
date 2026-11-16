@@ -1,0 +1,7 @@
+{
+  "webHash": "7d96b692a07641c226a7c333f0fd026a436edb453ba254be660fec282322a147",
+  "previousSource": "0a89fd16c9cabc7033acfba9e201171b6500ca5c",
+  "identical": true,
+  "motionEvidence": ".issue/2026-11-16/evidence-automations-live/mobile-results.json",
+  "scope": "Backend dispatch fix only; identical web assets retain previous 12-case touch/motion acceptance, plus this round browser mail controls and mobile real-result deep link."
+}

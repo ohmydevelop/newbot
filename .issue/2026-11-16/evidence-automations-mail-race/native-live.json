@@ -1,0 +1,30 @@
+{
+  "scope": "Isolated production snapshot; real model and local TLS SMTP, browser notification deep link; no external email or production changes",
+  "checks": [
+    "smtp-config-saved-through-authenticated-http",
+    "scheduled-without-browser-real-model",
+    "chat-mode-preserved",
+    "restart-preserves-task-and-result-without-replay",
+    "run-now-new-independent-conversation",
+    "paused-due-time-does-not-dispatch",
+    "scheduled-result-local-tls-mail-delivered-once",
+    "restart-retains-mail-config-and-does-not-resend",
+    "manual-result-separate-mail",
+    "email-link-survives-login-and-opens-real-chat-then-run-history-mobile"
+  ],
+  "runs": [
+    {
+      "id": "e57b1d3e-daf5-4236-8559-78f63a8ea9c9",
+      "threadId": "01a1e53b-2851-7291-8ef3-33f4e29870c7",
+      "requestId": "a1bbe205-a03a-4a37-a92c-d2115446fbec",
+      "state": "succeeded"
+    },
+    {
+      "id": "8eb25a0e-25b5-4ad6-90de-f0688cbf7fee",
+      "threadId": "01a1e53b-3428-7891-9d05-ebe24bcbbb42",
+      "requestId": "9e472e6a-7fad-4c43-b81f-fa8c1bf6c6c0",
+      "state": "succeeded"
+    }
+  ],
+  "passed": true
+}

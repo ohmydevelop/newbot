@@ -1,0 +1,19 @@
+✔ SMTP STARTTLS: encrypted persistence, certificate, auth, delivery and independent retry (992.240044ms)
+✔ SMTP TLS: encrypted persistence, certificate, auth, delivery and independent retry (848.047357ms)
+✔ timezone, DST, month-end and leap dates preserve wall-time and skip nonexistent dates (25.715166ms)
+✔ durable schedule, concurrent ticks, isolated runs, snapshot and no overlap (10.7396ms)
+✔ pause/delete cancel queued work; stale actions fail; started work is not silently cancelled (3.68861ms)
+✔ restart reconciles dispatched work without replay, retry is a new explicit request (3.587272ms)
+✔ automatic HTTP execution shares ordinary validation, modes, cancellation and authentication (151.070679ms)
+✔ capacity retries preserve request; private authorization blocks instead of granting itself (3.653345ms)
+✔ pagination retains unread counts and pinned attachments survive cleanup until task deletion (17.77981ms)
+✔ hourly windows include endpoints, respect weekdays and skip duplicate or missing DST wall times (4.345832ms)
+✔ hourly catch-up coalesces and persists icon/window through restart without replay (5.610062ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 11
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2035.491153

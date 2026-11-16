@@ -197,6 +197,7 @@ export function automationMail(
       )
       .all() as any[];
     for (const d of pending) {
+      const row = configRow();
       if (!row || row.revision !== d.config_revision) {
         db.raw
           .prepare(

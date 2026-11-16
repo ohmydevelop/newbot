@@ -51,6 +51,7 @@ for (const secure of [false, true])
     const ca = readFileSync(join(root, "cert"), "utf8"),
       messages: string[] = [];
     let refuse = false;
+    let holdMessage: (() => Promise<void>) | undefined;
     const smtp = new SMTPServer({
       secure,
       key: readFileSync(join(root, "key")),
@@ -67,7 +68,8 @@ for (const secure of [false, true])
       onData(stream, _session, cb) {
         let text = "";
         stream.on("data", (chunk) => (text += chunk.toString()));
-        stream.on("end", () => {
+        stream.on("end", async () => {
+          await holdMessage?.();
           if (refuse) {
             const e = Object.assign(new Error("rejected"), {
               responseCode: 550,
@@ -200,6 +202,59 @@ for (const secure of [false, true])
       await mail.tick();
       assert.equal(messages.length, 2);
       assert.throws(() => mail.retry(run.id), /无需重试/);
+      const batch = [];
+      for (let i = 0; i < 2; i++) {
+        const next = a.runNow(task.id, task.revision, randomUUID());
+        await a.tick();
+        await a.tick();
+        assert.equal(a.result(next.id).state, "succeeded");
+        batch.push(next);
+      }
+      let entered!: () => void;
+      let release!: () => void;
+      const sending = new Promise<void>((r) => (entered = r));
+      const resume = new Promise<void>((r) => (release = r));
+      holdMessage = async () => {
+        entered();
+        await resume;
+      };
+      const delivery = mail.tick();
+      try {
+        await Promise.race([
+          sending,
+          new Promise<never>((_, reject) => {
+            setTimeout(
+              () => reject(new Error("SMTP DATA was not reached")),
+              5000,
+            ).unref();
+          }),
+        ]);
+        saved = mail.save({
+          revision: saved.revision,
+          config: { ...config, to: "new-owner@example.test" },
+        });
+      } finally {
+        holdMessage = undefined;
+        release();
+        await delivery;
+      }
+      const states = batch.map((v) => mail.status(v.id)?.state).sort();
+      assert.deepEqual(states, ["failed", "sent"]);
+      assert.equal(messages.length, 3);
+      assert.match(messages[2], /To: owner@example.test/);
+      const withheld = batch.find(
+        (v) => mail.status(v.id)?.state === "failed",
+      )!;
+      assert.match(mail.status(withheld.id)?.error || "", /配置已变化/);
+      const submitted = calls;
+      await mail.tick();
+      assert.equal(messages.length, 3);
+      mail.retry(withheld.id);
+      await Promise.all([mail.tick(), mail.tick()]);
+      assert.equal(mail.status(withheld.id)?.state, "sent");
+      assert.equal(calls, submitted);
+      assert.equal(messages.length, 4);
+      assert.match(messages[3], /To: new-owner@example.test/);
       db.raw
         .prepare(
           "UPDATE automation_deliveries SET state='sending' WHERE run_id=?",
@@ -208,7 +263,7 @@ for (const secure of [false, true])
       mail = automationMail(db, vault);
       assert.equal(mail.status(run.id)?.state, "unknown");
       await mail.tick();
-      assert.equal(messages.length, 2);
+      assert.equal(messages.length, 4);
       vault.close();
       const restartedVault = credentialVault(db, directory, cwd),
         restarted = automationMail(db, restartedVault);

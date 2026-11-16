@@ -1,0 +1,16 @@
+{
+  "scope": "Isolated production snapshot; real model and local TLS SMTP, browser notification deep link; no external email or production changes",
+  "checks": [
+    "smtp-config-saved-through-authenticated-http",
+    "scheduled-without-browser-real-model",
+    "chat-mode-preserved",
+    "restart-preserves-task-and-result-without-replay",
+    "run-now-new-independent-conversation",
+    "paused-due-time-does-not-dispatch",
+    "scheduled-result-local-tls-mail-delivered-once",
+    "restart-retains-mail-config-and-does-not-resend",
+    "manual-result-separate-mail"
+  ],
+  "passed": false,
+  "error": "Notification must contain the result link"
+}
