@@ -1,0 +1,16 @@
+{
+  "url": "https://integration-love-angela-heated.trycloudflare.com",
+  "checks": [
+    "production-real-model-chat",
+    "production-history-and-chat-mode-reload",
+    "public-mobile-mode-menu",
+    "installed-plugins-preserved",
+    "production-real-tool-catalog-no-test-grants",
+    "production-detail-return-visible",
+    "settled-desktop-history-recapture",
+    "legacy-chat-work-mode-ui"
+  ],
+  "errors": [],
+  "realConnectorToolCount": 125,
+  "completed": true
+}

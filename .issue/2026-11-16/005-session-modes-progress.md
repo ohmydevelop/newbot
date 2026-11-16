@@ -41,3 +41,13 @@
 |A2UI 通过数据提权|维持仅返回校验数据边界；原有 A2UI 单元回归 + 后续原生调用同策略|代码边界和既有回归通过，未新增真实 A2UI 生成验收|
 |插件/技能/专家和其他工作会话|公共最终策略不接受提示提权，work 不限缩；原生跨会话及相关回归|已验证，不代表第三方工具无副作用|
 |UI 新模式破坏旧体验|共用原菜单/样式；金图、主题/焦点/保存、滚动/拖拽/动画、独立复核|浏览器通过，无真机结论|
+
+## 发布与公网最终结果
+- 产品提交 688374dd1eb79a8f74e687e42b71795b46e9d087，发布提交 b2615497de459230d37cda2baf4e2377f9515b2b（仅额外忽略 Python 生成缓存）；均已推送 codex/newbot-systematize。第一次发布门禁因 Python 导入新建 __pycache__ 而阻止执行，线上未变；补标准忽略规则后重新校验并发布，没有绕过门禁。
+- 原入口 https://integration-love-angela-heated.trycloudflare.com/ ，密码、隧道、真实模型配置未改。newbot-test.service 已更新验证过的 Web 和 Server bundle；生产目录旧源码分支保留，实际部署版本以 release-manifest.json 为准。
+- 数据库 v17→v18，10 类表原列内容逐表摘要一致，37 个历史 runtime 均 work，旧审批偏好保留。备份 /home/a/Documents/ChatGPT/newbot/.data/backups/2026-11-16-web-b2615497de45。公网 HTML、主 JS/CSS、manifest、服务端 hash 与发布凭据匹配，ready=true；证据 deployment.json/release-receipt.json。
+- 公网浏览器真实发送 1 条专用上线验收消息，deepseek-flash 回答“聊天模式上线正常”。刷新恢复历史与 chat 模式；旧验收会话显示 work；手机模式菜单、GitHub/Sentry/cloudwalker 入口、HIDS 125 工具目录、详情长滚动后返回均通过，浏览器无未处理异常。线上没有复制测试工具许可。当前数据库模式为 37 work + 1 chat；这个新增验收会话发生在发布数据一致性检查之后。
+- live-browser.json、live-*.png、live-smoke.mjs 和 capture-live-settled.mjs 保存公网证据与重现步骤。桌面截图重拍为加载完成状态，不把加载态截图当最终效果。
+- 两个含真实私密配置的临时隔离快照已删除，测试报告仅保留元数据。自动/原生/浏览器验收均在本地完成；本轮未把远程 CI 计为已通过。
+
+本轮计划的实施、关联边界验证、发布和公网核验完成；无已知待修复的本轮失败项。真机/Safari、真实 Slack OAuth、其他模型/MCP、真实 A2UI 生成的验证边界见前文，不作已验收承诺。

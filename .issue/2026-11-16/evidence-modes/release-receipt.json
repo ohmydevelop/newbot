@@ -1,0 +1,44 @@
+{
+  "source": "b2615497de459230d37cda2baf4e2377f9515b2b",
+  "webHash": "7741f383120cb06c878e263af588f0017a69b369f2a204158830f1e81d6d48c7",
+  "serverHash": "113f5a06a0d7e25e3c2ca3b2be9934205f9ed450e2950031d54411f58619311e",
+  "created": "2026-11-16T13:57:53.791Z",
+  "checks": {
+    "types": {
+      "passed": true,
+      "evidence": ".issue/2026-11-16/evidence-modes/types.log"
+    },
+    "unit": {
+      "passed": true,
+      "evidence": ".issue/2026-11-16/evidence-modes/unit-final.log"
+    },
+    "design": {
+      "passed": true,
+      "evidence": ".issue/2026-11-16/evidence-modes/design.log"
+    },
+    "browser": {
+      "passed": true,
+      "evidence": ".issue/2026-11-16/evidence-modes/browser-final.log"
+    },
+    "motion": {
+      "passed": true,
+      "evidence": ".issue/2026-11-16/evidence-modes/mobile.log"
+    },
+    "native": {
+      "passed": true,
+      "evidence": ".issue/2026-11-16/evidence-modes/native-product.json"
+    },
+    "realModel": {
+      "passed": true,
+      "evidence": ".issue/2026-11-16/evidence-modes/live-model-stage.json"
+    },
+    "theme": {
+      "passed": true,
+      "evidence": ".issue/2026-11-16/evidence-modes/theme-recapture.log"
+    },
+    "rollback": {
+      "passed": true,
+      "evidence": ".issue/2026-11-16/evidence-modes/deployment-rollback.log"
+    }
+  }
+}
