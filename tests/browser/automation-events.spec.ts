@@ -97,6 +97,30 @@ for (const width of [320, 390, 1280])
       await expect(
         page.getByRole("button", { name: "任务会话", exact: true }),
       ).toBeVisible();
+      const geometry = await page
+        .locator(".automation-detail-actions")
+        .evaluate((el) => {
+          const status = el.querySelector("span")!;
+          const buttons = [...el.querySelectorAll("button")].map((button) =>
+            button.getBoundingClientRect(),
+          );
+          return {
+            statusHeight: status.getBoundingClientRect().height,
+            heights: buttons.map((r) => r.height),
+            centers: buttons.map((r) => r.y + r.height / 2),
+          };
+        });
+      expect(geometry.statusHeight).toBeLessThan(25);
+      expect(
+        Math.max(...geometry.heights) - Math.min(...geometry.heights),
+      ).toBeLessThan(1);
+      expect(
+        Math.max(...geometry.centers) - Math.min(...geometry.centers),
+      ).toBeLessThan(1);
+      expect(
+        await page.evaluate(() => document.documentElement.scrollWidth),
+      ).toBe(width);
+      await page.screenshot({ path: info.outputPath("event-after-run.png") });
       await page.getByRole("button", { name: "任务会话", exact: true }).click();
       await expect(
         page.getByRole("textbox", { name: "消息", exact: true }),

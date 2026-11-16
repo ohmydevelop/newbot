@@ -46,3 +46,17 @@ pass：PRODUCT.md、DESIGN.md、方向契约和 AUTO-6 落盘计划存在。继�
 clear。本次 ship 只覆盖上述已评分修复，不扩展为整个产品或新增 Grok 界面的认证。
 
 disposition: ship
+
+---
+
+2026-11-17 UI6：运行后任务会话入口的补充状态复核。原公网证据为 `evidence-automation-sessions-events/public-event-connection-before-ui6.png`，其中 390px 的“已启用”确实被挤成两行；此前 ship 没有覆盖此运行后状态。本轮限定此项修复及其直接布局回归。
+
+## verdict
+
+1. resolved：逐张查看 `.impeccable/review/automation-events/{320,390,1280}-{light,dark}-event-after-run.png` 六张有效截图。320/390px 浅深色中“已启用”均保持一行，任务会话、编辑的图标按钮与保留文字的立即运行按钮同高同轴，没有重叠、裁切或横向越界；320px 最紧状态仍可容纳整组动作。1280px 保留任务会话/编辑文字和原桌面布局。未见本批修复带来的视觉回归。可访问名称、44px精确尺寸及实际打开会话行为以父任务报告的六个浏览器用例为依据，静态截图只独立证明可见布局。
+
+## remaining
+
+clear。本次 ship 仅覆盖 UI6 运行后操作行的已评分修复，不扩大原审查范围。
+
+disposition: ship

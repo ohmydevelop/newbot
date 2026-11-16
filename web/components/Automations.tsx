@@ -438,21 +438,25 @@ export default function Automations({
                     {task.threadId && (
                       <button
                         type="button"
-                        className="secondary"
+                        className="secondary automation-detail-secondary"
+                        aria-label="任务会话"
+                        title="任务会话"
                         onClick={() => onOpenChat(task.threadId!)}
                       >
                         <MessageSquare size={16} />
-                        任务会话
+                        <span>任务会话</span>
                       </button>
                     )}
                     <button
                       type="button"
-                      className="secondary"
+                      className="secondary automation-detail-secondary"
+                      aria-label="编辑"
+                      title="编辑"
                       disabled={busy}
                       onClick={() => setEditor({ task })}
                     >
                       <Pencil size={16} />
-                      编辑
+                      <span>编辑</span>
                     </button>
                     <button
                       type="button"

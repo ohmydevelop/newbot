@@ -229,11 +229,26 @@
 }
 .automation-detail-actions > span {
   flex: 1;
+  white-space: nowrap;
 }
 .automation-detail-actions button {
   display: inline-flex;
   align-items: center;
   gap: 6px;
+}
+@media (max-width: 480px) {
+  .automation-detail-actions button {
+    height: 44px;
+    min-height: 44px;
+  }
+  .automation-detail-actions .automation-detail-secondary {
+    width: 44px;
+    padding: 0;
+    justify-content: center;
+  }
+  .automation-detail-secondary > span {
+    display: none;
+  }
 }
 .automation-trigger-summary {
   display: flex;

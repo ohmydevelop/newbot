@@ -137,6 +137,16 @@ try {
     await page.evaluate(() => document.documentElement.scrollWidth),
     390,
   );
+  const actions = await page
+    .locator(".automation-detail-actions")
+    .evaluate((el) => ({
+      statusHeight: el.querySelector("span").getBoundingClientRect().height,
+      heights: [...el.querySelectorAll("button")].map(
+        (button) => button.getBoundingClientRect().height,
+      ),
+    }));
+  assert(actions.statusHeight < 25);
+  assert(Math.max(...actions.heights) - Math.min(...actions.heights) < 1);
   await page.screenshot({ path: join(out, "public-event-connection-390.png") });
   await page.keyboard.press("Escape");
   await page.getByRole("button", { name: "任务会话", exact: true }).click();

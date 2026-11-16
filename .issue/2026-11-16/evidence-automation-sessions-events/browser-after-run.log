@@ -1,0 +1,15 @@
+[WebServer] (node:1060355) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 6 tests using 1 worker
+
+(node:1060394) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/browser/automation-events.spec.ts:4:5 › 事件触发配置与持续会话入口 320 light (6.8s)
+  ✓  2 tests/browser/automation-events.spec.ts:4:5 › 事件触发配置与持续会话入口 320 dark (6.7s)
+  ✓  3 tests/browser/automation-events.spec.ts:4:5 › 事件触发配置与持续会话入口 390 light (6.7s)
+  ✓  4 tests/browser/automation-events.spec.ts:4:5 › 事件触发配置与持续会话入口 390 dark (6.7s)
+  ✓  5 tests/browser/automation-events.spec.ts:4:5 › 事件触发配置与持续会话入口 1280 light (6.6s)
+  ✓  6 tests/browser/automation-events.spec.ts:4:5 › 事件触发配置与持续会话入口 1280 dark (6.5s)
+
+  6 passed (41.2s)
