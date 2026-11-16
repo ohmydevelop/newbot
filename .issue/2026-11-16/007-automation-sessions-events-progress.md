@@ -62,3 +62,5 @@
 
 ## UI6 公网运行后状态补验
 公网首次运行后增加“任务会话”按钮使状态文字换行，已采用窄屏44px图标次操作、文字主操作与单行状态；桌面原文字不变。6/6运行后浏览器场景通过（320/390/1280×明暗），增加状态高度、按钮高度/中心、页面宽度与实际会话打开检查。首次修正发现主操作的全局手机44px最小高度，与局部40px冲突，已统一44px，未放宽验收。新增截图位于.impeccable/review/automation-events/*-event-after-run.png。仅Web补发，服务端保持eefc244。
+
+UI6独立复核resolved/ship；Web 81136e31e31a8cabc5da96e7d1889cdd09008042已上线，后端eefc244保持不变、DBv20保持不变。再次公网验收通过，包含状态单行/按钮同高检查与真实模型两轮同会话，测试任务删除/会话归档再次查询确认。最终receipt-ui6.json、deployment-ui6.json、public-events.json与public-cleanup.json对应这次补发。

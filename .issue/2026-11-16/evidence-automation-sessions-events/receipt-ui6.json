@@ -1,0 +1,36 @@
+{
+  "source": "81136e31e31a8cabc5da96e7d1889cdd09008042",
+  "webHash": "efea0deb0de3f1d4cebc7f0ae6917cde2fdeb5de3458c7dbd02f6e4b76ba3f67",
+  "serverHash": "96c92b2080099ecb8cbbe51998a2b36c18f8507c65be6c8571917aa0f868e6eb",
+  "checks": {
+    "types": {
+      "passed": true,
+      "evidence": ".issue/2026-11-16/evidence-automation-sessions-events/build-ui6.log"
+    },
+    "unit": {
+      "passed": true,
+      "evidence": ".issue/2026-11-16/evidence-automation-sessions-events/unit-all.log"
+    },
+    "design": {
+      "passed": true,
+      "evidence": ".issue/2026-11-16/evidence-automation-sessions-events/design-ui6.log"
+    },
+    "browser": {
+      "passed": true,
+      "evidence": ".issue/2026-11-16/evidence-automation-sessions-events/browser-after-run.log"
+    },
+    "motion": {
+      "passed": true,
+      "evidence": ".issue/2026-11-16/evidence-automation-sessions-events/mobile.log"
+    },
+    "releaseIntegrity": {
+      "passed": true,
+      "evidence": ".issue/2026-11-16/evidence-automation-sessions-events/release-integrity.log"
+    },
+    "browserFull": {
+      "passed": true,
+      "evidence": ".issue/2026-11-16/evidence-automation-sessions-events/browser.log"
+    }
+  },
+  "created": "2026-11-16T23:18:58.431Z"
+}
