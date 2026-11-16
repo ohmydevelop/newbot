@@ -18,5 +18,8 @@
       "如何验证“不读文件”约束已生效？"
     ]
   },
-  "configurationWrites": false
+  "configurationWrites": false,
+  "finalSource": "9b29ddab3f1b4ca31e16749a44b70ce2d4dccad0",
+  "finalReloadRestoredChat": true,
+  "sharedLoadingLabel": "正在读取…"
 }

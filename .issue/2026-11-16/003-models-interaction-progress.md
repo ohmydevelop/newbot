@@ -34,3 +34,18 @@
 - 新建UI13验收聊天，发送即显示待提交消息，真实模型回答“模型与聊天连接正常”，流程默认折叠，追问随本轮验收上下文生成。live-models.png、live-chat.png、live-browser.json。此聊天为部署后有意新增，与部署期间数据不变是不同检查时点。
 - 在线慢加载暴露一个遗漏措辞“正在加载扩展…”；模型与扩展共用容器，改为中性的“正在读取…”，并把旧模型标签/内部模块加载措辞纳入ESLint禁止项。3项目录/模型针对性复验通过（terminology-final.txt）；lint旧标签与旧加载提示的两次故障注入均被拒绝，中性提示通过（terminology-lint-injection.json）。不涉及布局或接口变化。
 - 本次GitHub运行43833715342两个job均0步骤，明确仍为付款/额度限制；ci-annotations.json保存当次证据。本地验证没有冒称为云端CI成功。
+
+## 完成状态与边界
+最终产品源码 **9b29ddab3f1b4ca31e16749a44b70ce2d4dccad0** 已推送并发布；公网仍为 https://integration-love-angela-heated.trycloudflare.com/ ，登录凭证未改，隧道未重启。最终备份2026-11-16-web-9b29ddab3f1b；最终发布再次确认七表、后端、主资产和release manifest，deployment.json与verification-receipt.json对应最终源码/构建。
+
+最终线上重载恢复了UI13会话及真实回复，模型分类、25个目录项、统一“正在读取…”状态可见；live-models.png已刷新为最终版本。浏览器临时视口已复原，验收标签已关闭。首次重载的短等待超时，随后页面正常完成载入；不把网络等待误判为会话丢失。
+
+本轮授权范围完成：模型交互归一；左右拖拽所有者/收尾、目录迟到恢复修复；聊天内外滚动/表单滚动/动画/浅深色响应式验证；自动回归、证据、源码推送、备份与上线。已确认限制：GitHub计费导致云端CI没有执行；操作系统级真实失焦与真机触摸未验（浏览器协议取消、受控blur故障注入已验）；本轮未重新验证第三方OAuth或CloudWalker上游工具兼容性，没有修改其业务路径。真实模型聊天与合成配置测试分别记录，没有混称。
+
+可追踪关系：
+- 模型双标题/独立交互 → 旧ProviderSettings自带容器 → Settings/模型/专家/连接器 → 共用Toolbar、CatalogCopy、CatalogDetail与菜单 → 28场景汇总、截图及线上配置。
+- 拖拽提前结束 → 结束事件缺pointerId归属检查 → 左右PanelResizer → finishPointer统一门槛 → iframe、失捕获、取消、卸载与持久化测试/录屏。
+- 迟到焦点和滚动恢复 → 无用户接管与查询一致性约束 → 四设置目录 → 用户事件取消恢复、query/filter核对 → catalog-race-before与通过回归。
+- 临时加载名称偏差 → 内部Extensions命名泄漏 → 模型和扩展共享加载入口 → 中性状态+ESLint禁止旧措辞 → lint故障注入、3项复验与线上状态。
+
+证据入口：acceptance.json、browser-final.txt、shared-editor-scroll-final.txt、terminology-final.txt、unit.txt、drag-frames.json及recordings/。正文与原始反馈保持不变，未覆盖UI12历史结论。

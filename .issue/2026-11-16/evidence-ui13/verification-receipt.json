@@ -1,7 +1,7 @@
 {
-  "source": "b2043e66d96a082b0f8cfd24e0e49dfe2508f413",
-  "webHash": "883fad2edd00fc3cbddfbb778f1872e8cb64d908efbab57f2894c190ef4499bc",
-  "created": "2026-11-16T08:44:37.382Z",
+  "source": "9b29ddab3f1b4ca31e16749a44b70ce2d4dccad0",
+  "webHash": "03cd8dd2df882769f611a50a5a233c71353286ab72127accd8a26c448cf1f232",
+  "created": "2026-11-16T08:49:46.740Z",
   "checks": {
     "types": {
       "passed": true,
@@ -31,5 +31,9 @@
     ".issue/2026-11-16/evidence-ui13/reduced-navigation-frames.json",
     ".issue/2026-11-16/evidence-ui13/reduced-detail-frames.json",
     ".issue/2026-11-16/evidence-ui13/recordings"
+  ],
+  "supplementalChecks": [
+    ".issue/2026-11-16/evidence-ui13/terminology-final.txt",
+    ".issue/2026-11-16/evidence-ui13/terminology-lint-injection.json"
   ]
 }
