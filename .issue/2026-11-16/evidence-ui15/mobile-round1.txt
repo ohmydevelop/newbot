@@ -1,0 +1,139 @@
+[WebServer] (node:4099369) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 7 tests using 1 worker
+
+(node:4099392) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 tests/mobile/gestures.spec.ts:19:30 › 真实触摸事件：专家内外滚动交接 320 (9.3s)
+(node:4099622) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  2 tests/mobile/gestures.spec.ts:19:30 › 真实触摸事件：专家内外滚动交接 390 (9.2s)
+(node:4099853) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  3 tests/mobile/gestures.spec.ts:23:35 › 手机抽屉动画及关闭后触摸恢复 false (1.0s)
+  ✓  4 tests/mobile/gestures.spec.ts:23:35 › 手机抽屉动画及关闭后触摸恢复 true (1.0s)
+  ✓  5 tests/mobile/gestures.spec.ts:29:1 › 触摸分类横滑不改变分类，竖向目录仍可滚动 (3.4s)
+  ✓  6 tests/mobile/gestures.spec.ts:34:1 › 平板触控调整宽度、取消释放与下一次操作 (1.8s)
+  ✘  7 tests/mobile/gestures.spec.ts:37:1 › 触摸工作流程边缘交接聊天且默认折叠 (11.9s)
+
+
+  1) tests/mobile/gestures.spec.ts:19:30 › 真实触摸事件：专家内外滚动交接 320 ─────────────────────────────────────
+
+    Error: expect(received).toBeLessThan(expected)
+
+    Expected: < 221
+    Received:   231
+
+    Call Log:
+    - Timeout 5000ms exceeded while waiting on the predicate
+
+      14 |  await inner.evaluate(e=>e.scrollTop=(e.scrollHeight-e.clientHeight)/2);let p=await center(inner,page);let before=await outer.evaluate(e=>e.scrollTop);let mid=await inner.evaluate(e=>e.scrollTop);
+      15 |  await swipe(cdp,p.x,p.y+60,0,-120);await expect.poll(()=>inner.evaluate(e=>e.scrollTop)).toBeGreaterThan(mid+30);expect(await outer.evaluate(e=>e.scrollTop)).toBeCloseTo(before,0);
+    > 16 |  await page.waitForTimeout(600);await inner.evaluate(e=>e.scrollTop=0);before=await outer.evaluate(e=>e.scrollTop);p=await center(inner,page);await swipe(cdp,p.x,p.y-60,0,120);await expect.poll(()=>outer.evaluate(e=>e.scrollTop)).toBeLessThan(before-10);
+         |                                                                                                                                                                                                                                       ^
+      17 |  await page.waitForTimeout(600);await inner.scrollIntoViewIfNeeded();await inner.evaluate(e=>e.scrollTop=e.scrollHeight);await outer.evaluate(e=>e.scrollTop=Math.max(0,e.scrollHeight-e.clientHeight-120));before=await outer.evaluate(e=>e.scrollTop);p=await center(inner,page);await swipe(cdp,p.x,p.y+60,0,-120);await expect.poll(()=>outer.evaluate(e=>e.scrollTop)).toBeGreaterThan(before+10);
+      18 | }
+      19 | for(const width of [320,390])test(`真实触摸事件：专家内外滚动交接 ${width}`,async({page,context},info)=>{
+        at chain (/home/a/Documents/ChatGPT/newbot-systematize/tests/mobile/gestures.spec.ts:16:231)
+        at /home/a/Documents/ChatGPT/newbot-systematize/tests/mobile/gestures.spec.ts:20:181
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/gestures-真实触摸事件：专家内外滚动交接-320/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/gestures-真实触摸事件：专家内外滚动交接-320/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/gestures-真实触摸事件：专家内外滚动交接-320/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/gestures-真实触摸事件：专家内外滚动交接-320/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/gestures-真实触摸事件：专家内外滚动交接-320/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) tests/mobile/gestures.spec.ts:19:30 › 真实触摸事件：专家内外滚动交接 390 ─────────────────────────────────────
+
+    Error: expect(received).toBeLessThan(expected)
+
+    Expected: < 221
+    Received:   231
+
+    Call Log:
+    - Timeout 5000ms exceeded while waiting on the predicate
+
+      14 |  await inner.evaluate(e=>e.scrollTop=(e.scrollHeight-e.clientHeight)/2);let p=await center(inner,page);let before=await outer.evaluate(e=>e.scrollTop);let mid=await inner.evaluate(e=>e.scrollTop);
+      15 |  await swipe(cdp,p.x,p.y+60,0,-120);await expect.poll(()=>inner.evaluate(e=>e.scrollTop)).toBeGreaterThan(mid+30);expect(await outer.evaluate(e=>e.scrollTop)).toBeCloseTo(before,0);
+    > 16 |  await page.waitForTimeout(600);await inner.evaluate(e=>e.scrollTop=0);before=await outer.evaluate(e=>e.scrollTop);p=await center(inner,page);await swipe(cdp,p.x,p.y-60,0,120);await expect.poll(()=>outer.evaluate(e=>e.scrollTop)).toBeLessThan(before-10);
+         |                                                                                                                                                                                                                                       ^
+      17 |  await page.waitForTimeout(600);await inner.scrollIntoViewIfNeeded();await inner.evaluate(e=>e.scrollTop=e.scrollHeight);await outer.evaluate(e=>e.scrollTop=Math.max(0,e.scrollHeight-e.clientHeight-120));before=await outer.evaluate(e=>e.scrollTop);p=await center(inner,page);await swipe(cdp,p.x,p.y+60,0,-120);await expect.poll(()=>outer.evaluate(e=>e.scrollTop)).toBeGreaterThan(before+10);
+      18 | }
+      19 | for(const width of [320,390])test(`真实触摸事件：专家内外滚动交接 ${width}`,async({page,context},info)=>{
+        at chain (/home/a/Documents/ChatGPT/newbot-systematize/tests/mobile/gestures.spec.ts:16:231)
+        at /home/a/Documents/ChatGPT/newbot-systematize/tests/mobile/gestures.spec.ts:20:181
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/gestures-真实触摸事件：专家内外滚动交接-390/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/gestures-真实触摸事件：专家内外滚动交接-390/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/gestures-真实触摸事件：专家内外滚动交接-390/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/gestures-真实触摸事件：专家内外滚动交接-390/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/gestures-真实触摸事件：专家内外滚动交接-390/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3) tests/mobile/gestures.spec.ts:37:1 › 触摸工作流程边缘交接聊天且默认折叠 ────────────────────────────────────────
+
+    Error: expect(received).toBeLessThan(expected)
+
+    Expected: < 1175
+    Received:   1185
+
+    Call Log:
+    - Timeout 5000ms exceeded while waiting on the predicate
+
+      14 |  await inner.evaluate(e=>e.scrollTop=(e.scrollHeight-e.clientHeight)/2);let p=await center(inner,page);let before=await outer.evaluate(e=>e.scrollTop);let mid=await inner.evaluate(e=>e.scrollTop);
+      15 |  await swipe(cdp,p.x,p.y+60,0,-120);await expect.poll(()=>inner.evaluate(e=>e.scrollTop)).toBeGreaterThan(mid+30);expect(await outer.evaluate(e=>e.scrollTop)).toBeCloseTo(before,0);
+    > 16 |  await page.waitForTimeout(600);await inner.evaluate(e=>e.scrollTop=0);before=await outer.evaluate(e=>e.scrollTop);p=await center(inner,page);await swipe(cdp,p.x,p.y-60,0,120);await expect.poll(()=>outer.evaluate(e=>e.scrollTop)).toBeLessThan(before-10);
+         |                                                                                                                                                                                                                                       ^
+      17 |  await page.waitForTimeout(600);await inner.scrollIntoViewIfNeeded();await inner.evaluate(e=>e.scrollTop=e.scrollHeight);await outer.evaluate(e=>e.scrollTop=Math.max(0,e.scrollHeight-e.clientHeight-120));before=await outer.evaluate(e=>e.scrollTop);p=await center(inner,page);await swipe(cdp,p.x,p.y+60,0,-120);await expect.poll(()=>outer.evaluate(e=>e.scrollTop)).toBeGreaterThan(before+10);
+      18 | }
+      19 | for(const width of [320,390])test(`真实触摸事件：专家内外滚动交接 ${width}`,async({page,context},info)=>{
+        at chain (/home/a/Documents/ChatGPT/newbot-systematize/tests/mobile/gestures.spec.ts:16:231)
+        at /home/a/Documents/ChatGPT/newbot-systematize/tests/mobile/gestures.spec.ts:41:213
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/gestures-触摸工作流程边缘交接聊天且默认折叠/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/gestures-触摸工作流程边缘交接聊天且默认折叠/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/gestures-触摸工作流程边缘交接聊天且默认折叠/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/gestures-触摸工作流程边缘交接聊天且默认折叠/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/gestures-触摸工作流程边缘交接聊天且默认折叠/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3 failed
+    tests/mobile/gestures.spec.ts:19:30 › 真实触摸事件：专家内外滚动交接 320 ──────────────────────────────────────
+    tests/mobile/gestures.spec.ts:19:30 › 真实触摸事件：专家内外滚动交接 390 ──────────────────────────────────────
+    tests/mobile/gestures.spec.ts:37:1 › 触摸工作流程边缘交接聊天且默认折叠 ─────────────────────────────────────────
+  4 passed (39.8s)

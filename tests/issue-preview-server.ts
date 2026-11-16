@@ -98,6 +98,22 @@ class IssueCodex extends SkillsCodex {
       if (m.method === "turn/started")
         m.params.turn.startedAt = Date.now() / 1000;
     });
+    if (process.env.ISSUE_PLUGIN_SKILL) {
+      const path = join(directory, "plugin-guide", "SKILL.md");
+      mkdirSync(join(directory, "plugin-guide"), { recursive: true });
+      writeFileSync(
+        path,
+        "# 插件操作说明\n\n此合成技能属于测试插件，仅供阅读验收。\n",
+      );
+      this.skills.push({
+        name: "plugin-guide",
+        description: "测试插件使用说明",
+        path,
+        scope: "user",
+        enabled: true,
+        pluginId: "test-plugin@local",
+      });
+    }
     this.skills[0].description = "超长摘要。".repeat(100);
   }
   override async restart() {

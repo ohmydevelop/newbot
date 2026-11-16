@@ -1,0 +1,35 @@
+BEWARE: your OS is not officially supported by Playwright; downloading fallback build for ubuntu24.04-x64.
+Downloading WebKit 27.2 (playwright webkit v2388)[2m from https://cdn.playwright.dev/dbazure/download/playwright/builds/webkit/2388/webkit-ubuntu-24.04.zip[22m
+|                                                                                |   0% of 101.2 MiB
+|■■■■■■■■                                                                        |  10% of 101.2 MiB
+|■■■■■■■■■■■■■■■■                                                                |  20% of 101.2 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 101.2 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 101.2 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 101.2 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 101.2 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 101.2 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 101.2 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 101.2 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 101.2 MiB
+WebKit 27.2 (playwright webkit v2388) downloaded to /home/a/.cache/ms-playwright/webkit-2388
+BEWARE: your OS is not officially supported by Playwright; downloading fallback build for ubuntu24.04-x64.
+Playwright Host validation warning: 
+╔══════════════════════════════════════════════════════╗
+║ Host system is missing dependencies to run browsers. ║
+║ Please install them with the following command:      ║
+║                                                      ║
+║     sudo npx playwright install-deps                 ║
+║                                                      ║
+║ Alternatively, use apt:                              ║
+║     sudo apt-get install libicu74\                   ║
+║         libxml2                                      ║
+║                                                      ║
+║ <3 Playwright Team                                   ║
+╚══════════════════════════════════════════════════════╝
+    at validateDependenciesLinux (/home/a/Documents/ChatGPT/newbot-systematize/node_modules/playwright-core/lib/coreBundle.js:33958:9)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async Registry._validateHostRequirements (/home/a/Documents/ChatGPT/newbot-systematize/node_modules/playwright-core/lib/coreBundle.js:35219:18)
+    at async Registry._validateHostRequirementsForExecutableIfNeeded (/home/a/Documents/ChatGPT/newbot-systematize/node_modules/playwright-core/lib/coreBundle.js:35353:11)
+    at async Registry.validateHostRequirementsForExecutablesIfNeeded (/home/a/Documents/ChatGPT/newbot-systematize/node_modules/playwright-core/lib/coreBundle.js:35334:13)
+    at async installBrowsers (/home/a/Documents/ChatGPT/newbot-systematize/node_modules/playwright-core/lib/coreBundle.js:72905:5)
+    at async _Command.<anonymous> (/home/a/Documents/ChatGPT/newbot-systematize/node_modules/playwright-core/lib/coreBundle.js:76603:7)

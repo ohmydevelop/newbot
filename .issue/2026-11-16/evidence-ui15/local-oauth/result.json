@@ -1,0 +1,29 @@
+{
+  "scope": "Local authorization server and protected MCP, real isolated Codex; no third-party login",
+  "checks": {
+    "deniedRecoverable": true,
+    "authorizationAndDiscovery": true,
+    "nativeToolCall": true,
+    "usedCodeRejected": true,
+    "expiredTokenRefresh": true,
+    "restartDiscovery": true,
+    "restartToolCall": true,
+    "reload": true
+  },
+  "counts": {
+    "unauthorized": 19,
+    "resourceMetadata": 13,
+    "authorizationMetadata": 13,
+    "registration": 2,
+    "authorize": 2,
+    "denied": 1,
+    "approved": 1,
+    "pkceVerified": 1,
+    "initialized": 4,
+    "toolsListed": 4,
+    "toolCalled": 3,
+    "rejectedCode": 1,
+    "refreshed": 1
+  },
+  "passed": true
+}

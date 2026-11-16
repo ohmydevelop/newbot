@@ -1,0 +1,44 @@
+{
+  "source": "46c96722cab46fd8765a6b4cc2ed6ddbcc13ebb7",
+  "configKeys": [
+    "revision",
+    "revisions",
+    "writable",
+    "nativeWritable",
+    "providerStorage",
+    "providerSourceStatus",
+    "providerSourceConfigured",
+    "reason",
+    "defaults",
+    "sources",
+    "providers",
+    "mcp"
+  ],
+  "plugins": [
+    {
+      "id": "sentry@openai-api-curated",
+      "displayName": "Sentry",
+      "installed": true,
+      "available": true
+    },
+    {
+      "id": "slack@openai-api-curated",
+      "displayName": "Slack",
+      "installed": true,
+      "available": true
+    },
+    {
+      "id": "github@openai-api-curated",
+      "displayName": "GitHub",
+      "installed": true,
+      "available": true
+    },
+    {
+      "id": "cloudwalker@newbot-imports",
+      "displayName": "cloudwalker",
+      "installed": true,
+      "available": true
+    }
+  ],
+  "inventoryCorrection": "Initial connectors field read an incorrect key and was removed. Actual configuration.mcp was inspected: newbot_test (stdio), hids (HTTP); not an empty inventory."
+}

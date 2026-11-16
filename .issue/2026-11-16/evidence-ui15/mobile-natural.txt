@@ -1,0 +1,12 @@
+[WebServer] (node:4113879) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 3 tests using 1 worker
+
+(node:4113895) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/mobile/gestures.spec.ts:27:30 › 真实触摸事件：专家内外滚动交接 320 (13.0s)
+  ✓  2 tests/mobile/gestures.spec.ts:27:30 › 真实触摸事件：专家内外滚动交接 390 (13.0s)
+  ✓  3 tests/mobile/gestures.spec.ts:45:1 › 触摸工作流程边缘交接聊天且默认折叠 (16.4s)
+
+  3 passed (43.6s)

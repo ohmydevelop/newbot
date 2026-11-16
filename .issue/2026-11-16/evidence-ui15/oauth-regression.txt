@@ -1,0 +1,27 @@
+✔ MCP certificate accepts public PEM/DER, rejects keys and malformed bundles, and survives restart scoped to one connector (59.64184ms)
+✔ OAuth callback follows the sole public HTTPS origin after tunnel replacement and preserves explicit setup (0.236922ms)
+✔ official-style OAuth MCP declaration retains its client ID, supports configured override and rejects undeclared secrets (5.64538ms)
+✔ native cache resolution uses installed files rather than display version and never creates an empty source (2.535017ms)
+✔ OAuth completion reaches global UI without a chat and excludes raw provider diagnostics; late attempts do not match (6.136937ms)
+✔ MCP edits use native CAS leaves and preserve private commands, arguments, environment and headers (96.119231ms)
+✔ MCP create supports stdio/HTTP, strict schemas, safe endpoint syntax and no transport conversion (44.210488ms)
+✔ MCP environment references require explicit authorization and can be removed without clearing private values (38.160681ms)
+✔ non-user and overridden MCP definitions are read-only and cannot be edited or deleted (35.288256ms)
+✔ MCP enable, disable and delete change only their versioned configuration (35.528935ms)
+✔ MCP public inventory and connection diagnostics strip raw errors, schemas and metadata (41.958748ms)
+✔ testing disabled MCP does not reload or start discovery, and stale reload tokens fail closed (35.246335ms)
+✔ MCP management blocks tasks, approvals and pending OAuth, releasing guards after each error (36.00799ms)
+✔ MCP reload failure retains saved state, invalidates old App records and recovers through native reconnect (36.903902ms)
+✔ lost MCP write responses reload authoritative configuration without a duplicate write (35.657827ms)
+✔ MCP maintenance rejects new work during a pending mutation, then releases it (35.323259ms)
+✔ MCP HTTP routes require login and allowed Origin and return only the redacted effective configuration (73.807771ms)
+✔ paginated MCP catalogs keep App permissions discoverable and reload invalidates the old App capability (33.298218ms)
+✔ OAuth completion bypasses chat ownership filtering and publishes only safe global feedback (31.101109ms)
+ℹ tests 19
+ℹ suites 0
+ℹ pass 19
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1024.751797

@@ -1,0 +1,14 @@
+
+> newbot@0.2.0 test:mobile-contracts
+> playwright test --config=playwright.mobile.config.ts -g 插件长工具
+
+[WebServer] (node:4124772) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 1 test using 1 worker
+
+(node:4124803) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/mobile/related-scroll.spec.ts:63:1 › 插件长工具目录触摸主滚动与返回 (4.1s)
+
+  1 passed (5.3s)
