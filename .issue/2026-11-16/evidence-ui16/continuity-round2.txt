@@ -1,0 +1,156 @@
+[WebServer] (node:4138984) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 9 tests using 1 worker
+
+(node:4139024) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/browser/catalog-continuity.spec.ts:17:3 › 侧栏同坐标连续折叠和导航顺序 390 (2.4s)
+  ✓  2 tests/browser/catalog-continuity.spec.ts:17:3 › 侧栏同坐标连续折叠和导航顺序 1280 (378ms)
+  ✘  3 tests/browser/catalog-continuity.spec.ts:52:3 › 已有会话的两个输入框入口就地搜索选择 390 (7.9s)
+(node:4139283) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  4 tests/browser/catalog-continuity.spec.ts:52:3 › 已有会话的两个输入框入口就地搜索选择 1280 (7.5s)
+(node:4139478) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  5 tests/browser/catalog-continuity.spec.ts:94:3 › 目录整体中心对齐、说明省略与图标添加 390 (4.9s)
+  ✓  6 tests/browser/catalog-continuity.spec.ts:94:3 › 目录整体中心对齐、说明省略与图标添加 1280 (4.6s)
+  ✘  7 tests/browser/catalog-continuity.spec.ts:155:1 › 删除后插件与独立连接器连续填满同一网格 (7.4s)
+(node:4139794) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  8 tests/browser/catalog-continuity.spec.ts:187:3 › 长连接器详情底部仍可返回与管理 390 (2.7s)
+  ✓  9 tests/browser/catalog-continuity.spec.ts:187:3 › 长连接器详情底部仍可返回与管理 1280 (2.4s)
+
+
+  1) tests/browser/catalog-continuity.spec.ts:52:3 › 已有会话的两个输入框入口就地搜索选择 390 ────────────────────────
+
+    Error: expect(locator).toHaveAttribute(expected) failed
+
+    Locator:  locator('.composer-selection-panel').getByRole('option').first()
+    Expected: "false"
+    Received: "true"
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveAttribute" locator('.composer-selection-panel').getByRole('option').first() with timeout 5000ms
+      - waiting for locator('.composer-selection-panel').getByRole('option').first()
+        14 × locator resolved to <button id="_r_0_-0" type="button" role="option" data-active="true" aria-selected="true">…</button>
+           - unexpected value "true"
+
+
+      85 |       });
+      86 |       await option.click();
+    > 87 |       await expect(option).toHaveAttribute("aria-selected", "false");
+         |                            ^
+      88 |       await page.keyboard.press("Escape");
+      89 |       await expect(popup).toHaveCount(0);
+      90 |       await expect(trigger).toBeFocused();
+        at /home/a/Documents/ChatGPT/newbot-systematize/tests/browser/catalog-continuity.spec.ts:87:28
+
+    attachment #2: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/catalog-continuity-已有会话的两个输入框入口就地搜索选择-390/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/catalog-continuity-已有会话的两个输入框入口就地搜索选择-390/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/catalog-continuity-已有会话的两个输入框入口就地搜索选择-390/error-context.md
+
+    attachment #5: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/catalog-continuity-已有会话的两个输入框入口就地搜索选择-390/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/catalog-continuity-已有会话的两个输入框入口就地搜索选择-390/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) tests/browser/catalog-continuity.spec.ts:52:3 › 已有会话的两个输入框入口就地搜索选择 1280 ───────────────────────
+
+    Error: expect(locator).toHaveAttribute(expected) failed
+
+    Locator:  locator('.composer-selection-panel').getByRole('option').first()
+    Expected: "false"
+    Received: "true"
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveAttribute" locator('.composer-selection-panel').getByRole('option').first() with timeout 5000ms
+      - waiting for locator('.composer-selection-panel').getByRole('option').first()
+        14 × locator resolved to <button id="_r_0_-0" type="button" role="option" data-active="true" aria-selected="true">…</button>
+           - unexpected value "true"
+
+
+      85 |       });
+      86 |       await option.click();
+    > 87 |       await expect(option).toHaveAttribute("aria-selected", "false");
+         |                            ^
+      88 |       await page.keyboard.press("Escape");
+      89 |       await expect(popup).toHaveCount(0);
+      90 |       await expect(trigger).toBeFocused();
+        at /home/a/Documents/ChatGPT/newbot-systematize/tests/browser/catalog-continuity.spec.ts:87:28
+
+    attachment #2: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/catalog-continuity-已有会话的两个输入框入口就地搜索选择-1280/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/catalog-continuity-已有会话的两个输入框入口就地搜索选择-1280/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/catalog-continuity-已有会话的两个输入框入口就地搜索选择-1280/error-context.md
+
+    attachment #5: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/catalog-continuity-已有会话的两个输入框入口就地搜索选择-1280/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/catalog-continuity-已有会话的两个输入框入口就地搜索选择-1280/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3) tests/browser/catalog-continuity.spec.ts:155:1 › 删除后插件与独立连接器连续填满同一网格 ──────────────────────────
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('button', { name: '添加 测试插件', exact: true })
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByRole('button', { name: '添加 测试插件', exact: true }) with timeout 5000ms
+      - waiting for getByRole('button', { name: '添加 测试插件', exact: true })
+
+
+      165 |   await dialog.getByRole("button", { name: "卸载", exact: true }).click();
+      166 |   const add = page.getByRole("button", { name: "添加 测试插件", exact: true });
+    > 167 |   await expect(add).toBeVisible();
+          |                     ^
+      168 |   await expect(add).toHaveText("");
+      169 |   await add.click();
+      170 |   await expect(
+        at /home/a/Documents/ChatGPT/newbot-systematize/tests/browser/catalog-continuity.spec.ts:167:21
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/catalog-continuity-删除后插件与独立连接器连续填满同一网格/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/catalog-continuity-删除后插件与独立连接器连续填满同一网格/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/catalog-continuity-删除后插件与独立连接器连续填满同一网格/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/catalog-continuity-删除后插件与独立连接器连续填满同一网格/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/catalog-continuity-删除后插件与独立连接器连续填满同一网格/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3 failed
+    tests/browser/catalog-continuity.spec.ts:52:3 › 已有会话的两个输入框入口就地搜索选择 390 ─────────────────────────
+    tests/browser/catalog-continuity.spec.ts:52:3 › 已有会话的两个输入框入口就地搜索选择 1280 ────────────────────────
+    tests/browser/catalog-continuity.spec.ts:155:1 › 删除后插件与独立连接器连续填满同一网格 ───────────────────────────
+  6 passed (42.4s)

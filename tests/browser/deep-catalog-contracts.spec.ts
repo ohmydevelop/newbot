@@ -27,7 +27,7 @@ async function settings(page: Page, section: string) {
   await page.getByRole("searchbox", { name: `搜索${section}` }).waitFor();
 }
 
-test("目录主行状态和更多操作对齐，与有无说明无关", async ({ page }) => {
+test("目录状态和更多操作对齐，与有无说明无关", async ({ page }) => {
   await settings(page, "连接器");
   await page
     .getByRole("button", { name: "查看 测试插件", exact: true })

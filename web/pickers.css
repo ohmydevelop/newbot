@@ -15,7 +15,8 @@
   outline: none;
 }
 .composer-selection-panel {
-  height: min(420px, var(--radix-popover-content-available-height));
+  max-height: min(420px, var(--radix-popover-content-available-height));
+  height: auto;
 }
 .picker-search {
   display: flex;
@@ -125,14 +126,7 @@
   min-height: 36px;
   color: var(--text);
 }
-.composer-picker-anchor {
-  position: absolute;
-  top: 0;
-  left: 16px;
-  width: calc(100% - 32px);
-  height: 1px;
-  pointer-events: none;
-}
+
 .runtime-panel {
   width: min(380px, calc(100vw - 24px));
   height: auto;

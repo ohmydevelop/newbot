@@ -98,20 +98,20 @@ export function ConversationNavigation({
           <button
             type="button"
             className="rail-icon"
-            aria-label="搜索聊天"
-            title="搜索聊天"
-            onClick={() => onSearch()}
-          >
-            <Search size={18} aria-hidden="true" />
-          </button>
-          <button
-            type="button"
-            className="rail-icon"
             aria-label="新建聊天"
             title="新建聊天"
             onClick={onNewChat}
           >
             <SquarePen size={18} aria-hidden="true" />
+          </button>
+          <button
+            type="button"
+            className="rail-icon"
+            aria-label="搜索聊天"
+            title="搜索聊天"
+            onClick={() => onSearch()}
+          >
+            <Search size={18} aria-hidden="true" />
           </button>
           <span className="rail-spacer" />
           <button
@@ -135,14 +135,6 @@ export function ConversationNavigation({
       >
         <div className="sidebar-top">
           <button
-            className="brand-button"
-            onClick={onNewChat}
-            aria-label="newbot 首页"
-          >
-            <Mark size={26} />
-            <span>newbot</span>
-          </button>
-          <button
             className="icon-button sidebar-toggle"
             title="收起侧栏"
             aria-label="收起侧栏"
@@ -153,15 +145,15 @@ export function ConversationNavigation({
           </button>
         </div>
         <nav className="main-nav" aria-label="主导航">
-          <button onClick={onSearch}>
-            <Search size={18} aria-hidden="true" />
-            <span>搜索聊天</span>
-            <kbd>{appleKeys ? "⌘ K" : "Ctrl K"}</kbd>
-          </button>
           <button onClick={onNewChat}>
             <SquarePen size={18} />
             <span>新建聊天</span>
             <kbd>{appleKeys ? "⇧ ⌘ O" : "Ctrl ⇧ O"}</kbd>
+          </button>
+          <button onClick={onSearch}>
+            <Search size={18} aria-hidden="true" />
+            <span>搜索聊天</span>
+            <kbd>{appleKeys ? "⌘ K" : "Ctrl K"}</kbd>
           </button>
         </nav>
         <div className="history">

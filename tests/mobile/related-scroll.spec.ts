@@ -81,6 +81,13 @@ test("插件长工具目录触摸主滚动与返回", async ({ page, context }, 
   await expect
     .poll(() => outer.evaluate((e) => e.scrollTop))
     .toBeLessThan(before - 100);
+  await expect
+    .poll(async () => {
+      const position = await outer.evaluate((e) => e.scrollTop);
+      await page.waitForTimeout(120);
+      return Math.abs((await outer.evaluate((e) => e.scrollTop)) - position);
+    })
+    .toBeLessThan(1);
   await info.attach("plugin-tools-touch", {
     body: await page.screenshot(),
     contentType: "image/png",

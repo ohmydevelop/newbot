@@ -99,7 +99,7 @@
   --catalog-row-control: 32px;
   --catalog-row-pad: 6px;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   min-width: 0;
   min-height: 68px;
   padding: 4px 0;
@@ -119,7 +119,7 @@
   flex: 1;
   padding: var(--catalog-row-pad) 8px;
   gap: 12px;
-  align-items: flex-start;
+  align-items: center;
 }
 .plugin-center-list .catalog-entry-main strong {
   font-size: 14px;
@@ -162,7 +162,7 @@
   min-width: 28px;
   height: var(--catalog-row-control);
   min-height: var(--catalog-row-control);
-  margin: var(--catalog-row-pad) 4px 0 0;
+  margin: 0 4px 0 0;
 }
 .catalog-more svg {
   width: 16px;
@@ -632,11 +632,29 @@
 }
 
 /* The same quiet form grammar continues below the directory. */
+.catalog-step-navigation {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  background: var(--bg);
+  padding-block: 8px;
+  margin-bottom: 20px;
+}
 .catalog-step-heading {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin: 0 0 28px;
+  margin: 0;
+}
+.catalog-heading-feedback:empty {
+  display: none;
+}
+.catalog-heading-feedback :is(p, .provider-diagnostic) {
+  margin: 8px 0 0;
+  font-size: 13px;
+}
+.catalog-heading-feedback a {
+  overflow-wrap: anywhere;
 }
 .catalog-step-heading h2 {
   flex: 1;
@@ -914,8 +932,8 @@
   padding: 0;
 }
 @media (max-width: 700px) {
-  .catalog-step-heading {
-    margin-bottom: 24px;
+  .catalog-step-navigation {
+    margin-bottom: 16px;
   }
   .catalog-step :where(.catalog-form, .connection-editor-body) {
     gap: 20px;
@@ -945,10 +963,6 @@
   border-radius: 0;
 }
 @media (max-width: 700px) {
-  .catalog-step-heading {
-    padding-right: 40px;
-    margin-bottom: 24px;
-  }
   .catalog-step .skill-instructions {
     min-height: clamp(220px, 42dvh, 440px);
   }
@@ -961,31 +975,38 @@
   opacity: 1;
 }
 
-/* Shared two-line catalog identity, including connector and expert states. */
-.catalog-title-line {
-  min-height: var(--catalog-row-control, 32px);
+.catalog-copy {
   display: flex;
   align-items: center;
-  gap: 10px;
-  min-width: 0;
-}
-.catalog-title-line > strong {
-  flex: 1;
-  min-width: 0;
-}
-.catalog-title-line > .catalog-status {
-  flex: 0 0 auto;
-}
-.plugin-center-list .compact-skill-entry .catalog-title-line .catalog-status {
-  padding: 0;
-}
-.catalog-copy {
+  gap: 12px;
   overflow: hidden;
 }
-.catalog-copy > small {
+.catalog-identity {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+.catalog-identity > small {
+  display: block;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+}
+.catalog-copy > .catalog-status {
+  flex: none;
+}
+.plugin-center-list .compact-skill-entry .catalog-copy .catalog-status {
+  padding: 0;
+}
+.catalog-mcp-group:not([hidden]),
+.catalog-mcp-group > .mcp-settings {
+  display: contents;
+}
+.plugin-center-list .catalog-entry > .catalog-create {
+  flex: none;
+  width: var(--catalog-row-control);
+  height: var(--catalog-row-control);
+  margin-right: 4px;
 }
 .market-filter-trigger {
   display: inline-flex;
@@ -1038,9 +1059,6 @@
   }
 }
 
-.plugin-center-list .catalog-entry-main > :is(.catalog-icon, .expert-icon) {
-  margin-top: calc((var(--catalog-row-control) - 32px) / 2);
-}
 .catalog-heading-actions {
   display: flex;
   align-items: center;
@@ -1067,13 +1085,12 @@
 @media (max-width: 700px) {
   .catalog-step-heading:has(.catalog-heading-actions) {
     display: grid;
-    grid-template-columns: 44px minmax(0, 1fr);
+    grid-template-columns: 44px minmax(0, 1fr) auto;
     gap: 8px;
   }
   .catalog-step-heading .catalog-heading-actions {
-    grid-column: 1 / -1;
     justify-content: flex-end;
-    width: 100%;
+    width: auto;
   }
   .catalog-heading-actions :is(.catalog-use-button, .catalog-more) {
     min-height: 44px;
@@ -1105,12 +1122,6 @@
   }
 }
 
-.plugin-center-list .catalog-install {
-  flex: none;
-  height: var(--catalog-row-control);
-  margin: var(--catalog-row-pad) 4px 0 0;
-  padding: 4px 10px;
-}
 .catalog-step .field-label > .market-filter-trigger {
   border: 1px solid var(--line);
   border-radius: 10px;

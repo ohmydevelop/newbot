@@ -157,21 +157,6 @@ button.primary.destructive:hover:not(:disabled) {
   padding: 0 2px;
   margin-bottom: 20px;
 }
-.brand-button {
-  min-width: 0;
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  padding: 6px 3px;
-  font-size: 15px;
-  font-weight: 600;
-  letter-spacing: -0.45px;
-  white-space: nowrap;
-}
-.brand-button span {
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
 .sidebar-top > .icon-button {
   flex-shrink: 0;
 }
@@ -1720,10 +1705,6 @@ button.primary.destructive:hover:not(:disabled) {
   .sidebar {
     width: 230px;
   }
-  .brand-button {
-    font-size: 13px;
-    gap: 2px;
-  }
   .runtime-status {
     font-size: 10px;
   }
@@ -1760,10 +1741,6 @@ button.primary.destructive:hover:not(:disabled) {
     z-index: 100;
     background: #0006;
     cursor: default;
-  }
-  .sidebar .brand-button {
-    font-size: 15px;
-    gap: 7px;
   }
   .main-nav kbd {
     display: none;

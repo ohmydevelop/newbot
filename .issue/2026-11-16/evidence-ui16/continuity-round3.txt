@@ -1,0 +1,18 @@
+[WebServer] (node:4141450) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 9 tests using 1 worker
+
+(node:4141529) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/browser/catalog-continuity.spec.ts:17:3 › 侧栏同坐标连续折叠和导航顺序 390 (2.7s)
+  ✓  2 tests/browser/catalog-continuity.spec.ts:17:3 › 侧栏同坐标连续折叠和导航顺序 1280 (886ms)
+  ✓  3 tests/browser/catalog-continuity.spec.ts:52:3 › 已有会话的两个输入框入口就地搜索选择 390 (3.9s)
+  ✓  4 tests/browser/catalog-continuity.spec.ts:52:3 › 已有会话的两个输入框入口就地搜索选择 1280 (3.2s)
+  ✓  5 tests/browser/catalog-continuity.spec.ts:108:3 › 目录整体中心对齐、说明省略与图标添加 390 (4.7s)
+  ✓  6 tests/browser/catalog-continuity.spec.ts:108:3 › 目录整体中心对齐、说明省略与图标添加 1280 (4.6s)
+  ✓  7 tests/browser/catalog-continuity.spec.ts:179:1 › 删除后插件与独立连接器连续填满同一网格 (2.4s)
+  ✓  8 tests/browser/catalog-continuity.spec.ts:211:3 › 长连接器详情底部仍可返回与管理 390 (2.6s)
+  ✓  9 tests/browser/catalog-continuity.spec.ts:211:3 › 长连接器详情底部仍可返回与管理 1280 (2.4s)
+
+  9 passed (28.7s)

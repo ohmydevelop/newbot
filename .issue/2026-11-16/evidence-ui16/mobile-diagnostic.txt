@@ -1,0 +1,56 @@
+
+> newbot@0.2.0 test:mobile-contracts
+> playwright test --config=playwright.mobile.config.ts --grep 插件长工具目录
+
+[WebServer] (node:4158679) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 1 test using 1 worker
+
+(node:4158733) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 tests/mobile/related-scroll.spec.ts:63:1 › 插件长工具目录触摸主滚动与返回 (8.9s)
+
+
+  1) tests/mobile/related-scroll.spec.ts:63:1 › 插件长工具目录触摸主滚动与返回 ────────────────────────────────────
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('heading', { name: '测试插件', exact: true })
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByRole('heading', { name: '测试插件', exact: true }) with timeout 5000ms
+      - waiting for getByRole('heading', { name: '测试插件', exact: true })
+
+
+       98 |   await expect(
+       99 |     page.getByRole("heading", { name: "测试插件", exact: true }),
+    > 100 |   ).toBeVisible();
+          |     ^
+      101 | });
+      102 |
+        at /home/a/Documents/ChatGPT/newbot-systematize/tests/mobile/related-scroll.spec.ts:100:5
+
+    attachment #3: screenshot (image/png) ──────────────────────────────────────────────────────────
+    .data/mobile-verification/artifacts/related-scroll-插件长工具目录触摸主滚动与返回/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #4: video (video/webm) ──────────────────────────────────────────────────────────────
+    .data/mobile-verification/artifacts/related-scroll-插件长工具目录触摸主滚动与返回/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: .data/mobile-verification/artifacts/related-scroll-插件长工具目录触摸主滚动与返回/error-context.md
+
+    attachment #6: trace (application/zip) ─────────────────────────────────────────────────────────
+    .data/mobile-verification/artifacts/related-scroll-插件长工具目录触摸主滚动与返回/trace.zip
+    Usage:
+
+        npx playwright show-trace .data/mobile-verification/artifacts/related-scroll-插件长工具目录触摸主滚动与返回/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    tests/mobile/related-scroll.spec.ts:63:1 › 插件长工具目录触摸主滚动与返回 ─────────────────────────────────────

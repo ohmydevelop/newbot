@@ -29,7 +29,10 @@ export function CatalogToolbarSlot({ children }: { children: ReactNode }) {
 }
 /** A detail is a step within the catalog, not another dialog. Standalone callers retain their modal. */
 export function CatalogDetail(
-  props: ComponentProps<typeof Modal> & { returnFocus?: HTMLElement | null },
+  props: ComponentProps<typeof Modal> & {
+    returnFocus?: HTMLElement | null;
+    feedback?: ReactNode;
+  },
 ) {
   const navigation = useContext(CatalogNavigation);
   useEffect(() => {
@@ -79,8 +82,13 @@ export function CatalogDetail(
     };
   }, [navigation?.details, props.open]);
   if (!navigation?.details) {
-    const { returnFocus: _, ...modalProps } = props;
-    return <Modal {...modalProps} />;
+    const { returnFocus: _, feedback, children, ...modalProps } = props;
+    return (
+      <Modal {...modalProps}>
+        {feedback}
+        {children}
+      </Modal>
+    );
   }
   if (!props.open) return null;
   return createPortal(
@@ -88,22 +96,27 @@ export function CatalogDetail(
       className={`catalog-step ${props.className || ""}`}
       aria-label={props.title}
     >
-      <header className="catalog-step-heading">
-        <button
-          type="button"
-          className="catalog-back"
-          data-modal-back
-          disabled={props.dismissible === false}
-          onClick={() => props.onOpenChange(false)}
-        >
-          <ArrowLeft size={18} aria-hidden="true" />
-          <span className="sr-only">返回</span>
-        </button>
-        <h2 ref={heading} tabIndex={-1}>
-          {props.title}
-        </h2>
-        {props.headerActions && (
-          <div className="catalog-heading-actions">{props.headerActions}</div>
+      <header className="catalog-step-navigation">
+        <div className="catalog-step-heading">
+          <button
+            type="button"
+            className="catalog-back"
+            data-modal-back
+            disabled={props.dismissible === false}
+            onClick={() => props.onOpenChange(false)}
+          >
+            <ArrowLeft size={18} aria-hidden="true" />
+            <span className="sr-only">返回</span>
+          </button>
+          <h2 ref={heading} tabIndex={-1}>
+            {props.title}
+          </h2>
+          {props.headerActions && (
+            <div className="catalog-heading-actions">{props.headerActions}</div>
+          )}
+        </div>
+        {props.feedback && (
+          <div className="catalog-heading-feedback">{props.feedback}</div>
         )}
       </header>
       {props.description && <p className="muted">{props.description}</p>}

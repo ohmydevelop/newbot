@@ -240,6 +240,114 @@ export default function McpSettings({
           const s = summary(id),
             native = settings?.mcp.find((m: { name: string }) => m.name === id),
             displayName = s?.name || id;
+          const menu = (
+            <Dropdown.Root>
+              <Dropdown.Trigger
+                className="icon-button catalog-more"
+                aria-label={`${displayName} 更多操作`}
+                title="更多操作"
+              >
+                <MoreHorizontal size={20} />
+              </Dropdown.Trigger>
+              <Dropdown.Portal>
+                <ActionMenuContent
+                  className="dropdown"
+                  sideOffset={5}
+                  align="end"
+                >
+                  {detailId !== id && (
+                    <ActionMenuItem
+                      icon={Info}
+                      onSelect={() => setDetailId(id)}
+                    >
+                      查看
+                    </ActionMenuItem>
+                  )}
+                  <ActionMenuItem
+                    icon={RefreshCw}
+                    disabled={
+                      !!busy ||
+                      recovery.blocked ||
+                      !!draft ||
+                      !!deleting ||
+                      !(config?.nativeWritable ?? config?.writable)
+                    }
+                    onSelect={() =>
+                      void action("reload", async () => {
+                        await request("mcp/reload", {
+                          expectedRevision:
+                            config?.revisions?.[`mcp:${id}`] ||
+                            config?.revision,
+                        });
+                        await refresh();
+                      })
+                    }
+                  >
+                    重连
+                  </ActionMenuItem>
+                  {s?.editable && (
+                    <ActionMenuItem
+                      icon={Pencil}
+                      disabled={
+                        !!busy ||
+                        recovery.blocked ||
+                        !!draft ||
+                        !!deleting ||
+                        !(config?.nativeWritable ?? config?.writable)
+                      }
+                      onSelect={() => edit(id)}
+                    >
+                      编辑
+                    </ActionMenuItem>
+                  )}
+                  {s?.editable && (
+                    <ActionMenuItem
+                      icon={s.enabled ? PowerOff : Power}
+                      disabled={
+                        !!busy ||
+                        recovery.blocked ||
+                        !!draft ||
+                        !!deleting ||
+                        !(config?.nativeWritable ?? config?.writable)
+                      }
+                      onSelect={() =>
+                        void action(`toggle:${id}`, () =>
+                          changed("mcp/enabled", {
+                            id,
+                            expectedRevision:
+                              config?.revisions?.[`mcp:${id}`] ||
+                              config?.revision,
+                            enabled: !s.enabled,
+                          }),
+                        )
+                      }
+                    >
+                      {s.enabled ? "停用" : "启用"}
+                    </ActionMenuItem>
+                  )}
+                  {s?.editable && (
+                    <ActionMenuItem
+                      icon={Trash2}
+                      destructive
+                      separated
+                      disabled={
+                        !!busy ||
+                        recovery.blocked ||
+                        !!draft ||
+                        !!deleting ||
+                        !(config?.nativeWritable ?? config?.writable)
+                      }
+                      onSelect={() =>
+                        setDeleting({ id, revision: config!.revision })
+                      }
+                    >
+                      删除
+                    </ActionMenuItem>
+                  )}
+                </ActionMenuContent>
+              </Dropdown.Portal>
+            </Dropdown.Root>
+          );
           return (
             <div className="connection-entry" key={id}>
               <div className="catalog-entry">
@@ -269,86 +377,7 @@ export default function McpSettings({
                     }
                   />
                 </button>
-                <Dropdown.Root>
-                  <Dropdown.Trigger
-                    className="icon-button catalog-more"
-                    aria-label={`${displayName} 更多操作`}
-                    title="更多操作"
-                  >
-                    <MoreHorizontal size={20} />
-                  </Dropdown.Trigger>
-                  <Dropdown.Portal>
-                    <ActionMenuContent
-                      className="dropdown"
-                      sideOffset={5}
-                      align="end"
-                    >
-                      <ActionMenuItem
-                        icon={Info}
-                        onSelect={() => setDetailId(id)}
-                      >
-                        查看
-                      </ActionMenuItem>
-                      <ActionMenuItem
-                        icon={RefreshCw}
-                        disabled={!!busy}
-                        onSelect={() =>
-                          void action("reload", async () => {
-                            await request("mcp/reload", {
-                              expectedRevision:
-                                config?.revisions?.[`mcp:${id}`] ||
-                                config?.revision,
-                            });
-                            await refresh();
-                          })
-                        }
-                      >
-                        重连
-                      </ActionMenuItem>
-                      {s?.editable && (
-                        <ActionMenuItem
-                          icon={Pencil}
-                          disabled={!!busy}
-                          onSelect={() => edit(id)}
-                        >
-                          编辑
-                        </ActionMenuItem>
-                      )}
-                      {s?.editable && (
-                        <ActionMenuItem
-                          icon={s.enabled ? PowerOff : Power}
-                          disabled={!!busy}
-                          onSelect={() =>
-                            void action(`toggle:${id}`, () =>
-                              changed("mcp/enabled", {
-                                id,
-                                expectedRevision:
-                                  config?.revisions?.[`mcp:${id}`] ||
-                                  config?.revision,
-                                enabled: !s.enabled,
-                              }),
-                            )
-                          }
-                        >
-                          {s.enabled ? "停用" : "启用"}
-                        </ActionMenuItem>
-                      )}
-                      {s?.editable && (
-                        <ActionMenuItem
-                          icon={Trash2}
-                          destructive
-                          separated
-                          disabled={!!busy}
-                          onSelect={() =>
-                            setDeleting({ id, revision: config!.revision })
-                          }
-                        >
-                          删除
-                        </ActionMenuItem>
-                      )}
-                    </ActionMenuContent>
-                  </Dropdown.Portal>
-                </Dropdown.Root>
+                {menu}
               </div>
               {detailId === id && (
                 <CatalogDetail
@@ -359,15 +388,112 @@ export default function McpSettings({
                   }}
                   wide
                   className="connection-detail-modal"
+                  feedback={
+                    <>
+                      {!draft && !deleting && feedback}
+                      {notice && (
+                        <p className="configuration-notice" role="status">
+                          {notice}
+                        </p>
+                      )}
+                      {diagnostic?.id === id && (
+                        <div
+                          className={
+                            diagnostic.state === "failed"
+                              ? "provider-diagnostic inline-error"
+                              : "provider-diagnostic"
+                          }
+                          role="status"
+                        >
+                          {diagnostic.note}
+                          {diagnostic.state === "discovered" &&
+                            ` 共 ${diagnostic.toolCount} 个工具。`}
+                        </div>
+                      )}
+                      {oauth?.id === id && (
+                        <p className="provider-diagnostic">
+                          <a
+                            href={oauth.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            打开 {id} 授权页面
+                          </a>
+                        </p>
+                      )}
+                    </>
+                  }
+                  headerActions={
+                    <>
+                      {s && (
+                        <button
+                          className="icon-button"
+                          disabled={
+                            !!busy ||
+                            recovery.blocked ||
+                            !!draft ||
+                            !!deleting ||
+                            !config
+                          }
+                          aria-label={`测试 ${s?.name || id}`}
+                          title="测试连接"
+                          onClick={() =>
+                            void action(`test:${id}`, async () => {
+                              const result = await request<{
+                                note: string;
+                                toolCount: number;
+                                state: string;
+                              }>("mcp/test", {
+                                id,
+                                expectedRevision:
+                                  config?.revisions?.[`mcp:${id}`] ||
+                                  config?.revision,
+                              });
+                              setDiagnostic({ id, ...result });
+                              await loadDiscovery("mcp");
+                            })
+                          }
+                        >
+                          <RefreshCw size={18} aria-hidden="true" />
+                        </button>
+                      )}
+                      {native?.authStatus === "notLoggedIn" && (
+                        <button
+                          className="icon-button"
+                          disabled={
+                            !!busy || recovery.blocked || !!draft || !!deleting
+                          }
+                          aria-label={`授权 ${displayName}`}
+                          title="授权"
+                          onClick={() =>
+                            void action(`oauth:${id}`, async () => {
+                              const result = await request<{
+                                authorizationUrl: string;
+                                loginId?: string;
+                              }>("mcp/oauth", { name: id });
+                              const url = new URL(result.authorizationUrl);
+                              if (!["http:", "https:"].includes(url.protocol))
+                                throw new Error(
+                                  "授权地址不可用，请检查服务端 OAuth 配置",
+                                );
+                              setOauth({
+                                id,
+                                url: url.href,
+                                loginId: result.loginId,
+                              });
+                            })
+                          }
+                        >
+                          <KeyRound size={18} aria-hidden="true" />
+                        </button>
+                      )}
+
+                      {menu}
+                    </>
+                  }
                   dismissible={!busy}
                 >
                   <div className="connection-detail-body">
-                    {!draft && !deleting && feedback}
-                    {notice && (
-                      <p className="configuration-notice" role="status">
-                        {notice}
-                      </p>
-                    )}
                     <div className="connection-meta">
                       <ConnectionState
                         state={
@@ -425,160 +551,6 @@ export default function McpSettings({
                     {s?.privateFields?.valid === false && (
                       <p className="inline-error">
                         接收方已变化，请重新设置凭证。
-                      </p>
-                    )}
-                    <div className="provider-actions">
-                      {s?.editable && (
-                        <>
-                          <button
-                            className="secondary"
-                            disabled={
-                              !!busy ||
-                              recovery.blocked ||
-                              !(config?.nativeWritable ?? config?.writable)
-                            }
-                            aria-label={`编辑 ${displayName}`}
-                            title="编辑"
-                            onClick={() => edit(id)}
-                          >
-                            <Pencil size={16} aria-hidden="true" /> 编辑
-                          </button>
-                          <button
-                            className="secondary"
-                            disabled={
-                              !!busy ||
-                              recovery.blocked ||
-                              !!draft ||
-                              !!deleting ||
-                              !(config?.nativeWritable ?? config?.writable)
-                            }
-                            aria-label={`${s.enabled ? "停用" : "启用"} ${displayName}`}
-                            title={s.enabled ? "停用" : "启用"}
-                            onClick={() =>
-                              void action(`toggle:${id}`, () =>
-                                changed("mcp/enabled", {
-                                  id,
-                                  expectedRevision:
-                                    config?.revisions?.[`mcp:${id}`] ||
-                                    config?.revision,
-                                  enabled: !s.enabled,
-                                }),
-                              )
-                            }
-                          >
-                            {s.enabled ? (
-                              <PowerOff size={16} aria-hidden="true" />
-                            ) : (
-                              <Power size={16} aria-hidden="true" />
-                            )}
-                            {s.enabled ? "停用" : "启用"}
-                          </button>
-                          <button
-                            className="secondary"
-                            disabled={
-                              !!busy ||
-                              !!draft ||
-                              !(config?.nativeWritable ?? config?.writable)
-                            }
-                            data-variant="destructive"
-                            aria-label={`删除 ${displayName}`}
-                            title="删除"
-                            onClick={() => {
-                              setDeleting({ id, revision: config!.revision });
-                              recovery.clear();
-                              setNotice("");
-                            }}
-                          >
-                            <Trash2 size={16} aria-hidden="true" /> 删除
-                          </button>
-                        </>
-                      )}
-                      {s && (
-                        <button
-                          className="secondary"
-                          disabled={
-                            !!busy ||
-                            recovery.blocked ||
-                            !!draft ||
-                            !!deleting ||
-                            !config
-                          }
-                          aria-label={`测试 ${s?.name || id}`}
-                          title="测试连接"
-                          onClick={() =>
-                            void action(`test:${id}`, async () => {
-                              const result = await request<{
-                                note: string;
-                                toolCount: number;
-                                state: string;
-                              }>("mcp/test", {
-                                id,
-                                expectedRevision:
-                                  config?.revisions?.[`mcp:${id}`] ||
-                                  config?.revision,
-                              });
-                              setDiagnostic({ id, ...result });
-                              await loadDiscovery("mcp");
-                            })
-                          }
-                        >
-                          <RefreshCw size={18} aria-hidden="true" /> 测试连接
-                        </button>
-                      )}
-                      {native?.authStatus === "notLoggedIn" && (
-                        <button
-                          className="secondary"
-                          disabled={
-                            !!busy || recovery.blocked || !!draft || !!deleting
-                          }
-                          aria-label={`授权 ${displayName}`}
-                          title="授权"
-                          onClick={() =>
-                            void action(`oauth:${id}`, async () => {
-                              const result = await request<{
-                                authorizationUrl: string;
-                                loginId?: string;
-                              }>("mcp/oauth", { name: id });
-                              const url = new URL(result.authorizationUrl);
-                              if (!["http:", "https:"].includes(url.protocol))
-                                throw new Error(
-                                  "授权地址不可用，请检查服务端 OAuth 配置",
-                                );
-                              setOauth({
-                                id,
-                                url: url.href,
-                                loginId: result.loginId,
-                              });
-                            })
-                          }
-                        >
-                          <KeyRound size={16} aria-hidden="true" /> 授权
-                        </button>
-                      )}
-                    </div>
-                    {diagnostic?.id === id && (
-                      <div
-                        className={
-                          diagnostic.state === "failed"
-                            ? "provider-diagnostic inline-error"
-                            : "provider-diagnostic"
-                        }
-                        role="status"
-                      >
-                        {diagnostic.note}
-                        {diagnostic.state === "discovered" &&
-                          ` 共 ${diagnostic.toolCount} 个工具。`}
-                      </div>
-                    )}
-                    {oauth?.id === id && (
-                      <p className="provider-diagnostic">
-                        <a
-                          href={oauth.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          打开 {id} 授权页面
-                        </a>
                       </p>
                     )}
                   </div>

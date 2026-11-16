@@ -181,6 +181,59 @@ export default function ToolsSettings({
     `${p.displayName} ${p.name} ${p.description || ""}`
       .toLowerCase()
       .includes(query.toLowerCase());
+  const pluginMenu = (p: Json, showDetails = true) => (
+    <Dropdown.Root>
+      <Dropdown.Trigger
+        className="icon-button catalog-more"
+        aria-label={`${p.displayName} 更多操作`}
+        title="更多操作"
+        disabled={busy}
+      >
+        <MoreHorizontal size={16} />
+      </Dropdown.Trigger>
+      <Dropdown.Portal>
+        <ActionMenuContent className="dropdown" align="end" sideOffset={5}>
+          {showDetails && (
+            <ActionMenuItem icon={Settings2} onSelect={() => void open(p.id)}>
+              详情
+            </ActionMenuItem>
+          )}
+          {p.needsRepair && (
+            <ActionMenuItem
+              icon={RefreshCw}
+              disabled={!p.available || !p.installable}
+              onSelect={() => void action("plugin/install", p)}
+            >
+              重新安装
+            </ActionMenuItem>
+          )}
+          <ActionMenuItem
+            icon={p.enabled ? PowerOff : Power}
+            disabled={!p.available}
+            onSelect={() => void action("plugin/enabled", p, !p.enabled)}
+          >
+            {p.enabled ? "停用" : "启用"}
+          </ActionMenuItem>
+          <ActionMenuItem
+            icon={ArrowUpCircle}
+            disabled={!p.available || !p.update?.available}
+            title={p.update?.available ? "升级插件" : p.update?.reason}
+            onSelect={() => update(p)}
+          >
+            升级
+          </ActionMenuItem>
+          <ActionMenuItem
+            icon={Trash2}
+            destructive
+            separated
+            onSelect={() => setRemove(p)}
+          >
+            卸载
+          </ActionMenuItem>
+        </ActionMenuContent>
+      </Dropdown.Portal>
+    </Dropdown.Root>
+  );
   return (
     <section className="tools-catalog" data-mode="all" aria-label="连接器管理">
       {importing && (
@@ -296,71 +349,12 @@ export default function ToolsSettings({
                   }
                 />
               </button>
-              <Dropdown.Root>
-                <Dropdown.Trigger
-                  className="icon-button catalog-more"
-                  aria-label={`${p.displayName} 更多操作`}
-                  title="更多操作"
-                  disabled={busy}
-                >
-                  <MoreHorizontal size={16} />
-                </Dropdown.Trigger>
-                <Dropdown.Portal>
-                  <ActionMenuContent
-                    className="dropdown"
-                    align="end"
-                    sideOffset={5}
-                  >
-                    <ActionMenuItem
-                      icon={Settings2}
-                      onSelect={() => void open(p.id)}
-                    >
-                      详情
-                    </ActionMenuItem>
-                    {p.needsRepair && (
-                      <ActionMenuItem
-                        icon={RefreshCw}
-                        disabled={!p.available || !p.installable}
-                        onSelect={() => void action("plugin/install", p)}
-                      >
-                        重新安装
-                      </ActionMenuItem>
-                    )}
-                    <ActionMenuItem
-                      icon={p.enabled ? PowerOff : Power}
-                      disabled={!p.available}
-                      onSelect={() =>
-                        void action("plugin/enabled", p, !p.enabled)
-                      }
-                    >
-                      {p.enabled ? "停用" : "启用"}
-                    </ActionMenuItem>
-                    <ActionMenuItem
-                      icon={ArrowUpCircle}
-                      disabled={!p.available || !p.update?.available}
-                      title={
-                        p.update?.available ? "升级插件" : p.update?.reason
-                      }
-                      onSelect={() => update(p)}
-                    >
-                      升级
-                    </ActionMenuItem>
-                    <ActionMenuItem
-                      icon={Trash2}
-                      destructive
-                      separated
-                      onSelect={() => setRemove(p)}
-                    >
-                      卸载
-                    </ActionMenuItem>
-                  </ActionMenuContent>
-                </Dropdown.Portal>
-              </Dropdown.Root>
+              {pluginMenu(p)}
             </div>
           ))}
-      </div>
-      <div hidden={!!marketplace}>
-        <McpSettings embedded query={query} createSignal={create} />
+        <div className="catalog-mcp-group" hidden={!!marketplace}>
+          <McpSettings embedded query={query} createSignal={create} />
+        </div>
       </div>
       {catalog &&
         !entries.some((p) => p.installed && matches(p)) &&
@@ -392,13 +386,11 @@ export default function ToolsSettings({
                       description={p.description}
                     />
                   </button>
-                  <button
-                    className="secondary catalog-install"
+                  <CatalogAddButton
+                    label={`添加 ${p.displayName}`}
                     disabled={busy || !p.available || !p.installable}
                     onClick={() => void action("plugin/install", p)}
-                  >
-                    添加
-                  </button>
+                  />
                 </div>
               ))}
           </div>
@@ -413,14 +405,32 @@ export default function ToolsSettings({
           dismissible={!busy}
           wide
           className="catalog-detail-modal"
+          feedback={
+            error && (
+              <p role="alert" className="inline-error">
+                {error}
+              </p>
+            )
+          }
           headerActions={
             detail.installed ? (
-              <CatalogUse
-                kind="@"
-                entry={detail}
-                disabled={!detail.enabled || !detail.available || busy}
-              />
-            ) : undefined
+              <>
+                <CatalogUse
+                  kind="@"
+                  entry={detail}
+                  disabled={!detail.enabled || !detail.available || busy}
+                />
+                {pluginMenu(detail, false)}
+              </>
+            ) : (
+              <button
+                className="primary"
+                disabled={busy || !detail.installable || !detail.available}
+                onClick={() => void action("plugin/install", detail)}
+              >
+                安装
+              </button>
+            )
           }
           onOpenChange={(open) => {
             if (!open) setDetail(null);
@@ -485,56 +495,6 @@ export default function ToolsSettings({
                   </div>
                 )}
               </>
-            )}
-            <div className="editor-actions">
-              {detail.installed ? (
-                <>
-                  <button
-                    className="secondary"
-                    disabled={
-                      busy || !detail.available || !detail.update?.available
-                    }
-                    title={
-                      detail.update?.available
-                        ? "升级插件"
-                        : detail.update?.reason
-                    }
-                    onClick={() => update(detail)}
-                  >
-                    <ArrowUpCircle size={16} />
-                    升级
-                  </button>
-                  <button
-                    className="secondary"
-                    disabled={busy || !detail.available}
-                    onClick={() =>
-                      void action("plugin/enabled", detail, !detail.enabled)
-                    }
-                  >
-                    {detail.enabled ? "停用" : "启用"}
-                  </button>
-                  <button
-                    className="secondary danger-text"
-                    disabled={busy}
-                    onClick={() => setRemove(detail)}
-                  >
-                    卸载
-                  </button>
-                </>
-              ) : (
-                <button
-                  className="primary"
-                  disabled={busy || !detail.installable || !detail.available}
-                  onClick={() => void action("plugin/install", detail)}
-                >
-                  安装
-                </button>
-              )}
-            </div>
-            {error && (
-              <p role="alert" className="inline-error">
-                {error}
-              </p>
             )}
           </div>
         </CatalogDetail>

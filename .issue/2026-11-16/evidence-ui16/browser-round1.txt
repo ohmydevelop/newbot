@@ -1,0 +1,162 @@
+
+> newbot@0.2.0 test:ui-contracts
+> playwright test --config=playwright.config.ts
+
+[WebServer] (node:4144775) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 55 tests using 1 worker
+
+(node:4144815) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 tests/browser/catalog-continuity.spec.ts:17:3 › 侧栏同坐标连续折叠和导航顺序 390 (2.4s)
+  ✓   2 tests/browser/catalog-continuity.spec.ts:17:3 › 侧栏同坐标连续折叠和导航顺序 1280 (375ms)
+  ✓   3 tests/browser/catalog-continuity.spec.ts:52:3 › 已有会话的两个输入框入口就地搜索选择 390 (3.3s)
+  ✓   4 tests/browser/catalog-continuity.spec.ts:52:3 › 已有会话的两个输入框入口就地搜索选择 1280 (3.0s)
+  ✓   5 tests/browser/catalog-continuity.spec.ts:108:3 › 目录整体中心对齐、说明省略与图标添加 390 (4.8s)
+  ✓   6 tests/browser/catalog-continuity.spec.ts:108:3 › 目录整体中心对齐、说明省略与图标添加 1280 (4.6s)
+  ✓   7 tests/browser/catalog-continuity.spec.ts:179:1 › 删除后插件与独立连接器连续填满同一网格 (2.4s)
+  ✘   8 tests/browser/catalog-continuity.spec.ts:211:3 › 长连接器详情底部仍可返回与管理 390 (7.7s)
+(node:4145720) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘   9 tests/browser/catalog-continuity.spec.ts:211:3 › 长连接器详情底部仍可返回与管理 1280 (7.5s)
+(node:4145921) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  10 tests/browser/deep-catalog-contracts.spec.ts:30:1 › 目录主行状态和更多操作对齐，与有无说明无关 (2.0s)
+  ✓  11 tests/browser/deep-catalog-contracts.spec.ts:55:1 › 技能切换说明和源码不会移动主操作 (2.1s)
+  ✓  12 tests/browser/deep-catalog-contracts.spec.ts:77:1 › 持久表单字段填值后标签仍然可见 (2.0s)
+  ✓  13 tests/browser/deep-catalog-contracts.spec.ts:93:1 › 工具详情使用主滚动容器，长目录不受旧卡片高度限制 (1.9s)
+  ✓  14 tests/browser/deep-catalog-contracts.spec.ts:140:5 › 深层目录视觉 320 浅色 (4.3s)
+  ✓  15 tests/browser/deep-catalog-contracts.spec.ts:140:5 › 深层目录视觉 320 深色 (4.3s)
+  ✓  16 tests/browser/deep-catalog-contracts.spec.ts:140:5 › 深层目录视觉 390 浅色 (4.3s)
+  ✓  17 tests/browser/deep-catalog-contracts.spec.ts:140:5 › 深层目录视觉 390 深色 (4.3s)
+  ✓  18 tests/browser/deep-catalog-contracts.spec.ts:140:5 › 深层目录视觉 768 浅色 (4.1s)
+  ✓  19 tests/browser/deep-catalog-contracts.spec.ts:140:5 › 深层目录视觉 768 深色 (4.1s)
+  ✓  20 tests/browser/deep-catalog-contracts.spec.ts:140:5 › 深层目录视觉 1280 浅色 (4.1s)
+  ✓  21 tests/browser/deep-catalog-contracts.spec.ts:140:5 › 深层目录视觉 1280 深色 (4.1s)
+  ✓  22 tests/browser/deep-catalog-contracts.spec.ts:227:3 › 专家选择器双向滚动链 390 (3.0s)
+  ✓  23 tests/browser/deep-catalog-contracts.spec.ts:227:3 › 专家选择器双向滚动链 1280 (2.8s)
+  ✓  24 tests/browser/deep-catalog-contracts.spec.ts:238:1 › 技能管理菜单启停、失败重试与卸载取消保持正确状态 (4.8s)
+  ✓  25 tests/browser/deep-catalog-contracts.spec.ts:298:1 › 共享表单认证菜单与证书入口保持可访问 (3.3s)
+  ✓  26 tests/browser/deep-catalog-contracts.spec.ts:332:1 › 导入技能选择窗允许边缘交接且不执行安装 (3.4s)
+  ✓  27 tests/browser/deep-catalog-contracts.spec.ts:414:1 › 插件嵌套工具详情使用同一主滚动，返回保留插件上下文 (2.6s)
+  ✓  28 tests/browser/interaction-acceptance.spec.ts:40:1 › 左右拖拽跨越不透明 iframe，边界、点击恢复与宽度持久化 (3.9s)
+  ✓  29 tests/browser/interaction-acceptance.spec.ts:115:1 › 拖拽只接受所属指针，失去捕获、取消、失焦和卸载均清理 (843ms)
+  ✓  30 tests/browser/interaction-acceptance.spec.ts:159:3 › 动画真实帧连续且减弱模式即时稳定 false (3.5s)
+  ✓  31 tests/browser/interaction-acceptance.spec.ts:159:3 › 动画真实帧连续且减弱模式即时稳定 true (3.1s)
+  ✓  32 tests/browser/interaction-acceptance.spec.ts:255:1 › 工作流程默认折叠，内部滚动到两端后衔接聊天，重开保留位置 (6.1s)
+  ✓  33 tests/browser/interaction-acceptance.spec.ts:319:3 › 模型共享目录和配置详情 1280 (3.7s)
+  ✓  34 tests/browser/interaction-acceptance.spec.ts:319:3 › 模型共享目录和配置详情 320 (3.9s)
+  ✓  35 tests/browser/interaction-acceptance.spec.ts:391:1 › 目录迟到响应不得覆盖用户新查询、滚动和焦点 (3.4s)
+  ✓  36 tests/browser/interaction-acceptance.spec.ts:431:1 › 浏览器触摸取消释放拖拽捕获并保存最后宽度 (426ms)
+  ✓  37 tests/browser/interaction-acceptance.spec.ts:460:1 › 模型连接创建保存、重新读取、移除以及目录失败恢复 (3.3s)
+  ✓  38 tests/browser/interaction-acceptance.spec.ts:513:1 › 设为默认需先选择有效模型，显式操作才切换连接 (2.9s)
+  ✓  39 tests/browser/interaction-acceptance.spec.ts:551:1 › 模型与MCP长配置共用外层滚动，不截断证书和保存入口 (4.8s)
+  ✓  40 tests/browser/settings-contracts.spec.ts:22:1 › 分类真正卸载、关闭重开和详情返回保留目录状态 (3.6s)
+  ✓  41 tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 1440 light (4.7s)
+  ✓  42 tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 1440 dark (4.7s)
+  ✓  43 tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 1280 light (4.7s)
+  ✓  44 tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 1280 dark (4.7s)
+  ✓  45 tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 768 light (4.7s)
+  ✓  46 tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 768 dark (4.7s)
+  ✓  47 tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 390 light (4.9s)
+  ✓  48 tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 390 dark (4.8s)
+  ✓  49 tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 320 light (4.8s)
+  ✓  50 tests/browser/settings-contracts.spec.ts:66:5 › 设置布局 320 dark (4.9s)
+  ✓  51 tests/browser/settings-contracts.spec.ts:134:1 › 标题栏偏移与查询丢失注入会被同一验收器拒绝 (1.9s)
+  ✓  52 tests/browser/settings-contracts.spec.ts:163:1 › 左栏键盘/拖拽与刷新持久化，折叠保留设置入口 (2.2s)
+  ✓  53 tests/browser/settings-contracts.spec.ts:189:3 › 正常/减弱动画 false (1.9s)
+  ✓  54 tests/browser/settings-contracts.spec.ts:189:3 › 正常/减弱动画 true (2.0s)
+  ✓  55 tests/browser/settings-contracts.spec.ts:208:1 › 桌面设置缩为手机时右栏不能抢焦点 (2.1s)
+
+
+  1) tests/browser/catalog-continuity.spec.ts:211:3 › 长连接器详情底部仍可返回与管理 390 ──────────────────────────
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: locator('.catalog-heading-feedback [role="status"]')
+    Expected substring: "工具"
+    Received string:    "此 MCP 需要授权，请完成 OAuth 或检查服务端凭证。"
+    Timeout: 5000ms
+
+    Call log:
+      - Expect "toContainText" locator('.catalog-heading-feedback [role="status"]') with timeout 5000ms
+      - waiting for locator('.catalog-heading-feedback [role="status"]')
+        13 × locator resolved to <div role="status" class="provider-diagnostic">此 MCP 需要授权，请完成 OAuth 或检查服务端凭证。</div>
+           - unexpected value "此 MCP 需要授权，请完成 OAuth 或检查服务端凭证。"
+
+
+      231 |     await testButton.click();
+      232 |     const feedback = page.locator('.catalog-heading-feedback [role="status"]');
+    > 233 |     await expect(feedback).toContainText("工具");
+          |                            ^
+      234 |     const feedbackBox = (await feedback.boundingBox())!;
+      235 |     expect(feedbackBox.y).toBeGreaterThanOrEqual(outer.y);
+      236 |     expect(feedbackBox.y + feedbackBox.height).toBeLessThan(outer.y + 180);
+        at /home/a/Documents/ChatGPT/newbot-systematize/tests/browser/catalog-continuity.spec.ts:233:28
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/catalog-continuity-长连接器详情底部仍可返回与管理-390/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/catalog-continuity-长连接器详情底部仍可返回与管理-390/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/catalog-continuity-长连接器详情底部仍可返回与管理-390/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/catalog-continuity-长连接器详情底部仍可返回与管理-390/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/catalog-continuity-长连接器详情底部仍可返回与管理-390/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) tests/browser/catalog-continuity.spec.ts:211:3 › 长连接器详情底部仍可返回与管理 1280 ─────────────────────────
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: locator('.catalog-heading-feedback [role="status"]')
+    Expected substring: "工具"
+    Received string:    "此 MCP 需要授权，请完成 OAuth 或检查服务端凭证。"
+    Timeout: 5000ms
+
+    Call log:
+      - Expect "toContainText" locator('.catalog-heading-feedback [role="status"]') with timeout 5000ms
+      - waiting for locator('.catalog-heading-feedback [role="status"]')
+        13 × locator resolved to <div role="status" class="provider-diagnostic">此 MCP 需要授权，请完成 OAuth 或检查服务端凭证。</div>
+           - unexpected value "此 MCP 需要授权，请完成 OAuth 或检查服务端凭证。"
+
+
+      231 |     await testButton.click();
+      232 |     const feedback = page.locator('.catalog-heading-feedback [role="status"]');
+    > 233 |     await expect(feedback).toContainText("工具");
+          |                            ^
+      234 |     const feedbackBox = (await feedback.boundingBox())!;
+      235 |     expect(feedbackBox.y).toBeGreaterThanOrEqual(outer.y);
+      236 |     expect(feedbackBox.y + feedbackBox.height).toBeLessThan(outer.y + 180);
+        at /home/a/Documents/ChatGPT/newbot-systematize/tests/browser/catalog-continuity.spec.ts:233:28
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/catalog-continuity-长连接器详情底部仍可返回与管理-1280/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/catalog-continuity-长连接器详情底部仍可返回与管理-1280/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/catalog-continuity-长连接器详情底部仍可返回与管理-1280/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/catalog-continuity-长连接器详情底部仍可返回与管理-1280/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/catalog-continuity-长连接器详情底部仍可返回与管理-1280/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2 failed
+    tests/browser/catalog-continuity.spec.ts:211:3 › 长连接器详情底部仍可返回与管理 390 ───────────────────────────
+    tests/browser/catalog-continuity.spec.ts:211:3 › 长连接器详情底部仍可返回与管理 1280 ──────────────────────────
+  53 passed (3.4m)

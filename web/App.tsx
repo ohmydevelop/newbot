@@ -327,33 +327,10 @@ export default function App() {
     rememberWorkbenchFocus();
     setWorkspacePicker(true);
   }
-  const [railCapabilityFocus, setRailCapabilityFocus] = useState<{
-    kind: "plugins" | "skills";
-    version: number;
-  } | null>(null);
-  const capabilityReturnFocus = useRef<HTMLElement | null>(null);
-  function openComposerCapability(
-    kind: "plugins" | "skills",
-    trigger: HTMLElement | null,
-  ) {
-    if (!s.selectedId) {
-      mentions.open(kind, trigger);
-      return;
-    }
-    capabilityReturnFocus.current = trigger;
-    setRailCapabilityFocus((prior) => ({
-      kind,
-      version: (prior?.version || 0) + 1,
-    }));
-    setRailOpen(true);
-  }
   const [railArtifact, setRailArtifact] = useState<Artifact | null>(null);
   const [railOpen, setRailOpen] = useState(
     () => localStorage.getItem("newbot:rail") === "1",
   );
-  useEffect(() => {
-    if (!railOpen) setRailCapabilityFocus(null);
-  }, [railOpen]);
   const panelLayout = usePanelLayout(s.sidebar, railOpen && !!s.selectedId);
   const [settings, setSettings] = useState<string | null>(null);
   const [search, setSearch] = useState(false);
@@ -1778,7 +1755,7 @@ export default function App() {
                           (!s.pluginSelection && !s.expertSelection)
                         }
                         onSelect={() =>
-                          openComposerCapability(
+                          mentions.open(
                             "plugins",
                             document.getElementById("composer-add"),
                           )
@@ -1790,7 +1767,7 @@ export default function App() {
                         icon={BookOpen}
                         disabled={selectionDisabled || !s.skillSelection}
                         onSelect={() =>
-                          openComposerCapability(
+                          mentions.open(
                             "skills",
                             document.getElementById("composer-add"),
                           )
@@ -1806,15 +1783,13 @@ export default function App() {
                     type="button"
                     className="icon-button"
                     aria-label="选择专家或插件"
-                    data-composer-picker
+                    data-composer-picker="plugins"
                     title="选择专家或插件"
                     disabled={
                       selectionDisabled ||
                       (!s.pluginSelection && !s.expertSelection)
                     }
-                    onClick={(e) =>
-                      openComposerCapability("plugins", e.currentTarget)
-                    }
+                    onClick={(e) => mentions.open("plugins", e.currentTarget)}
                   >
                     <Blocks size={18} />
                   </button>
@@ -1824,11 +1799,9 @@ export default function App() {
                       className="icon-button skill-picker-trigger"
                       title="选择技能"
                       aria-label="选择技能"
-                      data-composer-picker
+                      data-composer-picker="skills"
                       disabled={selectionDisabled}
-                      onClick={(e) =>
-                        openComposerCapability("skills", e.currentTarget)
-                      }
+                      onClick={(e) => mentions.open("skills", e.currentTarget)}
                     >
                       <BookOpen size={17} aria-hidden="true" />
                     </button>
@@ -1922,19 +1895,12 @@ export default function App() {
             <WorkbenchRail
               width={panelLayout.right}
               narrow={panelLayout.overlay}
-              capabilityFocus={railCapabilityFocus}
               onClose={() => setRailOpen(false)}
               restoreFocus={() => {
                 const action = afterRailClose.current;
                 afterRailClose.current = null;
-                const trigger = capabilityReturnFocus.current;
-                capabilityReturnFocus.current = null;
                 if (action) requestAnimationFrame(action);
-                else
-                  (trigger?.isConnected
-                    ? trigger
-                    : railToggle.current
-                  )?.focus();
+                else railToggle.current?.focus();
               }}
               thread={s.thread || undefined}
               busy={selectionDisabled}
@@ -1948,7 +1914,12 @@ export default function App() {
               canPickSkills={s.skillSelection}
               onAdd={(kind) => {
                 afterRailClose.current = () =>
-                  mentions.open(kind, railToggle.current);
+                  mentions.open(
+                    kind,
+                    document.querySelector<HTMLButtonElement>(
+                      `[data-composer-picker="${kind}"]`,
+                    ),
+                  );
                 setRailOpen(false);
               }}
               onPickFiles={openWorkspaceFiles}

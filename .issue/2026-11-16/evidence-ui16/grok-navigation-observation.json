@@ -1,0 +1,8 @@
+{
+  "origin": "https://grok.com/",
+  "method": "CUA browser UI and read-only element bounds; same button before/after click",
+  "expanded": {"x": 12, "y": 12, "width": 32, "height": 32},
+  "collapsed": {"x": 12, "y": 12, "width": 32, "height": 32},
+  "restored": true,
+  "scope": "Sidebar position continuity only; no private account content stored"
+}

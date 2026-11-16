@@ -83,7 +83,7 @@ export function useComposerMentions({
   function open(next: "plugins" | "skills", target?: HTMLElement | null) {
     if (disabled || !(next === "skills" ? skillSelection : atSelection)) return;
     if (panel === next && mode === "button") {
-      searchInput.current?.focus();
+      close();
       return;
     }
     pending.current?.abort();
@@ -280,9 +280,7 @@ export function useComposerMentions({
         if (!open) close();
       }}
     >
-      <Popover.Anchor asChild>
-        <span className="composer-picker-anchor" />
-      </Popover.Anchor>
+      <Popover.Anchor virtualRef={mode === "button" ? opener : textarea} />
       <PickerContent
         className="composer-selection-panel"
         align="start"

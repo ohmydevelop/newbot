@@ -1,6 +1,5 @@
 import type { ReactNode } from "react";
 
-/** Shared two-line identity: title/status first, optional purpose second. */
 export function CatalogCopy({
   name,
   description,
@@ -12,11 +11,11 @@ export function CatalogCopy({
 }) {
   return (
     <span className="catalog-copy">
-      <span className="catalog-title-line">
+      <span className="catalog-identity">
         <strong title={name}>{name}</strong>
-        {status && <span className="catalog-status">{status}</span>}
+        {description && <small title={description}>{description}</small>}
       </span>
-      {description && <small title={description}>{description}</small>}
+      {status && <span className="catalog-status">{status}</span>}
     </span>
   );
 }

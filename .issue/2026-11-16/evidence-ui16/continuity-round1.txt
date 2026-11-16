@@ -1,0 +1,189 @@
+[WebServer] (node:4135548) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 9 tests using 1 worker
+
+(node:4135565) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 tests/browser/catalog-continuity.spec.ts:17:3 › 侧栏同坐标连续折叠和导航顺序 390 (699ms)
+(node:4135662) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  2 tests/browser/catalog-continuity.spec.ts:17:3 › 侧栏同坐标连续折叠和导航顺序 1280 (408ms)
+  ✓  3 tests/browser/catalog-continuity.spec.ts:52:3 › 已有会话的两个输入框入口就地搜索选择 390 (2.9s)
+  ✓  4 tests/browser/catalog-continuity.spec.ts:52:3 › 已有会话的两个输入框入口就地搜索选择 1280 (2.5s)
+  ✘  5 tests/browser/catalog-continuity.spec.ts:92:3 › 目录整体中心对齐、说明省略与图标添加 390 (9.9s)
+(node:4136014) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  6 tests/browser/catalog-continuity.spec.ts:92:3 › 目录整体中心对齐、说明省略与图标添加 1280 (9.7s)
+(node:4136731) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  7 tests/browser/catalog-continuity.spec.ts:146:1 › 删除后插件与独立连接器连续填满同一网格 (7.5s)
+(node:4136938) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  8 tests/browser/catalog-continuity.spec.ts:174:3 › 长连接器详情底部仍可返回与管理 390 (2.6s)
+  ✓  9 tests/browser/catalog-continuity.spec.ts:174:3 › 长连接器详情底部仍可返回与管理 1280 (2.4s)
+
+
+  1) tests/browser/catalog-continuity.spec.ts:17:3 › 侧栏同坐标连续折叠和导航顺序 390 ────────────────────────────
+
+    Error: expect(received).toBeLessThanOrEqual(expected)
+
+    Expected: <= 1
+    Received:    2
+
+      35 |       const b = (await next.boundingBox())!;
+      36 |       expect(Math.abs(b.x - r.x)).toBeLessThanOrEqual(1);
+    > 37 |       expect(Math.abs(b.y - r.y)).toBeLessThanOrEqual(1);
+         |                                   ^
+      38 |     }
+      39 |     if (width <= 760)
+      40 |       await page.getByRole("button", { name: "展开侧栏", exact: true }).click();
+        at /home/a/Documents/ChatGPT/newbot-systematize/tests/browser/catalog-continuity.spec.ts:37:35
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/catalog-continuity-侧栏同坐标连续折叠和导航顺序-390/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/catalog-continuity-侧栏同坐标连续折叠和导航顺序-390/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/catalog-continuity-侧栏同坐标连续折叠和导航顺序-390/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/catalog-continuity-侧栏同坐标连续折叠和导航顺序-390/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/catalog-continuity-侧栏同坐标连续折叠和导航顺序-390/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) tests/browser/catalog-continuity.spec.ts:92:3 › 目录整体中心对齐、说明省略与图标添加 390 ────────────────────────
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('.catalog-copy').first()
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" locator('.catalog-copy').first() with timeout 5000ms
+      - waiting for locator('.catalog-copy').first()
+
+
+       98 |       await page.getByRole("button", { name: section, exact: true }).click();
+       99 |       await page.getByRole("searchbox", { name: `搜索${section}` }).waitFor();
+    > 100 |       await expect(page.locator(".catalog-copy").first()).toBeVisible();
+          |                                                           ^
+      101 |       const rows = await page
+      102 |         .locator(".catalog-entry,.compact-skill-entry")
+      103 |         .evaluateAll((nodes) =>
+        at /home/a/Documents/ChatGPT/newbot-systematize/tests/browser/catalog-continuity.spec.ts:100:59
+
+    attachment #4: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/catalog-continuity-目录整体中心对齐、说明省略与图标添加-390/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #5: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/catalog-continuity-目录整体中心对齐、说明省略与图标添加-390/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/catalog-continuity-目录整体中心对齐、说明省略与图标添加-390/error-context.md
+
+    attachment #7: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/catalog-continuity-目录整体中心对齐、说明省略与图标添加-390/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/catalog-continuity-目录整体中心对齐、说明省略与图标添加-390/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3) tests/browser/catalog-continuity.spec.ts:92:3 › 目录整体中心对齐、说明省略与图标添加 1280 ───────────────────────
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('.catalog-copy').first()
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" locator('.catalog-copy').first() with timeout 5000ms
+      - waiting for locator('.catalog-copy').first()
+
+
+       98 |       await page.getByRole("button", { name: section, exact: true }).click();
+       99 |       await page.getByRole("searchbox", { name: `搜索${section}` }).waitFor();
+    > 100 |       await expect(page.locator(".catalog-copy").first()).toBeVisible();
+          |                                                           ^
+      101 |       const rows = await page
+      102 |         .locator(".catalog-entry,.compact-skill-entry")
+      103 |         .evaluateAll((nodes) =>
+        at /home/a/Documents/ChatGPT/newbot-systematize/tests/browser/catalog-continuity.spec.ts:100:59
+
+    attachment #4: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/catalog-continuity-目录整体中心对齐、说明省略与图标添加-1280/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #5: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/catalog-continuity-目录整体中心对齐、说明省略与图标添加-1280/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/catalog-continuity-目录整体中心对齐、说明省略与图标添加-1280/error-context.md
+
+    attachment #7: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/catalog-continuity-目录整体中心对齐、说明省略与图标添加-1280/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/catalog-continuity-目录整体中心对齐、说明省略与图标添加-1280/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  4) tests/browser/catalog-continuity.spec.ts:146:1 › 删除后插件与独立连接器连续填满同一网格 ──────────────────────────
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('button', { name: '添加 测试插件', exact: true })
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByRole('button', { name: '添加 测试插件', exact: true }) with timeout 5000ms
+      - waiting for getByRole('button', { name: '添加 测试插件', exact: true })
+
+
+      156 |   await dialog.getByRole("button", { name: "卸载", exact: true }).click();
+      157 |   const add = page.getByRole("button", { name: "添加 测试插件", exact: true });
+    > 158 |   await expect(add).toBeVisible();
+          |                     ^
+      159 |   await add.click();
+      160 |   await expect(
+      161 |     page.getByRole("button", { name: "测试插件 更多操作", exact: true }),
+        at /home/a/Documents/ChatGPT/newbot-systematize/tests/browser/catalog-continuity.spec.ts:158:21
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/catalog-continuity-删除后插件与独立连接器连续填满同一网格/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/catalog-continuity-删除后插件与独立连接器连续填满同一网格/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/catalog-continuity-删除后插件与独立连接器连续填满同一网格/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/catalog-continuity-删除后插件与独立连接器连续填满同一网格/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/catalog-continuity-删除后插件与独立连接器连续填满同一网格/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  4 failed
+    tests/browser/catalog-continuity.spec.ts:17:3 › 侧栏同坐标连续折叠和导航顺序 390 ─────────────────────────────
+    tests/browser/catalog-continuity.spec.ts:92:3 › 目录整体中心对齐、说明省略与图标添加 390 ─────────────────────────
+    tests/browser/catalog-continuity.spec.ts:92:3 › 目录整体中心对齐、说明省略与图标添加 1280 ────────────────────────
+    tests/browser/catalog-continuity.spec.ts:146:1 › 删除后插件与独立连接器连续填满同一网格 ───────────────────────────
+  5 passed (41.3s)
