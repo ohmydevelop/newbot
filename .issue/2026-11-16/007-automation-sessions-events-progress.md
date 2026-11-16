@@ -33,8 +33,8 @@
 - 完整单测首次唯一失败是旧迁移测试硬编码19；改为DATABASE_VERSION，第二轮603项中602通过、1项原有跳过、无失败。新增prepare竞态后针对性20/20通过。
 - 密钥弹层迟到读取与重复轮换在同类边界排查中补齐；保持最少必要说明，未重新设计外壳。
 
-## 尚未宣称完成
-完整浏览器回归、生产部署与公网验收尚在进行；触摸与修正后的视觉复核已通过。物理手机、第三方真实事件源注册、邮箱主动订阅和OpenClaw/Hermes代码插件运行时不在本轮完成声明内。历史运行入口仍可进入对应会话，多个新运行共用会话时打开会话最新位置，未新增按turn锚点自动翻页。
+## 验收范围与限制
+完整浏览器、触摸、视觉、生产部署与公网验收均已通过。物理手机、第三方真实事件源注册、邮箱主动订阅和OpenClaw/Hermes代码插件运行时不在本轮完成声明内。历史运行入口仍可进入对应会话，多个新运行共用会话时打开会话最新位置，未新增按turn锚点自动翻页。
 
 ## 收尾验收补充
 - E3：事件积压占满全局前10个候选会阻止别的任务，改为每任务选最早queued；20/20针对性通过，包括独立任务不被32条积压阻挡。
@@ -44,3 +44,17 @@
 - 最终独立视觉复核ship，字段标签修正resolved，六个条件弹层均不越界。完整单测606项：605通过、1项原有skip。
 
 原生归档→恢复→切模式→继续执行现已通过；额外模拟原生恢复完成而本地仍归档，重试核对后正常续用同一会话。证据live-model.json含7项真实执行检查。原生恢复能力通过本地及远程Runner共享权限清单接入，未开放通用任意RPC。
+
+
+## 最终交付（2026-11-17）
+- 生产部署版本eefc244cde1ec3df38eed38051419db22141c756，分支codex/newbot-systematize；核心实现3e6749b，部署校验修正eefc244。地址 https://integration-love-angela-heated.trycloudflare.com/ ，登录方式保持原样。
+- 92/92浏览器回归通过，包括原截图golden、拖拽、键盘、动效真实帧、减弱动画、滚动衔接、异步迟到响应、事件编辑与持续会话入口；12/12移动触摸通过；独立视觉ship。
+- 完整单测606项605通过/1原有skip；追加跨语言构建哈希3/3，数据库迁移/回滚3/3；真实Codex生态技能扫描/安装/重启/卸载通过。
+- 真实模型隔离验证7项通过：签名HTTP、重复投递、重启前排队/重启后续用、前文记忆、归档恢复、原生恢复已完成但本地回执丢失的核对、切模式后同会话。三次run同thread不同turn。
+- 首次发布因Python Path组件排序与JS字符串排序差异自动回滚；454文件逐项一致，未取消完整性检查。统一相对POSIX字符串排序并以JS/Python交叉测试锁定；二次发布成功，实际v19→20，全部保留表摘要一致，公网JS/CSS字节一致。
+- 公网验收passed：无cookie的签名事件成功、同一事件重复投递返回原runId；再手动运行成功，共用01a1e6a1-8038-77b1-898f-18035e002673、turn不同；390px浏览器连接弹层与任务会话可用。只删除此次创建的测试任务、归档此次会话，查询确认cleanup通过。
+- 备份：/home/a/Documents/ChatGPT/newbot/.data/backups/2026-11-17-web-eefc244cde1e。
+- 主要证据：evidence-automation-sessions-events/{receipt.json,deployment.json,public-events.json,public-cleanup.json,live-model.json,browser-summary.json,mobile-summary.json,native-import-lifecycle.log,release-integrity.log}；视觉证据与结论在007-automation-events-design-review.md。
+
+## 不支持/未实测的明确边界
+第三方真实GitHub/OpenClaw/Hermes服务的注册与端到端投递未进行（已做本地协议客户端和公网真实HTTP）；JS/Python原生插件tools/hooks/channels不会自动转换执行；Gmail/Outlook订阅/续期未实现；物理手机不可用。技能依赖的外部工具和权限仍需按原MCP机制配置。旧运行会话不合并，新共享会话入口目前打开最新位置而非按每个turn自动翻页。临时Cloudflare域名若更换，外部发送端需更新URL。
