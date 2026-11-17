@@ -32,17 +32,33 @@ Newbot 的持久队列插件可使用额外的 `_meta["io.newbot/receipt"]` 和 
 
 运行 `npm run build:event-plugins`，生成独立包：
 
-|目录（位于 `.data/event-plugins/`）|用途|
-|---|---|
-|`github-events`|GitHub Issue/PR 事件，公开仓库可匿名，私有仓库配置只读令牌|
-|`mailbox-events`|本地文件信箱测试夹具；不是 Gmail 连接器|
-|`relay-events`|通用 CloudEvents 中继消费者，按事件类型筛选|
-|`openclaw-event-bridge`|OpenClaw 消息收发/重置 hook|
-|`hermes-event-bridge`|Hermes agent 开始/结束/会话重置 hook|
+| 目录（位于 `.data/event-plugins/`） | 用途                                                       |
+| ----------------------------------- | ---------------------------------------------------------- |
+| `github-events`                     | GitHub Issue/PR 事件，公开仓库可匿名，私有仓库配置只读令牌 |
+| `mailbox-events`                    | 本地文件信箱测试夹具；不是 Gmail 连接器                    |
+| `relay-events`                      | 通用 CloudEvents 中继消费者，按事件类型筛选                |
 
-前面三个目录可通过 Newbot 设置中的本地插件导入安装。将 `mailbox-events` 复制为独立包，修改包名、事件名称/schema 和处理实现，即可开发第二种来源。SDK 入口在 `packages/event-bridge/server.ts`；实现与前端无耦合。原生 Codex 的导入/读取/卸载仅验证插件包装兼容性，事件方法由 Newbot 独立 MCP 连接执行。
+以上三个目录可通过 Newbot 设置中的本地插件导入安装。将 `mailbox-events` 复制为独立包，修改包名、事件名称/schema 和处理实现，即可开发第二种来源。构建同时生成可独立导入的发布器 `dist/event-bridge/publisher.mjs` 和中继 `dist/event-relay/main.mjs`。SDK 入口在 `packages/event-bridge/server.ts`；实现与前端无耦合。原生 Codex 的导入/读取/卸载仅验证插件包装兼容性，事件方法由 Newbot 独立 MCP 连接执行。
 
-后面两个是各自产品的 hook 包，不是可直接装入 Codex 的插件。按对应产品的 hook 安装机制放入目录并启用，配置：`NEWBOT_EVENT_URL`（route events 完整 URL）、`NEWBOT_EVENT_TOKEN`（producer）、`NEWBOT_EVENT_SOURCE`（建议 urn）、`NEWBOT_EVENT_OUTBOX`（私有持久目录）。Node hook 要求 Node 24+；Python hook 使用标准库。源端先持久化，再出站发送；队列最多10000条，满时明确失败。只映射文档列出的生命周期事件，不承诺完整生态兼容。
+## 最小 Bridge
+
+默认链路只有三部分：事件生产者 → HTTPS 中继 → Newbot 中继插件。业务方将事件转成 CloudEvents 1.0 并用 producer token 发布；Newbot 主动出站消费，只有真正到达的事件触发自动任务。无需针对外部 Agent 产品增加适配层，也无需修改平台注册表。现有 poll/push 插件可以直接连接上游，不必绕中继。
+
+生产者可以直接使用 HTTP POST，也可以用 `packages/event-bridge/publisher.ts` 的 `eventPublisher`。后者需要 `url`、`token`、`source`、`directory`，可选 `caCertificate`（PEM）。先同步写入本地 SQLite，再异步发送；重开发布器后继续重试。队列上限10000条，满时明确失败。稳定业务事件使用稳定 id；不同事件不能复用同一 id。只发送业务所需数据，不发送配置、凭证或完整请求头。
+
+```ts
+const publisher = eventPublisher({
+  url,
+  token,
+  source,
+  directory,
+  caCertificate,
+});
+publisher.enqueue("record.updated", { recordId: "42" }, "source-event-id");
+await publisher.flush();
+// 长期服务由内部定时器重试；退出前等待正在进行的发送并关闭。
+await publisher.close();
+```
 
 ## 自托管中继
 
@@ -50,7 +66,7 @@ Newbot 的持久队列插件可使用额外的 `_meta["io.newbot/receipt"]` 和 
 
 通过 admin Bearer token 向 `POST /v1/routes` 创建通道，返回 producer/consumer 两种独立密钥。producer 仅用于 `POST /v1/routes/:id/events`；consumer 用于 subscribe/lease/ack/unsubscribe。撤销使用 admin `DELETE /v1/routes/:id`。密钥响应只在创建时返回，应存到密码管理器或 Newbot 私密字段中。
 
-`relay-events` 配置中继 HTTPS 地址、route ID、consumer token；外部 hook 使用 producer token。内网机器无需开放入站端口，也不要求常驻浏览器。多个条件使用独立消费者组，不互相抢事件；删除停用的外部消费者可调用 unsubscribe 释放其积压约束。
+`relay-events` 配置中继 HTTPS 地址、route ID、consumer token，可选配置「中继 CA 证书（PEM）」；外部生产者使用 producer token。内网机器无需开放入站端口，也不要求常驻浏览器。多个条件使用独立消费者组，不互相抢事件；删除停用的外部消费者可调用 unsubscribe 释放其积压约束。
 
 若直接订阅只支持 webhook 的 MCP，在 Newbot Server 设置 `NEWBOT_EVENT_RELAY_URL`（HTTPS origin）、`NEWBOT_EVENT_RELAY_ROUTE` 和 `NEWBOT_EVENT_RELAY_TOKEN`（consumer）。上游回调指向中继，不指向内网机器。平台发送 client-generated `whsec_` secret，校验原始正文的 HMAC、5分钟时间窗及订阅身份。签名校验在业务处理前完成，只有持久写入成功才返回2xx；订阅撤销后返回410。停止订阅尝试主动 unsubscribe，失效凭证下由上游有限 TTL 清理。未配置中继的 webhook-only 来源不能启用，poll/push 不需要中继。
 
@@ -62,4 +78,6 @@ v23 只在主数据库事务内添加通用参数及迁移记录。任务/触发
 
 `npm run test:event-bridge` 包括协议、模拟上游、实际 stdio MCP、HTTP 中继、迁移回滚、签名 webhook、本地 OAuth 和 HTTPS 测试；`npm run test:event-bridge-ui` 在320/390/768/1280宽度、深浅色下安装后的来源配置/运行验收。CI 执行边界检查，禁止核心导入提供方实现或插件反向导入宿主。
 
-测试边界：本地信箱不是 Gmail；本地 OAuth 不是 Slack 登录；hook 函数的独立运行不是完整 OpenClaw/Hermes 安装验收；浏览器视口测试不是真机。公网 HTTPS relay 与真实业务账号需要部署相应中继/账号后额外验证。
+测试边界：本地信箱不是 Gmail；本地 OAuth 不是 Slack 登录；浏览器视口测试不是真机。公网 HTTPS relay 与真实业务账号需要部署相应中继/账号后额外验证。
+
+本地完整验收：先运行 `npm run build:event-plugins`，再设置协议匹配的 `CODEX_BIN` 并执行 `npm run test:bridge-minimal`。脚本使用隔离数据库、实际插件导入、私有 CA HTTPS 反向代理、原生 Codex runtime 与本地确定性模型，验证三次任务复用同一会话、发布器重开、重复交付及 Newbot 重启。输出默认位于 `.data/bridge-acceptance/evidence`；不接入任何真实 SaaS 账号，也不验证外部模型质量。

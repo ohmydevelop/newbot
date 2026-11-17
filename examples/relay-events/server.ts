@@ -6,6 +6,7 @@ import {
   serveEvents,
 } from "../../packages/event-bridge/server.js";
 import { cloudEvent } from "../../packages/event-bridge/protocol.js";
+import { relayRequest } from "../../packages/event-bridge/relay-request.js";
 const origin = () => {
   const url = new URL(process.env.RELAY_URL || "https://unconfigured.invalid");
   if (
@@ -22,18 +23,22 @@ const origin = () => {
     throw new Error("Invalid relay URL");
   return url.origin;
 };
+const http = relayRequest(origin(), process.env.RELAY_CA_CERTIFICATE);
 async function request(operation: string, body: unknown, signal?: AbortSignal) {
   const route = z.string().uuid().parse(process.env.RELAY_ROUTE);
-  const res = await fetch(`${origin()}/v1/routes/${route}/${operation}`, {
-    method: "POST",
-    headers: {
-      "content-type": "application/json",
-      authorization: "Bearer " + (process.env.RELAY_TOKEN || ""),
+  const res = await http.request(
+    `${origin()}/v1/routes/${route}/${operation}`,
+    {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        authorization: "Bearer " + (process.env.RELAY_TOKEN || ""),
+      },
+      body: JSON.stringify(body),
+      signal: signal || AbortSignal.timeout(30000),
+      redirect: "error",
     },
-    body: JSON.stringify(body),
-    signal: signal || AbortSignal.timeout(30000),
-    redirect: "error",
-  });
+  );
   if (!res.ok)
     throw new SourceFailure(
       res.status === 401

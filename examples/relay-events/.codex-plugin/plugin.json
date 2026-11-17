@@ -1,1 +1,8 @@
-{"name":"relay-events","version":"1.0.0","description":"通过出站连接接收桥接事件。","author":{"name":"newbot"}}
+{
+  "name": "relay-events",
+  "version": "1.0.1",
+  "description": "通过出站连接接收桥接事件。",
+  "author": {
+    "name": "newbot"
+  }
+}

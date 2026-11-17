@@ -1,0 +1,7 @@
+
+> newbot@0.2.0 build:event-plugins
+> node scripts/build-event-plugins.mjs
+
+/home/a/Documents/ChatGPT/newbot-systematize/.data/event-plugins/github-events
+/home/a/Documents/ChatGPT/newbot-systematize/.data/event-plugins/mailbox-events
+/home/a/Documents/ChatGPT/newbot-systematize/.data/event-plugins/relay-events

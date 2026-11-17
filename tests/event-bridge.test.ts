@@ -297,12 +297,9 @@ test("Bridge: real HTTP relay and MCP subprocess acknowledge only after durable 
   }
 });
 
-test("Bridge publisher: disk outbox survives failed delivery and process reopen; source hook excludes config and credentials", async () => {
+test("Bridge publisher: disk outbox survives failed delivery and process reopen", async () => {
   const { eventPublisher } = await import(
     "../packages/event-bridge/publisher.js"
-  );
-  const { normalizeOpenClaw } = await import(
-    "../examples/openclaw-event-bridge/handler.js"
   );
   const dir = await mkdtemp(join(tmpdir(), "bridge-outbox-"));
   const bodies: string[] = [];
@@ -316,20 +313,11 @@ test("Bridge publisher: disk outbox survives failed delivery and process reopen;
     },
   });
   try {
-    const observation = normalizeOpenClaw({
-      type: "message",
-      action: "received",
-      context: {
-        content: "hello",
-        cfg: { token: "secret" },
-        messageId: "external",
-      },
-    })!;
-    assert.deepEqual(observation.data, {
-      messageId: "external",
-      text: "hello",
-    });
-    publisher.enqueue(observation.type, observation.data, "fixed-id");
+    publisher.enqueue(
+      "example.message.received",
+      { messageId: "external", text: "hello" },
+      "fixed-id",
+    );
     await assert.rejects(publisher.flush());
     await publisher.close();
     publisher = eventPublisher({
@@ -346,17 +334,20 @@ test("Bridge publisher: disk outbox survives failed delivery and process reopen;
     await publisher.flush();
     assert.equal(bodies.length, 1);
     assert.equal(JSON.parse(bodies[0]).id, "fixed-id");
-    assert(!bodies[0].includes("secret"));
   } finally {
     await publisher.close();
     await rm(dir, { recursive: true, force: true });
   }
 });
 
-test("event failure contract: transport loss retries, authorization and incompatible definitions stop, backoff survives RPC",async()=>{
- const {eventFailure}=await import("../packages/event-bridge/core.js");
- assert.equal(eventFailure(new Error("offline")).code,"retry");
- assert.equal(eventFailure({code:-32024}).code,"auth_required");
- assert.equal(eventFailure({code:-32601}).code,"conflict");
- const error=eventFailure({code:-32000,data:{"io.newbot/failure":"retry",retryAfterMs:60000}});assert.equal(error.retryAfterMs,60000);
+test("event failure contract: transport loss retries, authorization and incompatible definitions stop, backoff survives RPC", async () => {
+  const { eventFailure } = await import("../packages/event-bridge/core.js");
+  assert.equal(eventFailure(new Error("offline")).code, "retry");
+  assert.equal(eventFailure({ code: -32024 }).code, "auth_required");
+  assert.equal(eventFailure({ code: -32601 }).code, "conflict");
+  const error = eventFailure({
+    code: -32000,
+    data: { "io.newbot/failure": "retry", retryAfterMs: 60000 },
+  });
+  assert.equal(error.retryAfterMs, 60000);
 });

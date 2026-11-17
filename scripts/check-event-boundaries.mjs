@@ -26,9 +26,7 @@ for (const file of [
     failures.push(file + ": provider implementation leaked into platform");
 }
 for (const file of files("examples").filter((f) =>
-  /\/(github-events|mailbox-events|relay-events|openclaw-event-bridge|hermes-event-bridge)\//.test(
-    f,
-  ),
+  /\/(github-events|mailbox-events|relay-events)\//.test(f),
 )) {
   const text = readFileSync(file, "utf8");
   if (/from\s*["'][^"']*\/server\//.test(text))

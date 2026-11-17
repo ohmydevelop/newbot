@@ -3,11 +3,13 @@ import { mkdirSync, chmodSync } from "node:fs";
 import { join } from "node:path";
 import { randomUUID } from "node:crypto";
 import { cloudEvent, type CloudEvent } from "./protocol.js";
+import { relayRequest } from "./relay-request.js";
 export function eventPublisher(options: {
   directory: string;
   url: string;
   token: string;
   source: string;
+  caCertificate?: string;
   request?: typeof fetch;
 }) {
   const url = new URL(options.url);
@@ -23,6 +25,7 @@ export function eventPublisher(options: {
       ))
   )
     throw new Error("Publisher needs HTTPS or loopback URL");
+  const http = relayRequest(url.origin, options.caCertificate);
   mkdirSync(options.directory, { recursive: true, mode: 0o700 });
   const file = join(options.directory, "outbox.sqlite"),
     db = new DatabaseSync(file);
@@ -37,7 +40,7 @@ export function eventPublisher(options: {
       for (const row of db
         .prepare("SELECT id,body FROM outbox ORDER BY created,rowid LIMIT 32")
         .all()) {
-        const res = await (options.request || fetch)(url, {
+        const res = await (options.request || http.request)(url, {
           method: "POST",
           headers: {
             "content-type": "application/json",
@@ -100,6 +103,7 @@ export function eventPublisher(options: {
       closed = true;
       clearInterval(timer);
       await pending?.catch(() => {});
+      await http.close();
       db.close();
     },
   };

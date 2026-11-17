@@ -1,0 +1,56 @@
+
+> newbot@0.2.0 test:event-bridge
+> npm run build:event-plugins && node scripts/check-event-boundaries.mjs && tsx --test tests/event-bridge*.test.ts tests/event-relay.test.ts tests/event-subscriptions*.test.ts
+
+
+> newbot@0.2.0 build:event-plugins
+> node scripts/build-event-plugins.mjs
+
+/home/a/Documents/ChatGPT/newbot-systematize/.data/event-plugins/github-events
+/home/a/Documents/ChatGPT/newbot-systematize/.data/event-plugins/mailbox-events
+/home/a/Documents/ChatGPT/newbot-systematize/.data/event-plugins/relay-events
+Event boundaries: generic platform and independent plugin implementations verified; legacy-v1 compatibility quarantined.
+✔ real MCP Streamable HTTP over private HTTPS discovers and consumes events using saved CA without an Agent loop (211.04948ms)
+✔ v21 upgrade preserves task/trigger/revision, fixed conversation, encrypted account, webhook and independent checkpoints (5.429431ms)
+✔ migration interrupted by malformed data rolls back changes and completion marker, then retries (0.518461ms)
+✔ Event OAuth: real local authorization code/PKCE, denial, state replay, encrypted restart and refresh (62.110625ms)
+✔ private HTTPS: configured CA allows actual TLS, stays scoped to one origin, and cannot bypass hostname checks (192.683026ms)
+✔ MCP webhook: real relay HTTP, signed verification, durable duplicate/restart, host commit ack, expiry and teardown (200.763111ms)
+✔ Bridge: imported mailbox package discovers schema and polls over real SDK stdio without a provider registration (303.988723ms)
+✔ Bridge: schema refuses executable/reference and unknown data fields (2.0283ms)
+✔ Bridge: installed v2 plugin → encrypted account → actual subprocess events → task queue → same conversation (1266.442882ms)
+✔ Bridge: real HTTP relay and MCP subprocess acknowledge only after durable host acceptance, two filtered subscriptions share no cursor (289.989453ms)
+✔ Bridge publisher: disk outbox survives failed delivery and process reopen (2.999247ms)
+✔ event failure contract: transport loss retries, authorization and incompatible definitions stop, backoff survives RPC (0.238334ms)
+✔ Relay: durable encrypted acceptance, duplicate/conflict, lease takeover and isolated idempotent ack (7.999302ms)
+✔ Relay: actual HTTP caller roles cannot publish or acknowledge another route (89.983698ms)
+✔ Relay: two durable subscriber groups each receive the same event and acknowledgments do not steal a peer's delivery (1.912343ms)
+✔ Relay: crash after host commit can release an expired receipt; superseded receipts do not acknowledge the current lease or wedge the host (6.721674ms)
+✔ GitHub baseline, bounded pagination, immutable normalized payload, gap and rate limit (23.33705ms)
+✔ GitHub unknown event omitted, access denied stops; fixed origin cannot be overridden (0.758507ms)
+✔ E1/E6: HTTP adapter restricts origin, blocks redirects, bounds payload and maps auth/rate/gap failures (90.302488ms)
+✔ E1/E3: background worker runs without a browser and close aborts an in-flight request without advancing cursor (237.136322ms)
+✔ D5: v20 migration adds account storage without rewriting legacy task records (4.591447ms)
+✔ D1-D5: installed declaration, encrypted account, shared outbound queue and persistent task thread (164.265051ms)
+✔ D1/D2/D3: stale account writes rejected; deletion pauses tasks; package tampering revokes source (58.094011ms)
+✔ D2/D4: renaming an account preserves the shared checkpoint and does not skip events (55.286061ms)
+✔ D1/D5: uninstall pauses shared tasks; import without event declaration contributes nothing (62.811368ms)
+✔ D2/D3/D4: server restart restores encrypted account and checkpoint without replay, then continues the same task thread (113.248267ms)
+✔ E1/E5: declarative installation permits only host adapters; shared subscription and baseline skip historical events (14.63143ms)
+✔ E2/E4: saved cursor survives ack failure and database reopen; successful target survives lost receipt and failed peer (4.284162ms)
+✔ E3: leases prevent concurrent polling; expired worker response is fenced after takeover (8.443472ms)
+✔ E3/E5: disabling and uninstall fence in-flight responses; reinstall does not silently resume (4.764132ms)
+✔ E4: failed target preserves FIFO while its peer progresses, target removal cancels backlog (6.10334ms)
+✔ E6: typed auth/gap errors stop polling until explicit retry; transient failures obey delay (3.026528ms)
+✔ E2/E6/E7: capacity and conflicting IDs roll back entire page and cursor; canonical key order deduplicates (4.691792ms)
+✔ E7: identical event IDs in different connections remain distinct (3.42417ms)
+✔ E5/E6: unknown event type and nonempty baseline cannot advance checkpoint or acknowledge (2.344498ms)
+✔ E3: replacing an installed provider fences its previous in-flight adapter generation (7.909191ms)
+ℹ tests 36
+ℹ suites 0
+ℹ pass 36
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2321.473035

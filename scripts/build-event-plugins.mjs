@@ -1,8 +1,11 @@
 import { build } from "esbuild";
-import { mkdir, copyFile, writeFile } from "node:fs/promises";
+import { mkdir, copyFile, writeFile, readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 for (const name of ["github-events", "mailbox-events", "relay-events"]) {
   const root = resolve(".data/event-plugins", name);
+  const metadata = JSON.parse(
+    await readFile(`examples/${name}/.codex-plugin/plugin.json`, "utf8"),
+  );
   await mkdir(root + "/.codex-plugin", { recursive: true });
   await build({
     entryPoints: [`examples/${name}/server.ts`],
@@ -33,6 +36,7 @@ for (const name of ["github-events", "mailbox-events", "relay-events"]) {
         RELAY_URL: "${user_config.url}",
         RELAY_ROUTE: "${user_config.route}",
         RELAY_TOKEN: "${user_config.token}",
+        RELAY_CA_CERTIFICATE: "${user_config.ca_certificate}",
       },
     };
   await writeFile(
@@ -68,7 +72,7 @@ for (const name of ["github-events", "mailbox-events", "relay-events"]) {
     JSON.stringify({
       manifest_version: "0.3",
       name,
-      version: "1.0.0",
+      version: metadata.version,
       description: "Newbot event plugin",
       author: { name: "newbot" },
       server: {
@@ -81,6 +85,11 @@ for (const name of ["github-events", "mailbox-events", "relay-events"]) {
           ? {
               url: { type: "string", title: "中继地址", required: true },
               route: { type: "string", title: "接收通道", required: true },
+              ca_certificate: {
+                type: "string",
+                title: "中继 CA 证书（PEM）",
+                required: false,
+              },
               token: {
                 type: "string",
                 title: "访问令牌",
@@ -100,33 +109,21 @@ for (const name of ["github-events", "mailbox-events", "relay-events"]) {
   );
   console.log(root);
 }
-for (const name of ["openclaw-event-bridge", "hermes-event-bridge"]) {
-  const root = resolve(".data/event-plugins", name);
-  await mkdir(root, { recursive: true });
-  if (name.startsWith("openclaw")) {
-    await build({
-      entryPoints: [`examples/${name}/handler.ts`],
-      outfile: root + "/handler.js",
-      bundle: true,
-      platform: "node",
-      format: "esm",
-      banner: {
-        js: 'import { createRequire } from "node:module"; const require = createRequire(import.meta.url);',
-      },
-    });
-    await copyFile(`examples/${name}/HOOK.md`, root + "/HOOK.md");
-    await writeFile(
-      root + "/package.json",
-      JSON.stringify({ name, type: "module", private: true }),
-    );
-  } else
-    for (const file of ["HOOK.yaml", "handler.py"])
-      await copyFile(`examples/${name}/${file}`, root + "/" + file);
-}
 await mkdir("dist/event-relay", { recursive: true });
 await build({
   entryPoints: ["services/event-relay/main.ts"],
   outfile: "dist/event-relay/main.mjs",
+  bundle: true,
+  platform: "node",
+  format: "esm",
+  banner: {
+    js: 'import { createRequire } from "node:module"; const require = createRequire(import.meta.url);',
+  },
+});
+await mkdir("dist/event-bridge", { recursive: true });
+await build({
+  entryPoints: ["packages/event-bridge/publisher.ts"],
+  outfile: "dist/event-bridge/publisher.mjs",
   bundle: true,
   platform: "node",
   format: "esm",
