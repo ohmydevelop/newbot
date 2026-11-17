@@ -109,3 +109,13 @@ v23 只在主数据库事务内添加通用参数及迁移记录。任务/触发
 运行 `node dist/event-forwarder/main.mjs /path/to/config.json`。只传入明确列出的环境变量，不复制宿主环境或凭证到事件中。中继插件在 Newbot 内使用同一通道的 consumer token；不要在源插件旁额外创建重复消费任务。
 
 GitHub事件包1.1.0新增 `workflow.completed`，参数为仓库与可选分支，输出真实工作流名称、提交、运行链接及结论。首次读取只建立基线；随后读取最近100条已完成运行，按runId/attempt去重，32条分批交付。窗口完全越过未消费检查点时报告gap而不静默跳过；较旧且已离开最近100条窗口的运行重跑不在此来源的覆盖范围内。若业务需要全量审计，应接入有完整保留策略的上游。公开API匿名额度不足时可在插件环境提供已有授权，插件仅使用读取接口，令牌不进入relay和模型。
+
+## 已部署的真实业务链路
+
+当前实例已接入 `ohmydevelop/newbot` 的 `codex/newbot-systematize` 分支CI完成事件。`github-events`（1.1.0）在通用出站桥中读取真实GitHub API，经过独立公网HTTPS中继，再由生产Newbot的`relay-events`（1.0.2）触发「Newbot CI 结果」任务。任务沿用已配置的百智-MQ / deepseek-flash，并将连续结果写入同一会话；不会发送邮件或GitHub评论。
+
+部署进程：`newbot-event-relay.service`、`newbot-event-relay-tunnel.service`、`newbot-github-event-bridge.service`，均为user systemd服务。运行数据位于实际实例 `.data/event-bridge-live/`；relay数据库与relay.key必须一起备份，producer的checkpoint和outbox也应一起保留。令牌配置仅存在0600私密文件。可先在自动任务页暂停任务，再停用事件源服务以暂停业务；不删除历史会话。
+
+公网入口使用Cloudflare Quick Tunnel，是真实公网TLS连接，但不是固定域名长期托管。重建隧道会换地址，必须同步更新producer/consumer连接；由于出站桥会阻止不同目的通道复用旧游标，切换前应排空outbox、停源并明确进行检查点迁移，不应靠删除状态恢复。长期运行应使用固定域名的命名Tunnel。[Cloudflare官方限制](https://developers.cloudflare.com/tunnel/get-started/quick-tunnels/)
+
+验收证据位于 `.issue/2026-11-17/evidence-bridge-public/`：两个真实GitHub运行、真实模型文本、同会话ID、公网重放去重、relay/producer重启及源MCP进程断线后自动重连。CI自身的failure状态作为业务结果传递，与Bridge链路成功是不同结论。

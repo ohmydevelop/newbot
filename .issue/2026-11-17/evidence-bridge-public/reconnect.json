@@ -1,0 +1,8 @@
+{
+  "parentPid": 1672079,
+  "terminatedSourcePid": 1672163,
+  "source": "installed github-events MCP subprocess",
+  "recovery": "automatic, same supervisor process",
+  "newSourcePid": 1676806,
+  "pollAfterReconnect": "events:0; no duplicate run"
+}
