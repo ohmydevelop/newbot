@@ -1,0 +1,23 @@
+{
+  "providers": [
+    {
+      "label": "事件桥",
+      "state": null,
+      "events": 1
+    },
+    {
+      "label": "GitHub 仓库事件",
+      "state": null,
+      "events": 13
+    }
+  ],
+  "accounts": [
+    {
+      "label": "GitHub CI · 公网 Bridge",
+      "available": true
+    }
+  ],
+  "existingTaskStatus": {
+    "state": "ready"
+  }
+}

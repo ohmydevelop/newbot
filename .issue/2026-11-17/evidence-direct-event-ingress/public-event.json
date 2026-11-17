@@ -1,0 +1,38 @@
+{
+  "origin": "https://reliance-inns-suggested-chicago.trycloudflare.com",
+  "taskId": "f4d5a0fa-f506-4389-90e9-acf4a22f9b04",
+  "triggerId": "a4a02de7-a378-46ad-8763-b984c5556ca8",
+  "provider": "gateway_a26181cc65e9408bbcacc4392aaadd66",
+  "model": "deepseek-flash",
+  "events": [
+    {
+      "sequence": 1,
+      "http": 202,
+      "duplicateHttp": 200,
+      "runId": "c0ea687d-2402-4609-bb61-60a901aa16b7",
+      "state": "succeeded",
+      "threadId": "01a1ea48-2f05-7ac3-b9d2-7ac466c6cb5a",
+      "turnId": "01a1ea48-3009-7df1-81be-89ab850c0867",
+      "error": null,
+      "responseLength": 11,
+      "responseSHA256": "279bc562925c4e4687278e2812df3c84dedd3b13e42db0ffdbcc3982cfbe1eb1"
+    },
+    {
+      "sequence": 2,
+      "http": 202,
+      "duplicateHttp": 200,
+      "runId": "79854a68-faf9-4d4f-b83f-1505e241b040",
+      "state": "succeeded",
+      "threadId": "01a1ea48-2f05-7ac3-b9d2-7ac466c6cb5a",
+      "turnId": "01a1ea48-474e-7633-a266-09779faac45b",
+      "error": null,
+      "responseLength": 11,
+      "responseSHA256": "b22e83ecd3c8b402d3cdf2c981f539dbd14461c80ef61f329c5711bea3597134"
+    }
+  ],
+  "existingTask": "dec7d1cc-cc76-41ce-8695-01d7ce7fb823",
+  "existingThread": "01a1e82d-a351-75f1-9f02-227ee80befb0",
+  "sameConversation": true,
+  "pausedHttp": 409,
+  "existingTaskPreserved": true
+}

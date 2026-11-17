@@ -1,0 +1,17 @@
+{
+  "directIngressVisible": true,
+  "focusRestored": true,
+  "width": 390,
+  "menu": [
+    "仅一次",
+    "每小时",
+    "每天",
+    "工作日",
+    "每周",
+    "每月",
+    "每年",
+    "接收事件",
+    "事件桥",
+    "GitHub 仓库事件"
+  ]
+}

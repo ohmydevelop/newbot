@@ -1,0 +1,28 @@
+{
+  "source": "3236298207d77afd078d6696d4b930bac9b6202a",
+  "webHash": "723192ee9b3d164029078d9db436133c5fa14f2c2b6f91e91f3a6661f400de98",
+  "serverHash": "ef09c3eabc91cdf319e9633316718fdd072e4c6c7ed9bca5047ffa15199a6ec3",
+  "checks": {
+    "types": {
+      "passed": true,
+      "evidence": ".issue/2026-11-17/evidence-direct-event-ingress/typecheck.log"
+    },
+    "unit": {
+      "passed": true,
+      "evidence": ".issue/2026-11-17/evidence-direct-event-ingress/regression.log"
+    },
+    "design": {
+      "passed": true,
+      "evidence": ".issue/2026-11-17/evidence-direct-event-ingress/lint.log"
+    },
+    "browser": {
+      "passed": true,
+      "evidence": ".issue/2026-11-17/evidence-direct-event-ingress/browser.json"
+    },
+    "motion": {
+      "passed": true,
+      "evidence": ".issue/2026-11-17/evidence-direct-event-ingress/browser.json"
+    }
+  },
+  "created": "2026-11-17T16:11:39.311Z"
+}
