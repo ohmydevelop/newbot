@@ -1,30 +1,10 @@
-✖ generic MCP bridge persists before cursor advance and recovers relay outage without re-emitting after reopen (384.524881ms)
-✔ workflow plugin establishes a baseline, emits new completion and rerun IDs, drains pages without silently losing events (9.663355ms)
+✔ generic MCP bridge persists before cursor advance and recovers relay outage without re-emitting after reopen (352.214535ms)
+✔ workflow plugin establishes a baseline, emits new completion and rerun IDs, drains pages without silently losing events (8.784508ms)
 ℹ tests 2
 ℹ suites 0
-ℹ pass 1
-ℹ fail 1
+ℹ pass 2
+ℹ fail 0
 ℹ cancelled 0
 ℹ skipped 0
 ℹ todo 0
-ℹ duration_ms 704.352494
-
-✖ failing tests:
-
-test at tests/event-forwarder.test.ts:1:489
-✖ generic MCP bridge persists before cursor advance and recovers relay outage without re-emitting after reopen (384.524881ms)
-  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
-  
-  0 !== 1
-  
-      at TestContext.<anonymous> (/home/a/Documents/ChatGPT/newbot-systematize/tests/event-forwarder.test.ts:63:12)
-      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
-      at async Test.run (node:internal/test_runner/test:1409:7)
-      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
-    generatedMessage: true,
-    code: 'ERR_ASSERTION',
-    actual: 0,
-    expected: 1,
-    operator: 'strictEqual',
-    diff: 'simple'
-  }
+ℹ duration_ms 637.321364

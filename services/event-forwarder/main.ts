@@ -20,16 +20,18 @@ const config = z
     }),
   })
   .parse(JSON.parse(await readFile(process.argv[2], "utf8")));
-const bridge = await eventForwarder({
-  ...config,
-  server: {
-    command: config.server.command,
-    args: config.server.args,
-    env: Object.fromEntries(
-      config.server.envKeys.map((key) => [key, process.env[key] || ""]),
-    ),
-  },
-});
+const open = () =>
+  eventForwarder({
+    ...config,
+    server: {
+      command: config.server.command,
+      args: config.server.args,
+      env: Object.fromEntries(
+        config.server.envKeys.map((key) => [key, process.env[key] || ""]),
+      ),
+    },
+  });
+let bridge = await open();
 const stop = new AbortController();
 for (const signal of ["SIGINT", "SIGTERM"] as const)
   process.on(signal, () => stop.abort());
@@ -62,7 +64,9 @@ try {
         )
       )
         throw error;
-      delay = Math.max(10000, failure.retryAfterMs || 60000);
+      delay = Math.min(3600000, Math.max(10000, failure.retryAfterMs || 60000));
+      await bridge.close();
+      bridge = await open();
     }
     await sleep(delay, undefined, { signal: stop.signal }).catch(() => {});
   }

@@ -62,6 +62,7 @@ export async function eventForwarder(options: ForwarderOptions) {
   let closed = false,
     busy = false;
   const close = async () => {
+    if (closed) return;
     closed = true;
     await client.close();
     await publisher.close();
