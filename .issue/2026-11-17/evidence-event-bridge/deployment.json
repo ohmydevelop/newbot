@@ -1,0 +1,42 @@
+{
+  "source": "d10faeaf0943f51f15d98fda63d2bccb7c10e390",
+  "webHash": "790ea34baa2d339a4d03f48e84eaec0261a69dc322a2a505c684bc1e7156142c",
+  "url": "https://promised-retailers-python-prizes.trycloudflare.com",
+  "ready": {
+    "ready": true,
+    "runtime": "ready"
+  },
+  "dataUnchanged": true,
+  "databaseMigration": "event-bridge-v23",
+  "previousDatabaseVersion": 20,
+  "historicalModes": "unchanged",
+  "tables": [
+    "threads",
+    "session_runtime",
+    "session_runtime_pending",
+    "thread_workspaces",
+    "plugin_connection_settings",
+    "private_field_sets",
+    "provider_configuration",
+    "extension_configuration",
+    "experts",
+    "session_extensions",
+    "automation_tasks",
+    "automation_runs",
+    "automation_deliveries",
+    "automation_mail_config",
+    "automation_threads",
+    "automation_event_routes",
+    "automation_event_inbox",
+    "automation_attachment_refs"
+  ],
+  "serverUnchanged": false,
+  "serverHash": "2abfc63b73b62983efcdf2f1ee43662907a27fad863292c00535ec6df3114a5a",
+  "previousServerIndexHash": "976306a2f54d80fd8a8c3d21d77229e1c9642bde7ad6de35ea7bbec1c8b35a6f",
+  "backup": "/home/a/Documents/ChatGPT/newbot/.data/backups/2026-11-17-web-d10faeaf0943",
+  "assets": {
+    "assets/index-pWXKEmMl.js": "eeb9b32f03cda5109a38c43e4a2854c889a3e5b8e8191a8812887fa1e3f4cac2",
+    "assets/index-CMsJUEpa.css": "5f5cf6086cb9f3ebdf046891182f1c8a66bb2a5389735047e2706cf5b779b290"
+  },
+  "retainedAssets": 7171
+}

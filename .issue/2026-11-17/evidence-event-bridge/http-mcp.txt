@@ -1,0 +1,9 @@
+✔ real MCP Streamable HTTP over private HTTPS discovers and consumes events using saved CA without an Agent loop (242.255665ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 545.685053

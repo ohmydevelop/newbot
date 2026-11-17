@@ -1,0 +1,44 @@
+{
+  "source": "d10faeaf0943f51f15d98fda63d2bccb7c10e390",
+  "webHash": "790ea34baa2d339a4d03f48e84eaec0261a69dc322a2a505c684bc1e7156142c",
+  "serverHash": "2abfc63b73b62983efcdf2f1ee43662907a27fad863292c00535ec6df3114a5a",
+  "checks": {
+    "types": {
+      "passed": true,
+      "evidence": ".issue/2026-11-17/evidence-event-bridge/types.txt"
+    },
+    "unit": {
+      "passed": true,
+      "evidence": ".issue/2026-11-17/evidence-event-bridge/tests.txt"
+    },
+    "design": {
+      "passed": true,
+      "evidence": ".issue/2026-11-17/evidence-event-bridge/lint.txt"
+    },
+    "browser": {
+      "passed": true,
+      "evidence": ".issue/2026-11-17/evidence-event-bridge/browser.json"
+    },
+    "motion": {
+      "passed": true,
+      "evidence": ".issue/2026-11-17/evidence-event-bridge/mobile.txt"
+    },
+    "migration": {
+      "passed": true,
+      "evidence": ".issue/2026-11-17/evidence-event-bridge/migration-live.json"
+    },
+    "native": {
+      "passed": true,
+      "evidence": ".issue/2026-11-17/evidence-event-bridge/native.txt"
+    },
+    "boundaries": {
+      "passed": true,
+      "evidence": ".issue/2026-11-17/evidence-event-bridge/boundaries.txt"
+    },
+    "recovery": {
+      "passed": true,
+      "evidence": ".issue/2026-11-17/evidence-event-bridge/receipt-recovery.txt"
+    }
+  },
+  "created": "2026-11-17T04:12:46.671Z"
+}

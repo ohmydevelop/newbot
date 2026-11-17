@@ -21,3 +21,17 @@
 - 生产数据库只读副本迁移演练 v20→v23：55张既有表所有行不变，迁移记录写入；发布脚本已增加对应版本检查和失败恢复测试。
 - 提供单文件中继部署包、Compose、独立插件与开发文档 docs/event-bridge.md。公网 HTTPS 中继地址及真实事件上游未配置，不将本地替身验收写成外部服务已连通。
 - 当前阶段：准备提交并通过发布门禁；尚未更新线上服务。发布后结果追加到此记录，禁止用本条作为已上线证明。
+
+## 上线结果
+
+2026-11-17 已发布产品提交 `d10faeaf0943f51f15d98fda63d2bccb7c10e390` 到用户实际 `newbot-test.service`（3100）。发布凭据、备份路径、数据库/构建校验见 `evidence-event-bridge/deployment.json`、`release-receipt.json`。v20→v23 成功，18组受保护表摘要保持不变；此前离线迁移演练覆盖全部55张既有表。
+
+首次尝试在登录前因旧临时隧道失效而停止，未切换任何资产；旧 `*-current.log` 实为11月13日已停止日志。恢复 web/apps 两条隧道，备份并更新生产 `.env` 中的精确 origin，保留端口、密码、模型与账号配置。`*-current.log` 现在指向活跃日志，避免后续再次读取失效历史地址。失败预备文件已保留在 `.data/preflight-failed-d10faeaf0943/`。
+
+当前入口：https://promised-retailers-python-prizes.trycloudflare.com 。公网390/1280两宽度真实登录、自动任务入口、未保存编辑器、触发器菜单、source API200及release source核对均通过（`public-browser.json`）。没有创建生产测试任务、发送外部消息或更换用户密码；生产截图保留在 gitignored `.data/event-bridge-public/`，避免把真实工作区信息提交到公开仓库。
+
+补充真实 MCP Streamable HTTP + 私有 HTTPS/CA 的事件发现与读取通过（`http-mcp.txt`），是实际 SDK transport 测试，不仅是普通 HTTPS 请求。
+
+中继可执行包及5个插件/hook归档已交付到生产 `.data/event-bridge-releases/d10faeaf0943/`。中继仍是可选独立服务：未配置持久公网 HTTPS relay 地址、未连接真实 SaaS 账号，因此不宣称真实 Gmail/Slack/OpenClaw/Hermes 完整产品或公网 webhook 已运行。已完成标准接口、部署包、本地实际出站/签名回调与恢复验证；这些外部部署条件不影响 poll/push 插件运行。
+
+CI 已加入边界与浏览器验证；本轮验收以本地证据为准，不冒称远程 CI 已执行。唯一全量测试跳过项为历史远程原生商店下载用例；事件包本地原生导入已另行通过。物理手机和软键盘仍无设备可测。

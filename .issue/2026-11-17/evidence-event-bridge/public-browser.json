@@ -1,0 +1,22 @@
+{
+  "url": "https://promised-retailers-python-prizes.trycloudflare.com",
+  "checks": [
+    {
+      "width": 390,
+      "editor": true,
+      "triggerPicker": true,
+      "sourceApi": 200,
+      "overflow": false,
+      "source": "d10faeaf0943f51f15d98fda63d2bccb7c10e390"
+    },
+    {
+      "width": 1280,
+      "editor": true,
+      "triggerPicker": true,
+      "sourceApi": 200,
+      "overflow": false,
+      "source": "d10faeaf0943f51f15d98fda63d2bccb7c10e390"
+    }
+  ],
+  "created": "2026-11-17T04:21:31.759Z"
+}
