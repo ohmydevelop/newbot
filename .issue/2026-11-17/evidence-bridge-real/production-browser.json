@@ -6,6 +6,7 @@
       "sourceVisible": true,
       "accountFieldsVisible": true,
       "caFieldVisible": true,
+      "pastedCaValid": true,
       "overflow": false,
       "saved": false
     },
@@ -14,6 +15,7 @@
       "sourceVisible": true,
       "accountFieldsVisible": true,
       "caFieldVisible": true,
+      "pastedCaValid": true,
       "overflow": false,
       "saved": false
     }

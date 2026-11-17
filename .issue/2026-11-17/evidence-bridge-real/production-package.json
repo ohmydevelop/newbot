@@ -1,17 +1,17 @@
 {
-  "source": "03f07ca19f414f1da6db94ce9cbe71d4a6ce62b5",
-  "destination": "/home/a/Documents/ChatGPT/newbot/.data/event-bridge-releases/03f07ca19f41",
+  "source": "d5a03b9d77eadfde0a05ff0af409c497c2ba80ff",
+  "destination": "/home/a/Documents/ChatGPT/newbot/.data/event-bridge-releases/d5a03b9d77ea",
   "installed": [
     {
       "name": "relay-events",
       "state": "installed"
     }
   ],
-  "importId": "499dce59-548b-490d-97cb-70d0a48c1fb5",
+  "importId": "f3e63448-d4bf-438e-9646-6f58c1f34939",
   "hashes": {
     "event-relay/main.mjs": "44f6107e6ce823b9c09e4b4ad67050cb65d7062207173b24aa744d10e91555ce",
-    "publisher/publisher.mjs": "01627ad67763fc424c3b61e2a79663ddf0c853ad7b7df218cb986f42ab5e055c",
-    "relay-events/server.mjs": "6043e49d39e5f94228c061591b861b091d7ea34e1e734d66975a4cb444ed8d02"
+    "publisher/publisher.mjs": "cc0b623d2128b0c0ca715f297f58ab244a55d03cbfae59e6091eeecbe4e3b253",
+    "relay-events/server.mjs": "1983780536bdb81918f7cc51212e4b9fef4ade041fa6d3425b51fc064348468f"
   },
   "origin": "https://promised-retailers-python-prizes.trycloudflare.com",
   "serverRestarted": false,
