@@ -32,11 +32,11 @@ Newbot 的持久队列插件可使用额外的 `_meta["io.newbot/receipt"]` 和 
 
 运行 `npm run build:event-plugins`，生成独立包：
 
-| 目录（位于 `.data/event-plugins/`） | 用途                                                       |
-| ----------------------------------- | ---------------------------------------------------------- |
-| `github-events`                     | GitHub Issue/PR 事件，公开仓库可匿名，私有仓库配置只读令牌 |
-| `mailbox-events`                    | 本地文件信箱测试夹具；不是 Gmail 连接器                    |
-| `relay-events`                      | 通用 CloudEvents 中继消费者，按事件类型筛选                |
+| 目录（位于 `.data/event-plugins/`） | 用途                                                        |
+| ----------------------------------- | ----------------------------------------------------------- |
+| `github-events`                     | GitHub 部分 Issue/PR 事件及工作流完成事件；按需配置只读令牌 |
+| `mailbox-events`                    | 本地文件信箱测试夹具；不是 Gmail 连接器                     |
+| `relay-events`                      | 通用 CloudEvents 中继消费者，按事件类型筛选                 |
 
 以上三个目录可通过 Newbot 设置中的本地插件导入安装。将 `mailbox-events` 复制为独立包，修改包名、事件名称/schema 和处理实现，即可开发第二种来源。构建同时生成可独立导入的发布器 `dist/event-bridge/publisher.mjs` 和中继 `dist/event-relay/main.mjs`。SDK 入口在 `packages/event-bridge/server.ts`；实现与前端无耦合。原生 Codex 的导入/读取/卸载仅验证插件包装兼容性，事件方法由 Newbot 独立 MCP 连接执行。
 

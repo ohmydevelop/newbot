@@ -1,126 +1,203 @@
-# newbot
+# Newbot
 
-以 Codex App Server 为唯一 Agent 内核的私有 Web 客户端。React + Vite + Fastify；AG-UI 标准事件经 SSE 传送，用户操作使用 HTTP。没有自建 Agent Loop、模型网关或第二套 MCP 客户端。
+Newbot 是一个可以部署在自己服务器上的 AI 工作台。在浏览器里聊天、上传文件、连接业务工具，也可以让自动任务按时间或业务事件运行，把结果留在同一个会话里。
 
-当前交付为 **v2 架构的 0.2.0 开发功能冻结候选版**，不是白皮书全部验收项已完成的生产版本。实现范围与已知边界见 [实施记录](docs/architecture.md)，实测结果见 [验证记录](docs/validation.md)。生产部署、Named Tunnel、备份恢复与验收命令见 [稳定版手册](docs/production.md)。官方原版 App 与性能结果见 [第二轮记录](docs/round2.md)。
+你可以配置自己的模型服务，用插件接入外部系统，用技能保存处理方法，再用专家组合提示词、插件和技能。底层执行由 Codex 承担，Newbot 提供界面、配置、权限管理和自动任务。
 
-## 使用与当前范围
+**当前版本：0.2.0，持续开发中。** 已有真实模型和业务事件链路的验证，但不代表所有模型、OAuth 服务或部署环境都已验收。具体边界见下文。
 
-输入框右下角可切换“聊天 / 规划 / 工作”。新会话默认聊天，旧会话保留工作模式；运行中切换从下一次任务生效，原工作审批偏好不变。聊天不执行命令，规划仅允许沙盒内只读调查。需要 MCP 查询时，在设置的连接器或插件连接详情中展开“聊天与规划可用工具”，只勾选已经确认不会修改外部数据的工具，逐项自动保存。连接地址或工具定义变化后需要重新确认。三种模式共用 Codex 和同一会话历史，详见[模式边界与验收](docs/session-modes.md)。
+## 可以做什么
 
-Provider 定义、默认模型及推理参数保存到 SQLite，启动自动恢复到内存，通过原生线程参数热更新；会话选择和历史保留。可选 NEWBOT_RUNTIME_CONFIG_URL 用于首次初始化或显式重新下发，成功后同样持久化。迁移与 API 用法见 [配置持久化与热更新](docs/provider-memory-config.md)。
+| 需求                     | 在 Newbot 中怎么做                               |
+| ------------------------ | ------------------------------------------------ |
+| 日常问答、分析图片和文本 | 新建聊天，选择模型，输入问题或添加支持的附件     |
+| 查询业务系统、执行任务   | 配置连接器或插件，在会话中选择使用               |
+| 复用处理方法             | 添加技能，例如告警分析或代码审查流程             |
+| 使用固定角色             | 创建专家，组合提示词、插件和技能                 |
+| 定期生成结果             | 在自动任务中设置时间、指令和模型                 |
+| 业务发生变化后自动处理   | 安装提供事件来源的插件，为自动任务添加事件触发器 |
+| 查看交互式结果           | 使用受支持的 MCP Apps 或 A2UI 表单               |
 
-D1–D7 功能开发已完成，保留 Codex 作为唯一 Agent 内核。支持聊天/历史/恢复、模型与 Provider/MCP 配置、Skills 显式选择、受控文件和 HTML/PDF 预览、MCP Apps、受限 A2UI、独立私密输入，以及桌面/手机的键盘和主题交互。
+例如：连接安全平台后，让专家查询近期告警；或者监听 GitHub 工作流完成事件，让模型比较本次和上次结果。工具能访问什么、任务能执行什么，取决于你配置的连接和权限。
 
-- [使用指南](docs/user-guide.md)：聊天、草稿、审批、文件、表单、私密输入与故障恢复。
-- [能力与限制](docs/capability-matrix.md)：实例条件、开放范围与明确关闭项。
-- [2026-11-10 工作区与扩展改进](.issue/2026-11-10/issue-03-plan.md)：手工模型、专家组合、会话目录、热更新和侧栏状态；[验证记录](.issue/2026-11-10/issue-03-progress.md)。
-- [2026-11-09 用户反馈改进](.issue/2026-11-09/plan.md)：缩略图预览、模型网关、审批、插件与界面整理；[验证记录](.issue/2026-11-09/progress.md)。
-- [第二轮设置体验改进](.issue/2026-11-09/plan-02.md)：直接填写 API Key、自动网关标识、统一工具/插件目录与技能条目；[验证记录](.issue/2026-11-09/progress-02.md)。
-- [菜单与按钮打磨](.issue/2026-11-09/plan-03.md)：统一操作图标、危险分组、按钮与手机状态；[效果与证据](.issue/2026-11-09/progress-03.md)。
-- [历史功能冻结记录](docs/feature-freeze.md)：302 项自动测试、150 项相关浏览器检查及发布前待办。
-- [整体开发计划](docs/roadmap.md)：全部阶段和对应证据。
+## 在本机运行
 
-正式 Docker、固定双域名、两个真实 Provider、OAuth、24 小时并发及完整备份恢复统一留在 R1。生产依赖审计仍有 A2UI/旧 Zod 相关 2 项 high，现有资源限额为缓解措施；当前不是已完成生产验收的稳定发布。
+### 准备环境
 
-## 本机运行
+- Linux、Node.js 24+、npm，以及可写的 tmpfs 目录（默认 `/dev/shm`）。
+- 可用的模型服务，或供实例使用的 Codex 账号。
+- **与本分支匹配的 Codex 内核。** 当前分支包含原生扩展，涉及模型路由、插件资源和局部 CA 证书；仅安装 npm 中的 Codex 包不足以运行完整功能。
 
-需要 Node.js 24+、Linux（可写 tmpfs 诊断目录），以及可用的 Codex 账号或 Provider。npm 安装固定的 Codex 0.165.0。
+已有匹配的二进制时，通过 `CODEX_BIN` 指定它。首次从源码安装，可按下面的方式构建；需要 Git、Rust 1.95.0 工具链及对应 Linux 编译依赖，首次构建会下载源码和依赖。固定提交与补丁说明见 [Codex 内核](native/codex/README.md)。
 
 ```bash
 npm ci
+node scripts/build-native-codex.mjs
+export CODEX_BIN="$PWD/.data/native/managed/bin/codex"
 npm run build
 npm start
 ```
 
-访问 <http://localhost:3100>。首次启动会生成随机登录密码，保存在 `.data/initial-password`（`0600`）；该文件已存在时启动会沿用其中密码，清空数据库不会更换登录密码。也可以复制 `.env.example` 到 `.env`，设置至少 12 字符的 `ADMIN_PASSWORD`。不要提交 `.env`、`.data` 或 Codex 凭证。
+这是当前源码的安装路径；本轮文档更新未在全新机器重新执行安装验收。不要通过改写版本号来绕过协议检查。
 
-开发模式：`npm run dev`，访问 <http://localhost:5173>。修改 `.env` 中的 `PUBLIC_ORIGIN` 为 `http://localhost:5173`；也可以不设此项，开发默认允许 3100/5173 的 localhost 和 127.0.0.1。
+### 登录和配置模型
 
-默认使用 `DATA_DIR/codex`（本地为 `.data/codex`），不继承启动者的 `CODEX_HOME`。子进程的用户目录、SQLite 状态与 XDG 目录也独立保存。需要登录时使用固定版本 Codex，并明确指定实例目录：
-
-```bash
-CODEX_HOME=/absolute/path/to/newbot/.data/codex npx codex -c 'cli_auth_credentials_store="file"' login
-```
-
-使用其他实例目录时设置 `NEWBOT_CODEX_HOME`。宿主的 `~/.codex`、`~/.agents` 及其子目录不可作为实例目录，也不会自动导入个人配置、账号或历史。已有共享 Home 的安装应先备份并选择性迁移应用会话，再切换；详见 [运行隔离与热更新](docs/runtime-isolation.md)。Provider 由 Bridge SQLite 管理并注入原生线程；普通扩展配置和启停状态也保存到 SQLite，每轮同步到对应原生线程；技能与插件包保持原生文件结构。新聊天使用独立工作目录，详见 [会话工作区与扩展](docs/session-extensions.md)。普通配置不回读凭证明文；Provider 与 MCP 的请求头、stdio 环境变量通过独立私密通道加密保存；聊天授权可限本次任务或当前会话，见 [私密运行参数](docs/private-runtime-fields.md)。
-
-## 单容器
+打开 [http://localhost:3100](http://localhost:3100)。首次启动生成的登录密码保存在本机 `.data/initial-password`，可在服务器终端读取：
 
 ```bash
-docker compose up -d --build
-docker compose exec newbot cat /data/initial-password
-docker compose exec newbot codex login --device-auth
+cat .data/initial-password
 ```
 
-访问 <http://localhost:3100>。`agent-data` 卷保存独立 Codex Home、工作目录、Provider SQLite 配置、Web 会话和附件。自定义 Provider 在 Web 网关设置中添加，密钥通过私密入口加密保存；保留卷重启后配置自动恢复。正式容器验收仍在 R1。
+也可以把 `.env.example` 复制为 `.env`，设置至少 12 个字符的 `ADMIN_PASSWORD`。已有实例重启会沿用已保存的密码；不要提交 `.env`、`.data` 或账号凭证。
 
-HTML 运行预览与 MCP Apps 共用独立的 `APP_ORIGIN`。本机仅开放一个主站地址时可在 localhost/127.0.0.1 之间选择另一个地址作为应用域；主站同时允许两者时，应显式配置独立应用地址，未配置时 HTML 保持源码/下载模式。应用域只提供隔离文档，禁止访问登录、API 和主站页面。
+登录后：
 
-公网部署时，将 `PUBLIC_ORIGIN` 设置为主站精确 HTTPS origin，将 `APP_ORIGIN` 设置为不同 origin，例如 `https://apps.agent.example.com`；两个域名反向代理到同一个 Fastify 服务。主站和应用站不能使用同一 origin。转发 SSE 时关闭代理缓冲，保留 Host。仅在反向代理可信且直接对外入口受控时设置 `TRUST_PROXY=true`。
+1. 打开设置中的 **模型**，添加服务地址、API Key 和要使用的模型。
+2. 保存并检查连接，再进行一次真实聊天；能列出模型不等于工具调用也兼容。
+3. 回到聊天页，选择模型并发送第一条消息。
 
-```caddyfile
-agent.example.com, apps.agent.example.com {
-  reverse_proxy 127.0.0.1:3100 {
-    flush_interval -1
-  }
-}
-```
+API Key 使用专用私密字段提交，不要填进聊天内容。模型配置保存到本机 SQLite；保留实例数据目录后，重启可以恢复配置。
 
-**容器与 Compose 的目标环境运行尚未纳入本轮验收，将在 R1 实际验证。** 不要通过 `privileged` 或关闭 Codex sandbox 来绕过执行失败。
-
-## Cloudflare 临时分享
-
-分享模式保留密码登录，使用两个独立 origin 承载工作台与 MCP Apps。当前临时分享使用 poll，分享时设置 `AGENT_TRANSPORT=poll`，继续传递相同的 AG-UI 事件。当前分享地址与停止方法见 [分享说明](docs/cloudflare-sharing.md)。
-
-## API 与协议
-
-- `POST /api/agent/run`：新建/继续 Turn，接受 `requestId`、`threadId?`、`text`、`model?`、`effort?`、`provider?`、`attachments?`、`skills?`、`plugins?`、`expertId?`、`extensionRevision?`。
-- `GET /api/agent/runs/:requestId`：核对发送回执；`POST /api/agent/runs/:requestId/abandon` 只放弃尚未登记的发送，并阻止迟到请求执行。
-- `GET /api/agent/events`：AG-UI SSE；可用 `threadId` 筛选，重连后同步状态快照。
-- `POST /api/agent/action`：白名单内的中断、审批、重命名、归档、恢复与 MCP OAuth 操作。
-- `GET /api/runtime/capabilities`：报告实际实现与协议基线，未知的 MCP 协商版本为 `null`。
-- `GET/POST /api/config`：已脱离凭证的配置视图及有限修改。
-- `GET /api/threads`、`GET /api/threads/:id`：产品会话映射和 Codex 历史分页。
-- `POST /api/mcp-apps/open`、`close`、`status`、`call-request`、`call-approve`、`call-cancel`：App 独立 View、资源与一次性工具授权。生命周期与恢复见 [D4.1 记录](docs/mcp-app-lifecycle.md)。
-- `POST /api/attachments`、`GET /api/files/:id`：受认证的附件上传/读取。
-
-登录依赖 HttpOnly / SameSite=Strict Cookie。所有写请求需要合法 Origin。API 需要登录，`/api/health`、`/api/session`、`/api/login` 除外。`/sandbox/:token` 是受限应用 HTML 的短期能力 URL，在应用 origin 提供；不能作为普通文件接口使用。
-
-完整的 AG-UI 客户端可消费标准文本、工具及生命周期事件。产品视图使用 `STATE_SNAPSHOT`、`ACTIVITY_SNAPSHOT`，审批与运行状态使用带 `newbot.*` 名称的 `CUSTOM` 扩展事件。前端不接收原始 Codex 通知。
-
-## 开发验证
+如果使用 Codex 账号登录，需要明确指定 Newbot 的独立账号目录。在项目根目录、已设置 `CODEX_BIN` 的终端执行：
 
 ```bash
-npm run generate:codex  # 使用固定版本二进制重新导出协议
-npm run check
-npm test
-npm run build
-npm audit
+CODEX_HOME="$PWD/.data/codex" "$CODEX_BIN" -c 'cli_auth_credentials_store="file"' login
 ```
 
-`generated/codex` 是 Codex 自动生成的类型，禁止手工编辑。`server/protocol.ts` 只关联请求和生成的响应类型。升级二进制必须重新生成并通过契约和实际连接测试；启动时拒绝协议版本不匹配。
+上述路径适用于默认数据目录。自定义 `DATA_DIR` 或 `NEWBOT_CODEX_HOME` 时，应使用实际实例目录。Newbot 不自动继承宿主的 `~/.codex`、个人账号或历史，详见 [运行隔离](docs/runtime-isolation.md)。长期运行时，将 `CODEX_BIN` 的绝对路径写入服务环境或 `.env`。
 
-生成脚本现在包含 `--experimental`，用于固定版本 App Server 的动态工具字段。新对话原生注册 `newbot_ui`；旧线程不自动迁移或分叉。
+## 日常使用
 
-浏览器验证夹具：`npx tsx tests/preview.ts`，访问 <http://127.0.0.1:3101>，测试密码 `browser-test-password-only`。该实例使用临时目录和测试数据，**没有真实模型或监控数据**，不被产品入口或 Docker 使用。MCP App 夹具由官方 SDK 构建，用于验证初始化、工具结果和经审批的反向工具调用。
+### 聊天、规划和工作
 
-## 内置 MCP 可视化测试
+三种模式共用 Codex 和同一会话历史，可以在输入框的模式菜单中切换。
 
-已提供一个使用官方 SDK 的真实测试 Server 和 App，见 [测试 MCP 示例](examples/test-mcp/README.md)。设置 `ENABLE_TEST_MCP=true` 后，只在本工作台的 Codex 进程启用 `newbot_test`。聊天中调用 `show_metrics` 即可显示 CPU、内存、磁盘图表；服务器选择、时间范围和刷新继续走宿主授权。数据全部为模拟值，不读取真实系统指标。
+| 模式 | 用途与边界                                                    |
+| ---- | ------------------------------------------------------------- |
+| 聊天 | 问答、查看支持的附件、调用经确认的只读工具；不执行 shell 命令 |
+| 规划 | 先分析和制定方案，允许受限制的只读调查                        |
+| 工作 | 按已配置权限调用工具、执行命令和修改文件                      |
 
-插件内的连接器、技能和自动操作统一在插件详情中管理。插件作者可用 MCPB `user_config` 声明必要字段，用户只需填写地址、Key 等设置；配置和私密参数从下一轮生效。格式与边界见 [插件配置说明](docs/plugin-configuration.md)。
+新会话默认使用聊天模式。运行中更改模式从下一轮生效。只读 MCP 工具需要先在连接详情中确认可用范围；技能和专家提示词不能提升权限。详见 [模式与权限](docs/session-modes.md)。
 
-每个 App 的“权限与能力”展示实际工具范围及宿主限制。未开放的外链、下载、聊天写入、额外资源和模型请求会明确失败；工具调用仍逐次批准。标准握手、结果与测试边界见 [Host 能力记录](docs/mcp-app-host.md)。
+发送后可以查看回答和执行过程，需要审批时在会话中处理。关闭网页不会主动停止后台任务；如果发送结果不明，先检查发送状态，避免重复执行。服务或 Codex 进程退出后，不保证自动续跑。详见 [聊天与恢复指南](docs/user-guide.md)。
 
-MCP 的普通 Elicitation 请求支持有限表单、提交、拒绝、取消和服务端超时，见 [普通输入记录](docs/mcp-elicitation.md)及[独立测试 MCP](examples/test-elicitation/README.md)。这是可能进入模型上下文的普通信息输入；私密输入使用独立的 [受信通道](docs/trusted-input.md)，不复用此表单。
+### 连接器、插件、技能和专家
 
-`npm run test:official-ui` 使用真实 Codex/MCP 与原版官方 App 验证并发、拒绝、取消和恢复，不调用模型；测试历史的重放边界和结果见 [D4.4 记录](docs/mcp-app-regression.md)。
+这些功能在设置中管理，会话里按需选择：
 
-A2UI 已完成 D5.1 官方样例和协议基线验证：`npm run dev:a2ui` 启动回环地址实验室，`npm run test:a2ui-ui` 运行浏览器检查。见 [样例说明](examples/a2ui/README.md) 和 [版本与依赖决策](docs/a2ui-foundation.md)。D5.2 组件目录与资源限额已完成，可通过 `npm run dev:a2ui-catalog` 查看，见 [组件记录](docs/a2ui-catalog.md)。D5.3 已接入真实 Agent，能力范围见下文。
+| 名称   | 含义                                                 |
+| ------ | ---------------------------------------------------- |
+| 连接器 | 接入一个工具服务，例如 HTTPS MCP 或本地 MCP 进程     |
+| 插件   | 可安装的功能包，可以包含连接器、技能及事件来源声明   |
+| 技能   | 一套可复用的处理说明与资源，通常以 `SKILL.md` 为入口 |
+| 专家   | 提示词、插件和技能的组合，独立于技能管理             |
 
-D5.3 已启用新对话中的真实 Agent 表单：直接请求可填写的表单，填入普通信息后提交，Codex 在同一个 Turn 中继续。增量更新、原消息关联、服务端字段重建、单次消费、取消和重试均已接通。见 [真实 Agent 接入记录](docs/a2ui-agent.md)。`npm run test:a2ui-chat-ui` 使用模拟 Agent 做浏览器矩阵；`npm run test:a2ui-live` 使用已配置模型执行真实流程。D5.4 已支持表单快照、服务端草稿、冲突提示、到期禁用和重启只读恢复；旧表单不会重新获得提交权限。见 [恢复记录](docs/a2ui-recovery.md)。临时 Provider 检查和独立私密保存继续可用。SQLite 模式支持加密保存网关密钥、MCP 请求头和 stdio 环境变量，也支持聊天中对已配置接收方进行本次任务/当前会话授权；不接入通用 sudo 执行器，详见 [私密字段与任务授权](docs/private-runtime-fields.md)。
+插件支持从商店或本地包导入，也支持添加多个商店。安装后仍需填写业务地址、凭证或完成授权。**安装了工具插件，不代表它自动具备事件触发能力**：只有声明并实现事件接口的插件，才会出现在自动任务的事件来源中。
 
-## 遥测
+HTTPS 模型和 MCP 连接可在配置中获取或选择受支持的证书；获取后应核对并保存，再测试实际调用。插件内连接器沿用对应配置入口。配置方法见 [插件配置](docs/plugin-configuration.md) 和 [原生证书支持](native/codex/README.md)。
 
-默认不启动导出器。配置 `OTEL_EXPORTER_OTLP_TRACES_ENDPOINT` 或 `OTEL_EXPORTER_OTLP_ENDPOINT` 后启用固定版本的 OpenTelemetry SDK。仅记录显式请求和 Turn 的限定元数据、摘要标识、状态与耗时；不安装自动采集，不记录 Prompt、输出、工具参数、环境变量、请求头或凭证。目前不具备模型推理内部 Span，也不宣称完整实现尚在演进的 GenAI 语义约定。
+### 自动任务
+
+从侧栏“新建聊天”下方进入 **自动任务**，选择模板或创建自定义任务：
+
+1. 写清要完成的事，选择模型、模式，以及需要的专家、插件或技能。
+2. 添加时间触发器，或从已安装插件提供的事件来源中选择触发条件。
+3. 保存后可以立即运行，并在运行记录里查看结果。
+
+**一个任务持续使用同一个专属会话。** 每次运行是新的轮次，有独立状态和记录；模型可以参考该会话的前次结果。需要互不影响的上下文时，创建不同任务。
+
+任务在服务器后台运行，不要求网页保持打开。暂停任务阻止后续触发；停止正在执行的一轮需要单独操作。删除任务保留已有聊天。
+
+通知可选择站内或邮件。邮件需要先配置 SMTP 并测试，邮件只包含任务状态和结果入口。浏览器提醒需要页面打开并获得授权；关闭网页后的 Web Push 尚未提供。详见 [自动任务使用说明](docs/user-guide.md#自动任务)。
+
+## 内网机器如何接收业务事件
+
+能主动访问上游的插件可以直接轮询或建立出站连接，无需公网回调地址。需要接收外部推送时，可以部署一个独立 HTTPS 中继：
+
+```text
+外部业务事件
+    ↓ 事件插件或生产者转换数据
+HTTPS 中继
+    ↑ Newbot 从内网主动连接并取回事件
+自动任务 → Codex → 模型与工具 → 结果追加到任务会话
+```
+
+平台负责持久接收、去重、任务派发和会话；插件负责理解上游业务并转换事件。新增符合接口约定的插件无需修改平台代码。中继需要可访问的 HTTPS 地址，内网 Newbot 无需开放入站端口。
+
+仓库提供以下可构建的事件插件：
+
+| 插件             | 当前用途                                   |
+| ---------------- | ------------------------------------------ |
+| `github-events`  | 部分 Issue/PR 状态变化，以及工作流完成事件 |
+| `relay-events`   | 从通用 HTTPS 中继获取事件                  |
+| `mailbox-events` | 本地文件信箱测试夹具，并非 Gmail 连接器    |
+
+运行 `npm run build:event-plugins` 后，插件包位于 `.data/event-plugins/`，可以在设置中导入。中继、出站桥和配置步骤见 [事件 Bridge 指南](docs/event-bridge.md)，GitHub 范围见 [插件说明](examples/github-events/README.md)。
+
+已有真实 GitHub 事件经过公网中继触发模型、连续写入同一会话的 [验收记录](.issue/2026-11-17/003-bridge-public-progress.md)。其中分别记录事件链路是否成功和 GitHub 构建本身的结果；临时公网入口不等于固定域名长期部署。
+
+## 一次聊天如何到达模型
+
+```text
+浏览器提交消息
+    ↓ HTTP
+Newbot Server：校验身份、权限、会话与输入
+    ↓ JSON-RPC over stdio
+Codex App Server：维护上下文，调用模型与工具
+    ↓ 执行通知
+Newbot 转换为 AG-UI 事件
+    ↓ SSE，或配置为轮询
+浏览器更新回答和执行过程
+```
+
+Newbot 直接连接 Codex App Server，没有使用 `openai` 模型 SDK、`@openai/codex-sdk` 或 CopilotKit。AG-UI 用于执行事件，不是模型调用协议；普通聊天不经过外部事件中继。
+
+前端使用 React、TypeScript、Vite、Radix 和 Zustand，服务端使用 Fastify 与 SQLite。交互式工具页面使用 MCP Apps；动态表单使用受限 A2UI 组件。AG-UI 中仍有 Newbot 业务扩展，不能保证换成任意通用客户端后完整还原界面。
+
+## 部署与数据
+
+- 默认只监听本机 `127.0.0.1:3100`。公网访问需要配置 HTTPS 和准确的 `PUBLIC_ORIGIN`。
+- MCP Apps 与可执行 HTML 预览需要独立的 `APP_ORIGIN`，例如主站 `https://chat.example.com`，应用站 `https://apps.example.com`；两个 origin 不能相同。
+- 反向代理应关闭 SSE 缓冲。临时 Cloudflare 分享使用 `AGENT_TRANSPORT=poll`，仍传递相同的 AG-UI 事件；临时地址可能变化。
+- 备份整个实例数据目录，包括会话、附件、SQLite 和凭证加密密钥。使用事件中继时，还需备份中继数据库、密钥及出站桥的检查点和队列。
+- 仓库有 Docker/Compose 模板，但当前定制内核与目标环境需配套验证，不把模板存在视为生产部署已通过。
+
+部署参考见 [Cloudflare 分享说明](docs/cloudflare-sharing.md)、[运行隔离](docs/runtime-isolation.md) 和 [历史部署手册](docs/production.md)。历史手册中的旧内核版本与模型切换流程不能直接套用到当前分支。
+
+## 开发与验证
+
+开发前先准备匹配的 Codex 内核，并设置 `CODEX_BIN`。
+
+```bash
+npm run dev             # 开发界面：http://localhost:5173
+npm run check           # TypeScript 检查
+npm test                # 自动测试
+npm run lint:ui         # 界面代码与样式规则
+npm run test:ui-contracts # 浏览器交互约定
+npm run build           # 构建
+```
+
+如果 `.env` 设置了 `PUBLIC_ORIGIN`，开发时将其改为 `http://localhost:5173`。浏览器测试需要对应 Playwright 浏览器及系统依赖；涉及模型、OAuth 和公网服务的验收，还需要实际配置。
+
+修改 Codex 协议后，使用匹配二进制运行 `npm run generate:codex`，再执行契约和真实连接检查。`generated/codex` 为生成类型，不手工修改。原生开发步骤见 [内核说明](native/codex/README.md)。
+
+## 当前边界与更多说明
+
+- 事件接口基于限定版本的 MCP Events 草案及 Newbot 扩展，内部使用 CloudEvents 1.0；不宣称已兼容所有事件插件。
+- GitHub 轮询有历史窗口与 API 配额限制；没有声明事件能力的 Gmail、Slack 等工具插件不能直接充当触发器。
+- 自建 OAuth 测试不能代替真实 Slack 等账号授权验收，浏览器手机视口检查也不等于真机验收。
+- MCP Apps、A2UI 和附件只支持已实现的范围；模型和工具的兼容性需逐项验证。
+- 当前仍是开发版本，固定公网域名、目标容器、长期运行和完整恢复应在实际部署环境验收。
+
+| 想了解什么                 | 文档                                           |
+| -------------------------- | ---------------------------------------------- |
+| 聊天、文件、通知和故障恢复 | [使用指南](docs/user-guide.md)                 |
+| 插件需要哪些配置           | [插件配置](docs/plugin-configuration.md)       |
+| 开发事件来源和部署中继     | [事件 Bridge](docs/event-bridge.md)            |
+| MCP App 的交互和权限范围   | [MCP Apps Host](docs/mcp-app-host.md)          |
+| 动态表单怎样接入 Agent     | [A2UI 接入](docs/a2ui-agent.md)                |
+| 凭证如何保存和隔离         | [私密运行参数](docs/private-runtime-fields.md) |
+| 当前前端模块的职责         | [前端边界](docs/frontend-boundaries.md)        |
+
+历史阶段记录保留原验证时间与范围；本轮真实事件链路证据见 [2026-11-17 验收记录](.issue/2026-11-17/003-bridge-public-progress.md)。

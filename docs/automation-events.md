@@ -1,4 +1,6 @@
-# 自动任务：持续会话与事件接入
+# 自动任务：持续会话与事件接入（历史方案）
+
+> 本文保留早期直接 webhook 和生态适配方案，供旧配置排查使用。新任务采用通用插件事件 Bridge，不再以 OpenClaw / Hermes 专用适配作为接入方向。当前安装与配置请看 [事件 Bridge](event-bridge.md)，日常操作见 [使用指南](user-guide.md#自动任务)。下文来源菜单和迁移方式不能作为当前新安装指南。
 
 同一任务默认续用专属会话，保留前次上下文。每次运行仍有独立请求、轮次、状态、取消和通知记录。旧任务在下一次读取时选取最近一个未归档的历史会话；原有历史记录保持原地址，不合并或删除。归档任务会话会暂停任务，恢复任务重新启用同一会话。任务配置决定模型、模式、专家、技能及权限；在任务会话追问时，下一次自动运行会重新应用任务配置。需要完全独立的上下文时，请建立不同任务。
 
@@ -6,12 +8,12 @@
 
 新建或编辑任务 → 添加触发器 → Webhook / GitHub / Hermes / OpenClaw → 条件 → 保存。概览中的“连接设置”提供独立接收地址与密钥。保存任务并不自动配置外部服务。事件可以与时间触发组合；同一任务最多排队32次，逐次执行。Cookie登录只用于管理，事件入口使用自己的认证。
 
-|来源|认证与事件标识|支持范围|
-|---|---|---|
-|Webhook|Standard Webhooks：`webhook-id`、`webhook-timestamp`、`webhook-signature`；签名内容`id.timestamp.rawBody`，`v1,<base64 HMAC-SHA256>`；UI密钥是base64编码的随机字节|通用JSON事件，时间窗口±5分钟，稳定ID重试去重|
-|GitHub|`X-Hub-Signature-256: sha256=<HMAC-SHA256(rawBody)>`、`X-GitHub-Delivery`、`X-GitHub-Event`|仓库/事件/动作过滤；ping仅校验，不运行；issue、PR、push基础正文|
-|Hermes|`X-Webhook-Timestamp`、`X-Webhook-Signature-V2: <HMAC-SHA256(timestamp.rawBody)>`；密钥按UI字符串使用|Hermes V2发送格式；时间窗口±5分钟，同一签名正文去重；不是完整Hermes路由服务|
-|OpenClaw|`Authorization: Bearer <token>`或`x-openclaw-token`；必须有`Idempotency-Key`|`message`、`name`、`event_type`、`deliver:false`；目的会话、权限与模型只能在Newbot任务中配置|
+| 来源     | 认证与事件标识                                                                                                                                                     | 支持范围                                                                                     |
+| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------- |
+| Webhook  | Standard Webhooks：`webhook-id`、`webhook-timestamp`、`webhook-signature`；签名内容`id.timestamp.rawBody`，`v1,<base64 HMAC-SHA256>`；UI密钥是base64编码的随机字节 | 通用JSON事件，时间窗口±5分钟，稳定ID重试去重                                                 |
+| GitHub   | `X-Hub-Signature-256: sha256=<HMAC-SHA256(rawBody)>`、`X-GitHub-Delivery`、`X-GitHub-Event`                                                                        | 仓库/事件/动作过滤；ping仅校验，不运行；issue、PR、push基础正文                              |
+| Hermes   | `X-Webhook-Timestamp`、`X-Webhook-Signature-V2: <HMAC-SHA256(timestamp.rawBody)>`；密钥按UI字符串使用                                                              | Hermes V2发送格式；时间窗口±5分钟，同一签名正文去重；不是完整Hermes路由服务                  |
+| OpenClaw | `Authorization: Bearer <token>`或`x-openclaw-token`；必须有`Idempotency-Key`                                                                                       | `message`、`name`、`event_type`、`deliver:false`；目的会话、权限与模型只能在Newbot任务中配置 |
 
 GitHub与Hermes的密钥按显示字符串使用；Standard Webhooks将base64密钥解码后使用。路径与响应为Newbot约定，不伪装成对方完整Gateway API。Hermes V1不接受。OpenClaw路由、模型、外发渠道等额外字段明确拒绝，避免静默丢弃行为。
 
