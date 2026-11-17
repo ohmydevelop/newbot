@@ -1,0 +1,16 @@
+{
+  "sourceCommit": "5eca62c0ace53aa111f7aa7ba492922b66f99391",
+  "businessWorkflow": "https://github.com/ohmydevelop/newbot/actions/runs/44089924723",
+  "businessConclusion": "failure",
+  "eventType": "event.received",
+  "automationRun": "21cd8428-a413-4ff3-9eb5-5a62dcd8e7b9",
+  "state": "succeeded",
+  "threadId": "01a1e82d-a351-75f1-9f02-227ee80befb0",
+  "turnId": "01a1e9a9-2a46-7422-b49a-130fcb0e9279",
+  "sameConversation": true,
+  "threadRead": true,
+  "modelReplyPresent": true,
+  "modelReplyCharacters": 208,
+  "modelReplySha256": "da82e22ce0ec4054b69e2561d763dc7c8d5910fe191479b30e2abfac606a200f",
+  "model": "deepseek-flash"
+}

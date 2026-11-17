@@ -13,5 +13,11 @@
       "resolution": "not changed in this event-system task"
     }
   ],
-  "selection": "default suite separates plugin fixture; dedicated 14-case suite is now wired to CI"
+  "selection": "default suite separates plugin fixture; dedicated 14-case suite is now wired to CI",
+  "uiResult": {
+    "passed": 92,
+    "failed": 8,
+    "cause": "plugin cases ran against the default fixture without plugin installation",
+    "resolution": "test grouping fixed in 2c60e76; same eight cases pass in dedicated 14-case local suite"
+  }
 }
