@@ -36,3 +36,7 @@ The trigger picker now lists platform time schedules and installed plugin event 
 ## AUTO-8 direct ingress
 
 User direction: external services send directly to Newbot, or Newbot connects outward through an event plugin. Add a generic 接收事件 option to the existing picker and 接收配置 in saved task details; no mandatory relay installation. Preserve the existing Picker, palette, typography and motion. Four direct-ingress browser cases plus fourteen plugin/menu cases pass; self-review of mobile dark and desktop light screenshots finds no new overflow or hierarchy issue. Clipboard denial has an explicit manual-copy path; successful retry clears the error. Evidence: `.issue/2026-11-17/007-direct-event-ingress-progress.md` and `evidence-direct-event-ingress/`. No new visual assets or global design changes. Browser fixtures are not physical-phone or real-provider proof.
+
+## AUTO-9 trigger groups
+
+The trigger picker separates 时间, 外部事件 and 来自插件 using quiet 12px labels from the incumbent compact-picker visual language. Labels disappear with empty filtered groups and are not focus targets. Existing option buttons remain direct children, preserving geometry and Tab navigation; callers without group metadata are unchanged. Eighteen browser cases pass; mobile dark visual self-review confirms the pinned palette and scrolling layout. Evidence: `.issue/2026-11-18/001-history-reset-trigger-groups-progress.md`. No new assets or global token changes.

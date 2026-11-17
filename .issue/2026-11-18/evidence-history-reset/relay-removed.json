@@ -1,0 +1,12 @@
+{
+  "removedPlugin": "relay-events@newbot-imports",
+  "sources": [
+    "GitHub 仓库事件"
+  ],
+  "tasks": 0,
+  "disabledServices": [
+    "newbot-github-event-bridge.service",
+    "newbot-event-relay-tunnel.service",
+    "newbot-event-relay.service"
+  ]
+}

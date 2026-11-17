@@ -1,0 +1,7 @@
+{
+  "provider_configuration": true,
+  "private_field_sets": true,
+  "managed_credentials": true,
+  "experts": true,
+  "automation_mail_config": true
+}

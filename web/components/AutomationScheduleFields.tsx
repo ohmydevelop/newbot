@@ -213,9 +213,16 @@ export function AddSchedule({
         ...Object.entries(frequencyLabels).map(([id, label]) => ({
           id,
           label,
+          group: "时间",
         })),
-        ...(onIncoming ? [{ id: "incoming", label: "接收事件" }] : []),
-        ...sources.map((s) => ({ id: "source:" + s.id, label: s.label })),
+        ...(onIncoming
+          ? [{ id: "incoming", label: "接收事件", group: "外部事件" }]
+          : []),
+        ...sources.map((s) => ({
+          id: "source:" + s.id,
+          label: s.label,
+          group: "来自插件",
+        })),
       ]}
       disabled={disabled}
       onChange={(v) =>

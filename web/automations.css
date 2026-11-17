@@ -446,6 +446,16 @@
 .automation-options {
   width: 300px;
 }
+.automation-option-group {
+  margin: 12px 12px 4px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+.automation-option-group:first-child {
+  margin-top: 4px;
+}
 .automation-options .picker-results > button {
   display: flex;
   align-items: center;

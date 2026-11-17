@@ -1,0 +1,27 @@
+[WebServer] (node:2484071) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 18 tests using 1 worker
+
+(node:2484093) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 tests/browser/automation-events.spec.ts:4:5 › 无插件时显示时间与通用接收入口 320 light (1.0s)
+  ✓   2 tests/browser/automation-events.spec.ts:4:5 › 无插件时显示时间与通用接收入口 320 dark (621ms)
+  ✓   3 tests/browser/automation-events.spec.ts:4:5 › 无插件时显示时间与通用接收入口 390 light (1.1s)
+  ✓   4 tests/browser/automation-events.spec.ts:4:5 › 无插件时显示时间与通用接收入口 390 dark (656ms)
+  ✓   5 tests/browser/automation-events.spec.ts:4:5 › 无插件时显示时间与通用接收入口 1280 light (771ms)
+  ✓   6 tests/browser/automation-events.spec.ts:4:5 › 无插件时显示时间与通用接收入口 1280 dark (638ms)
+  ✓   7 tests/browser/event-bridge.spec.ts:5:5 › 通用事件插件 320 light (6.8s)
+  ✓   8 tests/browser/event-bridge.spec.ts:5:5 › 通用事件插件 320 dark (6.8s)
+  ✓   9 tests/browser/event-bridge.spec.ts:5:5 › 通用事件插件 390 light (6.8s)
+  ✓  10 tests/browser/event-bridge.spec.ts:5:5 › 通用事件插件 390 dark (6.8s)
+  ✓  11 tests/browser/event-bridge.spec.ts:5:5 › 通用事件插件 768 light (6.7s)
+  ✓  12 tests/browser/event-bridge.spec.ts:5:5 › 通用事件插件 768 dark (6.7s)
+  ✓  13 tests/browser/event-bridge.spec.ts:5:5 › 通用事件插件 1280 light (6.8s)
+  ✓  14 tests/browser/event-bridge.spec.ts:5:5 › 通用事件插件 1280 dark (6.8s)
+  ✓  15 tests/browser/event-ingress.spec.ts:4:5 › 直接接收事件 390 light (1.3s)
+  ✓  16 tests/browser/event-ingress.spec.ts:4:5 › 直接接收事件 390 dark (952ms)
+  ✓  17 tests/browser/event-ingress.spec.ts:4:5 › 直接接收事件 1280 light (1.1s)
+  ✓  18 tests/browser/event-ingress.spec.ts:4:5 › 直接接收事件 1280 dark (1.1s)
+
+  18 passed (1.1m)

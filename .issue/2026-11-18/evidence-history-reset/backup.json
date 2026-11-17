@@ -1,0 +1,9 @@
+{
+  "path": "/home/a/Documents/ChatGPT/newbot/.data/backups/2026-11-18-history-reset-002715",
+  "private": true,
+  "stoppedServices": [
+    "newbot-github-event-bridge.service",
+    "newbot-event-relay-tunnel.service",
+    "newbot-event-relay.service"
+  ]
+}

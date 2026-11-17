@@ -45,6 +45,33 @@ for (const width of [320, 390, 1280])
       await expect(
         page.getByRole("button", { name: "接收事件", exact: true }),
       ).toBeVisible();
+      await expect(
+        page.getByRole("heading", { name: "时间", exact: true }),
+      ).toBeVisible();
+      await expect(
+        page.getByRole("heading", { name: "外部事件", exact: true }),
+      ).toBeVisible();
+      await expect(
+        page.getByRole("heading", { name: "来自插件", exact: true }),
+      ).toHaveCount(0);
+      const search = page.getByLabel("搜索添加触发器", { exact: true });
+      await search.fill("每天");
+      await expect(
+        page.getByRole("heading", { name: "外部事件", exact: true }),
+      ).toHaveCount(0);
+      await expect(
+        page.getByRole("heading", { name: "时间", exact: true }),
+      ).toBeVisible();
+      await search.fill("没有这种触发器");
+      await expect(page.locator(".automation-option-group")).toHaveCount(0);
+      await expect(
+        page.getByText("没有匹配的选项", { exact: true }),
+      ).toBeVisible();
+      await search.fill("");
+      await search.press("Tab");
+      await expect(
+        page.getByRole("button", { name: "仅一次", exact: true }),
+      ).toBeFocused();
       const motion = await page
         .locator(".picker-panel")
         .evaluate(async (el) => {

@@ -1,0 +1,18 @@
+✔ current contract rejects fixed source github (1.292492ms)
+✔ current contract rejects fixed source openclaw (0.119653ms)
+✔ current contract rejects fixed source hermes (0.07826ms)
+✔ current contract rejects fixed source webhook (0.064214ms)
+✔ current contract requires providerId; no historical field substitution (1.651221ms)
+✔ current contract requires connectionId; no historical field substitution (0.210252ms)
+✔ current contract requires events; no historical field substitution (0.126904ms)
+✔ current contract requires arguments; no historical field substitution (0.097505ms)
+✔ API cannot save obsolete or incomplete sources; retired endpoints are absent (141.311281ms)
+✔ direct ingress without plugin: scoped auth, durable dedupe, same conversation, rotation and lifecycle (238.450717ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 10
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 752.019084

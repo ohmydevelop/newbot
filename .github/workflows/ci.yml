@@ -39,7 +39,7 @@ jobs:
       - run: npm run build
       - run: npm run test:ui-contracts
       - run: npm run test:mobile-contracts
-      - run: npx playwright test --config=playwright.event-ingress.config.ts
+      - run: npx playwright test --config=playwright.trigger-groups.config.ts
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -47,6 +47,8 @@ jobs:
           path: |
             .data/ui-verification/
             .data/mobile-verification/
+            .data/trigger-groups/
+            .issue/2026-11-18/evidence-history-reset/
             .data/direct-event-ingress/
             .issue/2026-11-17/evidence-direct-event-ingress/
             .data/plugin-only-triggers/

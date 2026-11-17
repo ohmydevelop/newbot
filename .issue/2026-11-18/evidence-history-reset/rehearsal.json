@@ -1,0 +1,82 @@
+{
+  "data": "/home/a/Documents/ChatGPT/newbot-systematize/.data/history-reset/rehearsal",
+  "databases": {
+    "newbot.sqlite": {
+      "a2ui_calls": 24,
+      "a2ui_drafts": 0,
+      "a2ui_receipts": 0,
+      "a2ui_views": 24,
+      "artifact_sources": 0,
+      "artifacts": 0,
+      "automation_attachment_refs": 0,
+      "automation_deliveries": 0,
+      "automation_event_inbox": 10,
+      "automation_event_webhooks": 0,
+      "automation_incoming_credentials": 1,
+      "automation_runs": 15,
+      "automation_tasks": 5,
+      "automation_threads": 3,
+      "automation_webhook_inbox": 0,
+      "message_media": 0,
+      "run_attachments": 2,
+      "run_context": 131,
+      "run_experts": 49,
+      "run_plugins": 62,
+      "run_skills": 44,
+      "runs": 131,
+      "session_extensions": 53,
+      "session_inputs": 23,
+      "session_runtime": 53,
+      "session_runtime_pending": 2,
+      "session_runtime_requests": 1,
+      "session_runtime_versions": 17,
+      "thread_activity": 53,
+      "thread_waits": 0,
+      "thread_workspaces": 53,
+      "threads": 53
+    },
+    "codex/goals_1.sqlite": {
+      "thread_goal_continuation_deferrals": 0,
+      "thread_goals": 0
+    },
+    "codex/logs_2.sqlite": {
+      "logs": 0
+    },
+    "codex/memories_1.sqlite": {
+      "stage1_outputs": 0
+    },
+    "codex/queue_1.sqlite": {
+      "queued_items": 0,
+      "queued_thread_revisions": 0
+    },
+    "codex/state_5.sqlite": {
+      "guardian_review_feedback": 0,
+      "thread_attachments": 0,
+      "thread_dynamic_tools": 0,
+      "thread_read_receipts": 53,
+      "thread_spawn_edges": 0,
+      "threads": 54
+    },
+    "codex/thread_history_1.sqlite": {
+      "thread_history_projection_state": 54,
+      "thread_items": 1939,
+      "thread_realtime_items": 0,
+      "thread_turns": 136
+    },
+    "event-subscriptions/subscriptions.sqlite": {
+      "deliveries": 8,
+      "source_events": 8,
+      "subscriptions": 3
+    }
+  },
+  "filesRemoved": [
+    "codex/sessions",
+    "codex/archived_sessions",
+    "codex/session_index.jsonl",
+    "codex/shell_snapshots",
+    "codex/thread-writer-locks",
+    "uploads/c3d6f814-c28c-4c0b-865a-3a28b3270752",
+    "uploads/be6fa657-623d-4d3f-9f2e-31c5fc217529"
+  ],
+  "configurationPreserved": true
+}

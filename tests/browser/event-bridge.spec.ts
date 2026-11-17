@@ -41,6 +41,21 @@ for (const width of [320, 390, 768, 1280])
       await expect(
         page.getByRole("button", { name: "测试信箱", exact: true }),
       ).toBeVisible();
+      await expect(
+        page.getByRole("heading", { name: "来自插件", exact: true }),
+      ).toBeVisible();
+      const sourceSearch = page.getByLabel("搜索添加触发器", { exact: true });
+      await sourceSearch.fill("测试信箱");
+      await expect(
+        page.getByRole("heading", { name: "时间", exact: true }),
+      ).toHaveCount(0);
+      await expect(
+        page.getByRole("heading", { name: "外部事件", exact: true }),
+      ).toHaveCount(0);
+      await expect(
+        page.getByRole("heading", { name: "来自插件", exact: true }),
+      ).toBeVisible();
+      await sourceSearch.fill("");
       await page.screenshot({
         path: info.outputPath("installed-plugin-menu.png"),
       });

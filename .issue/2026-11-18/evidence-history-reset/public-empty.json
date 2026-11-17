@@ -1,0 +1,16 @@
+{
+  "apiThreads": 0,
+  "apiTasks": 0,
+  "database": {
+    "threads": 0,
+    "automation_tasks": 0,
+    "automation_runs": 0,
+    "runs": 0,
+    "automation_incoming_credentials": 0,
+    "automation_event_accounts": 0
+  },
+  "nativeThreads": 0,
+  "sources": [
+    "GitHub 仓库事件"
+  ]
+}
