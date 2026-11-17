@@ -171,7 +171,7 @@ test("durable schedule, concurrent ticks, shared task thread, snapshot and no ov
       a.save({ id: t.id, expectedRevision: 1, content: input() }),
     );
   }));
-test("historical tasks adopt latest available conversation once without rewriting old run links", () =>
+test("reading a task never guesses a conversation from historical run records", () =>
   fixture(async ({ a, db }: any) => {
     const task = await a.save({
       id: randomUUID(),
@@ -193,11 +193,11 @@ test("historical tasks adopt latest available conversation once without rewritin
     const before = JSON.stringify(
       db.raw.prepare("SELECT * FROM automation_runs ORDER BY rowid").all(),
     );
-    assert.equal(a.read(task.id).task.threadId, threadIds[1]);
+    assert.equal(a.read(task.id).task.threadId, null);
     db.raw
       .prepare("UPDATE threads SET archived=0 WHERE id=?")
       .run(threadIds[2]);
-    assert.equal(a.read(task.id).task.threadId, threadIds[1]);
+    assert.equal(a.read(task.id).task.threadId, null);
     assert.equal(
       JSON.stringify(
         db.raw.prepare("SELECT * FROM automation_runs ORDER BY rowid").all(),

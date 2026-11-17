@@ -1,0 +1,8 @@
+{
+  "automation_tasks": true,
+  "automation_threads": true,
+  "automation_runs": true,
+  "automation_event_inbox": true,
+  "automation_event_accounts": true,
+  "threads": true
+}

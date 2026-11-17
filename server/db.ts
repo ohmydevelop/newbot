@@ -1,10 +1,10 @@
-import { migrateEventConfiguration } from "./event-subscriptions/migration.js";
+import { discardInvalidEventConfiguration } from "./event-subscriptions/migration.js";
 import { PublicError } from "./public-error.js";
 import { DatabaseSync } from "node:sqlite";
 import { mkdirSync, chmodSync } from "node:fs";
 import { resolve } from "node:path";
 import { randomBytes, createHash } from "node:crypto";
-export const DATABASE_VERSION = 23;
+export const DATABASE_VERSION = 24;
 export function database(directory: string) {
   mkdirSync(directory, { recursive: true, mode: 0o700 });
   const path = resolve(directory, "newbot.sqlite");
@@ -98,7 +98,6 @@ export function database(directory: string) {
     CREATE TABLE IF NOT EXISTS automation_tasks(id TEXT PRIMARY KEY,revision INTEGER NOT NULL,content TEXT NOT NULL,enabled INTEGER NOT NULL,next_run INTEGER,created INTEGER NOT NULL,updated INTEGER NOT NULL,deleted INTEGER NOT NULL DEFAULT 0);
     CREATE TABLE IF NOT EXISTS automation_runs(id TEXT PRIMARY KEY,task_id TEXT NOT NULL REFERENCES automation_tasks(id),task_revision INTEGER NOT NULL,trigger_key TEXT NOT NULL,scheduled_at INTEGER NOT NULL,state TEXT NOT NULL,request_id TEXT NOT NULL UNIQUE,thread_id TEXT,turn_id TEXT,snapshot TEXT NOT NULL,started INTEGER,completed INTEGER,error TEXT,is_read INTEGER NOT NULL DEFAULT 0,UNIQUE(task_id,trigger_key));
     CREATE TABLE IF NOT EXISTS automation_threads(task_id TEXT PRIMARY KEY REFERENCES automation_tasks(id),thread_id TEXT NOT NULL UNIQUE);
-    CREATE TABLE IF NOT EXISTS automation_event_routes(task_id TEXT NOT NULL REFERENCES automation_tasks(id),trigger_id TEXT NOT NULL,source TEXT NOT NULL,version TEXT NOT NULL,packet TEXT NOT NULL,PRIMARY KEY(task_id,trigger_id));
     CREATE TABLE IF NOT EXISTS automation_event_inbox(task_id TEXT NOT NULL REFERENCES automation_tasks(id),trigger_id TEXT NOT NULL,event_id TEXT NOT NULL,digest TEXT NOT NULL,run_id TEXT NOT NULL REFERENCES automation_runs(id),received INTEGER NOT NULL,PRIMARY KEY(task_id,trigger_id,event_id));
     CREATE TABLE IF NOT EXISTS automation_event_webhooks(id TEXT PRIMARY KEY,packet TEXT NOT NULL);
     CREATE TABLE IF NOT EXISTS automation_event_oauth(id TEXT PRIMARY KEY,binding TEXT NOT NULL,packet TEXT NOT NULL);
@@ -121,7 +120,7 @@ export function database(directory: string) {
     );
   if (!(db.prepare("PRAGMA table_info(automation_event_accounts)").all() as {name:string}[]).some(c=>c.name==="generation"))
     db.exec("ALTER TABLE automation_event_accounts ADD COLUMN generation INTEGER NOT NULL DEFAULT 1");
-  migrateEventConfiguration(db);
+  if (version < 24) discardInvalidEventConfiguration(db);
   db.exec(`PRAGMA user_version=${DATABASE_VERSION}; COMMIT;`);
   db.exec(
     "UPDATE thread_activity SET state='unknown',revision=revision+1 WHERE state IN ('preparing','running','waiting')",

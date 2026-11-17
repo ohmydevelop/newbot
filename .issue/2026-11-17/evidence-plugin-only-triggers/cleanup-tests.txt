@@ -1,0 +1,12 @@
+✔ v24 deletes incomplete/fixed-source tasks and their dependent data, preserves current tasks and chats; repeat is harmless (9.427095ms)
+✔ cleanup is atomic when a deletion fails; malformed JSON is deleted instead of repaired (3.147414ms)
+✔ only decoded invalid account formats are deleted, not inaccessible encrypted credentials (3.299459ms)
+✔ shared subscription cleanup removes only invalid targets and preserves survivor cursor and deduplication (13.942905ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 188.405054

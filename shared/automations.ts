@@ -48,34 +48,16 @@ export const scheduleSchema = z
     "每小时执行的结束时间不能早于开始时间",
   );
 export const eventSourceLabels = {
-  webhook: "Webhook",
-  github: "GitHub",
-  hermes: "Hermes",
-  openclaw: "OpenClaw",
   subscription: "应用事件",
 } as const;
-export const eventTriggerSchema = z
-  .object({
-    id: z.string().uuid(),
-    source: z.enum(["webhook", "github", "hermes", "openclaw", "subscription"]),
-    providerId: z
-      .string()
-      .regex(/^[a-f0-9]{64}$/)
-      .optional(),
-    connectionId: z.string().uuid().optional(),
-    events: z.array(z.string().trim().min(1).max(100)).max(16).default([]),
-    arguments: z.record(z.string(), z.json()).optional(),
-    repository: z.string().trim().max(200).default(""),
-    actions: z.array(z.string().trim().min(1).max(100)).max(16).default([]),
-  })
-  .refine(
-    (t) =>
-      t.source !== "subscription" ||
-      (!!t.providerId &&
-        !!t.connectionId &&
-        (t.arguments !== undefined || /^[a-zA-Z0-9_.-]+\/[a-zA-Z0-9_.-]+$/.test(t.repository))),
-    "请选择应用、账号和仓库",
-  );
+export const eventTriggerSchema = z.object({
+  id: z.string().uuid(),
+  source: z.literal("subscription"),
+  providerId: z.string().regex(/^[a-f0-9]{64}$/),
+  connectionId: z.string().uuid(),
+  events: z.array(z.string().trim().min(1).max(100)).min(1).max(16),
+  arguments: z.record(z.string(), z.json()),
+});
 export type AutomationEventTrigger = z.infer<typeof eventTriggerSchema>;
 export const automationSchema = z
   .object({

@@ -1,4 +1,3 @@
-import { automationEvents, automationHookPath } from "./automation-events.js";
 import { eventSubscriptions } from "./event-subscriptions/service.js";
 import { automationMail } from "./automation-mail.js";
 import { automations } from "./automations.js";
@@ -102,7 +101,6 @@ type ServerOptions = {
   providerRuntime?: ProviderRuntime | null;
   automationClock?: () => number;
   automationTimer?: boolean;
-  eventSubscriptionFetch?: typeof fetch;
 };
 
 export async function createServer(options: ServerOptions = {}) {
@@ -573,7 +571,6 @@ async function createServerInternal(
       return runnerAuthentication(req, reply, nodeControl);
     if (req.headers.origin && !origins.has(req.headers.origin))
       return reply.code(403).send({ error: "来源验证失败" });
-    if (req.method === "POST" && automationHookPath.test(req.url)) return;
     if (
       !["GET", "HEAD"].includes(req.method) &&
       !origins.has(req.headers.origin || "")
@@ -1688,11 +1685,9 @@ async function createServerInternal(
     submitRun(req.body, reply),
   );
   const mail = automationMail(db, vault);
-  const eventRoutes = automationEvents(db, vault, options.automationClock);
   let subscriptions: ReturnType<typeof eventSubscriptions> | undefined;
   const scheduled = automations(db, {
     mail,
-    events: eventRoutes,
     restore: async (threadId) => {
       try {
         await runtime.call("thread/unarchive", { threadId });
@@ -1828,39 +1823,7 @@ async function createServerInternal(
         await service.handle("turn/interrupt", { threadId, turnId });
     },
   });
-  app.register(async (hooks) => {
-    hooks.removeContentTypeParser("application/json");
-    hooks.addContentTypeParser(
-      "application/json",
-      { parseAs: "buffer" },
-      (_req, body, done) => done(null, body),
-    );
-    hooks.post(
-      "/api/automation-hooks/:task/:trigger",
-      { bodyLimit: 64000 },
-      (req, reply) => {
-        const p = z
-          .object({ task: z.string().uuid(), trigger: z.string().uuid() })
-          .parse(req.params);
-        const result = eventRoutes.receive(
-          p.task,
-          p.trigger,
-          req.body as Buffer,
-          req.headers,
-        );
-        if (result.ignored)
-          return { ok: true, ignored: true, reason: result.reason };
-        const accepted = scheduled.receiveEvent(
-          p.task,
-          result.revision,
-          p.trigger,
-          result.event,
-        );
-        return reply.code(accepted.duplicate ? 200 : 202).send(accepted);
-      },
-    );
-  });
-  subscriptions = eventSubscriptions(db,vault,scheduled,runtime.extensionRuntime,{request:options.eventSubscriptionFetch,now:options.automationClock,existing:service.pluginConnections.eventConnection,...(process.env.NEWBOT_EVENT_RELAY_URL && process.env.NEWBOT_EVENT_RELAY_ROUTE && process.env.NEWBOT_EVENT_RELAY_TOKEN ? {relay:{url:process.env.NEWBOT_EVENT_RELAY_URL,route:process.env.NEWBOT_EVENT_RELAY_ROUTE,token:process.env.NEWBOT_EVENT_RELAY_TOKEN}} : {}),
+  subscriptions = eventSubscriptions(db,vault,scheduled,runtime.extensionRuntime,{now:options.automationClock,existing:service.pluginConnections.eventConnection,...(process.env.NEWBOT_EVENT_RELAY_URL && process.env.NEWBOT_EVENT_RELAY_ROUTE && process.env.NEWBOT_EVENT_RELAY_TOKEN ? {relay:{url:process.env.NEWBOT_EVENT_RELAY_URL,route:process.env.NEWBOT_EVENT_RELAY_ROUTE,token:process.env.NEWBOT_EVENT_RELAY_TOKEN}} : {}),
       callback:[...origins][0]+"/oauth/events/callback"});
   const subscriptionService=subscriptions;
   app.get("/api/automations/sources",()=>subscriptionService.catalog());
@@ -1874,18 +1837,6 @@ async function createServerInternal(
   const subscriptionTarget=z.object({taskId:z.string().uuid(),triggerId:z.string().uuid()});
   app.post("/api/automations/subscription-status",async req=>{const p=subscriptionTarget.parse(req.body);await subscriptionService.catalog();return subscriptionService.status(p.taskId,p.triggerId);});
   app.post("/api/automations/subscription-retry",req=>{const p=subscriptionTarget.parse(req.body);return subscriptionService.retry(p.taskId,p.triggerId);});
-  app.post("/api/automations/event-settings", (req) => {
-    const p = z
-      .object({
-        taskId: z.string().uuid(),
-        triggerId: z.string().uuid(),
-        revision: z.number().int().positive(),
-        rotate: z.boolean().default(false),
-        expectedVersion: z.string().uuid().optional(),
-      })
-      .parse(req.body);
-    return eventRoutes.settings(p.taskId, p.triggerId, p.revision, p.rotate, p.expectedVersion);
-  });
   app.get("/api/automations/mail", () => mail.settings());
   app.post("/api/automations/mail/save", { bodyLimit: 96000 }, (req) =>
     mail.save(req.body),

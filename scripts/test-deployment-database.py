@@ -92,4 +92,13 @@ class MigrationTests(unittest.TestCase):
             self.assertEqual(summaries(db,selected),before)
             with self.assertRaises(RuntimeError): validate_migration(db,"event-bridge-v23",21,selected)
 
+    def test_v24_requires_old_routes_removed_and_matching_version(self):
+        with sqlite3.connect(":memory:") as db:
+            db.executescript("CREATE TABLE automation_tasks(id TEXT PRIMARY KEY,content TEXT); PRAGMA user_version=24;")
+            selected=columns(db,["automation_tasks"])
+            validate_migration(db,"plugin-events-v24",23,selected)
+            with self.assertRaises(RuntimeError): validate_migration(db,"plugin-events-v24",22,selected)
+            db.execute("CREATE TABLE automation_event_routes(id TEXT)")
+            with self.assertRaises(RuntimeError): validate_migration(db,"plugin-events-v24",23,selected)
+
 unittest.main()

@@ -29,11 +29,6 @@ export const eventAccountSave = z.strictObject({
     )
     .optional(),
   secrets: z.record(z.string(), z.string().max(4096)).optional(),
-  token: z
-    .string()
-    .max(4096)
-    .regex(/^[^\s]*$/)
-    .optional(),
 });
 export type EventProviderView = {
   id: string;
@@ -47,7 +42,6 @@ export type EventProviderView = {
   }[];
   fields?: PluginConfigField[];
   state?: string;
-  legacy?: boolean;
   reusableConnection?: boolean;
   oauth?: boolean;
 };

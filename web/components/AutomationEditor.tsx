@@ -1,4 +1,3 @@
-import { EventTriggerFields } from "./AutomationEventFields";
 import {
   SubscriptionFields,
   useEventCatalog,
@@ -270,53 +269,30 @@ export default function AutomationEditor({
                 }
               />
             ))}
-            {(draft.eventTriggers || []).map((t, index) =>
-              t.source === "subscription" ? (
-                <SubscriptionFields
-                  key={t.id}
-                  value={t}
-                  index={index + 1}
-                  disabled={busy}
-                  catalog={sources.catalog}
-                  refresh={sources.refresh}
-                  onChange={(patch) =>
-                    update({
-                      eventTriggers: draft.eventTriggers.map((v) =>
-                        v.id === t.id ? { ...v, ...patch } : v,
-                      ),
-                    })
-                  }
-                  onRemove={() =>
-                    update({
-                      eventTriggers: draft.eventTriggers.filter(
-                        (v) => v.id !== t.id,
-                      ),
-                    })
-                  }
-                />
-              ) : (
-                <EventTriggerFields
-                  key={t.id}
-                  value={t}
-                  index={index + 1}
-                  disabled={busy}
-                  onChange={(patch) =>
-                    update({
-                      eventTriggers: draft.eventTriggers.map((v) =>
-                        v.id === t.id ? { ...v, ...patch } : v,
-                      ),
-                    })
-                  }
-                  onRemove={() =>
-                    update({
-                      eventTriggers: draft.eventTriggers.filter(
-                        (v) => v.id !== t.id,
-                      ),
-                    })
-                  }
-                />
-              ),
-            )}
+            {draft.eventTriggers.map((t, index) => (
+              <SubscriptionFields
+                key={t.id}
+                value={t}
+                index={index + 1}
+                disabled={busy}
+                catalog={sources.catalog}
+                refresh={sources.refresh}
+                onChange={(patch) =>
+                  update({
+                    eventTriggers: draft.eventTriggers.map((v) =>
+                      v.id === t.id ? { ...v, ...patch } : v,
+                    ),
+                  })
+                }
+                onRemove={() =>
+                  update({
+                    eventTriggers: draft.eventTriggers.filter(
+                      (v) => v.id !== t.id,
+                    ),
+                  })
+                }
+              />
+            ))}
             <AddSchedule
               sources={sources.catalog.providers}
               onSubscription={(providerId) =>
@@ -327,10 +303,13 @@ export default function AutomationEditor({
                       id: crypto.randomUUID(),
                       source: "subscription",
                       providerId,
-                      events: sources.catalog.providers.find(p=>p.id===providerId)?.legacy ? [] : (sources.catalog.providers.find(p=>p.id===providerId)?.events.slice(0,1).map(e=>e.id) || []),
+                      connectionId: "",
+                      events:
+                        sources.catalog.providers
+                          .find((p) => p.id === providerId)
+                          ?.events.slice(0, 1)
+                          .map((e) => e.id) || [],
                       arguments: {},
-                      repository: "",
-                      actions: [],
                     },
                   ],
                 })
@@ -338,20 +317,6 @@ export default function AutomationEditor({
               disabled={
                 busy ||
                 draft.triggers.length + (draft.eventTriggers?.length || 0) >= 8
-              }
-              onEvent={(source) =>
-                update({
-                  eventTriggers: [
-                    ...(draft.eventTriggers || []),
-                    {
-                      id: crypto.randomUUID(),
-                      source,
-                      events: [],
-                      repository: "",
-                      actions: [],
-                    },
-                  ],
-                })
               }
               onAdd={(frequency) =>
                 update({

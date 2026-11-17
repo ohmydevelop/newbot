@@ -1,4 +1,3 @@
-import type { AcceptedEvent } from "./automation-events.js";
 import { randomUUID } from "node:crypto";
 import { z } from "zod";
 import {
@@ -35,11 +34,14 @@ type RunRow = {
   error: string | null;
   is_read: number;
 };
+export type AcceptedEvent = {
+  id: string;
+  digest: string;
+  source: "subscription";
+  type: string;
+  payload: Record<string, unknown>;
+};
 type Dependencies = {
-  events?: Pick<
-    ReturnType<typeof import("./automation-events.js").automationEvents>,
-    "sync"
-  >;
   prepare?: (threadId: string, input: AutomationInput) => Promise<boolean>;
   restore?: (threadId: string) => Promise<void>;
   mail?: Pick<
@@ -82,17 +84,7 @@ export function automations(db: Store, deps: Dependencies) {
     const bound = db.raw
       .prepare("SELECT thread_id FROM automation_threads WHERE task_id=?")
       .get(id) as { thread_id: string } | undefined;
-    if (bound) return bound.thread_id;
-    const old = db.raw
-      .prepare(
-        "SELECT r.thread_id FROM automation_runs r JOIN threads t ON t.id=r.thread_id WHERE r.task_id=? AND t.archived=0 AND NOT EXISTS(SELECT 1 FROM automation_threads a WHERE a.thread_id=r.thread_id) ORDER BY r.scheduled_at DESC,r.rowid DESC LIMIT 1",
-      )
-      .get(id) as { thread_id: string } | undefined;
-    if (old)
-      db.raw
-        .prepare("INSERT OR IGNORE INTO automation_threads VALUES(?,?)")
-        .run(id, old.thread_id);
-    return old?.thread_id || null;
+    return bound?.thread_id || null;
   }
   function requireRow(id: string) {
     const r = row(id);
@@ -237,7 +229,6 @@ export function automations(db: Store, deps: Dependencies) {
         db.raw
           .prepare("INSERT INTO automation_attachment_refs VALUES(?,?)")
           .run(id, file);
-      deps.events?.sync(id, content.eventTriggers);
       db.audit("automation/save", id, "saved");
       return view(requireRow(id));
     });

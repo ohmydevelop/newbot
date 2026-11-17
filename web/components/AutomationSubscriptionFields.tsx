@@ -60,7 +60,6 @@ export function SubscriptionFields({
   const [editing, setEditing] = useState(false),
     [editingId, setEditingId] = useState<string | null>(null),
     [name, setName] = useState(""),
-    [token, setToken] = useState(""),
     [values, setValues] = useState<Record<string, string | number | boolean>>(
       {},
     ),
@@ -89,16 +88,12 @@ export function SubscriptionFields({
           label: name.trim() || provider.label,
           ...(reuseConnection
             ? { reuseConnection: true }
-            : provider.legacy
-              ? editingId && !token && account?.available
-                ? {}
-                : { token }
-              : { values, secrets }),
+            : { values, secrets }),
         },
         abort.signal,
       );
       if (abort.signal.aborted) return;
-      setToken("");
+
       setSecrets({});
       setEditing(false);
       onChange({ connectionId: result.id });
@@ -125,10 +120,9 @@ export function SubscriptionFields({
         abort.signal,
       );
       if (!abort.signal.aborted) {
-        setToken("");
         setSecrets({});
         setEditing(false);
-        onChange({ connectionId: undefined });
+        onChange({ connectionId: "" });
         refresh();
       }
     } catch (e) {
@@ -149,7 +143,7 @@ export function SubscriptionFields({
               request.current?.abort();
               pending.current = false;
               setBusy(false);
-              setToken("");
+
               setSecrets({});
               setEditing(false);
               setAuthorizationUrl("");
@@ -166,11 +160,9 @@ export function SubscriptionFields({
               {provider?.label || "应用不可用"}
             </span>
             <span className="muted">
-              {t.repository ||
-                Object.values(t.arguments || {})
-                  .filter((v) => typeof v === "string")
-                  .join(" · ") ||
-                "设置条件"}
+              {Object.values(t.arguments)
+                .filter((v) => typeof v === "string")
+                .join(" · ") || "设置条件"}
             </span>
           </Popover.Trigger>
           <PickerContent className="automation-event-settings" align="start">
@@ -197,7 +189,7 @@ export function SubscriptionFields({
                   setName("");
                   setValues({});
                   setSecrets({});
-                  setToken("");
+
                   setSecrets({});
                   setError("");
                 }}
@@ -291,7 +283,7 @@ export function SubscriptionFields({
                   setName(account.label);
                   setValues(account.values || {});
                   setSecrets({});
-                  setToken("");
+
                   setSecrets({});
                   setError("");
                 }}
@@ -343,9 +335,7 @@ export function SubscriptionFields({
                       }
                       value={
                         field.sensitive
-                          ? provider?.legacy
-                            ? token
-                            : secrets[field.id] || ""
+                          ? secrets[field.id] || ""
                           : field.type === "boolean"
                             ? undefined
                             : String(values[field.id] ?? "")
@@ -359,12 +349,10 @@ export function SubscriptionFields({
                       disabled={busy}
                       onChange={(e) =>
                         field.sensitive
-                          ? provider?.legacy
-                            ? setToken(e.target.value)
-                            : setSecrets({
-                                ...secrets,
-                                [field.id]: e.target.value,
-                              })
+                          ? setSecrets({
+                              ...secrets,
+                              [field.id]: e.target.value,
+                            })
                           : setValues({
                               ...values,
                               [field.id]:
@@ -400,16 +388,9 @@ export function SubscriptionFields({
             )}
             <AutomationChoice
               label="订阅事件"
-              value={t.events[0] || (provider?.legacy ? "all" : "")}
-              options={[
-                ...(provider?.legacy
-                  ? [{ id: "all", label: "所有支持的事件" }]
-                  : []),
-                ...(provider?.events || []),
-              ]}
-              onChange={(v) =>
-                onChange({ events: v === "all" ? [] : [v], arguments: {} })
-              }
+              value={t.events[0] || ""}
+              options={provider?.events || []}
+              onChange={(v) => onChange({ events: [v], arguments: {} })}
               disabled={!provider || busy}
               search
             />
@@ -420,17 +401,11 @@ export function SubscriptionFields({
                   provider?.events[0]
                 )?.inputSchema || { type: "object" }
               }
-              value={
-                provider?.legacy
-                  ? { repository: t.repository }
-                  : t.arguments || {}
-              }
+              value={t.arguments}
               onChange={(v) =>
-                provider?.legacy
-                  ? onChange({ repository: String(v.repository || "") })
-                  : onChange({
-                      arguments: v as AutomationEventTrigger["arguments"],
-                    })
+                onChange({
+                  arguments: v as AutomationEventTrigger["arguments"],
+                })
               }
               disabled={busy}
             />
@@ -535,13 +510,13 @@ export function SubscriptionConnection({
       <Popover.Trigger
         type="button"
         className="automation-choice"
-        aria-label={`${trigger.repository} 订阅状态`}
+        aria-label="订阅状态"
       >
         <Link size={15} />
         订阅状态
       </Popover.Trigger>
       <PickerContent className="automation-event-settings" align="start">
-        <strong>{trigger.repository || "应用事件"}</strong>
+        <strong>{"应用事件"}</strong>
         <p role="status">{subscriptionStateLabels[state] || "需要检查连接"}</p>
         {!["ready", "baseline", "pending", "disabled"].includes(state) && (
           <button

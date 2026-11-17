@@ -20,7 +20,7 @@ parser.add_argument("--service", required=True)
 parser.add_argument("--evidence", required=True)
 parser.add_argument("--include-server", action="store_true")
 parser.add_argument("--expected-server-hash")
-parser.add_argument("--database-migration", choices=["session-modes-v18", "automations-v19", "automation-events-v20", "event-bridge-v23"])
+parser.add_argument("--database-migration", choices=["session-modes-v18", "automations-v19", "automation-events-v20", "event-bridge-v23", "plugin-events-v24"])
 args = parser.parse_args()
 if args.database_migration and not args.include_server:
     parser.error("Database migrations require --include-server")
@@ -68,6 +68,8 @@ if args.database_migration in ["automation-events-v20", "event-bridge-v23"]:
     tables += ["automation_tasks", "automation_runs", "automation_deliveries", "automation_mail_config"]
 if args.database_migration == "event-bridge-v23":
     tables += ["automation_threads", "automation_event_routes", "automation_event_inbox", "automation_attachment_refs"]
+if args.database_migration == "plugin-events-v24":
+    tables += ["automation_tasks", "automation_runs", "automation_deliveries", "automation_mail_config", "automation_threads", "automation_event_inbox", "automation_attachment_refs", "automation_event_accounts", "automation_event_oauth", "automation_event_webhooks"]
 def systemctl(action):
     subprocess.run(["systemctl", "--user", action, args.service], check=True)
 swapped = False
@@ -78,13 +80,23 @@ try:
     stopped = True
     with sqlite3.connect(target / ".data/newbot.sqlite") as connection:
         previous_version = connection.execute("PRAGMA user_version").fetchone()[0]
-        if args.database_migration and previous_version != {"session-modes-v18":17,"automations-v19":18,"automation-events-v20":19,"event-bridge-v23":20}[args.database_migration]:
+        if args.database_migration and previous_version != {"session-modes-v18":17,"automations-v19":18,"automation-events-v20":19,"event-bridge-v23":20,"plugin-events-v24":23}[args.database_migration]:
             raise RuntimeError("Database version does not match migration baseline")
         selected = columns(connection, tables)
         with sqlite3.connect(backup / "database.sqlite") as saved:
             connection.backup(saved)
         before = summaries(connection, selected)
     (backup / "baseline.json").write_text(json.dumps(before))
+    cleanup = None
+    if args.database_migration == "plugin-events-v24":
+        cleanup = json.loads(subprocess.check_output(["node", "--import", "tsx", "scripts/prepare-event-cleanup.ts", str(backup / "database.sqlite"), str(backup / "expected-cleanup"), str(target / ".data/private-credentials.key")], cwd=source, text=True))
+        with sqlite3.connect(backup / "expected-cleanup/newbot.sqlite") as expected:
+            before = summaries(expected, selected)
+        (backup / "cleanup.json").write_text(json.dumps(cleanup))
+        subscriptions = target / ".data/event-subscriptions/subscriptions.sqlite"
+        if subscriptions.exists():
+            with sqlite3.connect(subscriptions) as current, sqlite3.connect(backup / "subscriptions.sqlite") as saved:
+                current.backup(saved)
     shutil.copytree(target / "dist/web", backup / "web")
     backend = hashlib.sha256((target / "dist/server/index.js").read_bytes()).hexdigest()
     if args.include_server:
@@ -142,7 +154,7 @@ try:
             raise RuntimeError("Public asset mismatch: " + path)
         verified[path] = hashlib.sha256(payload).hexdigest()
     result = {"source": manifest["source"], "webHash": manifest["webHash"], "url": args.origin, "ready": ready,
-        "dataUnchanged": True, "databaseMigration": args.database_migration, "previousDatabaseVersion": previous_version,
+        "dataUnchanged": cleanup is None, "retainedDataUnchanged": True, "cleanup": cleanup, "databaseMigration": args.database_migration, "previousDatabaseVersion": previous_version,
         "historicalModes": "work" if args.database_migration == "session-modes-v18" else "unchanged", "tables": tables, "serverUnchanged": not args.include_server, "serverHash": manifest.get("serverHash"), "previousServerIndexHash": backend, "backup": str(backup), "assets": verified, "retainedAssets": retained}
     pathlib.Path(args.evidence).write_text(json.dumps(result, indent=2) + "\n")
     print(json.dumps(result))
@@ -156,6 +168,8 @@ except Exception:
             server_old.rename(target / "dist/server")
         if args.database_migration:
             restore_database(backup / "database.sqlite", target / ".data/newbot.sqlite")
+            if (backup / "subscriptions.sqlite").exists():
+                restore_database(backup / "subscriptions.sqlite", target / ".data/event-subscriptions/subscriptions.sqlite")
     if stopped:
         systemctl("start")
     raise

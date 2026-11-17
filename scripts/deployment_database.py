@@ -48,6 +48,14 @@ def validate_migration(connection, migration, previous_version, selected):
                 raise RuntimeError("Missing event bridge table: " + table)
         if not connection.execute("SELECT 1 FROM automation_event_migrations WHERE id='event-config-v2-preserve-identities'").fetchone():
             raise RuntimeError("Event configuration migration did not complete")
+    elif migration == "plugin-events-v24":
+        if previous_version != 23 or version != 24:
+            raise RuntimeError("Expected database cleanup v23 to v24")
+        for table in ["automation_event_routes", "automation_event_migrations"]:
+            if connection.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name=?", (table,)).fetchone():
+                raise RuntimeError("Obsolete event table remains: " + table)
+        if connection.execute("PRAGMA foreign_key_check").fetchall():
+            raise RuntimeError("Event cleanup left dangling references")
     elif version != previous_version:
         raise RuntimeError("Unexpected database version change")
     if actual != expected:

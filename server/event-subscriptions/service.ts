@@ -1,3 +1,7 @@
+import {
+  accountConfiguration,
+  discardInvalidEventAccounts,
+} from "./account-configuration.js";
 import { webhookDelivery, type RelayConfiguration } from "./webhook.js";
 import { join } from "node:path";
 import { z } from "zod";
@@ -22,7 +26,6 @@ import {
   type Subscription,
 } from "./contracts.js";
 import { SubscriptionEngine } from "./engine.js";
-import { legacyManifest, legacyEvents, legacyAdapter } from "./legacy.js";
 import { eventOAuth } from "./oauth.js";
 import {
   pluginDescriptors,
@@ -63,7 +66,6 @@ export function eventSubscriptions(
   options: {
     relay?: RelayConfiguration;
     callback?: string;
-    request?: typeof fetch;
     now?: () => number;
     connect?: OpenEventConnection;
     existing?: (descriptor: PluginDescriptor) =>
@@ -76,6 +78,7 @@ export function eventSubscriptions(
       | undefined;
   } = {},
 ) {
+  discardInvalidEventAccounts(db, vault);
   const providers = new Map<string, Provider>();
   const discovery = new Map<
     string,
@@ -91,45 +94,14 @@ export function eventSubscriptions(
       .all() as Account[];
   const binding = (a: Account) =>
     `newbot:events:${a.id}:${a.revision}:${a.binding}`;
-  const registry = new ProviderRegistry(
-    new Map([
-      [
-        "legacy-v1",
-        legacyAdapter((connection) => {
-          const [id, revision] = connection.split(".");
-          const a = account(id);
-          if (
-            !a ||
-            String(a.generation) !== revision ||
-            providers.get(a.provider_id)?.binding !== a.binding
-          )
-            throw new SourceFailure("auth_required");
-          const bytes = vault.openPrivate(a.packet, binding(a));
-          try {
-            return bytes.toString("utf8");
-          } finally {
-            bytes.fill(0);
-          }
-        }, options.request),
-      ],
-    ]),
-  );
+  const registry = new ProviderRegistry(new Map());
   const peers = new Map<string, Promise<EventPeer>>();
   const unpack = (a: Account) => {
     const bytes = vault.openPrivate(a.packet, binding(a));
     try {
-      if (providers.get(a.provider_id)?.legacy)
-        return { values: {}, secrets: { token: bytes.toString("utf8") } };
-      const data = z
-        .object({
-          values: z.record(
-            z.string(),
-            z.union([z.string(), z.number(), z.boolean()]),
-          ),
-          secrets: z.record(z.string(), z.string()),
-          linkedRevision: z.string().optional(),
-        })
-        .parse(JSON.parse(bytes.toString("utf8")));
+      const data = accountConfiguration.parse(
+        JSON.parse(bytes.toString("utf8")),
+      );
       if (data.linkedRevision !== undefined) {
         const descriptor = providers.get(a.provider_id)?.descriptor;
         const existing = descriptor && options.existing?.(descriptor);
@@ -196,11 +168,7 @@ export function eventSubscriptions(
     ? webhookDelivery(db, vault, options.relay, connect)
     : undefined;
   const resources = (t: AutomationInput["eventTriggers"][number]) => {
-    const p = providers.get(t.providerId!);
-    if (p?.legacy) return [t.repository.toLowerCase()];
-    return (t.events.length ? t.events : p?.events.map((e) => e.id) || []).map(
-      (name) => canonical({ name, arguments: t.arguments || {} }),
-    );
+    return t.events.map((name) => canonical({ name, arguments: t.arguments }));
   };
   const engine = new SubscriptionEngine({
     directory: join(db.directory, "event-subscriptions"),
@@ -244,6 +212,16 @@ export function eventSubscriptions(
       return "accepted";
     },
   });
+  const survivingTriggers = new Set(
+    tasks
+      .list()
+      .flatMap((task) =>
+        task.eventTriggers.map((trigger) => `${task.id}:${trigger.id}`),
+      ),
+  );
+  engine.pruneTargets((target) =>
+    survivingTriggers.has(`${target.taskId}:${target.triggerId}`),
+  );
   let refreshing: Promise<void> | undefined;
   function refresh() {
     return (refreshing ??= (async () => {
@@ -272,89 +250,80 @@ export function eventSubscriptions(
           const file = tree.files.find((f) => f.path === "newbot-events.json");
           if (!file || file.data.length > 16384) continue;
           const raw = JSON.parse(file.data.toString("utf8"));
-          const legacy = raw.version === 1;
-          const manifest = legacy
-            ? legacyManifest.parse(raw)
-            : eventPackageSchema.parse(raw);
-          const descriptors = legacy
-            ? []
-            : await pluginDescriptors(pluginId, p.path, p.digest);
+          const manifest = eventPackageSchema.parse(raw);
+          const descriptors = await pluginDescriptors(
+            pluginId,
+            p.path,
+            p.digest,
+          );
           for (const source of manifest.sources) {
             const id = hash([pluginId, source.id]);
-            const descriptor =
-              !legacy && "server" in source
-                ? descriptors.find((d) => d.name === source.server)
-                : undefined;
-            let events: EventProviderView["events"] = legacy
-              ? legacyEvents
-              : [];
+            const descriptor = descriptors.find(
+              (d) => d.name === source.server,
+            );
+            let events: EventProviderView["events"] = [];
             let state: string | undefined;
-            if (!legacy) {
-              if (!descriptor || descriptor.reason) {
-                state = "unavailable";
-              } else if (
-                providers.get(id)?.binding === hash([p.digest, source])
-              )
-                events = providers.get(id)!.events;
-              else {
-                discovery.set(id, {
-                  descriptor,
-                  binding: hash([p.digest, source]),
-                });
-                let peer: EventPeer | undefined;
-                try {
-                  const a = accounts().find(
-                    (a) =>
-                      a.provider_id === id &&
-                      a.binding === hash([p.digest, source]),
-                  );
-                  let configuration = {
-                    values: Object.fromEntries(
-                      descriptor.fields
-                        .filter((f) => !f.sensitive && f.default !== undefined)
-                        .map((f) => [f.id, f.default]),
-                    ),
-                    secrets: {},
-                  };
-                  if (a) {
-                    const bytes = vault.openPrivate(a.packet, binding(a));
-                    try {
-                      configuration = JSON.parse(bytes.toString("utf8"));
-                    } finally {
-                      bytes.fill(0);
-                    }
+            if (!descriptor || descriptor.reason) {
+              state = "unavailable";
+            } else if (providers.get(id)?.binding === hash([p.digest, source]))
+              events = providers.get(id)!.events;
+            else {
+              discovery.set(id, {
+                descriptor,
+                binding: hash([p.digest, source]),
+              });
+              let peer: EventPeer | undefined;
+              try {
+                const a = accounts().find(
+                  (a) =>
+                    a.provider_id === id &&
+                    a.binding === hash([p.digest, source]),
+                );
+                let configuration = {
+                  values: Object.fromEntries(
+                    descriptor.fields
+                      .filter((f) => !f.sensitive && f.default !== undefined)
+                      .map((f) => [f.id, f.default]),
+                  ),
+                  secrets: {},
+                };
+                if (a) {
+                  const bytes = vault.openPrivate(a.packet, binding(a));
+                  try {
+                    configuration = JSON.parse(bytes.toString("utf8"));
+                  } finally {
+                    bytes.fill(0);
                   }
-                  const existing = options.existing?.(descriptor);
-                  if ((configuration as any).linkedRevision !== undefined) {
-                    if (
-                      existing?.revision !==
-                      (configuration as any).linkedRevision
-                    )
-                      throw new SourceFailure("auth_required");
-                    configuration = existing!;
-                  }
-                  peer = await (options.connect || openEventConnection)({
-                    descriptor,
-                    ...configuration,
-                    ...(a &&
-                    (descriptor.definition.oauth ||
-                      ("authentication" in source &&
-                        source.authentication === "oauth"))
-                      ? { authProvider: oauth.provider(a.id) }
-                      : {}),
-                  });
-                  events = (await discoverEvents(peer)).map((e) => ({
-                    id: e.name,
-                    label: e.title || e.name,
-                    inputSchema: e.inputSchema,
-                    delivery: e.delivery,
-                  }));
-                } catch {
-                  state = "auth_required";
-                } finally {
-                  await peer?.close();
-                  discovery.delete(id);
                 }
+                const existing = options.existing?.(descriptor);
+                if ((configuration as any).linkedRevision !== undefined) {
+                  if (
+                    existing?.revision !== (configuration as any).linkedRevision
+                  )
+                    throw new SourceFailure("auth_required");
+                  configuration = existing!;
+                }
+                peer = await (options.connect || openEventConnection)({
+                  descriptor,
+                  ...configuration,
+                  ...(a &&
+                  (descriptor.definition.oauth ||
+                    ("authentication" in source &&
+                      source.authentication === "oauth"))
+                    ? { authProvider: oauth.provider(a.id) }
+                    : {}),
+                });
+                events = (await discoverEvents(peer)).map((e) => ({
+                  id: e.name,
+                  label: e.title || e.name,
+                  inputSchema: e.inputSchema,
+                  delivery: e.delivery,
+                }));
+              } catch {
+                state = "auth_required";
+              } finally {
+                await peer?.close();
+                discovery.delete(id);
               }
             }
             found.set(id, {
@@ -362,9 +331,8 @@ export function eventSubscriptions(
               label: source.label,
               pluginId,
               binding: hash([p.digest, source]),
-              adapter: legacy ? "legacy-v1" : id,
+              adapter: id,
               descriptor,
-              legacy,
               state,
               reusableConnection:
                 !!descriptor && !!options.existing?.(descriptor),
@@ -372,15 +340,7 @@ export function eventSubscriptions(
                 !!descriptor?.definition.oauth ||
                 ("authentication" in source &&
                   source.authentication === "oauth"),
-              fields: descriptor?.fields || [
-                {
-                  id: "token",
-                  type: "string",
-                  title: "访问令牌",
-                  required: false,
-                  sensitive: true,
-                },
-              ],
+              fields: descriptor?.fields || [],
               events,
             });
           }
@@ -403,8 +363,7 @@ export function eventSubscriptions(
         }
       for (const [id, p] of found)
         if (!providers.has(id)) {
-          if (!p.legacy)
-            registry.registerAdapter(p.id, mcpEventAdapter(connect, webhook));
+          registry.registerAdapter(p.id, mcpEventAdapter(connect, webhook));
           if (!p.events.length) {
             providers.set(id, p);
             continue;
@@ -496,103 +455,92 @@ export function eventSubscriptions(
       throw new PublicError("账号配置已变化，请重新打开后重试");
     if (old && old.provider_id !== p.providerId)
       throw new PublicError("账号不能改为其他应用，请添加账号");
-    if (
-      old &&
-      old.binding !== provider.binding &&
-      p.token === undefined &&
-      p.secrets === undefined
-    )
+    if (old && old.binding !== provider.binding && p.secrets === undefined)
       throw new PublicError("应用已更新，请重新确认连接配置");
     let discovered: EventProviderView["events"] | undefined;
     let needsAuthorization = false;
     let secret: Buffer;
-    if (provider.legacy) {
-      if (p.token === undefined && old)
-        secret = vault.openPrivate(old.packet, binding(old));
-      else secret = Buffer.from(p.token || "");
-    } else {
-      const previous =
-        old && old.binding === provider.binding
-          ? unpack(old)
-          : { values: {}, secrets: {} };
-      const existing =
-        provider.descriptor && options.existing?.(provider.descriptor);
-      const linked =
-        p.reuseConnection ??
-        ("linkedRevision" in previous &&
-          previous.linkedRevision !== undefined &&
-          p.values === undefined &&
-          p.secrets === undefined);
-      if (linked && !existing)
-        throw new PublicError("插件连接尚未配置，请先在插件设置中完成连接");
-      const data = linked
-        ? { values: existing!.values, secrets: existing!.secrets }
-        : {
-            values: p.values ?? previous.values,
-            secrets: { ...previous.secrets, ...p.secrets },
-          };
-      const fields = provider.fields || [];
-      if (
-        Object.keys(data.values).some(
-          (k) => !fields.some((f) => f.id === k && !f.sensitive),
-        ) ||
-        Object.keys(data.secrets).some(
-          (k) => !fields.some((f) => f.id === k && f.sensitive),
-        )
+    const previous =
+      old && old.binding === provider.binding
+        ? unpack(old)
+        : { values: {}, secrets: {} };
+    const existing =
+      provider.descriptor && options.existing?.(provider.descriptor);
+    const linked =
+      p.reuseConnection ??
+      ("linkedRevision" in previous &&
+        previous.linkedRevision !== undefined &&
+        p.values === undefined &&
+        p.secrets === undefined);
+    if (linked && !existing)
+      throw new PublicError("插件连接尚未配置，请先在插件设置中完成连接");
+    const data = linked
+      ? { values: existing!.values, secrets: existing!.secrets }
+      : {
+          values: p.values ?? previous.values,
+          secrets: { ...previous.secrets, ...p.secrets },
+        };
+    const fields = provider.fields || [];
+    if (
+      Object.keys(data.values).some(
+        (k) => !fields.some((f) => f.id === k && !f.sensitive),
+      ) ||
+      Object.keys(data.secrets).some(
+        (k) => !fields.some((f) => f.id === k && f.sensitive),
       )
-        throw new PublicError("连接包含未声明的字段");
-      for (const field of fields) {
-        const value = field.sensitive
-          ? data.secrets[field.id]
-          : data.values[field.id];
-        if (field.required && (value === undefined || value === ""))
-          throw new PublicError("请填写" + field.title);
-        if (value !== undefined && typeof value !== field.type)
-          throw new PublicError("连接字段类型不正确");
+    )
+      throw new PublicError("连接包含未声明的字段");
+    for (const field of fields) {
+      const value = field.sensitive
+        ? data.secrets[field.id]
+        : data.values[field.id];
+      if (field.required && (value === undefined || value === ""))
+        throw new PublicError("请填写" + field.title);
+      if (value !== undefined && typeof value !== field.type)
+        throw new PublicError("连接字段类型不正确");
+    }
+    secret = Buffer.from(
+      JSON.stringify(
+        linked
+          ? { values: {}, secrets: {}, linkedRevision: existing!.revision }
+          : data,
+      ),
+    );
+    let peer: EventPeer | undefined;
+    try {
+      peer = await (options.connect || openEventConnection)({
+        descriptor: provider.descriptor!,
+        ...data,
+        ...(linked ? { caCertificate: existing!.caCertificate } : {}),
+      });
+      const events = await discoverEvents(peer);
+      if (!events.length) throw new PublicError("应用没有可订阅事件");
+      if (
+        (account(p.id)?.revision || 0) !== p.revision ||
+        providers.get(p.providerId)?.binding !== provider.binding
+      )
+        throw new PublicError("连接已变化，请重新打开后重试");
+      discovered = events.map((e) => ({
+        id: e.name,
+        label: e.title || e.name,
+        inputSchema: e.inputSchema,
+        delivery: e.delivery,
+      }));
+      await refresh();
+      if (providers.get(p.providerId)?.binding !== provider.binding)
+        throw new PublicError("应用已变化，请重新打开后重试");
+    } catch (error) {
+      if (
+        !provider.oauth ||
+        !(error instanceof SourceFailure) ||
+        error.code !== "auth_required"
+      ) {
+        secret.fill(0);
+        throw error;
       }
-      secret = Buffer.from(
-        JSON.stringify(
-          linked
-            ? { values: {}, secrets: {}, linkedRevision: existing!.revision }
-            : data,
-        ),
-      );
-      let peer: EventPeer | undefined;
-      try {
-        peer = await (options.connect || openEventConnection)({
-          descriptor: provider.descriptor!,
-          ...data,
-          ...(linked ? { caCertificate: existing!.caCertificate } : {}),
-        });
-        const events = await discoverEvents(peer);
-        if (!events.length) throw new PublicError("应用没有可订阅事件");
-        if (
-          (account(p.id)?.revision || 0) !== p.revision ||
-          providers.get(p.providerId)?.binding !== provider.binding
-        )
-          throw new PublicError("连接已变化，请重新打开后重试");
-        discovered = events.map((e) => ({
-          id: e.name,
-          label: e.title || e.name,
-          inputSchema: e.inputSchema,
-          delivery: e.delivery,
-        }));
-        await refresh();
-        if (providers.get(p.providerId)?.binding !== provider.binding)
-          throw new PublicError("应用已变化，请重新打开后重试");
-      } catch (error) {
-        if (
-          !provider.oauth ||
-          !(error instanceof SourceFailure) ||
-          error.code !== "auth_required"
-        ) {
-          secret.fill(0);
-          throw error;
-        }
-        needsAuthorization = true;
-      } finally {
-        await peer?.close();
-      }
+      needsAuthorization = true;
+    } finally {
+      await peer?.close();
     }
     if ((account(p.id)?.revision || 0) !== p.revision) {
       secret.fill(0);
@@ -614,13 +562,11 @@ export function eventSubscriptions(
       binding: provider.binding,
       label: p.label,
       packet: "",
-      has_token: provider.legacy
-        ? secret.length
-          ? 1
-          : 0
-        : Object.values(JSON.parse(secret.toString()).secrets).some(Boolean)
-          ? 1
-          : 0,
+      has_token: Object.values(JSON.parse(secret.toString()).secrets).some(
+        Boolean,
+      )
+        ? 1
+        : 0,
       generation: old ? old.generation + (sameCredential ? 0 : 1) : 1,
     };
     try {
@@ -699,29 +645,24 @@ export function eventSubscriptions(
       const p = providers.get(t.providerId!);
       if (!a || !p || a.provider_id !== p.id || a.binding !== p.binding)
         throw new PublicError("请连接可用的事件账号");
-      if (
-        t.events.some((e) => !p.events.some((v) => v.id === e)) ||
-        t.actions.length
-      )
+      if (t.events.some((e) => !p.events.some((v) => v.id === e)))
         throw new PublicError("请选择应用支持的事件");
-      if (!p.legacy) {
-        if (!t.events.length) throw new PublicError("请选择订阅事件");
-        for (const name of t.events) {
-          const event = p.events.find((e) => e.id === name)!;
-          if (
-            !event.delivery?.some(
-              (mode) =>
-                mode === "poll" ||
-                mode === "push" ||
-                (mode === "webhook" && !!webhook),
-            )
+      if (!t.events.length) throw new PublicError("请选择订阅事件");
+      for (const name of t.events) {
+        const event = p.events.find((e) => e.id === name)!;
+        if (
+          !event.delivery?.some(
+            (mode) =>
+              mode === "poll" ||
+              mode === "push" ||
+              (mode === "webhook" && !!webhook),
           )
-            throw new PublicError("此事件当前没有可用的交付方式");
-          try {
-            schemaValidator(event.inputSchema).parse(t.arguments || {});
-          } catch {
-            throw new PublicError("事件条件不完整或不受支持");
-          }
+        )
+          throw new PublicError("此事件当前没有可用的交付方式");
+        try {
+          schemaValidator(event.inputSchema).parse(t.arguments);
+        } catch {
+          throw new PublicError("事件条件不完整或不受支持");
         }
       }
     }

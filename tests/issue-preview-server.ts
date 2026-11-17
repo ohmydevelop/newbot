@@ -306,7 +306,6 @@ class IssueCodex extends SkillsCodex {
   }
 }
 let eventClock=Date.now();
-const eventRows=[{id:100,event:"closed",created_at:"2026-11-17T00:00:00Z",issue:{number:12}}];
 const codex = new IssueCodex(),
   ctx = await createServer({
     webDirectory: process.env.UI_TEST_CANDIDATE,
@@ -318,24 +317,10 @@ const codex = new IssueCodex(),
     codex,
     password: "issue-fixture-login",
     origins: [origin],
-    ...(process.env.ISSUE_EVENT_SUBSCRIPTIONS === "1" || process.env.ISSUE_EVENT_BRIDGE === "1" ? {
+    ...(process.env.ISSUE_EVENT_BRIDGE === "1" ? {
       automationClock:()=>eventClock,
-      eventSubscriptionFetch:async()=>Response.json(eventRows),
     }:{}),
   });
-if(process.env.ISSUE_EVENT_SUBSCRIPTIONS === "1"){
-  const {importTree}=await import("../server/import-files.js");
-  const {resolve}=await import("node:path");
-  const root=resolve("examples/github-events"),tree=await importTree(root);
-  ctx.db.raw.prepare("INSERT INTO extension_packages VALUES(?,?,?,?,?,?)").run("event-fixture-plugin","plugin","github-events",root,tree.digest,JSON.stringify({pluginId:"github-events@newbot-imports",installed:true}));
-  ctx.app.post("/fixture/subscription-step",async()=>{
-    eventClock+=65000;
-    await ctx.subscriptions.tick();
-    await ctx.automations.tick();
-    eventRows.unshift({id:eventRows[0].id+100,event:"closed",created_at:"2026-11-17T01:00:00Z",issue:{number:12}});
-    return {ok:true};
-  });
-}
 if(process.env.ISSUE_EVENT_BRIDGE === "1"){
   const {importTree}=await import("../server/import-files.js");
   const {resolve}=await import("node:path");

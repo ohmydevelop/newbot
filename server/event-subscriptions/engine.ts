@@ -149,6 +149,39 @@ export class SubscriptionEngine {
         this.setEnabled(row.id, false);
     this.options.registry.remove(providerId);
   }
+  pruneTargets(keep: (target: Target) => boolean) {
+    this.transaction(() => {
+      for (const row of this.db
+        .prepare("SELECT * FROM subscriptions")
+        .all() as Row[]) {
+        let config: Subscription | undefined;
+        try {
+          config = subscriptionSchema.parse(JSON.parse(row.config));
+        } catch {}
+        const targets = config?.targets.filter(keep) || [];
+        if (config && targets.length === config.targets.length) continue;
+        for (const target of config?.targets.filter((t) => !keep(t)) || [])
+          this.db
+            .prepare(
+              "DELETE FROM deliveries WHERE subscription_id=? AND target_key=?",
+            )
+            .run(row.id, targetKey(target));
+        if (targets.length) {
+          this.db
+            .prepare("UPDATE subscriptions SET config=? WHERE id=?")
+            .run(JSON.stringify({ ...config, targets }), row.id);
+        } else {
+          this.db
+            .prepare("DELETE FROM deliveries WHERE subscription_id=?")
+            .run(row.id);
+          this.db
+            .prepare("DELETE FROM source_events WHERE subscription_id=?")
+            .run(row.id);
+          this.db.prepare("DELETE FROM subscriptions WHERE id=?").run(row.id);
+        }
+      }
+    });
+  }
   inspect(id: string) {
     const row = this.row(id);
     if (!row) throw new Error("Unknown subscription");

@@ -88,7 +88,6 @@
     "test:modes-native": "node --import tsx scripts/test-session-modes-native.ts",
     "test:modes-baseline": "python3 scripts/test-mode-native-baseline.py",
     "test:subscriptions": "tsx --test tests/event-subscriptions*.test.ts",
-    "experiment:subscriptions": "node --import tsx examples/event-subscriptions/lab.ts",
     "build:event-plugins": "node scripts/build-event-plugins.mjs",
     "test:event-bridge": "npm run build:event-plugins && node scripts/check-event-boundaries.mjs && tsx --test tests/event-bridge*.test.ts tests/event-relay.test.ts tests/event-subscriptions*.test.ts",
     "test:event-bridge-ui": "playwright test --config=playwright.bridge.config.ts",

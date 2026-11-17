@@ -34,6 +34,16 @@ for (const width of [320, 390, 768, 1280])
       await editor
         .getByRole("button", { name: "添加触发器", exact: true })
         .click();
+      for (const name of ["GitHub", "OpenClaw", "Hermes", "Webhook"])
+        await expect(
+          page.getByRole("button", { name, exact: true }),
+        ).toHaveCount(0);
+      await expect(
+        page.getByRole("button", { name: "测试信箱", exact: true }),
+      ).toBeVisible();
+      await page.screenshot({
+        path: info.outputPath("installed-plugin-menu.png"),
+      });
       await page
         .getByRole("textbox", { name: "搜索添加触发器", exact: true })
         .fill("测试信箱");
@@ -51,9 +61,9 @@ for (const width of [320, 390, 768, 1280])
         fetch("/fixture/bridge").then((r) => r.json()),
       );
       await page.getByLabel("消息文件", { exact: true }).fill(file);
-      mkdirSync(".impeccable/review/event-bridge", { recursive: true });
+      mkdirSync(".impeccable/review/plugin-only-triggers", { recursive: true });
       await page.screenshot({
-        path: `.impeccable/review/event-bridge/account-${width}-${theme}.png`,
+        path: `.impeccable/review/plugin-only-triggers/account-${width}-${theme}.png`,
       });
       await page.getByRole("button", { name: "保存账号", exact: true }).click();
       await expect(
@@ -100,8 +110,8 @@ for (const width of [320, 390, 768, 1280])
       expect(
         await page.evaluate(() => document.documentElement.scrollWidth),
       ).toBe(width);
-      const path = `.impeccable/review/event-bridge/${width}-${theme}.png`;
-      mkdirSync(".impeccable/review/event-bridge", { recursive: true });
+      const path = `.impeccable/review/plugin-only-triggers/${width}-${theme}.png`;
+      mkdirSync(".impeccable/review/plugin-only-triggers", { recursive: true });
       await page.screenshot({ path });
       await info.attach("条件", { path, contentType: "image/png" });
       await page.keyboard.press("Escape");
@@ -129,7 +139,7 @@ for (const width of [320, 390, 768, 1280])
         .click();
       await expect(page.getByRole("status")).toHaveText("监听中");
       await page.screenshot({
-        path: `.impeccable/review/event-bridge/status-${width}-${theme}.png`,
+        path: `.impeccable/review/plugin-only-triggers/status-${width}-${theme}.png`,
       });
       await expect(page.getByLabel("事件接收地址")).toHaveCount(0);
       await page.keyboard.press("Escape");

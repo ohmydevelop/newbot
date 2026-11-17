@@ -1,4 +1,4 @@
-import { EventConnection } from "./AutomationEventFields";
+import { SubscriptionConnection } from "./AutomationSubscriptionFields";
 import { PluginIcon } from "./AppIcons";
 import * as Popover from "@radix-ui/react-popover";
 import { PickerContent } from "./Picker";
@@ -13,7 +13,6 @@ import {
   Bell,
   Check,
   Clock3,
-  Webhook,
   MessageSquare,
   Square,
 } from "lucide-react";
@@ -482,18 +481,12 @@ export default function Automations({
                     ))}
                     {(task.eventTriggers || []).map((t) => (
                       <div className="automation-trigger-summary" key={t.id}>
-                        {t.source === "subscription" ? (
-                          <PluginIcon size={18} />
-                        ) : (
-                          <Webhook size={18} />
-                        )}
+                        <PluginIcon size={18} />
                         <span>
                           {eventSourceLabels[t.source]}
-                          <small>
-                            {t.repository || t.events.join(", ") || "所有事件"}
-                          </small>
+                          <small>{t.events.join(", ")}</small>
                         </span>
-                        <EventConnection task={task} trigger={t} />
+                        <SubscriptionConnection task={task} trigger={t} />
                       </div>
                     ))}
                     <p className="muted">
