@@ -1,0 +1,20 @@
+{
+  "source": "03f07ca19f414f1da6db94ce9cbe71d4a6ce62b5",
+  "destination": "/home/a/Documents/ChatGPT/newbot/.data/event-bridge-releases/03f07ca19f41",
+  "installed": [
+    {
+      "name": "relay-events",
+      "state": "installed"
+    }
+  ],
+  "importId": "499dce59-548b-490d-97cb-70d0a48c1fb5",
+  "hashes": {
+    "event-relay/main.mjs": "44f6107e6ce823b9c09e4b4ad67050cb65d7062207173b24aa744d10e91555ce",
+    "publisher/publisher.mjs": "01627ad67763fc424c3b61e2a79663ddf0c853ad7b7df218cb986f42ab5e055c",
+    "relay-events/server.mjs": "6043e49d39e5f94228c061591b861b091d7ea34e1e734d66975a4cb444ed8d02"
+  },
+  "origin": "https://promised-retailers-python-prizes.trycloudflare.com",
+  "serverRestarted": false,
+  "productionAccountCreated": false,
+  "productionTaskCreated": false
+}

@@ -177,6 +177,7 @@ try {
       realNativeRuntime: true,
       realPluginImport: true,
       httpsEndToEnd: true,
+      singleLineCaSurvivesSaveAndRestart: true,
       failedDeliveryRetriedAfterProducerReopen: true,
       duplicateDidNotCreateRun: true,
       newbotRestartRestoredAccountAndTask: true,

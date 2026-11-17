@@ -253,7 +253,7 @@ await ctx.subscriptions.saveAccount({
   revision: 0,
   providerId: provider.id,
   label: "Local HTTPS bridge",
-  values: { url, route: route.id, ca_certificate: ca },
+  values: { url, route: route.id, ca_certificate: ca.replace(/\n/g, "") },
   secrets: { token: route.consumer },
 });
 const task = await ctx.automations.save({

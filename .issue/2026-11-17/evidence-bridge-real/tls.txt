@@ -1,4 +1,4 @@
-✔ private HTTPS: configured CA allows actual TLS, stays scoped to one origin, and cannot bypass hostname checks (182.221805ms)
+✔ private HTTPS: configured CA allows actual TLS, stays scoped to one origin, and cannot bypass hostname checks (124.323401ms)
 ℹ tests 1
 ℹ suites 0
 ℹ pass 1
@@ -6,4 +6,4 @@
 ℹ cancelled 0
 ℹ skipped 0
 ℹ todo 0
-ℹ duration_ms 338.707844
+ℹ duration_ms 247.426106

@@ -1,0 +1,21 @@
+{
+  "origin": "https://promised-retailers-python-prizes.trycloudflare.com",
+  "results": [
+    {
+      "width": 390,
+      "sourceVisible": true,
+      "accountFieldsVisible": true,
+      "caFieldVisible": true,
+      "overflow": false,
+      "saved": false
+    },
+    {
+      "width": 1280,
+      "sourceVisible": true,
+      "accountFieldsVisible": true,
+      "caFieldVisible": true,
+      "overflow": false,
+      "saved": false
+    }
+  ]
+}

@@ -5,7 +5,10 @@ import { execFileSync } from "node:child_process";
 import { mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { relayRequest } from "../packages/event-bridge/relay-request.js";
+import {
+  relayRequest,
+  relayCertificate,
+} from "../packages/event-bridge/relay-request.js";
 import { eventRequest } from "../server/event-subscriptions/tls.js";
 
 test("private HTTPS: configured CA allows actual TLS, stays scoped to one origin, and cannot bypass hostname checks", async () => {
@@ -52,9 +55,17 @@ test("private HTTPS: configured CA allows actual TLS, stays scoped to one origin
   const trusted = eventRequest(urls[0], ca),
     untrusted = eventRequest(urls[0]);
   const wrongHost = relayRequest(urls[0].replace("127.0.0.1", "localhost"), ca);
+  const pasted = relayRequest(urls[0], ca.replace(/\n/g, ""));
   const relay = relayRequest(urls[0], ca),
     noCa = relayRequest(urls[0]);
   try {
+    assert.throws(() => relayCertificate("garbage"));
+    assert.throws(() => relayCertificate(ca + "-----BEGIN PRIVATE KEY-----"));
+    assert.throws(() => relayCertificate("a".repeat(43693)));
+    assert.equal(relayCertificate(ca + ca), [ca.trim(), ca.trim()].join("\n"));
+    assert.deepEqual(await pasted.request(urls[0]).then((r) => r.json()), {
+      ok: true,
+    });
     assert.deepEqual(await relay.request(urls[0]).then((r) => r.json()), {
       ok: true,
     });
@@ -75,6 +86,7 @@ test("private HTTPS: configured CA allows actual TLS, stays scoped to one origin
       trusted.fetch(urls[0].replace("127.0.0.1", "localhost")),
     );
   } finally {
+    await pasted.close();
     await wrongHost.close();
     await relay.close();
     await noCa.close();

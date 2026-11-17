@@ -1,12 +1,12 @@
 {
-  "root": "/home/a/Documents/ChatGPT/newbot-systematize/.data/bridge-acceptance/run-1794893488867",
+  "root": "/home/a/Documents/ChatGPT/newbot-systematize/.data/bridge-acceptance/run-1794893831001",
   "model": "local deterministic Responses fixture; real pinned Codex runtime",
-  "started": "2026-11-17T05:31:28.868Z",
+  "started": "2026-11-17T05:37:11.002Z",
   "tls": {
     "trusted": true,
     "untrustedRejected": true,
     "crossOriginRejected": true,
-    "url": "https://127.0.0.1:39003"
+    "url": "https://127.0.0.1:32907"
   },
   "import": {
     "state": "complete",
@@ -58,31 +58,32 @@
   ],
   "runs": [
     {
-      "id": "4cc4da70-74a0-4fe6-a05d-f7a9d773e4ff",
+      "id": "6c1b3a6d-9d1a-483b-a5f2-60b6b74397de",
       "state": "succeeded",
-      "threadId": "01a1e7fd-3240-7382-9518-59ccc7e2f75c",
+      "threadId": "01a1e802-6a53-7c93-8d5f-813a99d3bb38",
       "error": null
     },
     {
-      "id": "0d2a1059-bf4a-4eed-8d71-bbb9a664dbc2",
+      "id": "1c33f09a-116f-4afc-868b-9dd0a289fe6a",
       "state": "succeeded",
-      "threadId": "01a1e7fd-3240-7382-9518-59ccc7e2f75c",
+      "threadId": "01a1e802-6a53-7c93-8d5f-813a99d3bb38",
       "error": null
     },
     {
-      "id": "99c97466-4b48-4d44-b94d-f790f9952836",
+      "id": "452364fc-945c-47b1-87a8-d1d5a91ef27f",
       "state": "succeeded",
-      "threadId": "01a1e7fd-3240-7382-9518-59ccc7e2f75c",
+      "threadId": "01a1e802-6a53-7c93-8d5f-813a99d3bb38",
       "error": null
     }
   ],
-  "taskId": "af789662-b461-430a-a439-5dce20af90fd",
+  "taskId": "28339c1d-9a48-41ea-adda-e017a8884ed2",
   "modelCalls": 3,
-  "appPort": 45621,
+  "appPort": 35911,
   "assertions": {
     "realNativeRuntime": true,
     "realPluginImport": true,
     "httpsEndToEnd": true,
+    "singleLineCaSurvivesSaveAndRestart": true,
     "failedDeliveryRetriedAfterProducerReopen": true,
     "duplicateDidNotCreateRun": true,
     "newbotRestartRestoredAccountAndTask": true,
