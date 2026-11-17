@@ -19,3 +19,11 @@ node scripts/stop-sharing.mjs
 改用固定域名的 Cloudflare Tunnel 时，将 `PUBLIC_ORIGIN` / `APP_ORIGIN` 改成对应 HTTPS origin，并将 `AGENT_TRANSPORT` 恢复为 `sse`。不要提交 `.env`、`.data` 或隧道凭证。
 
 测试实例的 Web 服务现由当前登录用户的 systemd 临时单元 `newbot-test.service` 管理，避免依赖交互终端寿命。查看状态：`systemctl --user status newbot-test.service`；停止：`systemctl --user stop newbot-test.service`。日志为 `.data/server.log`，只写路由模板与状态；它不会自动改变两条分享隧道的状态。该临时单元不保证主机重启后恢复，正式部署请使用生产 Compose 与 Named Tunnel 服务。
+
+## 地址打不开时
+
+先检查本机 `/api/ready`，再检查真实公网 HTTPS 请求。`systemctl` 显示 active 只说明 cloudflared 进程存活，不代表临时隧道注册仍有效。若日志持续出现 `Unauthorized: Tunnel not found`，原地址不能继续当作有效入口。
+
+重建临时隧道会生成新地址。必须一起更新主站 `PUBLIC_ORIGIN`、应用域 `APP_ORIGIN`、OAuth 回调和本机分享元数据；确认任务与审批空闲后再重启源站。最后使用浏览器从公网完成登录，并检查应用域不能访问主站 API。
+
+如果事件中继也更换地址，需要同步生产者与消费者。先检查并备份队列和游标，按同通道迁移，不删除状态重新开始。相关流程和本次边界见 [入口恢复记录](../.issue/2026-11-17/005-public-entry-recovery-progress.md)。

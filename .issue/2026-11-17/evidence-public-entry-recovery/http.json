@@ -1,0 +1,8 @@
+{
+  "home": 200,
+  "ready": 200,
+  "unauthenticated": 401,
+  "appsLogin": 403,
+  "relayUnauthenticated": 401,
+  "retiredConsumerRemoved": true
+}
