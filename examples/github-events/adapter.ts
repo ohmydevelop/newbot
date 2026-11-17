@@ -1,7 +1,10 @@
 import { z } from "zod";
 import { githubEventLabels } from "./events.js";
-import {SourceFailure} from "../../packages/event-bridge/core.js";
-import type {PullAdapter,SourceEvent} from "../../packages/event-bridge/types.js";
+import { SourceFailure } from "../../packages/event-bridge/core.js";
+import type {
+  PullAdapter,
+  SourceEvent,
+} from "../../packages/event-bridge/types.js";
 
 const checkpoint = z.strictObject({
   watermark: z.number().int().nonnegative(),

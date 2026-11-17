@@ -1,6 +1,8 @@
 {
   "name": "github-events",
-  "version": "0.1.0",
+  "version": "1.1.0",
   "description": "通过出站轮询触发 GitHub Issue 与 PR 自动任务。",
-  "author": { "name": "newbot" }
+  "author": {
+    "name": "newbot"
+  }
 }

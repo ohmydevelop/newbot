@@ -1,0 +1,1 @@
+Event boundaries: generic platform and independent plugin implementations verified; legacy-v1 compatibility quarantined.

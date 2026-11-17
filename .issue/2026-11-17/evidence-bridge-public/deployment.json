@@ -1,0 +1,12 @@
+{
+  "relayOrigin": "https://discretion-technician-physiology-monkey.trycloudflare.com",
+  "taskId": "dec7d1cc-cc76-41ce-8695-01d7ce7fb823",
+  "triggerId": "179b2625-8b33-444d-9d49-fd2513e14717",
+  "connectionId": "039c93f1-7b0f-44d3-8775-476b67f92594",
+  "model": "deepseek-flash",
+  "provider": "百智-MQ",
+  "unauthorizedRejected": true,
+  "producerConsumerRolesSeparated": true,
+  "channel": "GitHub Actions completed events",
+  "tunnel": "Cloudflare Quick Tunnel (temporary hostname)"
+}

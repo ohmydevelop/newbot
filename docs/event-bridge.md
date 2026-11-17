@@ -81,3 +81,31 @@ v23 只在主数据库事务内添加通用参数及迁移记录。任务/触发
 测试边界：本地信箱不是 Gmail；本地 OAuth 不是 Slack 登录；浏览器视口测试不是真机。公网 HTTPS relay 与真实业务账号需要部署相应中继/账号后额外验证。
 
 本地完整验收：先运行 `npm run build:event-plugins`，再设置协议匹配的 `CODEX_BIN` 并执行 `npm run test:bridge-minimal`。脚本使用隔离数据库、实际插件导入、私有 CA HTTPS 反向代理、原生 Codex runtime 与本地确定性模型，验证三次任务复用同一会话、发布器重开、重复交付及 Newbot 重启。输出默认位于 `.data/bridge-acceptance/evidence`；不接入任何真实 SaaS 账号，也不验证外部模型质量。
+
+## 任意事件插件转公网中继
+
+`dist/event-forwarder/main.mjs` 是独立的通用出站桥。它通过真实 MCP stdio 加载插件、发现并校验选定的 poll 事件，将完整事件页持久化到 outbox 后才保存源游标和确认回执。中继不可达时保留队列；重启继续发送。订阅源、参数或目的通道改变时拒绝复用旧检查点，需使用独立状态目录，避免混用游标。
+
+配置 JSON（含通道令牌的实际文件应为0600）：
+
+```json
+{
+  "directory": "/var/lib/newbot-bridge/source-one",
+  "source": "urn:company:source-one",
+  "server": {
+    "command": "/usr/bin/node",
+    "args": ["/opt/plugins/source-one/server.mjs"],
+    "envKeys": ["SOURCE_TOKEN"]
+  },
+  "event": "record.updated",
+  "arguments": {},
+  "relay": {
+    "url": "https://relay.example/v1/routes/ROUTE_ID/events",
+    "token": "PRODUCER_TOKEN"
+  }
+}
+```
+
+运行 `node dist/event-forwarder/main.mjs /path/to/config.json`。只传入明确列出的环境变量，不复制宿主环境或凭证到事件中。中继插件在 Newbot 内使用同一通道的 consumer token；不要在源插件旁额外创建重复消费任务。
+
+GitHub事件包1.1.0新增 `workflow.completed`，参数为仓库与可选分支，输出真实工作流名称、提交、运行链接及结论。首次读取只建立基线；随后读取最近100条已完成运行，按runId/attempt去重，32条分批交付。窗口完全越过未消费检查点时报告gap而不静默跳过；较旧且已离开最近100条窗口的运行重跑不在此来源的覆盖范围内。若业务需要全量审计，应接入有完整保留策略的上游。公开API匿名额度不足时可在插件环境提供已有只读授权，令牌不进入relay和模型。

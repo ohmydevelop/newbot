@@ -131,3 +131,15 @@ await build({
     js: 'import { createRequire } from "node:module"; const require = createRequire(import.meta.url);',
   },
 });
+
+await mkdir("dist/event-forwarder", { recursive: true });
+await build({
+  entryPoints: ["services/event-forwarder/main.ts"],
+  outfile: "dist/event-forwarder/main.mjs",
+  bundle: true,
+  platform: "node",
+  format: "esm",
+  banner: {
+    js: 'import { createRequire } from "node:module"; const require = createRequire(import.meta.url);',
+  },
+});
