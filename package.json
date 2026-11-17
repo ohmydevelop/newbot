@@ -8,14 +8,14 @@
   },
   "scripts": {
     "dev": "node --env-file-if-exists=.env node_modules/concurrently/dist/bin/concurrently.js -k \"tsx watch server/index.ts\" \"vite --host 127.0.0.1\"",
-    "build": "npm run build:mcp-test && tsc --noEmit && node scripts/build-web.mjs && esbuild server/index.ts server/runner/main.ts --bundle --platform=node --packages=external --format=esm --outdir=dist/server --splitting && node scripts/stage-server-dependencies.mjs",
+    "build": "npm run build:mcp-test && npm run build:event-plugins && tsc --noEmit && node scripts/build-web.mjs && esbuild server/index.ts server/runner/main.ts --bundle --platform=node --packages=external --format=esm --outdir=dist/server --splitting && node scripts/stage-server-dependencies.mjs",
     "start": "node --env-file-if-exists=.env dist/server/index.js",
     "test": "tsx --test tests/*.test.ts",
     "check": "tsc --noEmit",
     "generate:codex": "node scripts/generate-codex.mjs",
     "format": "prettier --write server web shared tests scripts docs README.md *.json *.ts compose.yaml",
     "build:mcp-test": "node scripts/build-test-mcp.mjs",
-    "pretest": "npm run build:mcp-test",
+    "pretest": "npm run build:mcp-test && npm run build:event-plugins",
     "mcp:test": "node dist/mcp-test/server.js",
     "test:container": "node scripts/container-smoke.mjs",
     "test:provider": "node scripts/verify-provider.mjs",
@@ -86,7 +86,12 @@
     "test:mobile-contracts": "playwright test --config=playwright.mobile.config.ts",
     "test:oauth-local": "node --import tsx scripts/test-local-oauth.ts",
     "test:modes-native": "node --import tsx scripts/test-session-modes-native.ts",
-    "test:modes-baseline": "python3 scripts/test-mode-native-baseline.py"
+    "test:modes-baseline": "python3 scripts/test-mode-native-baseline.py",
+    "test:subscriptions": "tsx --test tests/event-subscriptions*.test.ts",
+    "experiment:subscriptions": "node --import tsx examples/event-subscriptions/lab.ts",
+    "build:event-plugins": "node scripts/build-event-plugins.mjs",
+    "test:event-bridge": "npm run build:event-plugins && node scripts/check-event-boundaries.mjs && tsx --test tests/event-bridge*.test.ts tests/event-relay.test.ts tests/event-subscriptions*.test.ts",
+    "test:event-bridge-ui": "playwright test --config=playwright.bridge.config.ts"
   },
   "dependencies": {
     "@a2ui/web_core": "0.14.0",

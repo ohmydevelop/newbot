@@ -1,0 +1,1 @@
+{"mcpServers":{"mailbox-events":{"command":"node","args":["${__dirname}/server.mjs"],"env":{"MAILBOX_FILE":"${user_config.file}"}}}}

@@ -36,7 +36,7 @@ function copy(name, from = resolve("node_modules")) {
         : resolve("node_modules"),
     );
 }
-for (const name of ["nodemailer", "@js-temporal/polyfill", "yaml"]) copy(name);
+for (const name of ["nodemailer", "@js-temporal/polyfill", "yaml", "@modelcontextprotocol/client", "undici"]) copy(name);
 writeFileSync(
   resolve("dist/server/runtime-dependencies.json"),
   JSON.stringify(Object.fromEntries(copied), null, 2) + "\n",

@@ -52,14 +52,30 @@ export const eventSourceLabels = {
   github: "GitHub",
   hermes: "Hermes",
   openclaw: "OpenClaw",
+  subscription: "应用事件",
 } as const;
-export const eventTriggerSchema = z.object({
-  id: z.string().uuid(),
-  source: z.enum(["webhook", "github", "hermes", "openclaw"]),
-  events: z.array(z.string().trim().min(1).max(100)).max(16).default([]),
-  repository: z.string().trim().max(200).default(""),
-  actions: z.array(z.string().trim().min(1).max(100)).max(16).default([]),
-});
+export const eventTriggerSchema = z
+  .object({
+    id: z.string().uuid(),
+    source: z.enum(["webhook", "github", "hermes", "openclaw", "subscription"]),
+    providerId: z
+      .string()
+      .regex(/^[a-f0-9]{64}$/)
+      .optional(),
+    connectionId: z.string().uuid().optional(),
+    events: z.array(z.string().trim().min(1).max(100)).max(16).default([]),
+    arguments: z.record(z.string(), z.json()).optional(),
+    repository: z.string().trim().max(200).default(""),
+    actions: z.array(z.string().trim().min(1).max(100)).max(16).default([]),
+  })
+  .refine(
+    (t) =>
+      t.source !== "subscription" ||
+      (!!t.providerId &&
+        !!t.connectionId &&
+        (t.arguments !== undefined || /^[a-zA-Z0-9_.-]+\/[a-zA-Z0-9_.-]+$/.test(t.repository))),
+    "请选择应用、账号和仓库",
+  );
 export type AutomationEventTrigger = z.infer<typeof eventTriggerSchema>;
 export const automationSchema = z
   .object({

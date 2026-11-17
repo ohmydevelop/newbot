@@ -79,4 +79,17 @@ class MigrationTests(unittest.TestCase):
                 self.assertEqual(summaries(db,selected),before)
                 self.assertFalse(db.execute("SELECT 1 FROM sqlite_master WHERE name='automation_threads'").fetchone())
 
+    def test_event_bridge_v23_requires_completion_marker_and_preserves_existing_tables(self):
+        with sqlite3.connect(":memory:") as db:
+            db.executescript("CREATE TABLE automation_tasks(id TEXT,content TEXT); INSERT INTO automation_tasks VALUES('old','{}'); PRAGMA user_version=20;")
+            selected=columns(db,["automation_tasks"]); before=summaries(db,selected)
+            for table in ["automation_event_accounts","automation_event_oauth","automation_event_webhooks","automation_event_migrations"]:
+                db.execute("CREATE TABLE "+table+"(id TEXT)")
+            db.execute("PRAGMA user_version=23")
+            with self.assertRaises(RuntimeError): validate_migration(db,"event-bridge-v23",20,selected)
+            db.execute("INSERT INTO automation_event_migrations VALUES('event-config-v2-preserve-identities')")
+            validate_migration(db,"event-bridge-v23",20,selected)
+            self.assertEqual(summaries(db,selected),before)
+            with self.assertRaises(RuntimeError): validate_migration(db,"event-bridge-v23",21,selected)
+
 unittest.main()

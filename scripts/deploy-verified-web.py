@@ -20,7 +20,7 @@ parser.add_argument("--service", required=True)
 parser.add_argument("--evidence", required=True)
 parser.add_argument("--include-server", action="store_true")
 parser.add_argument("--expected-server-hash")
-parser.add_argument("--database-migration", choices=["session-modes-v18", "automations-v19", "automation-events-v20"])
+parser.add_argument("--database-migration", choices=["session-modes-v18", "automations-v19", "automation-events-v20", "event-bridge-v23"])
 args = parser.parse_args()
 if args.database_migration and not args.include_server:
     parser.error("Database migrations require --include-server")
@@ -64,8 +64,10 @@ def request(path, body=None):
 request("/api/login", {"password": (target / ".data/initial-password").read_text().strip()})
 request("/api/agent/action", {"action": "bridge/maintenance", "enabled": True})
 tables = ["threads", "session_runtime", "session_runtime_pending", "thread_workspaces", "plugin_connection_settings", "private_field_sets", "provider_configuration", "extension_configuration", "experts", "session_extensions"]
-if args.database_migration == "automation-events-v20":
+if args.database_migration in ["automation-events-v20", "event-bridge-v23"]:
     tables += ["automation_tasks", "automation_runs", "automation_deliveries", "automation_mail_config"]
+if args.database_migration == "event-bridge-v23":
+    tables += ["automation_threads", "automation_event_routes", "automation_event_inbox", "automation_attachment_refs"]
 def systemctl(action):
     subprocess.run(["systemctl", "--user", action, args.service], check=True)
 swapped = False
@@ -76,7 +78,7 @@ try:
     stopped = True
     with sqlite3.connect(target / ".data/newbot.sqlite") as connection:
         previous_version = connection.execute("PRAGMA user_version").fetchone()[0]
-        if args.database_migration and previous_version != {"session-modes-v18":17,"automations-v19":18,"automation-events-v20":19}[args.database_migration]:
+        if args.database_migration and previous_version != {"session-modes-v18":17,"automations-v19":18,"automation-events-v20":19,"event-bridge-v23":20}[args.database_migration]:
             raise RuntimeError("Database version does not match migration baseline")
         selected = columns(connection, tables)
         with sqlite3.connect(backup / "database.sqlite") as saved:

@@ -1,0 +1,19 @@
+✔ MCP webhook: real relay HTTP, signed verification, durable duplicate/restart, host commit ack, expiry and teardown (140.16639ms)
+✔ Bridge: imported mailbox package discovers schema and polls over real SDK stdio without a provider registration (290.107983ms)
+✔ Bridge: schema refuses executable/reference and unknown data fields (2.085886ms)
+✔ Bridge: installed v2 plugin → encrypted account → actual subprocess events → task queue → same conversation (1155.419576ms)
+✔ Bridge: real HTTP relay and MCP subprocess acknowledge only after durable host acceptance, two filtered subscriptions share no cursor (259.637506ms)
+✔ Bridge publisher: disk outbox survives failed delivery and process reopen; source hook excludes config and credentials (3.824779ms)
+✔ event failure contract: transport loss retries, authorization and incompatible definitions stop, backoff survives RPC (0.323905ms)
+✔ Relay: durable encrypted acceptance, duplicate/conflict, lease takeover and isolated idempotent ack (8.805398ms)
+✔ Relay: actual HTTP caller roles cannot publish or acknowledge another route (55.392746ms)
+✔ Relay: two durable subscriber groups each receive the same event and acknowledgments do not steal a peer's delivery (1.414172ms)
+✔ Relay: crash after host commit can release an expired receipt; superseded receipts do not acknowledge the current lease or wedge the host (5.057246ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 11
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1935.304267

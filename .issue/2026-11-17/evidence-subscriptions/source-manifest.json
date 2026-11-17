@@ -1,0 +1,19 @@
+{
+  "baseCommit": "12544933e5f6afad7384416bc6dd7d93507b6d33",
+  "branch": "codex/newbot-systematize",
+  "state": "uncommitted experimental changes; no deployment",
+  "files": {
+    "examples/event-subscriptions/README.md": "8008a0f5d8ae86da8c8eb2bf49636c9f5578e6f9659affa995d5a283ab72f5bd",
+    "examples/event-subscriptions/automation-bridge.ts": "2ba7f0803d7c808750d02f379b7abda824d8fdf698985dd6216c543d6f23b63e",
+    "examples/event-subscriptions/contracts.ts": "34af8fbd39c81196fa9d92da3135202da533cdc8f5829d9e81c828dda375edb9",
+    "examples/event-subscriptions/crash-worker.ts": "f53a416ab62b3147dd69642931c1fba9a97f7a4b9fc12aa25f77c2810e14d9c8",
+    "examples/event-subscriptions/engine.ts": "9dd903add95f6f66778a98154372b67bb8985abd8b8e07ba112f2a2fa772b628",
+    "examples/event-subscriptions/lab.ts": "3c2faf5e16e8106ed3b9af5fa164d677e18750acfbf38c0793c8aa57e678edb7",
+    "examples/event-subscriptions/loopback-pull.ts": "e5ae4c24d14fb3d1444059c46c42942e22c0bff9da9b747dffe80272eccfe788",
+    "examples/event-subscriptions/plugin.json": "e2f732d57fef3cd75916973c7b2f05f7f5ba00693798fa0b8b56c9c733faa4e4",
+    "examples/event-subscriptions/upstream-fixture.ts": "7ecf2ec2945ad743a150dad3d252b5ae3b23ee670fb308389c7a5b43cc8858c2",
+    "package.json": "b5f48e8dddd248942235f94977cc16793ef2039d849fbe0caa7eb201f8830494",
+    "tests/event-subscriptions-http.test.ts": "d3c0904e5906731264af7cd8404cacb54613314d13c7bd9370dea5022658fcdd",
+    "tests/event-subscriptions.test.ts": "3f1cd3cbeaf8aea059359804667078d49691e3eebb62dfa9e0f7f641d18b600f"
+  }
+}

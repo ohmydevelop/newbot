@@ -191,10 +191,14 @@ export function AddSchedule({
   onEvent,
   disabled,
   onAdd,
+  sources = [],
+  onSubscription,
 }: {
   disabled: boolean;
   onEvent?: (source: AutomationEventTrigger["source"]) => void;
   onAdd: (frequency: AutomationSchedule["frequency"]) => void;
+  sources?: { id: string; label: string }[];
+  onSubscription?: (providerId: string) => void;
 }) {
   return (
     <AutomationChoice
@@ -213,17 +217,22 @@ export function AddSchedule({
           label,
         })),
         ...(onEvent
-          ? Object.entries(eventSourceLabels).map(([id, label]) => ({
-              id: "event:" + id,
-              label,
-            }))
+          ? Object.entries(eventSourceLabels)
+              .filter(([id]) => id !== "subscription")
+              .map(([id, label]) => ({
+                id: "event:" + id,
+                label,
+              }))
           : []),
+        ...sources.map((s) => ({ id: "source:" + s.id, label: s.label })),
       ]}
       disabled={disabled}
       onChange={(v) =>
-        v.startsWith("event:")
-          ? onEvent?.(v.slice(6) as AutomationEventTrigger["source"])
-          : onAdd(v as AutomationSchedule["frequency"])
+        v.startsWith("source:")
+          ? onSubscription?.(v.slice(7))
+          : v.startsWith("event:")
+            ? onEvent?.(v.slice(6) as AutomationEventTrigger["source"])
+            : onAdd(v as AutomationSchedule["frequency"])
       }
     />
   );

@@ -1,4 +1,5 @@
 import { EventConnection } from "./AutomationEventFields";
+import { PluginIcon } from "./AppIcons";
 import * as Popover from "@radix-ui/react-popover";
 import { PickerContent } from "./Picker";
 import { useEffect, useId, useRef, useState } from "react";
@@ -481,7 +482,11 @@ export default function Automations({
                     ))}
                     {(task.eventTriggers || []).map((t) => (
                       <div className="automation-trigger-summary" key={t.id}>
-                        <Webhook size={18} />
+                        {t.source === "subscription" ? (
+                          <PluginIcon size={18} />
+                        ) : (
+                          <Webhook size={18} />
+                        )}
                         <span>
                           {eventSourceLabels[t.source]}
                           <small>

@@ -231,11 +231,15 @@ test("failed restore keeps task paused; stale native restore cannot re-enable a 
       1,
     );
     let release!: () => void;
+    let entered!: () => void;
+    const started = new Promise<void>(resolve => { entered = resolve; });
     dependencies.restore = () =>
       new Promise<void>((resolve) => {
         release = resolve;
+        entered();
       });
     const restoring = a.resume(task.id, paused.revision);
+    await started;
     a.control(task.id, paused.revision, "delete");
     release();
     await assert.rejects(restoring);

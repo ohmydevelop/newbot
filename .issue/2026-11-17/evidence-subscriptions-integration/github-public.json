@@ -1,0 +1,8 @@
+{
+  "at": "2026-11-17T01:42:35.483Z",
+  "repository": "microsoft/vscode",
+  "baselineEvents": 0,
+  "subsequentEvents": 0,
+  "cursorParsed": true,
+  "scope": "real GitHub public read-only API; no account OAuth, private repository or new event generated"
+}

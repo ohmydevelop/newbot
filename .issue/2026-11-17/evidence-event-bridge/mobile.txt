@@ -1,0 +1,25 @@
+
+> newbot@0.2.0 test:mobile-contracts
+> playwright test --config=playwright.mobile.config.ts
+
+[WebServer] (node:1449309) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 12 tests using 1 worker
+
+(node:1449366) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 tests/mobile/automations.spec.ts:4:3 › 自动任务触摸滚动与固定操作 reduce (2.9s)
+  ✓   2 tests/mobile/automations.spec.ts:4:3 › 自动任务触摸滚动与固定操作 no-preference (3.2s)
+  ✓   3 tests/mobile/gestures.spec.ts:4:3 › 真实触摸事件：专家内外滚动交接 320 (13.1s)
+  ✓   4 tests/mobile/gestures.spec.ts:4:3 › 真实触摸事件：专家内外滚动交接 390 (13.0s)
+  ✓   5 tests/mobile/gestures.spec.ts:31:3 › 手机抽屉动画及关闭后触摸恢复 false (1.0s)
+  ✓   6 tests/mobile/gestures.spec.ts:31:3 › 手机抽屉动画及关闭后触摸恢复 true (1.0s)
+  ✓   7 tests/mobile/gestures.spec.ts:78:1 › 触摸分类横滑不改变分类，竖向目录仍可滚动 (3.4s)
+  ✓   8 tests/mobile/gestures.spec.ts:103:1 › 平板触控调整宽度、取消释放与下一次操作 (1.8s)
+  ✓   9 tests/mobile/gestures.spec.ts:127:1 › 触摸工作流程边缘交接聊天且默认折叠 (16.6s)
+  ✓  10 tests/mobile/gestures.spec.ts:174:1 › 插件内技能可阅读源码并返回，读取页不混入管理操作 (3.0s)
+  ✓  11 tests/mobile/related-scroll.spec.ts:3:1 › 技能导入预览触摸两端交接，不执行安装 (17.9s)
+  ✓  12 tests/mobile/related-scroll.spec.ts:63:1 › 插件长工具目录触摸主滚动与返回 (4.2s)
+
+  12 passed (1.4m)

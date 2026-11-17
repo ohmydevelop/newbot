@@ -1,0 +1,245 @@
+
+> newbot@0.2.0 test:native-compat
+> node scripts/verify-native-compat.mjs
+
+{
+  "initialize": {
+    "runtimeCapabilities": {
+      "liveModelRoutes": false,
+      "mcpCustomCa": true,
+      "pinnedPluginRoots": true,
+      "providerCustomCa": true,
+      "sameThreadProviderSwitch": true,
+      "verifiedModelRoutes": true
+    },
+    "userAgent": "newbot_compat_probe/0.0.0 (Linux Unknown; x86_64) unknown (newbot_compat_probe; 1.0)",
+    "codexHome": "/tmp/newbot-native-compat-R97icx",
+    "platformFamily": "unix",
+    "platformOs": "linux"
+  },
+  "plugins": {
+    "discovery": true,
+    "marketplaces": 1
+  },
+  "pluginProbe": {
+    "marketplaces": [
+      {
+        "name": "newbot-local-tests",
+        "path": "/tmp/newbot-native-compat-R97icx/market/.agents/plugins/marketplace.json",
+        "interface": null,
+        "plugins": [
+          {
+            "id": "github-events@newbot-local-tests",
+            "remotePluginId": null,
+            "version": null,
+            "localVersion": "0.1.0",
+            "name": "github-events",
+            "shareContext": null,
+            "source": {
+              "type": "local",
+              "path": "/tmp/newbot-native-compat-R97icx/market/github-events"
+            },
+            "installed": false,
+            "installedAt": null,
+            "enabled": false,
+            "installPolicy": "AVAILABLE",
+            "installPolicySource": null,
+            "mustShowInstallationInterstitial": null,
+            "authPolicy": "ON_INSTALL",
+            "availability": "AVAILABLE",
+            "disabledReason": null,
+            "eligiblePlanTypes": null,
+            "interface": null,
+            "keywords": []
+          },
+          {
+            "id": "mailbox-events@newbot-local-tests",
+            "remotePluginId": null,
+            "version": null,
+            "localVersion": "1.0.0",
+            "name": "mailbox-events",
+            "shareContext": null,
+            "source": {
+              "type": "local",
+              "path": "/tmp/newbot-native-compat-R97icx/market/mailbox-events"
+            },
+            "installed": false,
+            "installedAt": null,
+            "enabled": false,
+            "installPolicy": "AVAILABLE",
+            "installPolicySource": null,
+            "mustShowInstallationInterstitial": null,
+            "authPolicy": "ON_INSTALL",
+            "availability": "AVAILABLE",
+            "disabledReason": null,
+            "eligiblePlanTypes": null,
+            "interface": null,
+            "keywords": []
+          },
+          {
+            "id": "relay-events@newbot-local-tests",
+            "remotePluginId": null,
+            "version": null,
+            "localVersion": "1.0.0",
+            "name": "relay-events",
+            "shareContext": null,
+            "source": {
+              "type": "local",
+              "path": "/tmp/newbot-native-compat-R97icx/market/relay-events"
+            },
+            "installed": false,
+            "installedAt": null,
+            "enabled": false,
+            "installPolicy": "AVAILABLE",
+            "installPolicySource": null,
+            "mustShowInstallationInterstitial": null,
+            "authPolicy": "ON_INSTALL",
+            "availability": "AVAILABLE",
+            "disabledReason": null,
+            "eligiblePlanTypes": null,
+            "interface": null,
+            "keywords": []
+          },
+          {
+            "id": "newbot-test-plugin@newbot-local-tests",
+            "remotePluginId": null,
+            "version": null,
+            "localVersion": "0.1.0",
+            "name": "newbot-test-plugin",
+            "shareContext": null,
+            "source": {
+              "type": "local",
+              "path": "/tmp/newbot-native-compat-R97icx/market/plugin"
+            },
+            "installed": false,
+            "installedAt": null,
+            "enabled": false,
+            "installPolicy": "AVAILABLE",
+            "installPolicySource": null,
+            "mustShowInstallationInterstitial": null,
+            "authPolicy": "ON_INSTALL",
+            "availability": "AVAILABLE",
+            "disabledReason": null,
+            "eligiblePlanTypes": null,
+            "interface": {
+              "displayName": "测试插件",
+              "shortDescription": "验证原生插件技能引用",
+              "longDescription": null,
+              "developerName": null,
+              "category": null,
+              "capabilities": [],
+              "websiteUrl": null,
+              "privacyPolicyUrl": null,
+              "termsOfServiceUrl": null,
+              "defaultPrompt": null,
+              "brandColor": null,
+              "composerIcon": null,
+              "composerIconUrl": null,
+              "logo": null,
+              "logoDark": null,
+              "logoUrl": null,
+              "logoUrlDark": null,
+              "screenshots": [],
+              "screenshotUrls": []
+            },
+            "keywords": []
+          }
+        ]
+      }
+    ],
+    "marketplaceLoadErrors": [],
+    "featuredPluginIds": []
+  },
+  "eventPlugins": [
+    {
+      "name": "github-events",
+      "installed": true,
+      "read": true,
+      "uninstalled": true
+    },
+    {
+      "name": "mailbox-events",
+      "installed": true,
+      "read": true,
+      "uninstalled": true
+    },
+    {
+      "name": "relay-events",
+      "installed": true,
+      "read": true,
+      "uninstalled": true
+    }
+  ],
+  "pluginSkills": [
+    {
+      "name": "newbot-test-plugin:fixture-note",
+      "enabled": true
+    }
+  ],
+  "enabledPluginSkills": [
+    {
+      "name": "newbot-test-plugin:fixture-note",
+      "enabled": true
+    }
+  ],
+  "pluginConfig": {
+    "newbot-test-plugin@newbot-local-tests": {
+      "enabled": true
+    }
+  },
+  "pluginDisabled": {
+    "enabled": false,
+    "skills": [
+      {
+        "name": "newbot-test-plugin:fixture-note",
+        "enabled": true
+      }
+    ]
+  },
+  "disabledPluginSkills": [],
+  "pluginLifecycle": true,
+  "approvalPresets": [
+    {
+      "id": "ask",
+      "policy": "on-request",
+      "reviewer": "user",
+      "sandbox": "workspaceWrite"
+    },
+    {
+      "id": "review",
+      "policy": "on-request",
+      "reviewer": "auto_review",
+      "sandbox": "workspaceWrite"
+    },
+    {
+      "id": "full",
+      "policy": "never",
+      "reviewer": "user",
+      "sandbox": "dangerFullAccess"
+    }
+  ],
+  "approval": {
+    "policy": "on-request",
+    "reviewer": "user"
+  },
+  "unsubscribe": {
+    "status": "unsubscribed"
+  },
+  "resumedProvider": "probe_b",
+  "sameThread": true,
+  "secondStatus": "completed",
+  "turns": 2,
+  "crossProviderPassed": true,
+  "requests": [
+    {
+      "path": "/a/responses",
+      "first": true,
+      "second": false
+    },
+    {
+      "path": "/b/responses",
+      "first": true,
+      "second": true
+    }
+  ]
+}

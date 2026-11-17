@@ -1,0 +1,45 @@
+
+> newbot@0.2.0 experiment:subscriptions
+> node --import tsx examples/event-subscriptions/lab.ts --report .issue/2026-11-17/evidence-subscriptions-integration/lab.json
+
+{
+  "result": "passed",
+  "recordedAt": "2026-11-17T02:05:25.515Z",
+  "checks": [
+    "两个任务共享一次出站拉取；Newbot 未监听 HTTP 端口",
+    "子进程在落盘后 ack 前退出；恢复后完成确认及双目标派发，回执丢失未重复创建 run",
+    "真实 HTTP 连接中断后补齐；每个任务两次执行保持同一会话、不同 turn",
+    "上游重复投递没有新增运行",
+    "暂停任务和修改任务均拒绝旧绑定事件",
+    "删除任务后迟到事件被丢弃，没有新增运行"
+  ],
+  "subscriptions": 1,
+  "tasks": 2,
+  "runs": 4,
+  "newbotListening": false,
+  "conversations": [
+    {
+      "taskId": "fed82eb7-2ec2-4cb2-8a02-9b35ecd2f7ba",
+      "threadId": "fab95e87-dad5-4c89-8a0e-73020de57fad",
+      "turnIds": [
+        "0fc2bed6-8e11-45c4-94fd-3467eb0e6efa",
+        "96dbf5d2-e4ff-4430-94eb-24db1baf373c"
+      ]
+    },
+    {
+      "taskId": "f986b631-f907-444e-b62e-cc6b497e7b59",
+      "threadId": "ef0dd954-e199-483b-936b-382f0f972ec2",
+      "turnIds": [
+        "9d5f1552-ba90-4407-8577-80008f6feae8",
+        "b48d16cd-2323-48a2-91c6-69f2ad567019"
+      ]
+    }
+  ],
+  "pullRequests": 9,
+  "limitations": [
+    "上游为本地 HTTP 替身，未验证真实 Gmail/GitHub 或 OAuth",
+    "使用 FakeCodex，未调用真实模型",
+    "消费者没有监听端口，但未配置或测试物理防火墙",
+    "实验插件清单与内部 webhook 类型桥不代表生产插件/UI 已接通"
+  ]
+}

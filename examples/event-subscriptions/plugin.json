@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "pluginId": "newbot-lab",
+  "source": {
+    "id": "notifications",
+    "label": "实验事件源",
+    "adapter": "loopback-pull-v1",
+    "events": ["message.received", "issue.opened"]
+  }
+}

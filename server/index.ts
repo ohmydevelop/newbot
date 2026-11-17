@@ -1,4 +1,5 @@
 import { automationEvents, automationHookPath } from "./automation-events.js";
+import { eventSubscriptions } from "./event-subscriptions/service.js";
 import { automationMail } from "./automation-mail.js";
 import { automations } from "./automations.js";
 import { certificateInspectRequest } from "../shared/certificates.js";
@@ -101,6 +102,7 @@ type ServerOptions = {
   providerRuntime?: ProviderRuntime | null;
   automationClock?: () => number;
   automationTimer?: boolean;
+  eventSubscriptionFetch?: typeof fetch;
 };
 
 export async function createServer(options: ServerOptions = {}) {
@@ -1687,6 +1689,7 @@ async function createServerInternal(
   );
   const mail = automationMail(db, vault);
   const eventRoutes = automationEvents(db, vault, options.automationClock);
+  let subscriptions: ReturnType<typeof eventSubscriptions> | undefined;
   const scheduled = automations(db, {
     mail,
     events: eventRoutes,
@@ -1745,6 +1748,7 @@ async function createServerInternal(
     now: options.automationClock,
     ready: () => runtime.state === "ready" && !service.busy,
     validate: async (input) => {
+      await subscriptions?.validate(input);
       if (["email", "both"].includes(input.notification) && !mail.configured())
         throw new PublicError("请先配置邮件通知");
       await files.inputs(input.attachments);
@@ -1856,6 +1860,20 @@ async function createServerInternal(
       },
     );
   });
+  subscriptions = eventSubscriptions(db,vault,scheduled,runtime.extensionRuntime,{request:options.eventSubscriptionFetch,now:options.automationClock,existing:service.pluginConnections.eventConnection,...(process.env.NEWBOT_EVENT_RELAY_URL && process.env.NEWBOT_EVENT_RELAY_ROUTE && process.env.NEWBOT_EVENT_RELAY_TOKEN ? {relay:{url:process.env.NEWBOT_EVENT_RELAY_URL,route:process.env.NEWBOT_EVENT_RELAY_ROUTE,token:process.env.NEWBOT_EVENT_RELAY_TOKEN}} : {}),
+      callback:[...origins][0]+"/oauth/events/callback"});
+  const subscriptionService=subscriptions;
+  app.get("/api/automations/sources",()=>subscriptionService.catalog());
+  app.post("/api/automations/accounts/save",{bodyLimit:16384},req=>subscriptionService.saveAccount(req.body));
+  app.post("/api/automations/accounts/delete",req=>subscriptionService.removeAccount(req.body));
+  app.post("/api/automations/accounts/oauth/start",req=>subscriptionService.oauthStart(z.object({id:z.string().uuid()}).parse(req.body).id));
+  app.get("/oauth/events/callback",async(req,reply)=>{
+    reply.header("Cache-Control","no-store").header("Content-Security-Policy","default-src 'none'; frame-ancestors 'none'").type("text/plain; charset=utf-8");
+    try{await subscriptionService.oauthComplete(z.object({state:z.string().max(100).optional(),code:z.string().max(4096).optional(),error:z.string().max(200).optional(),iss:z.string().max(4096).optional()}).parse(req.query));return "已连接，可返回 Newbot 刷新账号。";}catch{return reply.code(400).send("授权未完成或已过期，请返回 Newbot 重试。");}
+  });
+  const subscriptionTarget=z.object({taskId:z.string().uuid(),triggerId:z.string().uuid()});
+  app.post("/api/automations/subscription-status",async req=>{const p=subscriptionTarget.parse(req.body);await subscriptionService.catalog();return subscriptionService.status(p.taskId,p.triggerId);});
+  app.post("/api/automations/subscription-retry",req=>{const p=subscriptionTarget.parse(req.body);return subscriptionService.retry(p.taskId,p.triggerId);});
   app.post("/api/automations/event-settings", (req) => {
     const p = z
       .object({
@@ -1933,7 +1951,7 @@ async function createServerInternal(
     scheduled.markRead(z.object({ id: z.string().uuid() }).parse(req.body).id);
     return { ok: true };
   });
-  if (options.automationTimer !== false) scheduled.start();
+  if (options.automationTimer !== false) {scheduled.start();subscriptionService.start();}
   const actions = new Set([
     "configuration/recover",
     "gateway/catalog",
@@ -2365,6 +2383,7 @@ async function createServerInternal(
     );
   }
   app.addHook("preClose", async () => {
+    await subscriptionService.close();
     await scheduled.close();
     for (const res of streams.keys()) res.end();
   });
@@ -2402,6 +2421,7 @@ async function createServerInternal(
     workspaces: workspaceStore,
     nodeControl,
     automations: scheduled,
+    subscriptions: subscriptionService,
   };
 }
 if (

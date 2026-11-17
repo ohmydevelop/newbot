@@ -1,0 +1,1 @@
+{"manifest_version":"0.3","name":"mailbox-events","version":"1.0.0","description":"本地信箱事件测试","author":{"name":"newbot"},"server":{"type":"node","entry_point":"server.mjs","mcp_config":{"command":"node","args":["${__dirname}/server.mjs"],"env":{"MAILBOX_FILE":"${user_config.file}"}}},"user_config":{"file":{"type":"string","title":"消息文件","default":""}}}

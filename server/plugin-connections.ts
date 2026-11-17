@@ -697,8 +697,19 @@ export function pluginConnections(
       throw e;
     }
   }
+  function eventConnection(d: PluginDescriptor) {
+    const s=state(d);
+    if(!s.row || !s.configured || !s.enabled || s.changed || !s.resolved) return undefined;
+    return {
+      revision:s.row?.revision || "absent",
+      values:s.values,
+      secrets:Object.fromEntries(s.resolved.secrets.filter(v=>s.stored[fieldKey(v.field)]!==undefined).map(v=>[v.id,s.stored[fieldKey(v.field)]])),
+      caCertificate:s.resolved.definition.tls_ca_certificate as string | undefined,
+    };
+  }
   return {
     descriptors,
+    eventConnection,
     list,
     requireConfigured,
     overlay,

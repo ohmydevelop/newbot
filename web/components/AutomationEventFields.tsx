@@ -3,12 +3,13 @@ import * as Popover from "@radix-ui/react-popover";
 import { Copy, KeyRound, Link, RefreshCw, Webhook, X } from "lucide-react";
 import { PickerContent } from "./Picker";
 import { automationRequest } from "../automations";
+import { SubscriptionConnection } from "./AutomationSubscriptionFields";
 import {
   eventSourceLabels,
   type Automation,
   type AutomationEventTrigger,
 } from "../../shared/automations";
-export function EventConnection({
+function WebhookConnection({
   task,
   trigger,
 }: {
@@ -155,6 +156,16 @@ export function EventConnection({
     </Popover.Root>
   );
 }
+export function EventConnection(props: {
+  task: Automation;
+  trigger: AutomationEventTrigger;
+}) {
+  return props.trigger.source === "subscription" ? (
+    <SubscriptionConnection {...props} />
+  ) : (
+    <WebhookConnection {...props} />
+  );
+}
 function FilterInput({
   label,
   value,
@@ -210,7 +221,9 @@ export function EventTriggerFields({
             disabled={disabled}
             aria-label={`事件条件 ${index}`}
           >
-            {eventSourceLabels[t.source]}
+            <span className="automation-event-source">
+              {eventSourceLabels[t.source]}
+            </span>
             <span className="muted">
               {t.repository || t.events.join(", ") || "所有事件"}
             </span>

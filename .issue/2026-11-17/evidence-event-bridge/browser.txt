@@ -1,0 +1,21 @@
+
+> newbot@0.2.0 test:event-bridge-ui
+> playwright test --config=playwright.bridge.config.ts
+
+[WebServer] (node:1460961) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 8 tests using 1 worker
+
+(node:1460983) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/browser/event-bridge.spec.ts:5:5 › 通用事件插件 320 light (6.9s)
+  ✓  2 tests/browser/event-bridge.spec.ts:5:5 › 通用事件插件 320 dark (6.8s)
+  ✓  3 tests/browser/event-bridge.spec.ts:5:5 › 通用事件插件 390 light (6.8s)
+  ✓  4 tests/browser/event-bridge.spec.ts:5:5 › 通用事件插件 390 dark (6.8s)
+  ✓  5 tests/browser/event-bridge.spec.ts:5:5 › 通用事件插件 768 light (6.8s)
+  ✓  6 tests/browser/event-bridge.spec.ts:5:5 › 通用事件插件 768 dark (6.7s)
+  ✓  7 tests/browser/event-bridge.spec.ts:5:5 › 通用事件插件 1280 light (6.6s)
+  ✓  8 tests/browser/event-bridge.spec.ts:5:5 › 通用事件插件 1280 dark (6.7s)
+
+  8 passed (55.2s)

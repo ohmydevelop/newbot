@@ -1,0 +1,6 @@
+name: newbot-events
+description: Export selected lifecycle observations to a Newbot event relay.
+events:
+  - agent:start
+  - agent:end
+  - session:reset

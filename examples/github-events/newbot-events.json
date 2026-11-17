@@ -1,0 +1,6 @@
+{
+  "version": 1,
+  "sources": [
+    { "id": "repository", "label": "GitHub 仓库事件", "adapter": "github-issue-events-v1" }
+  ]
+}

@@ -1,0 +1,41 @@
+✔ webhook: authenticated raw bytes, durable duplicate receipt, single task thread and independent turns (172.830587ms)
+✔ github: authenticated raw bytes, durable duplicate receipt, single task thread and independent turns (85.399152ms)
+✔ hermes: authenticated raw bytes, durable duplicate receipt, single task thread and independent turns (85.555255ms)
+✔ openclaw: authenticated raw bytes, durable duplicate receipt, single task thread and independent turns (68.417647ms)
+✔ signature family and timestamp cannot be swapped; changed duplicate id rejects; queue bound and FIFO; pause fences queued events (88.360081ms)
+✔ GitHub filters and ping; key rotation revokes old key; deletion and removed trigger revoke ingress (63.79098ms)
+✔ OpenClaw ingress cannot choose a thread, model, permission or outgoing channel (63.533374ms)
+✔ real HTTP accepts signed JSON without cookie and rejects oversized bodies (74.444395ms)
+✔ task edits apply mode and expert to the same thread; manual conversation holds its queue; archive pauses (79.872651ms)
+✔ timezone, DST, month-end and leap dates preserve wall-time and skip nonexistent dates (22.742542ms)
+✔ durable schedule, concurrent ticks, shared task thread, snapshot and no overlap (12.088806ms)
+✔ historical tasks adopt latest available conversation once without rewriting old run links (4.347803ms)
+✔ failed restore keeps task paused; stale native restore cannot re-enable a changed task (4.309808ms)
+✔ pause during asynchronous conversation preparation prevents late dispatch (4.069367ms)
+✔ pause/delete cancel queued work; stale actions fail; started work is not silently cancelled (3.852721ms)
+✔ restart reconciles dispatched work without replay, retry is a new explicit request (3.861885ms)
+✔ automatic HTTP execution shares ordinary validation, modes, cancellation and authentication (154.963408ms)
+✔ capacity retries preserve request; private authorization blocks instead of granting itself (4.624945ms)
+✔ pagination retains unread counts and pinned attachments survive cleanup until task deletion (24.776058ms)
+✔ hourly windows include endpoints, respect weekdays and skip duplicate or missing DST wall times (4.684809ms)
+✔ hourly catch-up coalesces and persists icon/window through restart without replay (6.497594ms)
+✔ E1/E6: HTTP adapter restricts origin, blocks redirects, bounds payload and maps auth/rate/gap failures (71.56005ms)
+✔ E1/E3: background worker runs without a browser and close aborts an in-flight request without advancing cursor (216.699386ms)
+✔ E1/E5: declarative installation permits only host adapters; shared subscription and baseline skip historical events (14.806061ms)
+✔ E2/E4: saved cursor survives ack failure and database reopen; successful target survives lost receipt and failed peer (4.254204ms)
+✔ E3: leases prevent concurrent polling; expired worker response is fenced after takeover (12.603507ms)
+✔ E3/E5: disabling and uninstall fence in-flight responses; reinstall does not silently resume (3.767714ms)
+✔ E4: failed target preserves FIFO while its peer progresses, target removal cancels backlog (5.597425ms)
+✔ E6: typed auth/gap errors stop polling until explicit retry; transient failures obey delay (2.583934ms)
+✔ E2/E6/E7: capacity and conflicting IDs roll back entire page and cursor; canonical key order deduplicates (4.294328ms)
+✔ E7: identical event IDs in different connections remain distinct (3.18262ms)
+✔ E5/E6: unknown event type and nonempty baseline cannot advance checkpoint or acknowledge (2.311533ms)
+✔ E3: replacing an installed provider fences its previous in-flight adapter generation (8.018828ms)
+ℹ tests 33
+ℹ suites 0
+ℹ pass 33
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1316.170386

@@ -1,0 +1,402 @@
+{
+  "config": {
+    "argv": [
+      "/home/a/.local/share/mise/installs/node/26.12.0/bin/node",
+      "/home/a/Documents/ChatGPT/newbot-systematize/node_modules/@playwright/test/cli.js",
+      "test",
+      "--config=playwright.subscriptions.config.ts"
+    ],
+    "configFile": "/home/a/Documents/ChatGPT/newbot-systematize/playwright.subscriptions.config.ts",
+    "rootDir": "/home/a/Documents/ChatGPT/newbot-systematize/tests/browser",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/home/a/Documents/ChatGPT/newbot-systematize/.data/subscription-ui",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/home/a/Documents/ChatGPT/newbot-systematize/tests/browser",
+        "testIgnore": [],
+        "testMatch": [
+          "event-subscriptions.spec.ts"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/home/a/Documents/ChatGPT/newbot-systematize/.data/subscription-ui",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "",
+        "testDir": "/home/a/Documents/ChatGPT/newbot-systematize/tests/browser",
+        "snapshotDir": "/home/a/Documents/ChatGPT/newbot-systematize/tests/browser",
+        "testIgnore": [],
+        "testMatch": "event-subscriptions.spec.ts",
+        "timeout": 30000,
+        "use": {
+          "baseURL": "http://127.0.0.1:3178",
+          "browserName": "chromium",
+          "viewport": {
+            "width": 1280,
+            "height": 720
+          },
+          "deviceScaleFactor": 1,
+          "locale": "zh-CN",
+          "timezoneId": "Asia/Shanghai",
+          "trace": "retain-on-failure",
+          "video": {
+            "mode": "on",
+            "size": {
+              "width": 1280,
+              "height": 844
+            }
+          },
+          "screenshot": "only-on-failure"
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": ""
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": ".issue/2026-11-17/evidence-subscriptions-integration/browser.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.65.1",
+    "workers": 1,
+    "webServer": {
+      "command": "ISSUE_TEST_PORT=3178 ISSUE_RICH_UI=1 ISSUE_MEMORY_PROVIDERS=1 ISSUE05_UI=1 ISSUE_EVENT_SUBSCRIPTIONS=1 node --import tsx tests/issue-preview-server.ts",
+      "url": "http://127.0.0.1:3178/api/ready",
+      "reuseExistingServer": false,
+      "timeout": 30000
+    }
+  },
+  "suites": [
+    {
+      "title": "event-subscriptions.spec.ts",
+      "file": "event-subscriptions.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "应用订阅 320 light",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6742,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-17T01:58:39.100Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "条件",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.data/subscription-ui/event-subscriptions-应用订阅-320-light/attachments/条件-e9509ef20fb92667e1bec430c89c033464457595.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.data/subscription-ui/event-subscriptions-应用订阅-320-light/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "21f60e796f19db5cfca2-4fcd2426483a2c94db5b",
+          "file": "event-subscriptions.spec.ts",
+          "line": 5,
+          "column": 5
+        },
+        {
+          "title": "应用订阅 320 dark",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6602,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-17T01:58:45.898Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "条件",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.data/subscription-ui/event-subscriptions-应用订阅-320-dark/attachments/条件-9436e6df390dbbf68bdae6b4c1751346be477af7.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.data/subscription-ui/event-subscriptions-应用订阅-320-dark/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "21f60e796f19db5cfca2-9ce4aeac1d54ef418c65",
+          "file": "event-subscriptions.spec.ts",
+          "line": 5,
+          "column": 5
+        },
+        {
+          "title": "应用订阅 390 light",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 11643,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-17T01:58:52.509Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "条件",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.data/subscription-ui/event-subscriptions-应用订阅-390-light/attachments/条件-b527a7c68840b7def523ad24607082dfefd12c66.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.data/subscription-ui/event-subscriptions-应用订阅-390-light/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "21f60e796f19db5cfca2-4e0623fb2cd064b0b73f",
+          "file": "event-subscriptions.spec.ts",
+          "line": 5,
+          "column": 5
+        },
+        {
+          "title": "应用订阅 390 dark",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 11637,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-17T01:59:04.160Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "条件",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.data/subscription-ui/event-subscriptions-应用订阅-390-dark/attachments/条件-06e52aa86f25c2a7a07e3a401922bbad549c00fd.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.data/subscription-ui/event-subscriptions-应用订阅-390-dark/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "21f60e796f19db5cfca2-de06f2d28837f53e78c3",
+          "file": "event-subscriptions.spec.ts",
+          "line": 5,
+          "column": 5
+        },
+        {
+          "title": "应用订阅 1280 light",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 16073,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-17T01:59:15.801Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "条件",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.data/subscription-ui/event-subscriptions-应用订阅-1280-light/attachments/条件-46ece07a9cd7bb49c71010712e28937cd90dd20a.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.data/subscription-ui/event-subscriptions-应用订阅-1280-light/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "21f60e796f19db5cfca2-57ed27f36c03ff26d32a",
+          "file": "event-subscriptions.spec.ts",
+          "line": 5,
+          "column": 5
+        },
+        {
+          "title": "应用订阅 1280 dark",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 11076,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-17T01:59:31.879Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "条件",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.data/subscription-ui/event-subscriptions-应用订阅-1280-dark/attachments/条件-8150bbc6e8548baabe09c814eaad4f334208ecac.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.data/subscription-ui/event-subscriptions-应用订阅-1280-dark/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "21f60e796f19db5cfca2-7be9250fab284ce9e248",
+          "file": "event-subscriptions.spec.ts",
+          "line": 5,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-17T01:58:37.956Z",
+    "duration": 65044.685,
+    "expected": 6,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

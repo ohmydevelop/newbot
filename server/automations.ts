@@ -345,6 +345,7 @@ export function automations(db: Store, deps: Dependencies) {
     if (r.revision !== revision)
       throw new PublicError("任务已变化，请刷新后重试");
     const input = JSON.parse(r.content);
+    await deps.validate(input);
     if (!nextScheduled(input.triggers, now()) && !input.eventTriggers?.length)
       throw new PublicError("计划没有未来的执行时间，请先编辑");
     const thread = taskThread(id);

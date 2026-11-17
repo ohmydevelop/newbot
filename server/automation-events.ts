@@ -98,6 +98,7 @@ export function automationEvents(
   }
   return {
     sync(task: string, triggers: AutomationEventTrigger[]) {
+      triggers = triggers.filter(t => t.source !== "subscription");
       const ids = new Set(triggers.map((t) => t.id));
       for (const r of db.raw
         .prepare(

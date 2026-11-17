@@ -40,6 +40,14 @@ def validate_migration(connection, migration, previous_version, selected):
         for table in ["automation_threads", "automation_event_routes", "automation_event_inbox"]:
             if not connection.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name=?", (table,)).fetchone():
                 raise RuntimeError("Missing automation event table: " + table)
+    elif migration == "event-bridge-v23":
+        if previous_version != 20 or version != 23:
+            raise RuntimeError("Expected database migration v20 to v23")
+        for table in ["automation_event_accounts", "automation_event_oauth", "automation_event_webhooks", "automation_event_migrations"]:
+            if not connection.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name=?", (table,)).fetchone():
+                raise RuntimeError("Missing event bridge table: " + table)
+        if not connection.execute("SELECT 1 FROM automation_event_migrations WHERE id='event-config-v2-preserve-identities'").fetchone():
+            raise RuntimeError("Event configuration migration did not complete")
     elif version != previous_version:
         raise RuntimeError("Unexpected database version change")
     if actual != expected:

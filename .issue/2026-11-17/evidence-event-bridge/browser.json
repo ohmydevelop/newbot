@@ -1,0 +1,492 @@
+{
+  "config": {
+    "argv": [
+      "/home/a/.local/share/mise/installs/node/26.12.0/bin/node",
+      "/home/a/Documents/ChatGPT/newbot-systematize/node_modules/.bin/playwright",
+      "test",
+      "--config=playwright.bridge.config.ts"
+    ],
+    "configFile": "/home/a/Documents/ChatGPT/newbot-systematize/playwright.bridge.config.ts",
+    "rootDir": "/home/a/Documents/ChatGPT/newbot-systematize/tests/browser",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/home/a/Documents/ChatGPT/newbot-systematize/.data/bridge-ui",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/home/a/Documents/ChatGPT/newbot-systematize/tests/browser",
+        "testIgnore": [],
+        "testMatch": [
+          "event-bridge.spec.ts"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/home/a/Documents/ChatGPT/newbot-systematize/.data/bridge-ui",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "",
+        "testDir": "/home/a/Documents/ChatGPT/newbot-systematize/tests/browser",
+        "snapshotDir": "/home/a/Documents/ChatGPT/newbot-systematize/tests/browser",
+        "testIgnore": [],
+        "testMatch": "event-bridge.spec.ts",
+        "timeout": 30000,
+        "use": {
+          "baseURL": "http://127.0.0.1:3179",
+          "browserName": "chromium",
+          "viewport": {
+            "width": 1280,
+            "height": 720
+          },
+          "deviceScaleFactor": 1,
+          "locale": "zh-CN",
+          "timezoneId": "Asia/Shanghai",
+          "trace": "retain-on-failure",
+          "video": {
+            "mode": "on",
+            "size": {
+              "width": 1280,
+              "height": 844
+            }
+          },
+          "screenshot": "only-on-failure"
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": ""
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": ".issue/2026-11-17/evidence-event-bridge/browser.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.65.1",
+    "workers": 1,
+    "webServer": {
+      "command": "ISSUE_TEST_PORT=3179 ISSUE_RICH_UI=1 ISSUE_MEMORY_PROVIDERS=1 ISSUE05_UI=1 ISSUE_EVENT_BRIDGE=1 node --import tsx tests/issue-preview-server.ts",
+      "url": "http://127.0.0.1:3179/api/ready",
+      "reuseExistingServer": false,
+      "timeout": 30000
+    }
+  },
+  "suites": [
+    {
+      "title": "event-bridge.spec.ts",
+      "file": "event-bridge.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "通用事件插件 320 light",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6860,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-17T04:03:58.708Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "条件",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.data/bridge-ui/event-bridge-通用事件插件-320-light/attachments/条件-e77045f3fa419cbb4a8150ed8937ee146dc14d7d.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.data/bridge-ui/event-bridge-通用事件插件-320-light/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "11b26dd2ff71008e721c-798e4fcb13f85e7da6af",
+          "file": "event-bridge.spec.ts",
+          "line": 5,
+          "column": 5
+        },
+        {
+          "title": "通用事件插件 320 dark",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6785,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-17T04:04:05.607Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "条件",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.data/bridge-ui/event-bridge-通用事件插件-320-dark/attachments/条件-528646046110ae1d6a669763512205d914180302.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.data/bridge-ui/event-bridge-通用事件插件-320-dark/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "11b26dd2ff71008e721c-f248d626639c02acf256",
+          "file": "event-bridge.spec.ts",
+          "line": 5,
+          "column": 5
+        },
+        {
+          "title": "通用事件插件 390 light",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6759,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-17T04:04:12.397Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "条件",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.data/bridge-ui/event-bridge-通用事件插件-390-light/attachments/条件-ef5c55f49898a518070977de4ebda94bea5e0121.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.data/bridge-ui/event-bridge-通用事件插件-390-light/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "11b26dd2ff71008e721c-82dbcd12ba6247c7fbda",
+          "file": "event-bridge.spec.ts",
+          "line": 5,
+          "column": 5
+        },
+        {
+          "title": "通用事件插件 390 dark",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6802,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-17T04:04:19.161Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "条件",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.data/bridge-ui/event-bridge-通用事件插件-390-dark/attachments/条件-c48227a31ae330b6ee39220173848c78c0a26a95.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.data/bridge-ui/event-bridge-通用事件插件-390-dark/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "11b26dd2ff71008e721c-510edb44208477beff6e",
+          "file": "event-bridge.spec.ts",
+          "line": 5,
+          "column": 5
+        },
+        {
+          "title": "通用事件插件 768 light",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6760,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-17T04:04:25.967Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "条件",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.data/bridge-ui/event-bridge-通用事件插件-768-light/attachments/条件-f83b35079c19eee42b0b554790cc38a953f6744f.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.data/bridge-ui/event-bridge-通用事件插件-768-light/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "11b26dd2ff71008e721c-8ee47d1281a10b9e6aa2",
+          "file": "event-bridge.spec.ts",
+          "line": 5,
+          "column": 5
+        },
+        {
+          "title": "通用事件插件 768 dark",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6679,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-17T04:04:32.732Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "条件",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.data/bridge-ui/event-bridge-通用事件插件-768-dark/attachments/条件-ba9552ede1dc984f655eaaf0397c3a93cf25a37e.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.data/bridge-ui/event-bridge-通用事件插件-768-dark/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "11b26dd2ff71008e721c-57745a3f78523cb85594",
+          "file": "event-bridge.spec.ts",
+          "line": 5,
+          "column": 5
+        },
+        {
+          "title": "通用事件插件 1280 light",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6649,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-17T04:04:39.415Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "条件",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.data/bridge-ui/event-bridge-通用事件插件-1280-light/attachments/条件-29bb4397f0dc046e5002622decb8d20915d06333.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.data/bridge-ui/event-bridge-通用事件插件-1280-light/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "11b26dd2ff71008e721c-f66f77a512a1b387b9c8",
+          "file": "event-bridge.spec.ts",
+          "line": 5,
+          "column": 5
+        },
+        {
+          "title": "通用事件插件 1280 dark",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6705,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-17T04:04:46.068Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "条件",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.data/bridge-ui/event-bridge-通用事件插件-1280-dark/attachments/条件-6fa75c99646d140d42c8806586cc304b9ecec847.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.data/bridge-ui/event-bridge-通用事件插件-1280-dark/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "11b26dd2ff71008e721c-09aed5f6b052835b0c9d",
+          "file": "event-bridge.spec.ts",
+          "line": 5,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-17T04:03:57.595Z",
+    "duration": 55235.685000000005,
+    "expected": 8,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

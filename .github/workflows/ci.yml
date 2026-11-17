@@ -14,6 +14,7 @@ jobs:
       - run: npm ci
       - run: npm run lint:ui
       - run: npm run check
+      - run: node scripts/check-event-boundaries.mjs
       - run: python3 scripts/test-deployment-database.py
       - run: npm test
         env:
@@ -38,6 +39,7 @@ jobs:
       - run: npm run build
       - run: npm run test:ui-contracts
       - run: npm run test:mobile-contracts
+      - run: npm run test:event-bridge-ui
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -45,4 +47,7 @@ jobs:
           path: |
             .data/ui-verification/
             .data/mobile-verification/
+            .data/bridge-ui/
+            .impeccable/review/event-bridge/
+            .issue/2026-11-17/evidence-event-bridge/
             test-results/

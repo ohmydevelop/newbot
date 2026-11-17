@@ -1,4 +1,8 @@
 import { EventTriggerFields } from "./AutomationEventFields";
+import {
+  SubscriptionFields,
+  useEventCatalog,
+} from "./AutomationSubscriptionFields";
 import { useRef, useState, useEffect, type ReactNode } from "react";
 import { Plus, X, ArrowLeft, Bell } from "lucide-react";
 import { dialogReturnTarget } from "./ui";
@@ -65,6 +69,7 @@ export default function AutomationEditor({
   onSaved: (task: Automation) => void;
 }) {
   const [mailSettings, setMailSettings] = useState(false);
+  const sources = useEventCatalog();
   const [draft, setDraft] = useState<AutomationInput>(
       () => task || newAutomation(initial),
     ),
@@ -265,29 +270,71 @@ export default function AutomationEditor({
                 }
               />
             ))}
-            {(draft.eventTriggers || []).map((t, index) => (
-              <EventTriggerFields
-                key={t.id}
-                value={t}
-                index={index + 1}
-                disabled={busy}
-                onChange={(patch) =>
-                  update({
-                    eventTriggers: draft.eventTriggers.map((v) =>
-                      v.id === t.id ? { ...v, ...patch } : v,
-                    ),
-                  })
-                }
-                onRemove={() =>
-                  update({
-                    eventTriggers: draft.eventTriggers.filter(
-                      (v) => v.id !== t.id,
-                    ),
-                  })
-                }
-              />
-            ))}
+            {(draft.eventTriggers || []).map((t, index) =>
+              t.source === "subscription" ? (
+                <SubscriptionFields
+                  key={t.id}
+                  value={t}
+                  index={index + 1}
+                  disabled={busy}
+                  catalog={sources.catalog}
+                  refresh={sources.refresh}
+                  onChange={(patch) =>
+                    update({
+                      eventTriggers: draft.eventTriggers.map((v) =>
+                        v.id === t.id ? { ...v, ...patch } : v,
+                      ),
+                    })
+                  }
+                  onRemove={() =>
+                    update({
+                      eventTriggers: draft.eventTriggers.filter(
+                        (v) => v.id !== t.id,
+                      ),
+                    })
+                  }
+                />
+              ) : (
+                <EventTriggerFields
+                  key={t.id}
+                  value={t}
+                  index={index + 1}
+                  disabled={busy}
+                  onChange={(patch) =>
+                    update({
+                      eventTriggers: draft.eventTriggers.map((v) =>
+                        v.id === t.id ? { ...v, ...patch } : v,
+                      ),
+                    })
+                  }
+                  onRemove={() =>
+                    update({
+                      eventTriggers: draft.eventTriggers.filter(
+                        (v) => v.id !== t.id,
+                      ),
+                    })
+                  }
+                />
+              ),
+            )}
             <AddSchedule
+              sources={sources.catalog.providers}
+              onSubscription={(providerId) =>
+                update({
+                  eventTriggers: [
+                    ...draft.eventTriggers,
+                    {
+                      id: crypto.randomUUID(),
+                      source: "subscription",
+                      providerId,
+                      events: sources.catalog.providers.find(p=>p.id===providerId)?.legacy ? [] : (sources.catalog.providers.find(p=>p.id===providerId)?.events.slice(0,1).map(e=>e.id) || []),
+                      arguments: {},
+                      repository: "",
+                      actions: [],
+                    },
+                  ],
+                })
+              }
               disabled={
                 busy ||
                 draft.triggers.length + (draft.eventTriggers?.length || 0) >= 8
@@ -321,6 +368,11 @@ export default function AutomationEditor({
                 })
               }
             />
+            {sources.error && (
+              <p className="error" role="alert">
+                {sources.error}
+              </p>
+            )}
           </section>
           <section className="automation-field">
             <h3>指令</h3>

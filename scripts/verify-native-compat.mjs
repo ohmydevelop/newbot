@@ -89,11 +89,14 @@ try {
         recursive: true,
       },
     );
+    const eventPackages=process.env.CODEX_COMPAT_EVENT_PACKAGES?["github-events","mailbox-events","relay-events"]:[];
+    for(const name of eventPackages)await cp(".data/event-plugins/"+name,dir+"/market/"+name,{recursive:true});
     await writeFile(
       dir + "/market/.agents/plugins/marketplace.json",
       JSON.stringify({
         name: "newbot-local-tests",
         plugins: [
+          ...eventPackages.map(name=>({name,source:{source:"local",path:"./"+name}})),
           {
             name: "newbot-test-plugin",
             source: { source: "local", path: "./plugin" },
@@ -185,7 +188,16 @@ try {
       (m) => m.name === "newbot-local-tests",
     );
     if (!marketplace?.plugins.length) throw Error("fixture plugin missing");
-    const plugin = marketplace.plugins[0],
+    if(process.env.CODEX_COMPAT_EVENT_PACKAGES){
+      report.eventPlugins=[];
+      for(const name of ["github-events","mailbox-events","relay-events"]){
+        const entry=marketplace.plugins.find(p=>p.name===name);if(!entry)throw Error("event package missing: "+name);
+        const args={marketplacePath:marketplace.path,pluginName:name};await call("plugin/install",args);
+        const detail=await call("plugin/read",args);if(!detail.plugin)throw Error("event package read failed");
+        await call("plugin/uninstall",{pluginId:entry.id});report.eventPlugins.push({name,installed:true,read:true,uninstalled:true});
+      }
+    }
+    const plugin = marketplace.plugins.find(p=>p.name==="newbot-test-plugin"),
       params = { marketplacePath: marketplace.path, pluginName: plugin.name };
     await call("plugin/install", params);
     const detail = await call("plugin/read", params);

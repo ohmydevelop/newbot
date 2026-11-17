@@ -436,6 +436,10 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+.automation-choice > .automation-event-source {
+  flex: 0 0 auto;
+  max-width: 50%;
+}
 .automation-choice > svg {
   flex: 0 0 auto;
 }
@@ -916,4 +920,24 @@
 }
 .automation-trigger-summary > .automation-choice {
   flex: none;
+}
+
+.automation-event-settings label.automation-event-checkbox {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  min-height: 32px;
+}
+.automation-event-settings .automation-event-checkbox input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 16px;
+  margin: 0;
+  accent-color: var(--text);
+}
+.automation-event-field {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
 }

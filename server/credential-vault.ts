@@ -132,7 +132,10 @@ export function credentialVault(db: Store, directory: string, cwd: string) {
       !persisted().length &&
       !sql.prepare("SELECT 1 FROM private_field_sets LIMIT 1").get() &&
       !sql.prepare("SELECT 1 FROM automation_mail_config LIMIT 1").get() &&
-      !sql.prepare("SELECT 1 FROM automation_event_routes LIMIT 1").get()
+      !sql.prepare("SELECT 1 FROM automation_event_routes LIMIT 1").get() &&
+      !sql.prepare("SELECT 1 FROM automation_event_accounts LIMIT 1").get() &&
+      !sql.prepare("SELECT 1 FROM automation_event_oauth LIMIT 1").get() &&
+      !sql.prepare("SELECT 1 FROM automation_event_webhooks LIMIT 1").get()
     ) {
       const descriptor = openSync(
         path,

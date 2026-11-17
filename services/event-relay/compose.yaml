@@ -1,0 +1,19 @@
+services:
+  relay:
+    build:
+      context: ../..
+      dockerfile: services/event-relay/Dockerfile
+    environment:
+      RELAY_ADMIN_TOKEN: ${RELAY_ADMIN_TOKEN:?Set a random admin token of at least 32 characters}
+      RELAY_HOST: 0.0.0.0
+      RELAY_DATA: /data
+    ports:
+      - "127.0.0.1:3180:3180"
+    volumes:
+      - relay-data:/data
+    restart: unless-stopped
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+volumes:
+  relay-data:
