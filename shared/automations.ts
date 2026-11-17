@@ -49,8 +49,9 @@ export const scheduleSchema = z
   );
 export const eventSourceLabels = {
   subscription: "应用事件",
+  incoming: "接收事件",
 } as const;
-export const eventTriggerSchema = z.object({
+const subscriptionTriggerSchema = z.object({
   id: z.string().uuid(),
   source: z.literal("subscription"),
   providerId: z.string().regex(/^[a-f0-9]{64}$/),
@@ -58,6 +59,15 @@ export const eventTriggerSchema = z.object({
   events: z.array(z.string().trim().min(1).max(100)).min(1).max(16),
   arguments: z.record(z.string(), z.json()),
 });
+export const eventTriggerSchema = z.discriminatedUnion("source", [
+  subscriptionTriggerSchema,
+  z.strictObject({
+    id: z.string().uuid(),
+    source: z.literal("incoming"),
+    events: z.array(z.string().trim().min(1).max(160)).max(16),
+  }),
+]);
+export type SubscriptionTrigger = z.infer<typeof subscriptionTriggerSchema>;
 export type AutomationEventTrigger = z.infer<typeof eventTriggerSchema>;
 export const automationSchema = z
   .object({

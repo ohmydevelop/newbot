@@ -1,0 +1,10 @@
+✔ MCP webhook: direct host HTTP without relay, signed verification, durable duplicate/restart, host commit ack, expiry and teardown (133.725373ms)
+✔ direct ingress without plugin: scoped auth, durable dedupe, same conversation, rotation and lifecycle (257.470498ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 839.649113

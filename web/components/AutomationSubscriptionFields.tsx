@@ -8,7 +8,7 @@ import { AutomationChoice } from "./AutomationChoice";
 import { automationRequest } from "../automations";
 import type {
   Automation,
-  AutomationEventTrigger,
+  SubscriptionTrigger,
 } from "../../shared/automations";
 import {
   subscriptionStateLabels,
@@ -47,10 +47,10 @@ export function SubscriptionFields({
   catalog,
   refresh,
 }: {
-  value: AutomationEventTrigger;
+  value: SubscriptionTrigger;
   index: number;
   disabled: boolean;
-  onChange: (v: Partial<AutomationEventTrigger>) => void;
+  onChange: (v: Partial<SubscriptionTrigger>) => void;
   onRemove: () => void;
   catalog: EventCatalog;
   refresh: () => void;
@@ -404,7 +404,7 @@ export function SubscriptionFields({
               value={t.arguments}
               onChange={(v) =>
                 onChange({
-                  arguments: v as AutomationEventTrigger["arguments"],
+                  arguments: v as SubscriptionTrigger["arguments"],
                 })
               }
               disabled={busy}
@@ -439,7 +439,7 @@ export function SubscriptionConnection({
   trigger,
 }: {
   task: Automation;
-  trigger: AutomationEventTrigger;
+  trigger: SubscriptionTrigger;
 }) {
   const [open, setOpen] = useState(false),
     [state, setState] = useState("pending"),

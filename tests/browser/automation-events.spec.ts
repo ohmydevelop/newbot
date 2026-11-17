@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 for (const width of [320, 390, 1280])
   for (const theme of ["light", "dark"] as const)
-    test(`无插件时只显示平台时间触发器 ${width} ${theme}`, async ({
+    test(`无插件时显示时间与通用接收入口 ${width} ${theme}`, async ({
       page,
     }, info) => {
       test.setTimeout(60000);
@@ -41,6 +41,9 @@ for (const width of [320, 390, 1280])
         ).toHaveCount(0);
       await expect(
         page.getByRole("button", { name: "每天", exact: true }),
+      ).toBeVisible();
+      await expect(
+        page.getByRole("button", { name: "接收事件", exact: true }),
       ).toBeVisible();
       const motion = await page
         .locator(".picker-panel")

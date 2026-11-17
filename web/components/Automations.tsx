@@ -1,3 +1,4 @@
+import { IncomingConnection } from "./AutomationIncomingFields";
 import { SubscriptionConnection } from "./AutomationSubscriptionFields";
 import { PluginIcon } from "./AppIcons";
 import * as Popover from "@radix-ui/react-popover";
@@ -5,6 +6,7 @@ import { PickerContent } from "./Picker";
 import { useEffect, useId, useRef, useState } from "react";
 import {
   ArrowLeft,
+  ArrowDownToLine,
   Play,
   Pause,
   Pencil,
@@ -481,12 +483,24 @@ export default function Automations({
                     ))}
                     {(task.eventTriggers || []).map((t) => (
                       <div className="automation-trigger-summary" key={t.id}>
-                        <PluginIcon size={18} />
+                        {t.source === "incoming" ? (
+                          <ArrowDownToLine size={18} />
+                        ) : (
+                          <PluginIcon size={18} />
+                        )}
                         <span>
                           {eventSourceLabels[t.source]}
-                          <small>{t.events.join(", ")}</small>
+                          <small>{t.events.join(", ") || "全部类型"}</small>
                         </span>
-                        <SubscriptionConnection task={task} trigger={t} />
+                        {t.source === "incoming" ? (
+                          <IncomingConnection
+                            key={`${t.id}:${task.revision}`}
+                            task={task}
+                            trigger={t}
+                          />
+                        ) : (
+                          <SubscriptionConnection task={task} trigger={t} />
+                        )}
                       </div>
                     ))}
                     <p className="muted">

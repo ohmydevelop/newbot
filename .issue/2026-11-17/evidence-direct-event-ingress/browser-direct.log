@@ -1,0 +1,188 @@
+[WebServer] (node:2425221) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 4 tests using 1 worker
+
+(node:2425292) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 tests/browser/event-ingress.spec.ts:4:5 › 直接接收事件 390 light (6.4s)
+(node:2425466) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  2 tests/browser/event-ingress.spec.ts:4:5 › 直接接收事件 390 dark (6.1s)
+(node:2425720) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  3 tests/browser/event-ingress.spec.ts:4:5 › 直接接收事件 1280 light (6.1s)
+(node:2425930) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  4 tests/browser/event-ingress.spec.ts:4:5 › 直接接收事件 1280 dark (6.1s)
+
+
+  1) tests/browser/event-ingress.spec.ts:4:5 › 直接接收事件 390 light ────────────────────────────────────
+
+    Error: expect(locator).toHaveText(expected) failed
+
+    Locator: getByRole('status')
+    Expected: "地址已复制"
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toHaveText" getByRole('status') with timeout 5000ms
+      - waiting for getByRole('status')
+
+
+      89 |       });
+      90 |       await page.getByRole("button", { name: "复制地址", exact: true }).click();
+    > 91 |       await expect(page.getByRole("status")).toHaveText("地址已复制");
+         |                                              ^
+      92 |       const result = await page.request.post(address, {
+      93 |         headers: {
+      94 |           authorization: `Bearer ${token}`,
+        at /home/a/Documents/ChatGPT/newbot-systematize/tests/browser/event-ingress.spec.ts:91:46
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    .data/direct-event-ingress/browser/event-ingress-直接接收事件-390-light/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    .data/direct-event-ingress/browser/event-ingress-直接接收事件-390-light/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: .data/direct-event-ingress/browser/event-ingress-直接接收事件-390-light/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    .data/direct-event-ingress/browser/event-ingress-直接接收事件-390-light/trace.zip
+    Usage:
+
+        npx playwright show-trace .data/direct-event-ingress/browser/event-ingress-直接接收事件-390-light/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) tests/browser/event-ingress.spec.ts:4:5 › 直接接收事件 390 dark ─────────────────────────────────────
+
+    Error: expect(locator).toHaveText(expected) failed
+
+    Locator: getByRole('status')
+    Expected: "地址已复制"
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toHaveText" getByRole('status') with timeout 5000ms
+      - waiting for getByRole('status')
+
+
+      89 |       });
+      90 |       await page.getByRole("button", { name: "复制地址", exact: true }).click();
+    > 91 |       await expect(page.getByRole("status")).toHaveText("地址已复制");
+         |                                              ^
+      92 |       const result = await page.request.post(address, {
+      93 |         headers: {
+      94 |           authorization: `Bearer ${token}`,
+        at /home/a/Documents/ChatGPT/newbot-systematize/tests/browser/event-ingress.spec.ts:91:46
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    .data/direct-event-ingress/browser/event-ingress-直接接收事件-390-dark/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    .data/direct-event-ingress/browser/event-ingress-直接接收事件-390-dark/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: .data/direct-event-ingress/browser/event-ingress-直接接收事件-390-dark/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    .data/direct-event-ingress/browser/event-ingress-直接接收事件-390-dark/trace.zip
+    Usage:
+
+        npx playwright show-trace .data/direct-event-ingress/browser/event-ingress-直接接收事件-390-dark/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3) tests/browser/event-ingress.spec.ts:4:5 › 直接接收事件 1280 light ───────────────────────────────────
+
+    Error: expect(locator).toHaveText(expected) failed
+
+    Locator: getByRole('status')
+    Expected: "地址已复制"
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toHaveText" getByRole('status') with timeout 5000ms
+      - waiting for getByRole('status')
+
+
+      89 |       });
+      90 |       await page.getByRole("button", { name: "复制地址", exact: true }).click();
+    > 91 |       await expect(page.getByRole("status")).toHaveText("地址已复制");
+         |                                              ^
+      92 |       const result = await page.request.post(address, {
+      93 |         headers: {
+      94 |           authorization: `Bearer ${token}`,
+        at /home/a/Documents/ChatGPT/newbot-systematize/tests/browser/event-ingress.spec.ts:91:46
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    .data/direct-event-ingress/browser/event-ingress-直接接收事件-1280-light/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    .data/direct-event-ingress/browser/event-ingress-直接接收事件-1280-light/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: .data/direct-event-ingress/browser/event-ingress-直接接收事件-1280-light/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    .data/direct-event-ingress/browser/event-ingress-直接接收事件-1280-light/trace.zip
+    Usage:
+
+        npx playwright show-trace .data/direct-event-ingress/browser/event-ingress-直接接收事件-1280-light/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  4) tests/browser/event-ingress.spec.ts:4:5 › 直接接收事件 1280 dark ────────────────────────────────────
+
+    Error: expect(locator).toHaveText(expected) failed
+
+    Locator: getByRole('status')
+    Expected: "地址已复制"
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toHaveText" getByRole('status') with timeout 5000ms
+      - waiting for getByRole('status')
+
+
+      89 |       });
+      90 |       await page.getByRole("button", { name: "复制地址", exact: true }).click();
+    > 91 |       await expect(page.getByRole("status")).toHaveText("地址已复制");
+         |                                              ^
+      92 |       const result = await page.request.post(address, {
+      93 |         headers: {
+      94 |           authorization: `Bearer ${token}`,
+        at /home/a/Documents/ChatGPT/newbot-systematize/tests/browser/event-ingress.spec.ts:91:46
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    .data/direct-event-ingress/browser/event-ingress-直接接收事件-1280-dark/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    .data/direct-event-ingress/browser/event-ingress-直接接收事件-1280-dark/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: .data/direct-event-ingress/browser/event-ingress-直接接收事件-1280-dark/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    .data/direct-event-ingress/browser/event-ingress-直接接收事件-1280-dark/trace.zip
+    Usage:
+
+        npx playwright show-trace .data/direct-event-ingress/browser/event-ingress-直接接收事件-1280-dark/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  4 failed
+    tests/browser/event-ingress.spec.ts:4:5 › 直接接收事件 390 light ─────────────────────────────────────
+    tests/browser/event-ingress.spec.ts:4:5 › 直接接收事件 390 dark ──────────────────────────────────────
+    tests/browser/event-ingress.spec.ts:4:5 › 直接接收事件 1280 light ────────────────────────────────────
+    tests/browser/event-ingress.spec.ts:4:5 › 直接接收事件 1280 dark ─────────────────────────────────────

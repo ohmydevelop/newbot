@@ -1,0 +1,944 @@
+{
+  "config": {
+    "argv": [
+      "/home/a/.local/share/mise/installs/node/26.12.0/bin/node",
+      "/home/a/Documents/ChatGPT/newbot-systematize/node_modules/.bin/playwright",
+      "test",
+      "--config=playwright.event-ingress.config.ts"
+    ],
+    "configFile": "/home/a/Documents/ChatGPT/newbot-systematize/playwright.event-ingress.config.ts",
+    "rootDir": "/home/a/Documents/ChatGPT/newbot-systematize/tests/browser",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/home/a/Documents/ChatGPT/newbot-systematize/.data/direct-event-ingress/browser",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/home/a/Documents/ChatGPT/newbot-systematize/tests/browser",
+        "testIgnore": [],
+        "testMatch": [
+          "event-ingress.spec.ts",
+          "event-bridge.spec.ts",
+          "automation-events.spec.ts"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/home/a/Documents/ChatGPT/newbot-systematize/.data/direct-event-ingress/browser",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "",
+        "testDir": "/home/a/Documents/ChatGPT/newbot-systematize/tests/browser",
+        "snapshotDir": "/home/a/Documents/ChatGPT/newbot-systematize/tests/browser",
+        "testIgnore": [],
+        "testMatch": [
+          "event-ingress.spec.ts",
+          "event-bridge.spec.ts",
+          "automation-events.spec.ts"
+        ],
+        "timeout": 30000,
+        "use": {
+          "baseURL": "http://127.0.0.1:3179",
+          "browserName": "chromium",
+          "viewport": {
+            "width": 1280,
+            "height": 720
+          },
+          "deviceScaleFactor": 1,
+          "locale": "zh-CN",
+          "timezoneId": "Asia/Shanghai",
+          "trace": "retain-on-failure",
+          "video": {
+            "mode": "on",
+            "size": {
+              "width": 1280,
+              "height": 844
+            }
+          },
+          "screenshot": "only-on-failure"
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": ""
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": ".issue/2026-11-17/evidence-direct-event-ingress/browser.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.65.1",
+    "workers": 1,
+    "webServer": {
+      "command": "ISSUE_TEST_PORT=3179 ISSUE_RICH_UI=1 ISSUE_MEMORY_PROVIDERS=1 ISSUE05_UI=1 ISSUE_EVENT_BRIDGE=1 node --import tsx tests/issue-preview-server.ts",
+      "url": "http://127.0.0.1:3179/api/ready",
+      "reuseExistingServer": false,
+      "timeout": 30000
+    }
+  },
+  "suites": [
+    {
+      "title": "automation-events.spec.ts",
+      "file": "automation-events.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "无插件时显示时间与通用接收入口 320 light",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 943,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-17T16:09:00.538Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "motion",
+                      "contentType": "application/json",
+                      "body": "eyJ0aGVtZSI6ImxpZ2h0IiwiZHVyYXRpb25zIjpbXSwic2hpZnQiOjAsIm9wYWNpdHkiOiIxIn0="
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.data/direct-event-ingress/browser/automation-events-无插件时显示时间与通用接收入口-320-light/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "501698b22e21d43ab95f-22049170ef41805133f4",
+          "file": "automation-events.spec.ts",
+          "line": 4,
+          "column": 5
+        },
+        {
+          "title": "无插件时显示时间与通用接收入口 320 dark",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 601,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-17T16:09:01.528Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "motion",
+                      "contentType": "application/json",
+                      "body": "eyJ0aGVtZSI6ImRhcmsiLCJkdXJhdGlvbnMiOltdLCJzaGlmdCI6MCwib3BhY2l0eSI6IjEifQ=="
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.data/direct-event-ingress/browser/automation-events-无插件时显示时间与通用接收入口-320-dark/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "501698b22e21d43ab95f-dbe873dc327e1ca24db4",
+          "file": "automation-events.spec.ts",
+          "line": 4,
+          "column": 5
+        },
+        {
+          "title": "无插件时显示时间与通用接收入口 390 light",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 943,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-17T16:09:02.135Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "motion",
+                      "contentType": "application/json",
+                      "body": "eyJ0aGVtZSI6ImxpZ2h0IiwiZHVyYXRpb25zIjpbXSwic2hpZnQiOjAsIm9wYWNpdHkiOiIxIn0="
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.data/direct-event-ingress/browser/automation-events-无插件时显示时间与通用接收入口-390-light/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "501698b22e21d43ab95f-ae99b647cf8de32b60fe",
+          "file": "automation-events.spec.ts",
+          "line": 4,
+          "column": 5
+        },
+        {
+          "title": "无插件时显示时间与通用接收入口 390 dark",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 571,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-17T16:09:03.083Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "motion",
+                      "contentType": "application/json",
+                      "body": "eyJ0aGVtZSI6ImRhcmsiLCJkdXJhdGlvbnMiOltdLCJzaGlmdCI6MCwib3BhY2l0eSI6IjEifQ=="
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.data/direct-event-ingress/browser/automation-events-无插件时显示时间与通用接收入口-390-dark/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "501698b22e21d43ab95f-5efc388dfc964a33c95f",
+          "file": "automation-events.spec.ts",
+          "line": 4,
+          "column": 5
+        },
+        {
+          "title": "无插件时显示时间与通用接收入口 1280 light",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 690,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-17T16:09:03.658Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "motion",
+                      "contentType": "application/json",
+                      "body": "eyJ0aGVtZSI6ImxpZ2h0IiwiZHVyYXRpb25zIjpbXSwic2hpZnQiOjAsIm9wYWNpdHkiOiIxIn0="
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.data/direct-event-ingress/browser/automation-events-无插件时显示时间与通用接收入口-1280-light/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "501698b22e21d43ab95f-0e6877dfac5cc5c4c94e",
+          "file": "automation-events.spec.ts",
+          "line": 4,
+          "column": 5
+        },
+        {
+          "title": "无插件时显示时间与通用接收入口 1280 dark",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 613,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-17T16:09:04.352Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "motion",
+                      "contentType": "application/json",
+                      "body": "eyJ0aGVtZSI6ImRhcmsiLCJkdXJhdGlvbnMiOltdLCJzaGlmdCI6MCwib3BhY2l0eSI6IjEifQ=="
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.data/direct-event-ingress/browser/automation-events-无插件时显示时间与通用接收入口-1280-dark/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "501698b22e21d43ab95f-9f12f1f75d3dde9c3b19",
+          "file": "automation-events.spec.ts",
+          "line": 4,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "event-bridge.spec.ts",
+      "file": "event-bridge.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "通用事件插件 320 light",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6859,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-17T16:09:04.974Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "条件",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.data/direct-event-ingress/browser/event-bridge-通用事件插件-320-light/attachments/条件-bcf9a842ccaaca4ae68f94821473d53640d3b05c.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.data/direct-event-ingress/browser/event-bridge-通用事件插件-320-light/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "11b26dd2ff71008e721c-798e4fcb13f85e7da6af",
+          "file": "event-bridge.spec.ts",
+          "line": 5,
+          "column": 5
+        },
+        {
+          "title": "通用事件插件 320 dark",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6862,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-17T16:09:11.839Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "条件",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.data/direct-event-ingress/browser/event-bridge-通用事件插件-320-dark/attachments/条件-24b147d5434c626b8de8a2128f8a6702b9f815ed.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.data/direct-event-ingress/browser/event-bridge-通用事件插件-320-dark/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "11b26dd2ff71008e721c-f248d626639c02acf256",
+          "file": "event-bridge.spec.ts",
+          "line": 5,
+          "column": 5
+        },
+        {
+          "title": "通用事件插件 390 light",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6889,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-17T16:09:18.705Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "条件",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.data/direct-event-ingress/browser/event-bridge-通用事件插件-390-light/attachments/条件-631410e764ab19831633a050968a567b22adc780.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.data/direct-event-ingress/browser/event-bridge-通用事件插件-390-light/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "11b26dd2ff71008e721c-82dbcd12ba6247c7fbda",
+          "file": "event-bridge.spec.ts",
+          "line": 5,
+          "column": 5
+        },
+        {
+          "title": "通用事件插件 390 dark",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6876,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-17T16:09:25.599Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "条件",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.data/direct-event-ingress/browser/event-bridge-通用事件插件-390-dark/attachments/条件-daeae590394877a2f85fbc5689ab9a18928ea0f5.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.data/direct-event-ingress/browser/event-bridge-通用事件插件-390-dark/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "11b26dd2ff71008e721c-510edb44208477beff6e",
+          "file": "event-bridge.spec.ts",
+          "line": 5,
+          "column": 5
+        },
+        {
+          "title": "通用事件插件 768 light",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6712,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-17T16:09:32.479Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "条件",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.data/direct-event-ingress/browser/event-bridge-通用事件插件-768-light/attachments/条件-e68953f28346da9910bb0c61522c85e9ee0b572d.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.data/direct-event-ingress/browser/event-bridge-通用事件插件-768-light/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "11b26dd2ff71008e721c-8ee47d1281a10b9e6aa2",
+          "file": "event-bridge.spec.ts",
+          "line": 5,
+          "column": 5
+        },
+        {
+          "title": "通用事件插件 768 dark",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6702,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-17T16:09:39.195Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "条件",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.data/direct-event-ingress/browser/event-bridge-通用事件插件-768-dark/attachments/条件-3edc49b4b518a6b50b374b740dcc2f41677c5978.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.data/direct-event-ingress/browser/event-bridge-通用事件插件-768-dark/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "11b26dd2ff71008e721c-57745a3f78523cb85594",
+          "file": "event-bridge.spec.ts",
+          "line": 5,
+          "column": 5
+        },
+        {
+          "title": "通用事件插件 1280 light",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6727,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-17T16:09:45.902Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "条件",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.data/direct-event-ingress/browser/event-bridge-通用事件插件-1280-light/attachments/条件-387b5a434ea804ec5f70484dbf467593c7b00823.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.data/direct-event-ingress/browser/event-bridge-通用事件插件-1280-light/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "11b26dd2ff71008e721c-f66f77a512a1b387b9c8",
+          "file": "event-bridge.spec.ts",
+          "line": 5,
+          "column": 5
+        },
+        {
+          "title": "通用事件插件 1280 dark",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6771,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-17T16:09:52.633Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "条件",
+                      "contentType": "image/png",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.data/direct-event-ingress/browser/event-bridge-通用事件插件-1280-dark/attachments/条件-dc99d45ebd6c38d4ac63c4faec46a396c6b43589.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.data/direct-event-ingress/browser/event-bridge-通用事件插件-1280-dark/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "11b26dd2ff71008e721c-09aed5f6b052835b0c9d",
+          "file": "event-bridge.spec.ts",
+          "line": 5,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "event-ingress.spec.ts",
+      "file": "event-ingress.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "直接接收事件 390 light",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1298,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-17T16:09:59.413Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.data/direct-event-ingress/browser/event-ingress-直接接收事件-390-light/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "56396f78b543b3ee409a-e06f807e499e18a89c59",
+          "file": "event-ingress.spec.ts",
+          "line": 4,
+          "column": 5
+        },
+        {
+          "title": "直接接收事件 390 dark",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 980,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-17T16:10:00.715Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.data/direct-event-ingress/browser/event-ingress-直接接收事件-390-dark/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "56396f78b543b3ee409a-7589163a5e6e7ac588a0",
+          "file": "event-ingress.spec.ts",
+          "line": 4,
+          "column": 5
+        },
+        {
+          "title": "直接接收事件 1280 light",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1172,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-17T16:10:01.699Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.data/direct-event-ingress/browser/event-ingress-直接接收事件-1280-light/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "56396f78b543b3ee409a-e9708c3137ac0c8b9073",
+          "file": "event-ingress.spec.ts",
+          "line": 4,
+          "column": 5
+        },
+        {
+          "title": "直接接收事件 1280 dark",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1070,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-17T16:10:02.874Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/home/a/Documents/ChatGPT/newbot-systematize/.data/direct-event-ingress/browser/event-ingress-直接接收事件-1280-dark/video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "56396f78b543b3ee409a-d0498fecaa46091e423f",
+          "file": "event-ingress.spec.ts",
+          "line": 4,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-17T16:08:59.353Z",
+    "duration": 64653.023,
+    "expected": 18,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

@@ -4,31 +4,27 @@ import { createHmac, randomBytes } from "node:crypto";
 import { mkdtempSync, mkdirSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { relayServer } from "../services/event-relay/server.js";
+import Fastify from "fastify";
 import { database } from "../server/db.js";
 import { credentialVault } from "../server/credential-vault.js";
 import { webhookDelivery } from "../server/event-subscriptions/webhook.js";
 import { mcpEventAdapter } from "../server/event-subscriptions/mcp-adapter.js";
 import type { EventPeer } from "../server/event-subscriptions/connection.js";
 
-test("MCP webhook: real relay HTTP, signed verification, durable duplicate/restart, host commit ack, expiry and teardown", async () => {
+test("MCP webhook: direct host HTTP without relay, signed verification, durable duplicate/restart, host commit ack, expiry and teardown", async () => {
   const dir = mkdtempSync(join(tmpdir(), "bridge-hook-")),
     work = join(dir, "work");
   mkdirSync(work);
-  const relay = relayServer({
-    directory: join(dir, "relay"),
-    adminToken: "a".repeat(40),
-  });
-  await relay.app.listen({ port: 0, host: "127.0.0.1" });
-  const origin = `http://127.0.0.1:${(relay.app.server.address() as { port: number }).port}`,
-    route = relay.store.createRoute();
+  let app = Fastify(),
+    origin = "";
   let db = database(join(dir, "host")),
     vault = credentialVault(db, db.directory, work);
   let delivery: { url: string; secret: string } | undefined,
     subscribeCount = 0,
-    unsubscribed = false;
+    unsubscribed = false,
+    active = true;
   const toLocal: typeof fetch = (input, init) =>
-    fetch(String(input).replace("https://relay.test", origin), init);
+    fetch(String(input).replace("https://newbot.test", origin), init);
   async function send(body: any, id: string, change?: Record<string, string>) {
     const raw = JSON.stringify(body),
       stamp = String(Math.floor(Date.now() / 1000));
@@ -83,14 +79,19 @@ test("MCP webhook: real relay HTTP, signed verification, durable duplicate/resta
       };
     },
   };
-  const configuration = {
-    url: "https://relay.test",
-    route: route.id,
-    token: route.consumer,
-    request: toLocal,
-  };
-  let hook = webhookDelivery(db, vault, configuration, async () => peer),
+  let hook = webhookDelivery(
+      db,
+      vault,
+      "https://newbot.test",
+      async () => peer,
+    ),
     adapter = mcpEventAdapter(async () => peer, hook);
+  async function listen() {
+    hook.register(app);
+    await app.listen({ port: 0, host: "127.0.0.1" });
+    origin = `http://127.0.0.1:${(app.server.address() as { port: number }).port}`;
+  }
+  await listen();
   const context = {
     connectionId: "account.1",
     resource: JSON.stringify({ name: "message.received", arguments: {} }),
@@ -134,23 +135,37 @@ test("MCP webhook: real relay HTTP, signed verification, durable duplicate/resta
         db.raw.prepare("SELECT * FROM automation_event_webhooks").all(),
       ).includes(delivery!.secret),
     );
+    await app.close();
     vault.close();
     db.raw.close();
     db = database(join(dir, "host"));
     vault = credentialVault(db, db.directory, work);
-    hook = webhookDelivery(db, vault, configuration, async () => peer);
+    hook = webhookDelivery(
+      db,
+      vault,
+      "https://newbot.test",
+      async () => peer,
+      () => active,
+    );
+    app = Fastify();
+    await listen();
     adapter = mcpEventAdapter(async () => peer, hook);
     await adapter.acknowledge(context, page.receipt!);
     await adapter.acknowledge(context, page.receipt!);
     assert.equal((await adapter.pull(context)).events.length, 0);
     assert.equal(subscribeCount, 1);
+    active = false;
+    assert.equal(
+      (await send({ ...event, eventId: "revoked" }, "revoked")).status,
+      410,
+    );
     await hook.reconcile(new Set());
     assert(unsubscribed);
     assert.equal((await send(event, "one")).status, 410);
   } finally {
     vault.close();
     db.raw.close();
-    await relay.app.close();
+    await app.close();
     rmSync(dir, { recursive: true, force: true });
   }
 });

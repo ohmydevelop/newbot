@@ -37,7 +37,7 @@ type RunRow = {
 export type AcceptedEvent = {
   id: string;
   digest: string;
-  source: "subscription";
+  source: "subscription" | "incoming";
   type: string;
   payload: Record<string, unknown>;
 };

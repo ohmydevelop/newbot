@@ -1,3 +1,4 @@
+import { IncomingFields } from "./AutomationIncomingFields";
 import {
   SubscriptionFields,
   useEventCatalog,
@@ -269,31 +270,63 @@ export default function AutomationEditor({
                 }
               />
             ))}
-            {draft.eventTriggers.map((t, index) => (
-              <SubscriptionFields
-                key={t.id}
-                value={t}
-                index={index + 1}
-                disabled={busy}
-                catalog={sources.catalog}
-                refresh={sources.refresh}
-                onChange={(patch) =>
-                  update({
-                    eventTriggers: draft.eventTriggers.map((v) =>
-                      v.id === t.id ? { ...v, ...patch } : v,
-                    ),
-                  })
-                }
-                onRemove={() =>
-                  update({
-                    eventTriggers: draft.eventTriggers.filter(
-                      (v) => v.id !== t.id,
-                    ),
-                  })
-                }
-              />
-            ))}
+            {draft.eventTriggers.map((t, index) =>
+              t.source === "incoming" ? (
+                <IncomingFields
+                  key={t.id}
+                  value={t}
+                  disabled={busy}
+                  onChange={(events) =>
+                    update({
+                      eventTriggers: draft.eventTriggers.map((v) =>
+                        v.id === t.id ? { ...v, events } : v,
+                      ),
+                    })
+                  }
+                  onRemove={() =>
+                    update({
+                      eventTriggers: draft.eventTriggers.filter(
+                        (v) => v.id !== t.id,
+                      ),
+                    })
+                  }
+                />
+              ) : (
+                <SubscriptionFields
+                  key={t.id}
+                  value={t}
+                  index={index + 1}
+                  disabled={busy}
+                  catalog={sources.catalog}
+                  refresh={sources.refresh}
+                  onChange={(patch) =>
+                    update({
+                      eventTriggers: draft.eventTriggers.map((v) =>
+                        v.id === t.id && v.source === "subscription"
+                          ? { ...v, ...patch }
+                          : v,
+                      ),
+                    })
+                  }
+                  onRemove={() =>
+                    update({
+                      eventTriggers: draft.eventTriggers.filter(
+                        (v) => v.id !== t.id,
+                      ),
+                    })
+                  }
+                />
+              ),
+            )}
             <AddSchedule
+              onIncoming={() =>
+                update({
+                  eventTriggers: [
+                    ...draft.eventTriggers,
+                    { id: crypto.randomUUID(), source: "incoming", events: [] },
+                  ],
+                })
+              }
               sources={sources.catalog.providers}
               onSubscription={(providerId) =>
                 update({

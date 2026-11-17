@@ -2,7 +2,7 @@ import {
   accountConfiguration,
   discardInvalidEventAccounts,
 } from "./account-configuration.js";
-import { webhookDelivery, type RelayConfiguration } from "./webhook.js";
+import { webhookDelivery } from "./webhook.js";
 import { join } from "node:path";
 import { z } from "zod";
 import type { Store } from "../db.js";
@@ -64,7 +64,7 @@ export function eventSubscriptions(
   tasks: ReturnType<typeof automations>,
   extensions?: ExtensionRuntime,
   options: {
-    relay?: RelayConfiguration;
+    origin?: string;
     callback?: string;
     now?: () => number;
     connect?: OpenEventConnection;
@@ -164,10 +164,45 @@ export function eventSubscriptions(
     }
     return peer;
   };
-  const webhook = options.relay
-    ? webhookDelivery(db, vault, options.relay, connect)
+  const webhook = options.origin
+    ? webhookDelivery(
+        db,
+        vault,
+        options.origin,
+        connect,
+        (connection, resource) => {
+          const [id, generation] = connection.split(".");
+          const a = account(id);
+          if (
+            !a ||
+            String(a.generation) !== generation ||
+            providers.get(a.provider_id)?.binding !== a.binding
+          )
+            return false;
+          try {
+            unpack(a);
+          } catch {
+            return false;
+          }
+          return tasks
+            .list()
+            .some(
+              (task) =>
+                task.enabled &&
+                task.eventTriggers.some(
+                  (t) =>
+                    t.source === "subscription" &&
+                    t.connectionId === id &&
+                    t.providerId === a.provider_id &&
+                    resources(t).includes(resource),
+                ),
+            );
+        },
+      )
     : undefined;
-  const resources = (t: AutomationInput["eventTriggers"][number]) => {
+  const resources = (
+    t: import("../../shared/automations.js").SubscriptionTrigger,
+  ) => {
     return t.events.map((name) => canonical({ name, arguments: t.arguments }));
   };
   const engine = new SubscriptionEngine({
@@ -183,11 +218,13 @@ export function eventSubscriptions(
       const trigger = task?.eventTriggers.find(
         (t) => t.id === target.triggerId && t.source === "subscription",
       );
-      const a = trigger?.connectionId && account(trigger.connectionId);
+      const a =
+        trigger?.source === "subscription" && account(trigger.connectionId);
       if (
         !task?.enabled ||
         task.revision !== target.revision ||
         !trigger ||
+        trigger.source !== "subscription" ||
         !a ||
         a.provider_id !== trigger.providerId ||
         providers.get(a.provider_id)?.binding !== a.binding ||
@@ -357,7 +394,9 @@ export function eventSubscriptions(
           for (const task of tasks.list())
             if (
               task.enabled &&
-              task.eventTriggers.some((t) => t.providerId === id)
+              task.eventTriggers.some(
+                (t) => t.source === "subscription" && t.providerId === id,
+              )
             )
               tasks.control(task.id, task.revision, "pause");
         }
@@ -629,7 +668,9 @@ export function eventSubscriptions(
     for (const task of tasks.list())
       if (
         task.enabled &&
-        task.eventTriggers.some((t) => t.connectionId === p.id)
+        task.eventTriggers.some(
+          (t) => t.source === "subscription" && t.connectionId === p.id,
+        )
       )
         tasks.control(task.id, task.revision, "pause");
     db.audit("automation/account", p.id, "deleted");
@@ -785,6 +826,9 @@ export function eventSubscriptions(
     return { ok: true };
   }
   return {
+    registerIngress(app: import("fastify").FastifyInstance) {
+      webhook?.register(app);
+    },
     catalog,
     async oauthStart(id: string) {
       await refresh();

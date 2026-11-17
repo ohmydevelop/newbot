@@ -2,7 +2,7 @@
 
 Newbot 负责账号授权、持久接收、去重、派发和任务会话；插件负责发现事件、描述参数、读取上游与转换数据。新增事件插件无需修改服务端注册表或前端字段。没有事件声明的工具插件不会自动出现触发器。
 
-当前使用 MCP Events 草案 `47d95c979faa73427e1f6e0ac0c1347559d8ea37` 的受限实现，profile 为 `mcp-events-47d95c9`，不是已发布的 MCP 正式标准。内部事件使用 CloudEvents 1.0。轮询、推送流与可选中继 webhook 都不调用模型；只有实际接收的事件才进入自动任务。单个任务的执行复用同一会话。
+当前使用 MCP Events 草案 `47d95c979faa73427e1f6e0ac0c1347559d8ea37` 的受限实现，profile 为 `mcp-events-47d95c9`，不是已发布的 MCP 正式标准。内部事件使用 CloudEvents 1.0。轮询、推送流与直达 Newbot 的 webhook 都不调用模型；只有实际接收的事件才进入自动任务。单个任务的执行复用同一会话。
 
 ## 插件约定
 
@@ -22,7 +22,7 @@ Newbot 负责账号授权、持久接收、去重、派发和任务会话；插�
 
 - `events/poll`：返回事件、游标及可选下一次轮询间隔。首次 null 游标从现在开始；历史回放由上游不透明游标控制。
 - `events/stream`：通过带 subscriptionId 的 active/event/heartbeat 通知持续发送；断线用持久游标恢复。不可回放来源无法保证离线期间的事件恢复。
-- `events/subscribe`：签名 webhook，通过启用 HTTPS 的自托管中继接收；平台负责 TTL 刷新、challenge、签名校验、回执和清理。
+- `events/subscribe`：签名 webhook，由 Newbot 自身接收；平台负责 TTL 刷新、challenge、签名校验、回执和清理。
 
 Newbot 的持久队列插件可使用额外的 `_meta["io.newbot/receipt"]` 和 `io.newbot/events/ack`。它是 Newbot 扩展，不是 MCP Events 标准字段。平台写入 inbox 和游标后才确认；重复事件不重复执行，冲突事件 ID/截断/容量满不会悄悄跳过。事件正文应只含任务所需的业务字段，不能把整个上游配置复制进来。
 
@@ -42,7 +42,7 @@ Newbot 的持久队列插件可使用额外的 `_meta["io.newbot/receipt"]` 和 
 
 ## 最小 Bridge
 
-默认链路只有三部分：事件生产者 → HTTPS 中继 → Newbot 中继插件。业务方将事件转成 CloudEvents 1.0 并用 producer token 发布；Newbot 主动出站消费，只有真正到达的事件触发自动任务。无需针对外部 Agent 产品增加适配层，也无需修改平台注册表。现有 poll/push 插件可以直接连接上游，不必绕中继。
+平台有两种接入方向：外部生产者直接POST到Newbot的接收入口，或Newbot通过事件插件主动连接外部服务。两者都不要求安装中继插件。直接投递的创建和格式见[事件触发说明](automation-events.md)。公网中继是可选的独立服务，适用于上游只能回调而Newbot不可达的情况；它通过普通插件接入，不是平台的必经层。
 
 生产者可以直接使用 HTTP POST，也可以用 `packages/event-bridge/publisher.ts` 的 `eventPublisher`。后者需要 `url`、`token`、`source`、`directory`，可选 `caCertificate`（PEM）。先同步写入本地 SQLite，再异步发送；重开发布器后继续重试。队列上限10000条，满时明确失败。稳定业务事件使用稳定 id；不同事件不能复用同一 id。只发送业务所需数据，不发送配置、凭证或完整请求头。
 
@@ -60,7 +60,7 @@ await publisher.flush();
 await publisher.close();
 ```
 
-## 自托管中继
+## 可选的外部中继服务
 
 构建后可直接运行 `dist/event-relay/main.mjs`，或使用 `services/event-relay/compose.yaml`。配置 `RELAY_ADMIN_TOKEN`（至少32字符随机值）、`RELAY_DATA`、`RELAY_HOST`、`RELAY_PORT`。默认仅监听本机；公网部署需 HTTPS 反向代理。不要把 admin token 给插件。
 
@@ -68,13 +68,15 @@ await publisher.close();
 
 `relay-events` 配置中继 HTTPS 地址、route ID、consumer token，可选配置「中继 CA 证书（PEM）」；外部生产者使用 producer token。内网机器无需开放入站端口，也不要求常驻浏览器。多个条件使用独立消费者组，不互相抢事件；删除停用的外部消费者可调用 unsubscribe 释放其积压约束。
 
-若直接订阅只支持 webhook 的 MCP，在 Newbot Server 设置 `NEWBOT_EVENT_RELAY_URL`（HTTPS origin）、`NEWBOT_EVENT_RELAY_ROUTE` 和 `NEWBOT_EVENT_RELAY_TOKEN`（consumer）。上游回调指向中继，不指向内网机器。平台发送 client-generated `whsec_` secret，校验原始正文的 HMAC、5分钟时间窗及订阅身份。签名校验在业务处理前完成，只有持久写入成功才返回2xx；订阅撤销后返回410。停止订阅尝试主动 unsubscribe，失效凭证下由上游有限 TTL 清理。未配置中继的 webhook-only 来源不能启用，poll/push 不需要中继。
+订阅只支持webhook的事件插件时，平台使用首个PUBLIC_ORIGIN生成 `/api/events/plugins/:key` 回调地址，直接在Newbot校验原始正文HMAC、5分钟时间窗及订阅身份，持久写入后返回成功。平台管理client-generated `whsec_` secret、TTL刷新、challenge及取消订阅。上游需要能访问该地址；不再读取 `NEWBOT_EVENT_RELAY_*` 配置。暂停/删除/凭证失效时拒收，未能通知上游取消时由有限TTL终止。插件仍基于限定版本MCP Events草案，不宣称任意第三方Webhook格式兼容。直收插件Webhook不进行外部轮询；持久队列由本地任务调度器领取。去重记录达到100000条时明确返回503，需维护容量，不静默删除未交付事件。
+
 
 SQLite 和加密密钥必须一并备份。正文 AES-GCM 加密，route token 仅存 hash，文件权限0600。待处理上限每通道100000条，满时503而不丢弃。已全部确认的正文保留7天，去重标记和回执30天；未确认事件不会按期限清理。密钥遗失时拒绝创建新密钥覆盖原存储。长期不用的消费者需要显式移除，否则其未确认数据持续保留。
 
 ## 迁移与验证
 
-v23 只在主数据库事务内添加通用参数及迁移记录。任务/触发器/账号/会话/游标/去重键保留，旧 webhook 原样保留；独立订阅库不重键。v1 源保留在单独兼容模块，只有已知旧声明走此入口。不同包摘要或不兼容升级需要重新确认账号，不能悄悄重放。迁移失败回滚，不启动 worker。
+只接受当前事件声明和配置。v24清理无效旧任务、缺少会话绑定的数据以及依赖记录，不补齐或猜测旧字段；聊天正文保留。插件变更摘要后需要重新确认连接。直接接收与插件订阅是明确分开的当前格式，不恢复旧业务来源和旧Webhook端点。
+
 
 `npm run test:event-bridge` 包括协议、模拟上游、实际 stdio MCP、HTTP 中继、迁移回滚、签名 webhook、本地 OAuth 和 HTTPS 测试；`npm run test:event-bridge-ui` 在320/390/768/1280宽度、深浅色下安装后的来源配置/运行验收。CI 执行边界检查，禁止核心导入提供方实现或插件反向导入宿主。
 
@@ -112,7 +114,7 @@ GitHub事件包1.1.0新增 `workflow.completed`，参数为仓库与可选分支
 
 ## 已部署的真实业务链路
 
-当前实例已接入 `ohmydevelop/newbot` 的 `codex/newbot-systematize` 分支CI完成事件。`github-events`（1.1.0）在通用出站桥中读取真实GitHub API，经过独立公网HTTPS中继，再由生产Newbot的`relay-events`（1.0.2）触发「Newbot CI 结果」任务。任务沿用已配置的百智-MQ / deepseek-flash，并将连续结果写入同一会话；不会发送邮件或GitHub评论。
+2026-11-17 的部署验收接入 `ohmydevelop/newbot` 的 `codex/newbot-systematize` 分支CI完成事件。`github-events`（1.1.0）在通用出站桥中读取真实GitHub API，经过独立公网HTTPS中继，再由生产Newbot的`relay-events`（1.0.2）触发「Newbot CI 结果」任务。任务沿用已配置的百智-MQ / deepseek-flash，并将连续结果写入同一会话；不会发送邮件或GitHub评论。
 
 部署进程：`newbot-event-relay.service`、`newbot-event-relay-tunnel.service`、`newbot-github-event-bridge.service`，均为user systemd服务。运行数据位于实际实例 `.data/event-bridge-live/`；relay数据库与relay.key必须一起备份，producer的checkpoint和outbox也应一起保留。令牌配置仅存在0600私密文件。可先在自动任务页暂停任务，再停用事件源服务以暂停业务；不删除历史会话。
 

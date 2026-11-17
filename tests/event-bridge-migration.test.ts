@@ -164,7 +164,7 @@ test("cleanup is atomic when a deletion fails; malformed JSON is deleted instead
 test("only decoded invalid account formats are deleted, not inaccessible encrypted credentials", () => {
   const f = setup();
   try {
-    const account = f.content.eventTriggers[0].connectionId,
+    const account = (f.content.eventTriggers[0] as import("../shared/automations.js").SubscriptionTrigger).connectionId,
       task = f.insert(f.content);
     for (const [id, packet] of [
       [account, "old-token"],

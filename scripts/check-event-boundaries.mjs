@@ -71,10 +71,24 @@ for (const file of files("examples").filter((f) =>
   if (/from\s*["'][^"']*\/server\//.test(text))
     failures.push(file + ": plugin imports the host");
 }
+for (const file of [
+  "server/index.ts",
+  "server/event-subscriptions/service.ts",
+  "server/event-subscriptions/webhook.ts",
+]) {
+  if (
+    /NEWBOT_EVENT_RELAY_|RelayConfiguration|services\/event-relay|examples\/relay-events/.test(
+      readFileSync(file, "utf8"),
+    )
+  )
+    failures.push(
+      file + ": platform event ingress must not depend on an external relay",
+    );
+}
 if (failures.length) {
   console.error(failures.join("\n"));
   process.exit(1);
 }
 console.log(
-  "Event boundaries: generic platform and independent plugin implementations verified; only current plugin events are supported.",
+  "Event boundaries: generic platform and independent plugin implementations verified; direct ingress and current plugin events are supported.",
 );

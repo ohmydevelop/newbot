@@ -1,7 +1,7 @@
 import { defineConfig } from "@playwright/test";
 export default defineConfig({
   testDir: "./tests/browser",
-  testIgnore: ["**/event-bridge.spec.ts"],
+  testIgnore: ["**/event-bridge.spec.ts", "**/event-ingress.spec.ts"],
   fullyParallel: false,
   snapshotPathTemplate: "{testDir}/__screenshots__/{arg}{ext}",
   workers: 1,

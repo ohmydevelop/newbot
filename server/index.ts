@@ -1,3 +1,4 @@
+import { incomingEvents, isEventDelivery } from "./event-subscriptions/ingress.js";
 import { eventSubscriptions } from "./event-subscriptions/service.js";
 import { automationMail } from "./automation-mail.js";
 import { automations } from "./automations.js";
@@ -569,6 +570,7 @@ async function createServerInternal(
     if (req.url.startsWith("/api/")) reply.header("Cache-Control", "no-store");
     if (nodeControl && isRunnerRoute(req.url))
       return runnerAuthentication(req, reply, nodeControl);
+    if (isEventDelivery(req.method, req.routeOptions.url)) return;
     if (req.headers.origin && !origins.has(req.headers.origin))
       return reply.code(403).send({ error: "来源验证失败" });
     if (
@@ -1823,8 +1825,12 @@ async function createServerInternal(
         await service.handle("turn/interrupt", { threadId, turnId });
     },
   });
-  subscriptions = eventSubscriptions(db,vault,scheduled,runtime.extensionRuntime,{now:options.automationClock,existing:service.pluginConnections.eventConnection,...(process.env.NEWBOT_EVENT_RELAY_URL && process.env.NEWBOT_EVENT_RELAY_ROUTE && process.env.NEWBOT_EVENT_RELAY_TOKEN ? {relay:{url:process.env.NEWBOT_EVENT_RELAY_URL,route:process.env.NEWBOT_EVENT_RELAY_ROUTE,token:process.env.NEWBOT_EVENT_RELAY_TOKEN}} : {}),
-      callback:[...origins][0]+"/oauth/events/callback"});
+  subscriptions = eventSubscriptions(db,vault,scheduled,runtime.extensionRuntime,{
+    now:options.automationClock, existing:service.pluginConnections.eventConnection,
+    origin:[...origins][0], callback:[...origins][0]+"/oauth/events/callback"
+  });
+  subscriptions.registerIngress(app);
+  incomingEvents(app, db, vault, scheduled, [...origins][0]);
   const subscriptionService=subscriptions;
   app.get("/api/automations/sources",()=>subscriptionService.catalog());
   app.post("/api/automations/accounts/save",{bodyLimit:16384},req=>subscriptionService.saveAccount(req.body));
