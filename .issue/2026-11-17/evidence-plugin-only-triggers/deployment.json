@@ -1,0 +1,61 @@
+{
+  "source": "5eca62c0ace53aa111f7aa7ba492922b66f99391",
+  "webHash": "1e8fbb69eec7d99f9b8ea584ed57da2a02f18e0f5cc259ce7d94ddc709b1235f",
+  "url": "https://reliance-inns-suggested-chicago.trycloudflare.com",
+  "ready": {
+    "ready": true,
+    "runtime": "ready"
+  },
+  "dataUnchanged": false,
+  "retainedDataUnchanged": true,
+  "cleanup": {
+    "removedTasks": [
+      "2ec75cd3-999c-48aa-80ec-923ba2ed068f",
+      "361b4a2f-ef87-40d3-b2d0-e9381cfc3157",
+      "3bcf6990-1cf4-42e8-9407-b90e17d6eaef",
+      "46d25f19-286a-4938-8991-ff2e50b66232",
+      "4be9b617-35f7-400a-a783-96c5cd2a30e7",
+      "6199d52a-5485-4ce0-9a03-842505975ae6",
+      "6dec63b8-61bf-4434-a81b-48f2d3c41dfc",
+      "7a267892-f2ce-4d7c-9fc2-623a261558d5",
+      "c1cc2039-86ef-4760-a09a-1fae2057e255"
+    ],
+    "removedAccounts": [],
+    "retainedTasks": 3,
+    "version": 24
+  },
+  "databaseMigration": "plugin-events-v24",
+  "previousDatabaseVersion": 23,
+  "historicalModes": "unchanged",
+  "tables": [
+    "threads",
+    "session_runtime",
+    "session_runtime_pending",
+    "thread_workspaces",
+    "plugin_connection_settings",
+    "private_field_sets",
+    "provider_configuration",
+    "extension_configuration",
+    "experts",
+    "session_extensions",
+    "automation_tasks",
+    "automation_runs",
+    "automation_deliveries",
+    "automation_mail_config",
+    "automation_threads",
+    "automation_event_inbox",
+    "automation_attachment_refs",
+    "automation_event_accounts",
+    "automation_event_oauth",
+    "automation_event_webhooks"
+  ],
+  "serverUnchanged": false,
+  "serverHash": "3e62b4bc212c04626004616cc9567a14dcb1fa38c7ace3a8569e10c24ea6ad38",
+  "previousServerIndexHash": "6dad4a4c43aefe7e7997d7cc552b6a61782b44d0a9b8a440332195c5d763a116",
+  "backup": "/home/a/Documents/ChatGPT/newbot/.data/backups/2026-11-17-web-5eca62c0ace5",
+  "assets": {
+    "assets/index-CJvoKtUB.js": "40e29e876aa2f9300598c8b2c286956c5aed24b9eb079247b129d8b53ea86332",
+    "assets/index-CMsJUEpa.css": "5f5cf6086cb9f3ebdf046891182f1c8a66bb2a5389735047e2706cf5b779b290"
+  },
+  "retainedAssets": 7632
+}

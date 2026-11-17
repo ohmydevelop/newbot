@@ -1,0 +1,43 @@
+{
+  "origin": "https://reliance-inns-suggested-chicago.trycloudflare.com",
+  "providers": [
+    {
+      "id": "25f7c8295438bf7e3c27f9795f227650a78df0ec3cdd4ff40fdbbbbe46f1511b",
+      "label": "事件桥",
+      "events": [
+        "event.received"
+      ]
+    },
+    {
+      "id": "494199ea6a17137c3bc48fbb2b77890939d3cb1b8ad5940520d7e65de7646579",
+      "label": "GitHub 仓库事件",
+      "events": [
+        "issue.closed",
+        "issue.reopened",
+        "issue.labeled",
+        "issue.unlabeled",
+        "issue.assigned",
+        "issue.unassigned",
+        "pull_request.closed",
+        "pull_request.reopened",
+        "pull_request.labeled",
+        "pull_request.unlabeled",
+        "pull_request.assigned",
+        "pull_request.unassigned",
+        "workflow.completed"
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "id": "039c93f1-7b0f-44d3-8775-476b67f92594",
+      "available": true
+    }
+  ],
+  "retiredEndpoints": [
+    404,
+    404
+  ],
+  "menu": "plugin-only",
+  "overflow": false
+}

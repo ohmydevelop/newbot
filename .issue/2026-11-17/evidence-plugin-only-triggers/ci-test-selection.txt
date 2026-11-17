@@ -1,0 +1,16 @@
+Listing tests:
+  automation-events.spec.ts:4:5 › 无插件时只显示平台时间触发器 320 light
+  automation-events.spec.ts:4:5 › 无插件时只显示平台时间触发器 320 dark
+  automation-events.spec.ts:4:5 › 无插件时只显示平台时间触发器 390 light
+  automation-events.spec.ts:4:5 › 无插件时只显示平台时间触发器 390 dark
+  automation-events.spec.ts:4:5 › 无插件时只显示平台时间触发器 1280 light
+  automation-events.spec.ts:4:5 › 无插件时只显示平台时间触发器 1280 dark
+  event-bridge.spec.ts:5:5 › 通用事件插件 320 light
+  event-bridge.spec.ts:5:5 › 通用事件插件 320 dark
+  event-bridge.spec.ts:5:5 › 通用事件插件 390 light
+  event-bridge.spec.ts:5:5 › 通用事件插件 390 dark
+  event-bridge.spec.ts:5:5 › 通用事件插件 768 light
+  event-bridge.spec.ts:5:5 › 通用事件插件 768 dark
+  event-bridge.spec.ts:5:5 › 通用事件插件 1280 light
+  event-bridge.spec.ts:5:5 › 通用事件插件 1280 dark
+Total: 14 tests in 2 files

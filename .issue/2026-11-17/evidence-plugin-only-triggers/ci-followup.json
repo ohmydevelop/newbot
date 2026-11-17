@@ -1,0 +1,17 @@
+{
+  "run": "https://github.com/ohmydevelop/newbot/actions/runs/44089924723",
+  "implementation": "5eca62c",
+  "failures": [
+    {
+      "test": "tests/credential-storage.test.ts",
+      "cause": "obsolete automation_event_routes fixture",
+      "resolution": "replaced by account/oauth/webhook key-loss contracts; 44 local credential tests pass"
+    },
+    {
+      "test": "tests/certificates.test.ts",
+      "cause": "runner openssl x509 rejects -not_before / -not_after fixture arguments",
+      "resolution": "not changed in this event-system task"
+    }
+  ],
+  "selection": "default suite separates plugin fixture; dedicated 14-case suite is now wired to CI"
+}

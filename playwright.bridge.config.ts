@@ -3,6 +3,7 @@ import base from "./playwright.config";
 export default defineConfig({
   ...base,
   testMatch: "event-bridge.spec.ts",
+  testIgnore: [],
   outputDir: ".data/bridge-ui",
   reporter: [
     ["list"],
