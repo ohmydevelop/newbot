@@ -1,0 +1,36 @@
+{
+  "source": "bd21789ea73db8820371182d0bcd1a8c9833ab7d",
+  "webHash": "c76b0e6548b8eed47910256ada2915152aebd35c1a258658d920d981b8a463b8",
+  "url": "https://reliance-inns-suggested-chicago.trycloudflare.com",
+  "ready": {
+    "ready": true,
+    "runtime": "ready"
+  },
+  "dataUnchanged": true,
+  "retainedDataUnchanged": true,
+  "cleanup": null,
+  "databaseMigration": null,
+  "previousDatabaseVersion": 24,
+  "historicalModes": "unchanged",
+  "tables": [
+    "threads",
+    "session_runtime",
+    "session_runtime_pending",
+    "thread_workspaces",
+    "plugin_connection_settings",
+    "private_field_sets",
+    "provider_configuration",
+    "extension_configuration",
+    "experts",
+    "session_extensions"
+  ],
+  "serverUnchanged": true,
+  "serverHash": null,
+  "previousServerIndexHash": "c738863d92b282d75ee88720efe8eb339216ab511e7efcc1f459d05390f4cda0",
+  "backup": "/home/a/Documents/ChatGPT/newbot/.data/backups/2026-11-18-web-bd21789ea73d",
+  "assets": {
+    "assets/index-q7FFbqra.js": "1a52bef5fc06dcee97a25a713b5bbfdf3b7bae4f361c3e7e664fd1c62cc1443c",
+    "assets/index-C3PYW67V.css": "389d24a12dcf332d081b02904709f14fdfb10c36d15bf76efb06e85ac232efb6"
+  },
+  "retainedAssets": 8319
+}

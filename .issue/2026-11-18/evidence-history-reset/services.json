@@ -1,0 +1,18 @@
+{
+  "newbot-test.service": {
+    "active": "active",
+    "enabled": "static"
+  },
+  "newbot-github-event-bridge.service": {
+    "active": "inactive",
+    "enabled": "disabled"
+  },
+  "newbot-event-relay.service": {
+    "active": "inactive",
+    "enabled": "disabled"
+  },
+  "newbot-event-relay-tunnel.service": {
+    "active": "inactive",
+    "enabled": "disabled"
+  }
+}

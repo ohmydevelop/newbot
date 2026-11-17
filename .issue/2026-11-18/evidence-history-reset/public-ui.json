@@ -1,0 +1,17 @@
+{
+  "threads": 0,
+  "tasks": 0,
+  "groups": [
+    "时间",
+    "外部事件",
+    "来自插件"
+  ],
+  "relayAbsent": true,
+  "searchHidesEmptyGroups": true,
+  "focusRestored": true,
+  "width": 390,
+  "scroll": {
+    "top": 22,
+    "max": 22
+  }
+}
